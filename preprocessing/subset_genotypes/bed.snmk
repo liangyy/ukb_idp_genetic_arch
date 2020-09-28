@@ -1,0 +1,31 @@
+if 'outdir' not in config:
+    config['outdir'] = 'output'
+
+from lib import get_bed_files
+
+bedfiles, bed_command = get_bed_files(config)
+
+rule all:
+    input:
+        [ '{outdir}/{name_tag}.chr{chr_num}.bed'.format(chr_num=i, **config) for i in range(1, 23) ]
+
+rule run:
+    input:
+        geno = bedfiles,
+        snplist = config['snplist'],
+        indivlist = config['indivlist']
+    params:
+        outprefix = '{outdir}/{name_tag}.chr{chr_num}',
+        bed_command = bed_command
+    output:
+        '{outdir}/{name_tag}.chr{chr_num}.bed'
+    shell:
+        '{config[plink1.9]} \
+            {params.bed_command} \
+            --extract {input.snplist} \
+            --keep {indivlist} \
+            --make-bed \
+            --memory {config[plink_mem_in_mb]} \
+            --out {params[0]}'
+        
+    

@@ -1,0 +1,6 @@
+plink1.9: '/vol/bmd/yanyul/softwares/plink'
+plink_mem_in_mb: 10000
+snplist: ''
+indivlist: ''
+genotype_bed: '/vol/bmd/meliao/data/genotype/plink/chr-{chr_num}'
+  

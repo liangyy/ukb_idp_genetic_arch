@@ -1,0 +1,14 @@
+outdir: '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/hapmap3_eur_snplist'
+name_tag: 'hapmap3_eur'
+pop_tag: 'CEU'
+maf: 0.01
+individual_list:
+  file: '/vol/bmd/yanyul/data/hapmap3/relationships_w_pops_121708.txt'
+  pop_col: 'population'
+  indiv_col: 'IID'
+  fam_col: 'FID'
+genotypes:
+  ped: '/vol/bmd/yanyul/data/hapmap3/hapmap3_r2_b36_fwd.consensus.qc.poly.ped'
+  map: '/vol/bmd/yanyul/data/hapmap3/hapmap3_r2_b36_fwd.consensus.qc.poly.map'
+plink1.9: '/vol/bmd/yanyul/softwares/plink'  # on CRI: module load gcc/6.2.0; module load plink/1.90
+plink_mem_in_mb: 10000

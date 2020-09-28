@@ -23,7 +23,7 @@ rule run:
         '{config[plink1.9]} \
             {params.bed_command} \
             --extract {input.snplist} \
-            --keep {input.indivlist} \
+            --keep <(cat {input.indivlist} | awk {{print $1"\t"$1}}) \
             --make-bed \
             --memory {config[plink_mem_in_mb]} \
             --out {params[0]}'

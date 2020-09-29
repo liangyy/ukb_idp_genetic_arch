@@ -13,4 +13,10 @@ def get_parquet_files(config):
     files = [ file_prefix + '.' + ss for ss in ['variants_metadata.parquet', 'variants.parquet'] ]
     command = file_prefix
     return files, prefix
+
+def get_plink_filters(config):
+    if 'plink_filters' not in config:
+        return ''
+    filters = config['plink_filters']
+    return ' '.join(filters)
          

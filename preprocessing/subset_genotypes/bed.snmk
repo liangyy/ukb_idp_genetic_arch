@@ -1,9 +1,10 @@
 if 'outdir' not in config:
     config['outdir'] = 'output'
 
-from lib import get_bed_files
+from lib import get_bed_files, get_plink_filters
 
 bedfiles, bed_command = get_bed_files(config)
+add_filters = get_plink_filters(config)
 
 rule all:
     input:
@@ -26,6 +27,7 @@ rule run:
             --keep <(cat {input.indivlist} | awk \'{{print $1"\t"$1}}\') \
             --make-bed \
             --memory {config[plink_mem_in_mb]} \
+            {add_filters} \
             --out {params[0]}'
         
     

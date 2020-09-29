@@ -12,7 +12,7 @@ def get_parquet_files(config):
     file_prefix = config['genotype_parquet']
     files = [ file_prefix + '.' + ss for ss in ['variants_metadata.parquet', 'variants.parquet'] ]
     command = file_prefix
-    return files, prefix
+    return files, file_prefix
 
 def get_plink_filters(config):
     if 'plink_filters' not in config:

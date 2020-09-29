@@ -56,13 +56,13 @@ if __name__ == '__main__':
     ))
     
     logging.info('Subsetting SNPs in metadata table.')
-    df_meta = df_meta[ df_meta.rsid.isin(snplist) ].reset_index(drop=True)
+    df_meta.drop(df_meta[ df_meta.rsid.isin(snplist) ].index, inplace=True)
     logging.info('Target SNP list size = {}. Resulting genotype table has {} SNPs remained.'.format(
         len(snplist), df_meta.shape[0]
     ))
     
     logging.info('Subsetting SNPs in genotype table.')
-    df_geno = df_geno[ ['individual'] + df_meta.id.tolist() ].copy()
+    df_geno.drop(df_geno.columns.difference(['individual'] + df_meta.id.tolist()),inplace=True)
     
     logging.info('Writing output metadata table.')
     df_meta.to_parquet(args.output_prefix + '.variants_metadata.parquet')

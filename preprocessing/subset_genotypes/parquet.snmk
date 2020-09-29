@@ -1,0 +1,30 @@
+if 'outdir' not in config:
+    config['outdir'] = 'output'
+
+from lib import get_parquet_files
+
+input_parquets, parquet_prefix = get_parquet_files(config)
+
+rule all:
+    input:
+        [ '{outdir}/{name_tag}.chr{chr_num}.variants.parquet'.format(chr_num=i, **config) for i in range(1, 23) ],
+        [ '{outdir}/{name_tag}.chr{chr_num}.variants_metadata.parquet'.format(chr_num=i, **config) for i in range(1, 23) ]
+
+rule extract:
+    input:
+        files = input_parquets,
+        snplist = config['snplist'],
+        indivlist = config['indivlist']
+    output:
+        '{outdir}/{name_tag}.chr{chr_num}.variants.parquet',
+        '{outdir}/{name_tag}.chr{chr_num}.variants_metadata.parquet'
+    params:
+        prefix = parquet_prefix,
+        outprefix = '{outdir}/{name_tag}.chr{chr_num}'
+    shell:
+        'python extract_from_genotype_parquet.py \
+            --input_prefix {params.prefix} \
+            --snplist {input.snplist} \
+            --indivlist {input.indivlist} \
+            --output_prefix {params.outprefix}'
+            

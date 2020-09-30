@@ -36,7 +36,9 @@ if __name__ == '__main__':
         format = '%(asctime)s  %(message)s',
         datefmt = '%Y-%m-%d %I:%M:%S %p'
     )
-    
+   
+    import pdb 
+
     logging.info('Loading genotype.')
     df_geno = pd.read_parquet(args.input_prefix + '.variants.parquet')
     
@@ -50,19 +52,19 @@ if __name__ == '__main__':
     indivlist = read_list(args.indivlist)
     
     logging.info('Subsetting individuals.')
-    df_geno = df_geno[ df_geno.individual.isin(indivlist) ].reset_index(drop=True)
+    df_geno.drop(df_geno[ ~df_geno.individual.isin(indivlist) ].index, inplace=True)
     logging.info('Target individual list size = {}. Resulting genotype table has {} individuals remained.'.format(
         len(indivlist), df_geno.shape[0]
     ))
     
     logging.info('Subsetting SNPs in metadata table.')
-    df_meta.drop(df_meta[ df_meta.rsid.isin(snplist) ].index, inplace=True)
+    df_meta.drop(df_meta[ ~df_meta.rsid.isin(snplist) ].index, inplace=True)
     logging.info('Target SNP list size = {}. Resulting genotype table has {} SNPs remained.'.format(
         len(snplist), df_meta.shape[0]
     ))
     
     logging.info('Subsetting SNPs in genotype table.')
-    df_geno.drop(df_geno.columns.difference(['individual'] + df_meta.id.tolist()),inplace=True)
+    df_geno.drop(columns=df_geno.columns.difference(['individual'] + df_meta.id.tolist()),inplace=True)
     
     logging.info('Writing output metadata table.')
     df_meta.to_parquet(args.output_prefix + '.variants_metadata.parquet')

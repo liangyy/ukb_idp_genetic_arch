@@ -3,7 +3,7 @@ import numpy as np
 import scipy.stats
 from pandas_plink import read_plink1_bin 
 
-def compute_grm_from_bed(bedfile_pattern, missing_rate_cutoff=0.5):
+def compute_grm_from_bed(bedfile_pattern, load_first_n_samples=None, missing_rate_cutoff=0.5):
     
     indiv_list = None
     nsnp = 0
@@ -14,6 +14,8 @@ def compute_grm_from_bed(bedfile_pattern, missing_rate_cutoff=0.5):
         G = read_plink1_bin(bedfile, verbose=False)
         if indiv_list is None:
             indiv_list = G.sample.to_series().tolist()
+            if load_first_n_samples is not None:
+                indiv_list = indiv_list[:load_first_n_samples]
         
         
         geno = G.sel(sample=indiv_list).values
@@ -113,9 +115,8 @@ def evaluate_performance(ypred, yobs):
     for i in range(k):
         pearson_col.append(pearson(ypred[:, i], yobs[:, i]))
         spearman_col.append(spearman(ypred[:, i], yobs[:, i]))
-    r2 = r2(ypred, yobs)
-    return pd.DataFrame({'R2': r2, 'Pearson': pearson_col, 'Spearman': spearman})
-    
+    r2_ = r2(ypred, yobs)
+    return pd.DataFrame({'R2': r2_, 'Pearson': pearson_col, 'Spearman': spearman_col})
 
 if __name__ == '__main__':
     import argparse
@@ -143,6 +144,10 @@ if __name__ == '__main__':
         Set the cross-validation fold for 
         outer CV and nested CV respectively.
     ''')
+    parser.add_argument('--first_n_indiv', type=int, default=None, help='''
+        For debugging purpose, , it run with the first N individuals.
+        And the rest of the samples will be discarded.
+    ''')
     parser.add_argument('--output', help='''
         Report the cross-validated R2, 
         Pearson's correlation and Spearman's correlation.
@@ -167,7 +172,7 @@ if __name__ == '__main__':
     pheno_mat, pheno_indiv_info, pheno_col_info = load_phenotype_parquet(args.phenotype_parquet)
     
     logging.info('Computing GRM.')
-    grm, grm_indiv_info = compute_grm_from_bed(args.geno_bed_pattern)
+    grm, grm_indiv_info = compute_grm_from_bed(args.geno_bed_pattern, load_first_n_samples=args.first_n_indiv)
     
     logging.info('Finalizing GRM and phenotype matrices.')
     indiv_info = intersection(pheno_indiv_info, grm_indiv_info)

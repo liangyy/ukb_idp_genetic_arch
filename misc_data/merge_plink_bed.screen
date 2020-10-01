@@ -1,0 +1,33 @@
+plink_exec=/vol/bmd/yanyul/softwares/plink  # plink1.9 for now since plink2 does not support --merge-list yet
+plink2_exec=/vol/bmd/yanyul/softwares/plink2
+genotype_prefix=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr
+outdir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes
+outprefix=IDP_HM3_finalPheno.merged_all
+
+# go to working directory
+cd /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/misc_data
+
+# step1: merge 22 chromosomes using plink1.9
+
+tmpfile_bedlist='tmpfile_bedlist.txt'
+if [[ -f $tmpfile_bedlist ]]
+then
+  rm $tmpfile_bedlist
+fi
+
+for i in `seq 1 22`
+do
+  echo $genotype_prefix$i >> $tmpfile_bedlist 
+  $plink_exec \
+    --merge-list $tmpfile_bedlist \
+    --make-bed \
+    --out $outdir/$outprefix > merge_plink_bed_step1.log 2>&1 
+done
+
+rm $tmpfile_bedlist
+
+# step2: convert BED to PGEN
+$plink2_exec \
+  --bfile $outdir/$outprefix \
+  --make-pgen \
+  --out $outdir/$outprefix > merge_plink_bed_step2.log 2>&1

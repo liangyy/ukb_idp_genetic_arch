@@ -1,8 +1,11 @@
 import numpy as np
 
+# for debugging
+import pdb
+
 class blupRidgeSolver:
     
-    def __init__(self, grm=None, y=None, theta_g_grid=None, inner_cv_fold=5)
+    def __init__(self, grm=None, y=None, theta_g_grid=None, inner_cv_fold=5):
         if theta_g_grid is None:
             self.theta_g_grid = np.array([0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95])
         self.inner_cv_fold = inner_cv_fold
@@ -40,8 +43,8 @@ class blupRidgeSolver:
             subset_y_idx = np.arange(self.ny)
             
         M = (1 - theta_g) * np.eye(ntrain) + theta_g * self.grm[train_idx, train_idx]
-        ypred = theta_g * (grm[test_idx, train_idx] @ np.solve(M, y[subset_y_idx, train_idx]))
-        mse = np.power(ypred - y[subset_y_idx, test_idx], 2).mean(axis=0).T
+        ypred = theta_g * (self.grm[test_idx, :][:, train_idx] @ np.linalg.solve(M, self.y[train_idx, :][:, subset_y_idx]))
+        mse = np.power(ypred - self.y[test_idx, :][:, subset_y_idx], 2).mean(axis=0).T
         return mse, ypred
         
     def cv_train(self, train_idx, test_idx, rand_seed=1):
@@ -56,12 +59,12 @@ class blupRidgeSolver:
         mse_mat = mse_mat.mean(axis=0) # squeeze partition dim by taking the average mse
         min_theta_idx = np.argmin(mse_mat, axis=0)
         y_pred = np.zeros((len(test_idx), self.ny))
-        for g_cand in range(len(theta_g_grid)):
+        for g_cand in range(len(self.theta_g_grid)):
             theta_g = self.theta_g_grid[g_cand]
             y_active_idx = np.where(g_cand == min_theta_idx)[0]
-            if y_active_ind.sum() == 0:
+            if y_active_idx.shape[0] == 0:
                 continue
             _, y_active_pred = self.train(train_idx, test_idx, theta_g, subset_y_idx=y_active_idx)
-            y_pred[:, y_active_ind] = y_active_pred
-        return y_pred, self.y[:, test_idx]
+            y_pred[:, y_active_idx] = y_active_pred
+        return y_pred, self.y[test_idx, :]
             

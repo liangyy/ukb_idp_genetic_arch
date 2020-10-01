@@ -1,0 +1,82 @@
+---
+title: "Genome-wide ridge regression"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+```
+
+# About
+
+Here I ran genome-wide ridge regression using code implemented at `../methods/gw_ridge`.
+In brief, the data is split into 5 folds and we predict 1 fold using ridge regression model trained using the rest 4 folds where the hyperparameter $\theta_g$ is selected via an inner round of cross-validation among the 4 folds of training data.
+
+Here I present the result along with the `OmicKriging` runs done by Owen.
+
+# Load data
+
+My results.
+
+```{r}
+df_new = read.table('~/Desktop/tmp/ukb_idp/gw_ridge/gw_ridge_default_theta_g_fold_5_5.tsv.gz', header = T)
+```
+
+Owen's runs.
+
+```{r}
+nbatch = 444
+df_owen = list()
+for(i in 1 : nbatch) {
+  df_owen[[length(df_owen) + 1]] = read.table(paste0('~/Desktop/tmp/ukb_idp/owen_okriging/okriging_cv_', i, '_summary.txt'), header = T)
+}
+df_owen = do.call(rbind, df_owen)
+df_owen$gene = stringr::str_replace(df_owen$gene, '\\.', '-')
+```
+
+Merge the two.
+
+```{r}
+df_merge = inner_join(df_new, df_owen, by = c('phenotype' = 'gene'))
+```
+
+# Pairwise comparison
+
+```{r, fig.height=5, fig.width=15}
+p1 = df_merge %>% ggplot() + geom_point(aes(x = r_squared, y = R2), alpha = 0.2) + 
+  th + 
+  geom_abline(intercept = 0, slope = 1) +
+  xlab('Owen\'s run R2') +
+  ylab('New run R2') + 
+  coord_equal()
+
+p2 = df_merge %>% ggplot() + geom_point(aes(x = pearson_r, y = Pearson), alpha = 0.2) + 
+  th + 
+  geom_abline(intercept = 0, slope = 1) +
+  xlab('Owen\'s run Pearson Cor') +
+  ylab('New run Pearson Cor') + 
+  coord_equal()
+
+p3 = df_merge %>% ggplot() + geom_point(aes(x = spearman_r, y = Spearman), alpha = 0.2) + 
+  th + 
+  geom_abline(intercept = 0, slope = 1) +
+  xlab('Owen\'s run Spearman Cor') +
+  ylab('New run Spearman Cor') + 
+  coord_equal()
+p1 + p2 + p3
+```
+
+
+**Take-away**: 
+
+* The new run is consistent with the previous result. Namely, an IDP with good result before also has good result in new run.
+* The new run has slighly better performance since we are selecting $\theta_g$ from a grid of values: 0.01, 0.05, 0.1, 0.2, ..., 0.9. But in Owen's run $\theta_g = 1$ which is not ridge regression anymore.
+
+

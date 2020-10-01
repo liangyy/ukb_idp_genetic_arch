@@ -1,0 +1,20 @@
+name: "ukb_idp_genetic_arch"
+output_dir: "../docs"
+include: [".nojekyll"]
+exclude: ["include"]
+navbar:
+  title: "UKB IDP Genetic Architecture"
+  left:
+    - text: "Analysis"
+      href: index.html
+  right:
+    - icon: fa-github
+      href: https://github.com/liangyy/ukb_idp_genetic_arch
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    theme: cosmo
+    highlight: textmate
+    

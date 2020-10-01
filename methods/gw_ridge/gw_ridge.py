@@ -44,7 +44,7 @@ class blupRidgeSolver:
         if subset_y_idx is None:
             subset_y_idx = np.arange(self.ny)
             
-        M = (1 - theta_g) * np.eye(ntrain) + theta_g * self.grm[train_idx, train_idx]
+        M = (1 - theta_g) * np.eye(ntrain) + theta_g * self.grm[train_idx, :][:, train_idx]
         if test_idx is not None:
             ypred = theta_g * (self.grm[test_idx, :][:, train_idx] @ np.linalg.solve(M, self.y[train_idx, :][:, subset_y_idx]))
             mse = np.power(ypred - self.y[test_idx, :][:, subset_y_idx], 2).mean(axis=0).T

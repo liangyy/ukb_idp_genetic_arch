@@ -103,7 +103,7 @@ def r2(ypred, yobs):
     ypred, yobs are n x k np.array with n being sample size
     '''
     mean_total_error = np.power(yobs - yobs.mean(axis=0), 2).mean(axis=0)
-    mean_resid_error = np.power(yobs - ypred.mean(axis=0), 2).mean(axis=0)
+    mean_resid_error = np.power(yobs - ypred, 2).mean(axis=0)
     return 1 - mean_resid_error / mean_total_error
 
 def evaluate_performance(ypred, yobs):

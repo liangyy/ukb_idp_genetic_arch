@@ -3,3 +3,5 @@ __pycache__
 .snakemake/
 output/
 .Rhistory
+notebook
+*.gz

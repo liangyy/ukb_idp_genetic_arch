@@ -3,6 +3,9 @@ import numpy as np
 import scipy.stats
 from pandas_plink import read_plink1_bin 
 
+# for debugging
+import pdb
+
 def compute_grm_from_bed(bedfile_pattern, load_first_n_samples=None, missing_rate_cutoff=0.5):
     
     indiv_list = None
@@ -73,7 +76,7 @@ def rearrange(mat, reference_label, target_label, mode):
     if mode == 'row':
         return mat[rearrange_idx, :]
     elif mode == 'both':
-        return mat[rearrange_idx, rearrange_idx]
+        return mat[rearrange_idx, :][:, rearrange_idx]
     else:
         raise ValueError('Mode = {} has not been implemented yet.'.format(mode))
 
@@ -86,7 +89,7 @@ def gen_partition(nsample, nfold, seed):
         out += [i] * size
         if i < rest:
             out += [i]
-    return out
+    return np.array(out)
 
 def pearson(y1, y2):
     '''
@@ -135,7 +138,7 @@ if __name__ == '__main__':
         Random seed for numpy 
         (to determine the cross-validation partition). 
     ''')
-    parser.add_argument('--nfold', nargs='+', default=None, help='''
+    parser.add_argument('--nfold', nargs='+', default=None, type=int, help='''
         Set the cross-validation fold for 
         outer CV and nested CV respectively.
     ''')
@@ -197,8 +200,8 @@ if __name__ == '__main__':
     Ypred_collector = []
     Yobs_collector = []
     for i in tqdm(range(outer_nfold)):
-        train_idx = np.where(sample_partitions == i)[0]
-        test_idx = np.where(sample_partitions != i)[0]
+        train_idx = np.where(sample_partitions != i)[0]
+        test_idx = np.where(sample_partitions == i)[0]
         Ypred, Yobs = solver.cv_train(train_idx, test_idx, rand_seed=args.rand_seed + i + 1)
         Ypred_collector.append(Ypred)
         Yobs_collector.append(Yobs)

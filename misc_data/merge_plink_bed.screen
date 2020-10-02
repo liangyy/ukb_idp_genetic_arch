@@ -8,13 +8,17 @@ multi_allelic_snplist=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/
 
 outdir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes
 outprefix=IDP_HM3_finalPheno.merged_all
+tempdir=$outdir/temp
 
 # go to working directory
 cd /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/misc_data
 
+# make temporary folder
+mkdir -p $tempdir
+
 # step1: merge 22 chromosomes using plink1.9
 
-tmpfile_bedlist='tmpfile_bedlist.txt'
+tmpfile_bedlist=$tempdir/tmpfile_bedlist.txt
 if [[ -f $tmpfile_bedlist ]]
 then
   rm $tmpfile_bedlist
@@ -22,16 +26,23 @@ fi
 
 for i in `seq 1 22`
 do
-  echo $genotype_prefix$i >> $tmpfile_bedlist 
+  echo $tempdir/$genotype_prefix$i >> $tmpfile_bedlist 
+  # need to exclude multi allelic snps
   $plink_exec \
-    --merge-list $tmpfile_bedlist \
-    --make-bed \
-    --memory $memory_in_mb \
+    --bfile $genotype_prefix$i \
     --exclude $multi_allelic_snplist \
-    --out $outdir/$outprefix > merge_plink_bed_step1.log 2>&1 
+    --make-bed \
+    --out $tempdir/$genotype_prefix$i
 done
 
-rm $tmpfile_bedlist
+$plink_exec \
+  --merge-list $tmpfile_bedlist \
+  --make-bed \
+  --memory $memory_in_mb \
+  --out $outdir/$outprefix > merge_plink_bed_step1.log 2>&1 
+
+# remove intermediate files
+rm -r $tempdir
 
 # step2: convert BED to PGEN
 $plink2_exec \

@@ -61,18 +61,18 @@ opt_parser <- OptionParser(option_list=option_list)
 opt <- parse_args(opt_parser) 
 
 # helper functions
-source('gw_lasso.R')
+source('gw_lasso_helper.R')
 
 # logging config
-logging::basicConfig(level = args$log_level)
+logging::basicConfig(level = opt$log_level)
 
 # set random seed
 set.seed(opt$random_seed)
 
 # load snpnet configuration
-snpnet_config = yaml::load_yaml(opt$snpnet_config)
+snpnet_config = yaml::read_yaml(opt$snpnet_config)
 
-loginfo('Loading phenotype table.')
+logging::loginfo('Loading phenotype table.')
 df_phenotype = load_phenotype(
   opt$phenotype_table, 
   indiv_col = opt$indiv_col,
@@ -81,26 +81,26 @@ df_phenotype = load_phenotype(
 # df_phenotype: first 2 columns are FID and IID and they are followed by phenotypes.
 nsample = nrow(df_phenotype)
 
-loginfo('Splitting into folds.')
+logging::loginfo('Splitting into folds.')
 partitions = get_partitions(nsample, opt$nfold)
 
-loginfo('Looping over phenotypes.')
+logging::loginfo('Looping over phenotypes.')
 pred_list = list()
 for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
   df_out = data.frame(yobs = df_phenotype[[pheno]], ypred = NA)
   for(k in 1 : opt$nfold) {
-    loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Initialization.'))
+    logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Initialization.'))
     
     # build inner training split col
-    train_idx = which(partitions != i)
-    test_idx = which(partitions == i)
-    ntrain = len(train_idx)
+    train_idx = which(partitions != k)
+    test_idx = which(partitions == k)
+    ntrain = length(train_idx)
     inner_partitions = get_partitions(ntrain, opt$inner_nfold)
     valid_idx = train_idx[inner_partitions == 1]
     split_col = rep(NA, nsample)
+    split_col[train_idx] = 'train'
     split_col[valid_idx] = 'val'
     split_col[test_idx] = 'test'
-    split_col[train_idx] = 'train'
     if(sum(is.na(split_col))) {
       stop('The split_col construction is failed.')
     }
@@ -108,13 +108,14 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     
     # build refit col
     split_col[split_col == 'val'] = 'train'
+    split_col[split_col == 'test'] = 'val'
     df_phenotype$split_refit = split_col
     
     # write the temporary phenotype file
     tmp_pheno_file = paste0(opt$output_prefix, '_', pheno, '_f', k, '.phe')
     write.table(df_phenotype, tmp_pheno_file, col = T, row = F, quo = F, sep = '\t')
     
-    loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Inner fit (early stopping applied).'))
+    logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Inner fit (early stopping applied).'))
     snpnet_config$early.stopping = TRUE
     inner_fit = snpnet::snpnet(
       genotype.pfile = opt$genotype, 
@@ -126,7 +127,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     )
     max_idx <- sum(!is.na(inner_fit$metric.val))
     
-    loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Full fit.'))
+    logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Full fit.'))
     snpnet_config$early.stopping = FALSE
     full_fit = snpnet::snpnet(
       genotype.pfile = opt$genotype, 
@@ -138,16 +139,17 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
       alpha = opt$alpha
     )
     
-    loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Predict.'))
-    full_pred = snpnet::snpnet(
+    logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Predict.'))
+    full_pred = snpnet::predict_snpnet(
+      fit = full_fit,			       
       new_genotype_file = opt$genotype, 
       new_phenotype_file = tmp_pheno_file, 
       phenotype = pheno, 
       split_col = "split_refit", 
-      split_name = 'test',
+      split_name = 'val',
       configs = snpnet_config
     )
-    test_pred = full_pred$prediction$test
+    test_pred = full_pred$prediction$val
     ypred_test = test_pred[, ncol(test_pred)]  # this is from the best lambda
     df_out$ypred[test_idx] = ypred_test
     
@@ -157,7 +159,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
   pred_list[[pheno]] = df_out
 }
 
-loginfo('Calculate performance.')
+logging::loginfo('Calculate performance.')
 out = list()
 for(pheno in names(pred_list)) {
   df_perf = eval_perf(pred_list[[pheno]]$ypred, pred_list[[pheno]]$yobs)
@@ -166,12 +168,12 @@ for(pheno in names(pred_list)) {
 }
 out = do.call(rbind, out)
 
-loginfo('Writing results to disk.')
+logging::loginfo('Writing results to disk.')
 saveRDS(pred_list, paste0(opt$output_prefix, '.yval.rds'))
 write.table(
   out, paste0(opt$output_prefix, '.performance.tsv'), 
   col = T, row = F, quo = F, sep = '\t'
 )
 
-loginfo('Done.')
+logging::loginfo('Done.')
 

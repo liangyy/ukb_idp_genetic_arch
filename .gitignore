@@ -6,3 +6,5 @@ output/
 notebook
 *.gz
 .Rproj.user
+*.tsv
+*.rds

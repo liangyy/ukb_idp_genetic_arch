@@ -26,13 +26,13 @@ fi
 
 for i in `seq 1 22`
 do
-  echo $tempdir/$genotype_prefix$i >> $tmpfile_bedlist 
+  echo $tempdir/chr$i >> $tmpfile_bedlist 
   # need to exclude multi allelic snps
   $plink_exec \
     --bfile $genotype_prefix$i \
     --exclude $multi_allelic_snplist \
     --make-bed \
-    --out $tempdir/$genotype_prefix$i
+    --out $tempdir/chr$i
 done
 
 $plink_exec \
@@ -47,7 +47,7 @@ rm -r $tempdir
 # step2: convert BED to PGEN
 $plink2_exec \
   --bfile $outdir/$outprefix \
-  --make-pgen \
+  --make-pgen vzs \
   --memory $memory_in_mb \
   --out $outdir/$outprefix > merge_plink_bed_step2.log 2>&1
 

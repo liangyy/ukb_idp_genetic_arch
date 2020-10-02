@@ -1,5 +1,5 @@
 genofile=/vol/bmd/yanyul/miniconda3/envs/snpnet/lib/R/library/snpnet/extdata/sample
-phenofile=/vol/bmd/yanyul/miniconda3/envs/snpnet/lib/R/library/snpnet/extdata/sample.phe
+phenofile=test_files/sample.phe.tsv
 phenolist=test_files/test_pheno_list.txt
 nfold=5
 innernfold=5

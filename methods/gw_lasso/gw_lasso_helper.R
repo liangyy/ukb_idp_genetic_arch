@@ -9,7 +9,7 @@ load_phenotype = function(phenotype_file, indiv_col, pheno_list) {
 }
 
 fix_str = function(str_) {
-  stringr::str_remove(str_, '-', 'x')
+  stringr::str_replace(str_, '-', 'x')
 }
 
 load_list = function(fn) {
@@ -27,13 +27,13 @@ get_partitions = function(ntotal, nfold) {
     }
     out = c(out, tmp)
   }
-  out
+  sample(out, length(out), replace = FALSE)
 }
 
 eval_perf = function(ypred, yobs) {
   # return R2, Pearson Cor, Spearman Cor
-  total_error = mean( (ypred - mean(ypred)) ^ 2 )
-  total_residual_error = mean( (ypred - yobs) ^ 2 )
+  total_error = mean( (yobs - mean(yobs)) ^ 2 )
+  total_residual_error = mean( (yobs - ypred) ^ 2 )
   R2 = 1 - total_residual_error / total_error
   pearson = cor(ypred, yobs, method = 'pearson')
   spearman = cor(ypred, yobs, method = 'spearman')

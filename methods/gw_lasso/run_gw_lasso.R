@@ -51,6 +51,9 @@ option_list <- list(
                 metavar="character"),
     make_option(c("-l", "--log_level"), type="integer", default=9,
                 help="Logging level",
+                metavar="character"),
+    make_option(c("-a", "--alpha"), type="numeric", default=1,
+                help="The alpha value in glmnet",
                 metavar="character")
 )
 
@@ -118,7 +121,8 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
       phenotype.file = tmp_pheno_file, 
       phenotype = pheno, 
       split.col = "split", 
-      configs = snpnet_config
+      configs = snpnet_config,
+      alpha = opt$alpha
     )
     max_idx <- sum(!is.na(inner_fit$metric.val))
     
@@ -130,7 +134,8 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
       phenotype = pheno, 
       split.col = "split_refit", 
       configs = snpnet_config,
-      lambda = inner_fit$full.lams[1:max_idx]
+      lambda = inner_fit$full.lams[1:max_idx],
+      alpha = opt$alpha
     )
     
     loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Predict.'))

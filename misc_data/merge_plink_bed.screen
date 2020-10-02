@@ -1,6 +1,11 @@
 plink_exec=/vol/bmd/yanyul/softwares/plink  # plink1.9 for now since plink2 does not support --merge-list yet
 plink2_exec=/vol/bmd/yanyul/softwares/plink2
+memory_in_mb=60000
 genotype_prefix=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr
+
+# this list of snps were obtained in initial plink1.9 call which returned an error and suggested to exclude them.
+multi_allelic_snplist=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
+
 outdir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes
 outprefix=IDP_HM3_finalPheno.merged_all
 
@@ -21,6 +26,8 @@ do
   $plink_exec \
     --merge-list $tmpfile_bedlist \
     --make-bed \
+    --memory $memory_in_mb \
+    --exclude $multi_allelic_snplist \
     --out $outdir/$outprefix > merge_plink_bed_step1.log 2>&1 
 done
 
@@ -30,4 +37,6 @@ rm $tmpfile_bedlist
 $plink2_exec \
   --bfile $outdir/$outprefix \
   --make-pgen \
+  --memory $memory_in_mb \
   --out $outdir/$outprefix > merge_plink_bed_step2.log 2>&1
+

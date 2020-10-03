@@ -7,6 +7,9 @@ niter: 100
 # recommended for faster computation performance (default TRUE) 
 use.glmnetPlus: TRUE 
 
+# SNP batch size (the number of SNPs to consider in batch)
+num.snps.batch: 2500
+
 # path to plink2 program 
 # on washington
 # plink2.path: "/vol/bmd/yanyul/softwares/plink2" 

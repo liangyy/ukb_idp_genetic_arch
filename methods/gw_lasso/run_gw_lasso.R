@@ -54,6 +54,9 @@ option_list <- list(
                 metavar="character"),
     make_option(c("-a", "--alpha"), type="numeric", default=1,
                 help="The alpha value in glmnet",
+                metavar="character"),
+    make_option(c("-m", "--mem"), type="numeric", default=10000,
+                help="Memory usage for plink2 in MB",
                 metavar="character")
 )
 
@@ -123,7 +126,8 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
       phenotype = pheno, 
       split.col = "split", 
       configs = snpnet_config,
-      alpha = opt$alpha
+      alpha = opt$alpha,
+      mem = opt$mem
     )
     max_idx <- sum(!is.na(inner_fit$metric.val))
     
@@ -136,7 +140,8 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
       split.col = "split_refit", 
       configs = snpnet_config,
       lambda = inner_fit$full.lams[1:max_idx],
-      alpha = opt$alpha
+      alpha = opt$alpha,
+      mem = opt$mem
     )
     
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Predict.'))

@@ -1,0 +1,45 @@
+if 'outdir' not in config:
+    config['outdir'] = 'output'
+
+rule all:
+    input:
+        '{outdir}/{name_tag}.gw_lasso.performance.tsv'.format(**config)
+
+rule prep_pheno:
+    input:
+        config['phenotype']['path'],
+        config['phenotype']['list']
+    output:
+        '{outdir}/{name_tag}.phe.tsv'
+    shell:
+        'python {config[parquet2tsv_script]} \
+            --parquet {input[0]} \
+            --output {output[0]} \
+            --col_list {input[1]} {config[phenotype][indiv_col]}'
+
+rule run_gw_lasso:
+    input:
+        geno_prefix = [ config['genotype_prefix'] + '.{}'.format(i) for i in ['pgen', 'pvar.zst', 'psam'],
+        phenotype = '{outdir}/{name_tag}.phe.tsv',
+        pheno_list = '{outdir}/{name_tag}.pheno_list.txt',
+        snpnet_config = config['snpnet_config']
+    params:
+        outprefix = '{outdir}/{name_tag}.gw_lasso'
+    log:
+        '{outdir}/{name_tag}.gw_lasso.log'
+    output:
+        '{outdir}/{name_tag}.gw_lasso.performance.tsv',
+        '{outdir}/{name_tag}.gw_lasso.yval.rds'
+    shell:
+        'Rscript run_gw_lasso.R \
+            --genotype {config[genotype_prefix]} \
+            --phenotype_table {input.phenotype} \
+            --nfold {config[nfold]} \
+            --inner_nfold {config[inner_nfold]} \
+            --indiv_col {config[phenotype][indiv_col]} \
+            --pheno_list {input.pheno_list} \
+            --snpnet_config {input.snpnet_config} \
+            --output_prefix {params.outprefix} \
+            --mem {config[plink_mem_in_mb]} \
+            --alpha {config[glmnet_alpha]} > {log} 2>&1'
+    

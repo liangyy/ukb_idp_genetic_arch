@@ -12,16 +12,16 @@ rule prep_pheno:
     output:
         '{outdir}/{name_tag}.phe.tsv'
     shell:
-        'python {config[parquet2tsv_script]} \
+        '{config[parquet2tsv_script]} \
             --parquet {input[0]} \
             --output {output[0]} \
             --col_list {input[1]} {config[phenotype][indiv_col]}'
 
 rule run_gw_lasso:
     input:
-        geno_prefix = [ config['genotype_prefix'] + '.{}'.format(i) for i in ['pgen', 'pvar.zst', 'psam'],
+        geno_prefix = [ config['genotype_prefix'] + '.{}'.format(i) for i in ['pgen', 'pvar.zst', 'psam'] ],
         phenotype = '{outdir}/{name_tag}.phe.tsv',
-        pheno_list = '{outdir}/{name_tag}.pheno_list.txt',
+        pheno_list = config['phenotype']['list'],
         snpnet_config = config['snpnet_config']
     params:
         outprefix = '{outdir}/{name_tag}.gw_lasso'

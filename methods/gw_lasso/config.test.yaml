@@ -1,4 +1,4 @@
-parquet2tsv_script: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/parquet2table/parquet2tsv.py'
+parquet2tsv_script: '/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/parquet2table/parquet2tsv.py'
 phenotype:
   path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/phenotypes/2020-05-18_final-phenotypes.parquet'
   list: 'test_files/idp_test.txt'

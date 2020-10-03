@@ -3,7 +3,7 @@ phenofile=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/test_genotypes/test_two_idps.
 phenolist=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/test_genotypes/test_pheno_list.txt
 nfold=5
 innernfold=5
-indiv_col=IID
+indiv_col=individual
 snpnet_config=test_files/snpnet.yaml
 output_prefix=test_files/test_idp
 

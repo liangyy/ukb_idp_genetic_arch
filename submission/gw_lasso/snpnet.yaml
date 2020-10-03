@@ -1,5 +1,5 @@
 # number of cores available (default 1) 
-nCores: 15
+nCores: 1
 
 # max number of iterations (default 50)  
 niter: 100 
@@ -8,7 +8,7 @@ niter: 100
 use.glmnetPlus: TRUE 
 
 # SNP batch size (the number of SNPs to consider in batch)
-num.snps.batch: 2500
+num.snps.batch: 200
 
 # path to plink2 program 
 # on washington

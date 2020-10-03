@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
 #PBS -l walltime=48:00:00
-#PBS -l nodes=1:ppn=16
-#PBS -l mem=16gb
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=8gb
 #PBS -e logs/run_$BATCH.err
 #PBS -o logs/run_$BATCH.out
 
@@ -22,3 +22,4 @@ cd ../../methods/gw_lasso
 $SNMK -s gw_lasso.snmk --configfile $PBS_O_WORKDIR/config.yaml -p \
   --config name_tag=$BATCH \
   > $PBS_O_WORKDIR/logs/run_$BATCH.log 2>&1
+

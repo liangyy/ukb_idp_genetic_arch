@@ -1,4 +1,5 @@
-genofile=/vol/bmd/yanyul/miniconda3/envs/snpnet/lib/R/library/snpnet/extdata/sample
+condadir=`which R | sed 's#bin/R##g'`
+genofile=$condadir/lib/R/library/snpnet/extdata/sample
 phenofile=test_files/sample.phe.tsv
 phenolist=test_files/test_pheno_list.txt
 nfold=5
@@ -9,7 +10,7 @@ output_prefix=test_files/output
 
 # conda activate snpnet
 
-cd /vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_lasso
+# cd /vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_lasso
 
 Rscript run_gw_lasso.R \
   --genotype $genofile \

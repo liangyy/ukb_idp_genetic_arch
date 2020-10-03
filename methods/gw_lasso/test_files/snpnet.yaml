@@ -8,7 +8,11 @@ niter: 100
 use.glmnetPlus: TRUE 
 
 # path to plink2 program 
-plink2.path: "/vol/bmd/yanyul/softwares/plink2" 
+# on washington
+# plink2.path: "/vol/bmd/yanyul/softwares/plink2" 
+# on CRI. 
+plink2.path: '/gpfs/data/im-lab/nas40t2/yanyul/softwares/plink2'
+
 
 # path to zstdcat program
 zstdcat.path: "zstdcat" 

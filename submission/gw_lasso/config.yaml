@@ -4,7 +4,7 @@ phenotype:
   list: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/gw_lasso/batch_list/{name_tag}'
   indiv_col: 'individual'
 genotype_prefix: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.merged_all'
-snpnet_config: 'test_files/snpnet.yaml'
+snpnet_config: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/gw_lasso/snpnet.yaml'
 inner_nfold: 5
 nfold: 5
 plink_mem_in_mb: 10000

@@ -1,0 +1,24 @@
+#PBS -S /bin/bash
+#PBS -l walltime=48:00:00
+#PBS -l nodes=1:ppn=16
+#PBS -l mem=16gb
+#PBS -e logs/run_$BATCH.err
+#PBS -o logs/run_$BATCH.out
+
+
+
+source ~/.bash_profile
+source ~/.bashrc
+
+SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snakemake
+
+
+conda activate snpnet
+
+cd ${PBS_O_WORKDIR}
+cd ../../methods/gw_lasso
+
+
+$SNMK -s gw_lasso.snmk --configfile $PBS_O_WORKDIR/config.yaml -p \
+  --config name_tag=$BATCH \
+  > $PBS_O_WORKDIR/logs/run_$BATCH.log 2>&1

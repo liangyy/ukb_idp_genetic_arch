@@ -12,5 +12,13 @@ nowdir=`pwd`
 
 for i in `ls batch_list/`
 do
-  qsub -v BATCH=$i -N gw_lasso_$i run.qsub
+  if [[ -f logs/run_$i.out ]]
+  then
+    tmp=`cat logs/run_$i.log | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l`
+    if [[ $tmp = 1 ]]
+    then
+      echo qsub -v BATCH=$i -N gw_lasso_$i run.qsub
+    fi
+  fi
+  # qsub -v BATCH=$i -N gw_lasso_$i run.qsub
 done

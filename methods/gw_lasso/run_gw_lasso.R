@@ -116,6 +116,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     
     # write the temporary phenotype file
     tmp_pheno_file = paste0(opt$output_prefix, '_', pheno, '_f', k, '.phe')
+    cache_file = paste0(opt$output_prefix, '_', pheno, '_f', k, '.rds')
     write.table(df_phenotype, tmp_pheno_file, col = T, row = F, quo = F, sep = '\t')
     
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Inner fit (early stopping applied).'))
@@ -145,18 +146,32 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     )
     
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Predict.'))
-    full_pred = snpnet::predict_snpnet(
-      fit = full_fit,			       
-      new_genotype_file = opt$genotype, 
-      new_phenotype_file = tmp_pheno_file, 
-      phenotype = pheno, 
-      split_col = "split_refit", 
-      split_name = 'val',
-      configs = snpnet_config
+    full_pred = tryCatch(
+      {
+        snpnet::predict_snpnet(
+          fit = full_fit,			       
+          new_genotype_file = opt$genotype, 
+          new_phenotype_file = tmp_pheno_file, 
+          phenotype = pheno, 
+          split_col = "split_refit", 
+          split_name = 'val',
+          configs = snpnet_config
+        )
+      }, error = function(e) {
+        list(
+          prediction = list(
+            val = matrix(mean(df_out$yobs[test_idx]), ncol = length(inner_fit$full.lams[1:max_idx]), nrow = length(test_idx))
+          )
+        )
+      }
     )
     test_pred = full_pred$prediction$val
-    ypred_test = test_pred[, ncol(test_pred)]  # this is from the best lambda
+    opt_idx = which.max(inner_fit$metric.val) 
+    ypred_test = test_pred[, opt_idx]  # this is from the best lambda
     df_out$ypred[match(names(ypred_test), df_out$indiv)] = as.numeric(ypred_test)
+    
+    # save some intermediate results
+    saveRDS(list(inner_fit = inner_fit, full_fit = full_fit, full_pred = full_pred), cache_file)
     
     # clean up intermediate file 
     system(paste0('rm ', tmp_pheno_file))

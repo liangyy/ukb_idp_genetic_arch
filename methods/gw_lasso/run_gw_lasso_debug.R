@@ -158,7 +158,8 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
       configs = snpnet_config
     )
     test_pred = full_pred$prediction$val
-    ypred_test = test_pred[, ncol(test_pred)]  # this is from the best lambda
+    opt_idx = which.max(inner_fit$metric.val) 
+    ypred_test = test_pred[, opt_idx]  # this is from the best lambda
     df_out$ypred[match(names(ypred_test), df_out$indiv)] = as.numeric(ypred_test)
     inner_collector[[length(inner_collector) + 1]] = list(ypred_test = df_out$ypred[test_idx], test_idx = test_idx, yobs_test = df_out$yobs[test_idx])
     saveRDS(list(inner_fit = inner_fit, full_fit = full_fit, full_pred = full_pred, ypred_test = df_out$ypred[test_idx], test_idx = test_idx, yobs_test = df_out$yobs[test_idx]), tmp_results)

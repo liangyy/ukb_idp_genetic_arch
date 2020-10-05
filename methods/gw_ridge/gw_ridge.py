@@ -28,7 +28,7 @@ class blupRidgeSolver:
             part_test_idx = train_idx[partition_pool == i]
             part_train_idx = train_idx[partition_pool != i]
             partitions.append((part_train_idx, part_test_idx))
-        return partitions
+        return np.random.permutation(partitions)
     
     def train(self, theta_g, train_idx=None, test_idx=None, subset_y_idx=None):
         '''

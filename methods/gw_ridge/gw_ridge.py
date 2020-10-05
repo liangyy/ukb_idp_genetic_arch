@@ -13,7 +13,8 @@ class blupRidgeSolver:
         self.y = y
         self.ny = y.shape[1]
         
-    def get_partition(self, train_idx):
+    def get_partition(self, train_idx, rand_seed):
+        np.random.seed(rand_seed)
         idx = np.arange(self.inner_cv_fold)
         partition_pool = []
         size_part = train_idx.shape[0] // self.inner_cv_fold
@@ -22,13 +23,13 @@ class blupRidgeSolver:
             partition_pool += [i] * size_part
             if i < rest:
                 partition_pool += [i]
-        partition_pool = np.array(partition_pool)
+        partition_pool = np.random.permutation(np.array(partition_pool))
         partitions = [] # each element will be a pair of training idx and testing idx
         for i in range(self.inner_cv_fold):
             part_test_idx = train_idx[partition_pool == i]
             part_train_idx = train_idx[partition_pool != i]
             partitions.append((part_train_idx, part_test_idx))
-        return np.random.permutation(partitions)
+        return partitions
     
     def train(self, theta_g, train_idx=None, test_idx=None, subset_y_idx=None):
         '''
@@ -55,12 +56,12 @@ class blupRidgeSolver:
     def cv_train(self, train_idx=None, test_idx=None, rand_seed=1):
         
         # random seed for reproducibility
-        np.random.seed(rand_seed)
+        # np.random.seed(rand_seed)
         # init train idx (if not set) to include all samples 
         if train_idx is None:
             train_idx = np.arange(self.grm.shape[0])
         # generate partitions
-        partitions = self.get_partition(train_idx)
+        partitions = self.get_partition(train_idx, rand_seed)
         # init inner CV MSE matrix npartition x ntheta_g x ny
         mse_mat = - np.ones((len(partitions), len(self.theta_g_grid), self.ny))
         # loop over partitions to calculate inner CV MSE

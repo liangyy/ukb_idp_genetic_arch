@@ -61,7 +61,7 @@ def load_phenotype_parquet(filename):
     
 def intersection(l1, l2):
     s1 = set(l1)
-    return list(s1.intersection(set(l2)))
+    return sorted(list(s1.intersection(set(l2))))
 
 def match_y_to_x(x, y):
     '''
@@ -224,7 +224,6 @@ if __name__ == '__main__':
     # return R2, pearson coef, spearman coef
     df_res = evaluate_performance(Ypred, Yobs)  
     df_res['phenotype'] = pheno_col_info
-    
     df_res.to_csv(args.output, compression='gzip', sep='\t', index=False)
     
         

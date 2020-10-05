@@ -189,7 +189,7 @@ if __name__ == '__main__':
                 'grm': grm,
                 'grm_indiv_info': grm_indiv_info
             }
-            pickle.dump(tmp)
+            pickle.dump(tmp, f)
     
     logging.info('Finalizing GRM and phenotype matrices.')
     indiv_info = intersection(pheno_indiv_info, grm_indiv_info)

@@ -1,5 +1,5 @@
 phenolist=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/phenotypes/idp_list.txt
-batchsize=4
+batchsize=2
 
 mkdir -p logs_2
 mkdir -p batch_list_2
@@ -17,8 +17,10 @@ do
     tmp=`cat logs_2/run_$i.log | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l`
     if [[ $tmp = 1 ]]
     then
-      echo qsub -v BATCH=$i -N gw_lasso_$i run.qsub
+      qsub -v BATCH=$i -N gw_lasso_$i run.qsub
     fi
+  else
+    :
+    # qsub -v BATCH=$i -N gw_lasso_$i run.qsub
   fi
-  # qsub -v BATCH=$i -N gw_lasso_$i run.qsub
 done

@@ -120,7 +120,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     write.table(df_phenotype, tmp_pheno_file, col = T, row = F, quo = F, sep = '\t')
     
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Inner fit (early stopping applied).'))
-    snpnet_config$early.stopping = TRUE
+    snpnet_config[['early.stopping']] = TRUE
     inner_fit = snpnet::snpnet(
       genotype.pfile = opt$genotype, 
       phenotype.file = tmp_pheno_file, 
@@ -133,7 +133,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     max_idx <- sum(!is.na(inner_fit$metric.val))
     
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Full fit.'))
-    snpnet_config$early.stopping = FALSE
+    snpnet_config[['early.stopping']] = FALSE
     full_fit = snpnet::snpnet(
       genotype.pfile = opt$genotype, 
       phenotype.file = tmp_pheno_file, 
@@ -165,13 +165,14 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
         )
       }
     )
-    test_pred = full_pred$prediction$val
-    opt_idx = which.max(inner_fit$metric.val) 
-    ypred_test = test_pred[, opt_idx]  # this is from the best lambda
-    df_out$ypred[match(names(ypred_test), df_out$indiv)] = as.numeric(ypred_test)
-    
     # save some intermediate results
     saveRDS(list(inner_fit = inner_fit, full_fit = full_fit, full_pred = full_pred), cache_file)
+     
+    # record results
+    test_pred = full_pred$prediction$val
+    opt_idx = min(which.max(inner_fit$metric.val), ncol(test_pred)) 
+    ypred_test = test_pred[, opt_idx]  # this is from the best lambda
+    df_out$ypred[match(names(ypred_test), df_out$indiv)] = as.numeric(ypred_test)
     
     # clean up intermediate file 
     system(paste0('rm ', tmp_pheno_file))

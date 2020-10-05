@@ -161,7 +161,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     ypred_test = test_pred[, ncol(test_pred)]  # this is from the best lambda
     df_out$ypred[match(names(ypred_test), df_out$indiv)] = as.numeric(ypred_test)
     inner_collector[[length(inner_collector) + 1]] = list(ypred_test = df_out$ypred[test_idx], test_idx = test_idx, yobs_test = df_out$yobs[test_idx])
-    saveRDS(list(inner_fit = inner_fit, full_fit = full_fit, full_pred = full_pred), tmp_results)
+    saveRDS(list(inner_fit = inner_fit, full_fit = full_fit, full_pred = full_pred, ypred_test = df_out$ypred[test_idx], test_idx = test_idx, yobs_test = df_out$yobs[test_idx])), tmp_results)
     # clean up intermediate file 
     # system(paste0('rm ', tmp_pheno_file))
   }

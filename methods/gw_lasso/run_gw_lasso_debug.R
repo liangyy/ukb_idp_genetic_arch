@@ -118,6 +118,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     
     # write the temporary phenotype file
     tmp_pheno_file = paste0(opt$output_prefix, '_', pheno, '_f', k, '.phe')
+    tmp_results = paste0(opt$output_prefix, '_', pheno, '_f', k, '.rds')
     write.table(df_phenotype, tmp_pheno_file, col = T, row = F, quo = F, sep = '\t')
     
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Inner fit (early stopping applied).'))
@@ -160,7 +161,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     ypred_test = test_pred[, ncol(test_pred)]  # this is from the best lambda
     df_out$ypred[test_idx] = ypred_test
     inner_collector[[length(inner_collector) + 1]] = list(ypred_test = ypred_test, test_idx = test_idx, yobs_test = df_out$yobs[test_idx])
-    
+    saveRDS(list(inner_fit = inner_fit, full_fit = full_fit, full_pred = full_pred), tmp_results)
     # clean up intermediate file 
     # system(paste0('rm ', tmp_pheno_file))
   }

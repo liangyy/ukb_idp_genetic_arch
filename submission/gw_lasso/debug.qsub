@@ -15,7 +15,7 @@ conda activate snpnet
 cd ${PBS_O_WORKDIR}
 cd ../../methods/gw_lasso
 
-outdir=/scratch/t.cri.yliang/ukb_idp/debug_gw_lasso
+outdir=/scratch/t.cri.yliang/ukb_idp/debug_gw_lasso_2
 mkdir -p $outdir
 
 Rscript run_gw_lasso_debug.R \

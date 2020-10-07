@@ -1,5 +1,5 @@
 ---
-title: "Genome-wide ridge regression"
+title: "Genome-wide ridge/lasso regression"
 # author: Yanyu Liang
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
@@ -21,9 +21,13 @@ In brief, the data is split into 5 folds and we predict 1 fold using ridge regre
 
 Here I present the result along with the `OmicKriging` runs done by Owen.
 
+The genome-wide lasso and elastic net regression is done using implementation at `../method/gw_lass`. 
+Due to the computation burden, I did not do full round of 5-fold cross-validation to select hyperparameter (the inner CV). Instead, I just splitted the training data into 5 folds and used the 4 folds to train and 1 fold for validation.
+
+
 # Load data
 
-My results.
+My results (ridge).
 
 ```{r}
 df_new = read.table('~/Desktop/tmp/ukb_idp/gw_ridge/gw_ridge_default_theta_g_fold_5_5.tsv.gz', header = T)
@@ -47,24 +51,74 @@ Merge the two.
 df_merge = inner_join(df_new, df_owen, by = c('phenotype' = 'gene'))
 ```
 
-# Pairwise comparison
+Load lasso results.
+
+```{r}
+nbatch = 444
+df_lasso = list()
+for(i in 1 : nbatch) {
+  df_lasso[[length(df_lasso) + 1]] = read.table(paste0('~/Desktop/tmp/ukb_idp/gw_lasso/batch', stringi::stri_pad_left(i - 1, 3, 0), '.gw_lasso.performance.tsv'), header = T)
+}
+df_lasso = do.call(rbind, df_lasso)
+df_lasso$phenotype = stringr::str_replace(df_lasso$phenotype, 'x', '-')
+# fill in zero for missing values since they are the worst performance
+df_lasso[is.na(df_lasso)] = 0 
+```
+
+And merge with the other results.
+
+```{r}
+df_merge = inner_join(df_merge, df_lasso, by = 'phenotype', suffix = c('.ridge', '.lasso'))
+```
+
+Load heritability estimates done by Owen.
+And merge with the other results.
+
+```{r}
+df_h2 = read.table('~/Desktop/tmp/ukb_idp/owen_heritability/2020-08-11_idp-heritability-estimates.txt.gz', header = T)
+df_merge = inner_join(df_merge, df_h2, by = c('phenotype' = 'gene'))
+```
+
+Load elastic net results.
+
+```{r}
+nbatch = 444
+df_en = list()
+for(i in 1 : nbatch) {
+  df_en[[length(df_en) + 1]] = read.table(paste0('~/Desktop/tmp/ukb_idp/gw_elastic_net/batch', stringi::stri_pad_left(i - 1, 3, 0), '.gw_lasso.performance.tsv'), header = T)
+}
+df_en = do.call(rbind, df_en)
+df_en$phenotype = stringr::str_replace(df_en$phenotype, 'x', '-')
+# fill in zero for missing values since they are the worst performance
+df_en[is.na(df_en)] = 0
+# add suffix to 
+colnames(df_en)[1:3] = paste0(colnames(df_en)[1:3], '.en')
+```
+
+Merge with the other results.
+
+```{r}
+df_merge = inner_join(df_merge, df_en, by = 'phenotype')
+```
+
+# Pairwise comparison: ridge vs Owen's run
 
 ```{r, fig.height=5, fig.width=15}
-p1 = df_merge %>% ggplot() + geom_point(aes(x = r_squared, y = R2), alpha = 0.2) + 
+p1 = df_merge %>% ggplot() + geom_point(aes(x = r_squared, y = R2.ridge), alpha = 0.2) + 
   th + 
   geom_abline(intercept = 0, slope = 1) +
   xlab('Owen\'s run R2') +
   ylab('New run R2') + 
   coord_equal()
 
-p2 = df_merge %>% ggplot() + geom_point(aes(x = pearson_r, y = Pearson), alpha = 0.2) + 
+p2 = df_merge %>% ggplot() + geom_point(aes(x = pearson_r, y = Pearson.ridge), alpha = 0.2) + 
   th + 
   geom_abline(intercept = 0, slope = 1) +
   xlab('Owen\'s run Pearson Cor') +
   ylab('New run Pearson Cor') + 
   coord_equal()
 
-p3 = df_merge %>% ggplot() + geom_point(aes(x = spearman_r, y = Spearman), alpha = 0.2) + 
+p3 = df_merge %>% ggplot() + geom_point(aes(x = spearman_r, y = Spearman.ridge), alpha = 0.2) + 
   th + 
   geom_abline(intercept = 0, slope = 1) +
   xlab('Owen\'s run Spearman Cor') +
@@ -79,4 +133,102 @@ p1 + p2 + p3
 * The new run is consistent with the previous result. Namely, an IDP with good result before also has good result in new run.
 * The new run has slighly better performance since we are selecting $\theta_g$ from a grid of values: 0.01, 0.05, 0.1, 0.2, ..., 0.9. But in Owen's run $\theta_g = 1$ which is not ridge regression anymore.
 
+
+
+# Pairwise comparison: ridge vs lasso/elastic net
+
+```{r, fig.height=5, fig.width=15}
+p1 = df_merge %>% ggplot() + 
+  geom_point(aes(x = R2.ridge, y = R2.lasso, color = 'alpha=1'), alpha = 0.2) +  
+  geom_point(aes(x = R2.ridge, y = R2.en, color = 'alpha=0.1'), alpha = 0.2) + 
+  th + 
+  geom_abline(intercept = 0, slope = 1) +
+  xlab('Ridge R2') +
+  ylab('Lasso/EN R2') + 
+  coord_equal()
+
+p2 = df_merge %>% ggplot() +
+  geom_point(aes(x = Pearson.ridge, y = Pearson.lasso, color = 'alpha=1'), alpha = 0.2) + 
+  geom_point(aes(x = Pearson.ridge, y = Pearson.en, color = 'alpha=0.1'), alpha = 0.2) + 
+  th + 
+  geom_abline(intercept = 0, slope = 1) +
+  xlab('Ridge Pearson Cor') +
+  ylab('Lasso/EN Pearson Cor') + 
+  coord_equal()
+
+p3 = df_merge %>% ggplot() + 
+  geom_point(aes(x = Spearman.ridge, y = Spearman.lasso, color = 'alpha=1'), alpha = 0.2) + 
+  geom_point(aes(x = Spearman.ridge, y = Spearman.en, color = 'alpha=0.1'), alpha = 0.2) + 
+  th + 
+  geom_abline(intercept = 0, slope = 1) +
+  xlab('Ridge Spearman Cor') +
+  ylab('Lasso/EN Spearman Cor') + 
+  coord_equal()
+p1 + p2 + p3
+```
+
+
+**Take-away**: 
+
+* For most of the traits, ridge performs much better than lasso. 
+* For those traits that have relatively good performance when using ridge, some of them have even better performance when using lasso.
+* Elastic net slightly outperforms lasso overall.
+
+# Pairwise: heritability vs ridge/lasso
+
+```{r}
+df_merge %>% mutate(diff_lasso_ridge = Pearson.lasso - Pearson.ridge) %>% 
+  ggplot() + 
+  geom_point(aes(x = Variance, y = diff_lasso_ridge), alpha = 0.2) +
+  xlab('Heritability') +
+  ylab('Difference of Pearson Correlation \n (lasso - ridge)') + 
+  geom_hline(yintercept = 0, color = 'gray') + 
+  th
+```
+
+**Take-away**: 
+
+* Only when the heritability is relatively high, lasso may be better than ridge.
+
+# Pairwise: heritability vs elastic net/lasso
+
+```{r}
+df_merge %>% mutate(diff_lasso_en = Pearson.lasso - Pearson.en) %>% 
+  ggplot() + 
+  geom_point(aes(x = Variance, y = diff_lasso_en), alpha = 0.2) +
+  xlab('Heritability') +
+  ylab('Difference of Pearson Correlation \n (lasso - elastic net)') + 
+  geom_hline(yintercept = 0, color = 'gray') + 
+  th
+```
+
+**Take-away**: 
+
+* Only when the heritability is relatively high, elastic net outperforms lasso.
+
+
+# Performance vs alpha
+
+```{r, fig.width=8, fig.height=4}
+suffix = c('.ridge', '.en', '.lasso')
+vars = c('R2', 'Pearson', 'Spearman')
+cols = c()
+for(s in suffix) {
+  for(v in vars) {
+    cols = c(cols, paste0(v, s))
+  }
+}
+tmp = df_merge[, c('phenotype', cols)] %>% reshape2::melt(id.vars = c('phenotype')) %>% 
+  mutate(
+    var_name = unlist(lapply(strsplit(as.character(variable), '\\.'), function(x) x[1])),
+    method = unlist(lapply(strsplit(as.character(variable), '\\.'), function(x) x[2]))
+  )
+tmp$alpha = 1
+tmp$alpha[tmp$method == 'ridge'] = 0
+tmp$alpha[tmp$method == 'en'] = 0.1
+tmp %>% ggplot() + 
+  geom_point(aes(x = alpha, y = value), alpha = 0.1) + 
+  geom_path(aes(x = alpha, y = value, group = phenotype), alpha = 0.1) + 
+  facet_wrap(~var_name) + th2
+```
 

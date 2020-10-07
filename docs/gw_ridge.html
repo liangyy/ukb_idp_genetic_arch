@@ -11,7 +11,7 @@
 
 
 
-<title>Genome-wide ridge regression</title>
+<title>Genome-wide ridge/lasso regression</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -369,8 +369,8 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Genome-wide ridge regression</h1>
-<h4 class="date">01 October, 2020</h4>
+<h1 class="title toc-ignore">Genome-wide ridge/lasso regression</h1>
+<h4 class="date">06 October, 2020</h4>
 
 </div>
 
@@ -379,25 +379,18 @@ div.tocify {
 library(ggplot2)
 theme_set(theme_bw(base_size = 15))
 source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
-library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;dplyr&#39;</code></pre>
-<pre><code>## The following objects are masked from &#39;package:stats&#39;:
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from &#39;package:base&#39;:
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>options(stringsAsFactors = F)
+library(dplyr)
+options(stringsAsFactors = F)
 library(patchwork)</code></pre>
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
 <p>Here I ran genome-wide ridge regression using code implemented at <code>../methods/gw_ridge</code>. In brief, the data is split into 5 folds and we predict 1 fold using ridge regression model trained using the rest 4 folds where the hyperparameter <span class="math inline">\(\theta_g\)</span> is selected via an inner round of cross-validation among the 4 folds of training data.</p>
 <p>Here I present the result along with the <code>OmicKriging</code> runs done by Owen.</p>
+<p>The genome-wide lasso and elastic net regression is done using implementation at <code>../method/gw_lass</code>. Due to the computation burden, I did not do full round of 5-fold cross-validation to select hyperparameter (the inner CV). Instead, I just splitted the training data into 5 folds and used the 4 folds to train and 1 fold for validation.</p>
 </div>
 <div id="load-data" class="section level1">
 <h1><span class="header-section-number">2</span> Load data</h1>
-<p>My results.</p>
+<p>My results (ridge).</p>
 <pre class="r"><code>df_new = read.table(&#39;~/Desktop/tmp/ukb_idp/gw_ridge/gw_ridge_default_theta_g_fold_5_5.tsv.gz&#39;, header = T)</code></pre>
 <p>Owen’s runs.</p>
 <pre class="r"><code>nbatch = 444
@@ -409,36 +402,156 @@ df_owen = do.call(rbind, df_owen)
 df_owen$gene = stringr::str_replace(df_owen$gene, &#39;\\.&#39;, &#39;-&#39;)</code></pre>
 <p>Merge the two.</p>
 <pre class="r"><code>df_merge = inner_join(df_new, df_owen, by = c(&#39;phenotype&#39; = &#39;gene&#39;))</code></pre>
+<p>Load lasso results.</p>
+<pre class="r"><code>nbatch = 444
+df_lasso = list()
+for(i in 1 : nbatch) {
+  df_lasso[[length(df_lasso) + 1]] = read.table(paste0(&#39;~/Desktop/tmp/ukb_idp/gw_lasso/batch&#39;, stringi::stri_pad_left(i - 1, 3, 0), &#39;.gw_lasso.performance.tsv&#39;), header = T)
+}
+df_lasso = do.call(rbind, df_lasso)
+df_lasso$phenotype = stringr::str_replace(df_lasso$phenotype, &#39;x&#39;, &#39;-&#39;)
+# fill in zero for missing values since they are the worst performance
+df_lasso[is.na(df_lasso)] = 0 </code></pre>
+<p>And merge with the other results.</p>
+<pre class="r"><code>df_merge = inner_join(df_merge, df_lasso, by = &#39;phenotype&#39;, suffix = c(&#39;.ridge&#39;, &#39;.lasso&#39;))</code></pre>
+<p>Load heritability estimates done by Owen. And merge with the other results.</p>
+<pre class="r"><code>df_h2 = read.table(&#39;~/Desktop/tmp/ukb_idp/owen_heritability/2020-08-11_idp-heritability-estimates.txt.gz&#39;, header = T)
+df_merge = inner_join(df_merge, df_h2, by = c(&#39;phenotype&#39; = &#39;gene&#39;))</code></pre>
+<p>Load elastic net results.</p>
+<pre class="r"><code>nbatch = 444
+df_en = list()
+for(i in 1 : nbatch) {
+  df_en[[length(df_en) + 1]] = read.table(paste0(&#39;~/Desktop/tmp/ukb_idp/gw_elastic_net/batch&#39;, stringi::stri_pad_left(i - 1, 3, 0), &#39;.gw_lasso.performance.tsv&#39;), header = T)
+}
+df_en = do.call(rbind, df_en)
+df_en$phenotype = stringr::str_replace(df_en$phenotype, &#39;x&#39;, &#39;-&#39;)
+# fill in zero for missing values since they are the worst performance
+df_en[is.na(df_en)] = 0
+# add suffix to 
+colnames(df_en)[1:3] = paste0(colnames(df_en)[1:3], &#39;.en&#39;)</code></pre>
+<p>Merge with the other results.</p>
+<pre class="r"><code>df_merge = inner_join(df_merge, df_en, by = &#39;phenotype&#39;)</code></pre>
 </div>
-<div id="pairwise-comparison" class="section level1">
-<h1><span class="header-section-number">3</span> Pairwise comparison</h1>
-<pre class="r"><code>p1 = df_merge %&gt;% ggplot() + geom_point(aes(x = r_squared, y = R2), alpha = 0.2) + 
+<div id="pairwise-comparison-ridge-vs-owens-run" class="section level1">
+<h1><span class="header-section-number">3</span> Pairwise comparison: ridge vs Owen’s run</h1>
+<pre class="r"><code>p1 = df_merge %&gt;% ggplot() + geom_point(aes(x = r_squared, y = R2.ridge), alpha = 0.2) + 
   th + 
   geom_abline(intercept = 0, slope = 1) +
   xlab(&#39;Owen\&#39;s run R2&#39;) +
   ylab(&#39;New run R2&#39;) + 
   coord_equal()
 
-p2 = df_merge %&gt;% ggplot() + geom_point(aes(x = pearson_r, y = Pearson), alpha = 0.2) + 
+p2 = df_merge %&gt;% ggplot() + geom_point(aes(x = pearson_r, y = Pearson.ridge), alpha = 0.2) + 
   th + 
   geom_abline(intercept = 0, slope = 1) +
   xlab(&#39;Owen\&#39;s run Pearson Cor&#39;) +
   ylab(&#39;New run Pearson Cor&#39;) + 
   coord_equal()
 
-p3 = df_merge %&gt;% ggplot() + geom_point(aes(x = spearman_r, y = Spearman), alpha = 0.2) + 
+p3 = df_merge %&gt;% ggplot() + geom_point(aes(x = spearman_r, y = Spearman.ridge), alpha = 0.2) + 
   th + 
   geom_abline(intercept = 0, slope = 1) +
   xlab(&#39;Owen\&#39;s run Spearman Cor&#39;) +
   ylab(&#39;New run Spearman Cor&#39;) + 
   coord_equal()
 p1 + p2 + p3</code></pre>
-<p><img src="gw_ridge_files/figure-html/unnamed-chunk-4-1.png" width="1440" /></p>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-45-1.png" width="1440" /></p>
 <p><strong>Take-away</strong>:</p>
 <ul>
 <li>The new run is consistent with the previous result. Namely, an IDP with good result before also has good result in new run.</li>
 <li>The new run has slighly better performance since we are selecting <span class="math inline">\(\theta_g\)</span> from a grid of values: 0.01, 0.05, 0.1, 0.2, …, 0.9. But in Owen’s run <span class="math inline">\(\theta_g = 1\)</span> which is not ridge regression anymore.</li>
 </ul>
+</div>
+<div id="pairwise-comparison-ridge-vs-lassoelastic-net" class="section level1">
+<h1><span class="header-section-number">4</span> Pairwise comparison: ridge vs lasso/elastic net</h1>
+<pre class="r"><code>p1 = df_merge %&gt;% ggplot() + 
+  geom_point(aes(x = R2.ridge, y = R2.lasso, color = &#39;alpha=0&#39;), alpha = 0.2) +  
+  geom_point(aes(x = R2.ridge, y = R2.en, color = &#39;alpha=0.1&#39;), alpha = 0.2) + 
+  th + 
+  geom_abline(intercept = 0, slope = 1) +
+  xlab(&#39;Ridge R2&#39;) +
+  ylab(&#39;Lasso/EN R2&#39;) + 
+  coord_equal()
+
+p2 = df_merge %&gt;% ggplot() +
+  geom_point(aes(x = Pearson.ridge, y = Pearson.lasso, color = &#39;alpha=0&#39;), alpha = 0.2) + 
+  geom_point(aes(x = Pearson.ridge, y = Pearson.en, color = &#39;alpha=0.1&#39;), alpha = 0.2) + 
+  th + 
+  geom_abline(intercept = 0, slope = 1) +
+  xlab(&#39;Ridge Pearson Cor&#39;) +
+  ylab(&#39;Lasso/EN Pearson Cor&#39;) + 
+  coord_equal()
+
+p3 = df_merge %&gt;% ggplot() + 
+  geom_point(aes(x = Spearman.ridge, y = Spearman.lasso, color = &#39;alpha=1&#39;), alpha = 0.2) + 
+  geom_point(aes(x = Spearman.ridge, y = Spearman.en, color = &#39;alpha=0.1&#39;), alpha = 0.2) + 
+  th + 
+  geom_abline(intercept = 0, slope = 1) +
+  xlab(&#39;Ridge Spearman Cor&#39;) +
+  ylab(&#39;Lasso/EN Spearman Cor&#39;) + 
+  coord_equal()
+p1 + p2 + p3</code></pre>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-46-1.png" width="1440" /></p>
+<p><strong>Take-away</strong>:</p>
+<ul>
+<li>For most of the traits, ridge performs much better than lasso.</li>
+<li>For those traits that have relatively good performance when using ridge, some of them have even better performance when using lasso.</li>
+<li>Elastic net slightly outperforms lasso overall.</li>
+</ul>
+</div>
+<div id="pairwise-heritability-vs-ridgelasso" class="section level1">
+<h1><span class="header-section-number">5</span> Pairwise: heritability vs ridge/lasso</h1>
+<pre class="r"><code>df_merge %&gt;% mutate(diff_lasso_ridge = Pearson.lasso - Pearson.ridge) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = Variance, y = diff_lasso_ridge), alpha = 0.2) +
+  xlab(&#39;Heritability&#39;) +
+  ylab(&#39;Difference of Pearson Correlation \n (lasso - ridge)&#39;) + 
+  geom_hline(yintercept = 0, color = &#39;gray&#39;) + 
+  th</code></pre>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
+<p><strong>Take-away</strong>:</p>
+<ul>
+<li>Only when the heritability is relatively high, lasso may be better than ridge.</li>
+</ul>
+</div>
+<div id="pairwise-heritability-vs-elastic-netlasso" class="section level1">
+<h1><span class="header-section-number">6</span> Pairwise: heritability vs elastic net/lasso</h1>
+<pre class="r"><code>df_merge %&gt;% mutate(diff_lasso_en = Pearson.lasso - Pearson.en) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = Variance, y = diff_lasso_en), alpha = 0.2) +
+  xlab(&#39;Heritability&#39;) +
+  ylab(&#39;Difference of Pearson Correlation \n (lasso - elastic net)&#39;) + 
+  geom_hline(yintercept = 0, color = &#39;gray&#39;) + 
+  th</code></pre>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<p><strong>Take-away</strong>:</p>
+<ul>
+<li>Only when the heritability is relatively high, elastic net outperforms lasso.</li>
+</ul>
+</div>
+<div id="performance-vs-alpha" class="section level1">
+<h1><span class="header-section-number">7</span> Performance vs alpha</h1>
+<pre class="r"><code>suffix = c(&#39;.ridge&#39;, &#39;.en&#39;, &#39;.lasso&#39;)
+vars = c(&#39;R2&#39;, &#39;Pearson&#39;, &#39;Spearman&#39;)
+cols = c()
+for(s in suffix) {
+  for(v in vars) {
+    cols = c(cols, paste0(v, s))
+  }
+}
+tmp = df_merge[, c(&#39;phenotype&#39;, cols)] %&gt;% reshape2::melt(id.vars = c(&#39;phenotype&#39;)) %&gt;% 
+  mutate(
+    var_name = unlist(lapply(strsplit(as.character(variable), &#39;\\.&#39;), function(x) x[1])),
+    method = unlist(lapply(strsplit(as.character(variable), &#39;\\.&#39;), function(x) x[2]))
+  )
+tmp$alpha = 1
+tmp$alpha[tmp$method == &#39;ridge&#39;] = 0
+tmp$alpha[tmp$method == &#39;en&#39;] = 0.1
+tmp %&gt;% ggplot() + 
+  geom_point(aes(x = alpha, y = value), alpha = 0.1) + 
+  geom_path(aes(x = alpha, y = value, group = phenotype), alpha = 0.1) + 
+  facet_wrap(~var_name) + th2</code></pre>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-49-1.png" width="768" /></p>
 </div>
 
 

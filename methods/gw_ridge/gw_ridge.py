@@ -14,6 +14,7 @@ class blupRidgeSolver:
         self.ny = y.shape[1]
         
     def get_partition(self, train_idx, rand_seed):
+        # random seed for reproducibility
         np.random.seed(rand_seed)
         idx = np.arange(self.inner_cv_fold)
         partition_pool = []
@@ -33,11 +34,13 @@ class blupRidgeSolver:
     
     def train(self, theta_g, train_idx=None, test_idx=None, subset_y_idx=None):
         '''
-        return mse and predicted y
+        return mse and predicted y if test_idx is not None.
+        Else, return partial_beta, and best_theta_g (at which partial beta is obtained).
         formula:
             M = (1 - theta_g) * np.eye(train_idx.shape[0]) + theta_g * grm[train_idx, train_idx]
             ypred = theta_g * (grm[test_idx, train_idx] @ np.solve(M, y[:, train_idx])
             mse = np.power(ypred - y[:, test_idx], 2).mean(axis=0).T 
+            betahat = best_theta_g / x.shape[1] * (x.T @ partial_beta)
         '''
         if train_idx is None:
             train_idx = np.arange(self.grm.shape[0])
@@ -55,8 +58,6 @@ class blupRidgeSolver:
         
     def cv_train(self, train_idx=None, test_idx=None, rand_seed=1):
         
-        # random seed for reproducibility
-        # np.random.seed(rand_seed)
         # init train idx (if not set) to include all samples 
         if train_idx is None:
             train_idx = np.arange(self.grm.shape[0])

@@ -42,7 +42,7 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
     
     # impute genotype missing value
     miss_x, miss_y = np.where(np.isnan(geno))
-    geno[(miss_x, miss_y)] = maf[miss_y]
+    geno[(miss_x, miss_y)] = maf[miss_y] * 2
     var_geno = 2 * maf * (1 - maf)
     
     # keep only genotypes with variance != 0
@@ -174,7 +174,7 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, indiv_list=None
         snplist_to_exclude = set([])
     
     for i in range(1, 23):
-        geno, indiv_list, snp_info, geno_sd = load_genotype_from_bedfile(
+        geno, indiv_list, geno_sd, snp_info = load_genotype_from_bedfile(
             bedfile_pattern.format(chr_num=i),
             indiv_list,
             snplist_to_exclude,
@@ -182,7 +182,8 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, indiv_list=None
             missing_rate_cutoff=missing_rate_cutoff, 
             return_snp=True
         )
-        beta_unscaled_i = geno.T @ beta_partial / geno_sd
+        
+        beta_unscaled_i = geno.T @ beta_partial / geno_sd[:, np.newaxis]
         nsnp += geno.shape[1]
         
         beta_hat.append(beta_unscaled_i)
@@ -246,6 +247,9 @@ if __name__ == '__main__':
         If specified, the script will generate training model 
         without inner loop of cross-validation 
         (args.nfold[1] will not be used).
+        The output betahat is in original scale.
+        Doing `plink2 --score` with 'cols=scoresums' gives the desired 
+        PRS with a mean shift (the mean shift is due to 2 * MAF * betahat).
     ''')
     args = parser.parse_args()
  
@@ -333,7 +337,6 @@ if __name__ == '__main__':
             theta_g_grid=args.theta_g_grid, 
             inner_cv_fold=outer_nfold
         )
-        breakpoint()
         beta_partial, best_theta_g = solver.cv_train(rand_seed=args.rand_seed)
         logging.info('Obtaining best betahat from beta_partial, best_theta_g, and genotypes.')
         betahat, snpid, ref, alt = obtain_bhat_from_bed(

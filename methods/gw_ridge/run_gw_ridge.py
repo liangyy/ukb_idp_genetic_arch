@@ -6,7 +6,7 @@ from pandas_plink import read_plink1_bin
 # for debugging
 import pdb
 
-def load_genotype_from_bedfile(bedfile, indiv_list, missing_rate_cutoff=0.5, return_snp=False):
+def load_genotype_from_bedfile(bedfile, indiv_list, load_first_n_samples=None, missing_rate_cutoff=0.5, return_snp=False):
     G = read_plink1_bin(bedfile, verbose=False)
     if indiv_list is None:
         indiv_list = G.sample.to_series().tolist()
@@ -33,7 +33,8 @@ def load_genotype_from_bedfile(bedfile, indiv_list, missing_rate_cutoff=0.5, ret
         snpid = G.variant.variant.to_series().to_list()
         a0 = G.variant.a0.to_series().to_list()
         a1 = G.variant.a1.to_series().to_list()
-    return geno, indiv_list, (snpid, a0, a1)
+        return geno, indiv_list, (snpid, a0, a1)
+    return geno, indiv_list
 
 def compute_grm_from_bed(bedfile_pattern, load_first_n_samples=None, missing_rate_cutoff=0.5):
     
@@ -45,6 +46,7 @@ def compute_grm_from_bed(bedfile_pattern, load_first_n_samples=None, missing_rat
         geno, indiv_list = load_genotype_from_bedfile(
             bedfile_pattern.format(chr_num=i),
             indiv_list,
+            load_first_n_samples=load_first_n_samples,
             missing_rate_cutoff=missing_rate_cutoff
         )
         
@@ -145,10 +147,12 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g,
         geno, indiv_list, snp_info = load_genotype_from_bedfile(
             bedfile_pattern.format(chr_num=i),
             indiv_list,
+            load_first_n_samples=load_first_n_samples,
             missing_rate_cutoff=missing_rate_cutoff, 
             return_snp=True
         )
-        
+        if i == 22:
+            breakpoint() 
         beta_unscaled_i = geno.T @ beta_partial
         nsnp += geno.shape[1]
         
@@ -296,12 +300,13 @@ if __name__ == '__main__':
         del df_meta
         
         _, filetype = os.path.splitext(args.output)
-        if filetype == 'gz':
+        print(filetype)
+        if filetype == '.gz':
             df_beta.to_csv(
                 args.output, compression='gzip', 
                 sep='\t', index=False
             )
-        elif filetype == 'parquet':
+        elif filetype == '.parquet':
             df_beta.to_parquet(args.output, index=False)
         
     logging.info('Done.')

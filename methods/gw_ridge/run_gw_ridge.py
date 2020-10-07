@@ -16,8 +16,9 @@ def load_genotype_from_bedfile(bedfile, indiv_list, load_first_n_samples=None, m
             
     if return_snp is True:
         snpid = G.variant.variant.to_series().to_list()
-        a0 = G.variant.a0.to_series().to_list()
-        a1 = G.variant.a1.to_series().to_list()        
+        snpid = np.array([ s.split('_')[1] for s in snpid ])
+        a0 = G.variant.a0.to_series().to_numpy()
+        a1 = G.variant.a1.to_series().to_numpy()        
     
     geno = G.sel(sample=indiv_list).values
     # filter out genotypes with high missing rate
@@ -48,7 +49,7 @@ def load_genotype_from_bedfile(bedfile, indiv_list, load_first_n_samples=None, m
     geno = (geno - 2 * maf) / np.sqrt(var_geno)
     
     if return_snp is True:
-        return geno, indiv_list, (snpid, a0, a1)
+        return geno, indiv_list, (snpid.tolist(), a0.tolist(), a1.tolist())
     else:
         return geno, indiv_list
 

@@ -61,7 +61,7 @@ def load_phenotype_parquet(filename):
     
 def intersection(l1, l2):
     s1 = set(l1)
-    return list(s1.intersection(set(l2)))
+    return sorted(list(s1.intersection(set(l2))))
 
 def match_y_to_x(x, y):
     '''
@@ -89,7 +89,7 @@ def gen_partition(nsample, nfold, seed):
         out += [i] * size
         if i < rest:
             out += [i]
-    return np.array(out)
+    return np.random.permutation(np.array(out))
 
 def pearson(y1, y2):
     '''
@@ -165,7 +165,8 @@ if __name__ == '__main__':
         format = '%(asctime)s  %(message)s',
         datefmt = '%Y-%m-%d %I:%M:%S %p'
     )
-    
+    import os.path
+    import gzip, pickle
     from tqdm import tqdm 
     import gw_ridge 
     
@@ -175,7 +176,20 @@ if __name__ == '__main__':
     pheno_mat, pheno_indiv_info, pheno_col_info = load_phenotype_parquet(args.phenotype_parquet)
     
     logging.info('Computing GRM.')
-    grm, grm_indiv_info = compute_grm_from_bed(args.geno_bed_pattern, load_first_n_samples=args.first_n_indiv)
+    grm_cache_file = args.output + '.grm_cache.pkl.gz'
+    if os.path.isfile(grm_cache_file):
+        with gzip.open(grm_cache_file, 'rb') as f:
+            tmp = pickle.load(f)
+            grm = tmp['grm']
+            grm_indiv_info = tmp['grm_indiv_info']
+    else:
+        grm, grm_indiv_info = compute_grm_from_bed(args.geno_bed_pattern, load_first_n_samples=args.first_n_indiv)
+        with gzip.open(grm_cache_file, 'wb') as f:
+            tmp = {
+                'grm': grm,
+                'grm_indiv_info': grm_indiv_info
+            }
+            pickle.dump(tmp, f)
     
     logging.info('Finalizing GRM and phenotype matrices.')
     indiv_info = intersection(pheno_indiv_info, grm_indiv_info)
@@ -210,7 +224,6 @@ if __name__ == '__main__':
     # return R2, pearson coef, spearman coef
     df_res = evaluate_performance(Ypred, Yobs)  
     df_res['phenotype'] = pheno_col_info
-    
     df_res.to_csv(args.output, compression='gzip', sep='\t', index=False)
     
         

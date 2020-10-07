@@ -10,3 +10,15 @@ For instance, reducing from `float64` to `float32` will reduce the memory need b
 The script to test the performance on a grid of `theta_g` where we assign `theta_g` weight to GRM and `1 - theta_g` weight to the identity component. 
 `theta_g` varies between 0 and 1 by construction.
 The relation between `theta_g` and `sigma2` (in vanilla ridge regression formula) is `sigma2 = (1 - theta_g) M / theta_g` where `M` is the number of SNPs.  
+
+Testing command:
+
+```
+python run_gw_ridge.py \
+  --geno_bed_pattern /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed \
+  --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
+  --nfold 5 5 \
+  --first_n_indiv 500 \
+  --output test.tsv.gz
+```
+

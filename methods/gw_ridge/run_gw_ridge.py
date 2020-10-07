@@ -25,11 +25,11 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
     
     # filter out unwanted snps
     geno = geno[:, ~np.isin(snpid, snplist_to_exclude)]
-    snpid = snpid[~np.isin(snpid, snplist_to_exclude)]
     if return_snp is True:
         a0 = a0[~np.isin(snpid, snplist_to_exclude)]
         a1 = a1[~np.isin(snpid, snplist_to_exclude)]
-        
+    snpid = snpid[~np.isin(snpid, snplist_to_exclude)]
+   
     # filter out genotypes with high missing rate
     missing_rate = np.isnan(geno).mean(axis=0)
     geno = geno[:, missing_rate < missing_rate_cutoff]
@@ -74,6 +74,7 @@ def compute_grm_from_bed(bedfile_pattern, snplist_to_exclude=None, load_first_n_
         geno, indiv_list = load_genotype_from_bedfile(
             bedfile_pattern.format(chr_num=i),
             indiv_list,
+            snplist_to_exclude,
             load_first_n_samples=load_first_n_samples,
             missing_rate_cutoff=missing_rate_cutoff
         )
@@ -162,9 +163,8 @@ def evaluate_performance(ypred, yobs):
     r2_ = r2(ypred, yobs)
     return pd.DataFrame({'R2': r2_, 'Pearson': pearson_col, 'Spearman': spearman_col})
 
-def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, snplist_to_exclude=None, 
+def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, indiv_list=None, snplist_to_exclude=None, 
     load_first_n_samples=None, missing_rate_cutoff=0.5):
-    indiv_list = None
     nsnp = 0
     beta_hat = []
     snpid = []
@@ -197,12 +197,12 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, snplist_to_excl
     
     return beta_hat, snpid, a0, a1
     
-def load_list_as_set(filename):
+def load_list(filename):
     o = []
     with open(filename, 'r') as f:
         for i in f:
             o.append(i.strip())
-    return set(o)    
+    return list(set(o))    
 
 if __name__ == '__main__':
     import argparse
@@ -264,10 +264,11 @@ if __name__ == '__main__':
     
     outer_nfold, inner_nfold = args.nfold
     
-    if args.load_list_as_set is None:
+    if args.snplist_to_exclude is None:
         snplist_to_exclude = set([])
     else:
-        snplist_to_exclude = load_list_as_set(args.load_list_as_set)
+        snplist_to_exclude = load_list(args.snplist_to_exclude)
+        logging.info('To exclude {} SNPs'.format(len(snplist_to_exclude)))
        
     logging.info('Loading phenotypes.')
     pheno_mat, pheno_indiv_info, pheno_col_info = load_phenotype_parquet(args.phenotype_parquet)
@@ -332,10 +333,12 @@ if __name__ == '__main__':
             theta_g_grid=args.theta_g_grid, 
             inner_cv_fold=outer_nfold
         )
+        breakpoint()
         beta_partial, best_theta_g = solver.cv_train(rand_seed=args.rand_seed)
         logging.info('Obtaining best betahat from beta_partial, best_theta_g, and genotypes.')
         betahat, snpid, ref, alt = obtain_bhat_from_bed(
-            args.geno_bed_pattern, snplist_to_exclude,
+            args.geno_bed_pattern, snplist_to_exclude=snplist_to_exclude,
+            indiv_list=indiv_info,
             load_first_n_samples=args.first_n_indiv,
             beta_partial=beta_partial, theta_g=best_theta_g
         )
@@ -345,7 +348,6 @@ if __name__ == '__main__':
         del df_meta
         
         _, filetype = os.path.splitext(args.output)
-        print(filetype)
         if filetype == '.gz':
             df_beta.to_csv(
                 args.output, compression='gzip', 

@@ -58,9 +58,9 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
     geno = (geno - 2 * maf) / np.sqrt(var_geno)
     
     if return_snp is True:
-        return geno, indiv_list, (snpid.tolist(), a0.tolist(), a1.tolist())
+        return geno, indiv_list, np.sqrt(var_geno), (snpid.tolist(), a0.tolist(), a1.tolist())
     else:
-        return geno, indiv_list
+        return geno, indiv_list, np.sqrt(var_geno)
 
 def compute_grm_from_bed(bedfile_pattern, snplist_to_exclude=None, load_first_n_samples=None, missing_rate_cutoff=0.5):
     
@@ -71,7 +71,7 @@ def compute_grm_from_bed(bedfile_pattern, snplist_to_exclude=None, load_first_n_
         snplist_to_exclude = set([])
     
     for i in range(1, 23):
-        geno, indiv_list = load_genotype_from_bedfile(
+        geno, indiv_list, _ = load_genotype_from_bedfile(
             bedfile_pattern.format(chr_num=i),
             indiv_list,
             snplist_to_exclude,
@@ -174,7 +174,7 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, indiv_list=None
         snplist_to_exclude = set([])
     
     for i in range(1, 23):
-        geno, indiv_list, snp_info = load_genotype_from_bedfile(
+        geno, indiv_list, snp_info, geno_sd = load_genotype_from_bedfile(
             bedfile_pattern.format(chr_num=i),
             indiv_list,
             snplist_to_exclude,
@@ -182,7 +182,7 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, indiv_list=None
             missing_rate_cutoff=missing_rate_cutoff, 
             return_snp=True
         )
-        beta_unscaled_i = geno.T @ beta_partial
+        beta_unscaled_i = geno.T @ beta_partial / geno_sd
         nsnp += geno.shape[1]
         
         beta_hat.append(beta_unscaled_i)

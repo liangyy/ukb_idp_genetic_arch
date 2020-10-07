@@ -8,33 +8,49 @@ import pdb
 
 def load_genotype_from_bedfile(bedfile, indiv_list, load_first_n_samples=None, missing_rate_cutoff=0.5, return_snp=False):
     G = read_plink1_bin(bedfile, verbose=False)
+    
     if indiv_list is None:
         indiv_list = G.sample.to_series().tolist()
         if load_first_n_samples is not None:
             indiv_list = indiv_list[:load_first_n_samples]
             
+    if return_snp is True:
+        snpid = G.variant.variant.to_series().to_list()
+        a0 = G.variant.a0.to_series().to_list()
+        a1 = G.variant.a1.to_series().to_list()        
+    
     geno = G.sel(sample=indiv_list).values
     # filter out genotypes with high missing rate
     missing_rate = np.isnan(geno).mean(axis=0)
     geno = geno[:, missing_rate < missing_rate_cutoff]
+    if return_snp is True:
+        snpid = snpid[missing_rate < missing_rate_cutoff]
+        a0 = a0[missing_rate < missing_rate_cutoff]
+        a1 = a1[missing_rate < missing_rate_cutoff]
+        
     maf = np.nanmean(geno, axis=0) / 2
+    
     # impute genotype missing value
     miss_x, miss_y = np.where(np.isnan(geno))
     geno[(miss_x, miss_y)] = maf[miss_y]
     var_geno = 2 * maf * (1 - maf)
+    
     # keep only genotypes with variance != 0
     to_keep = var_geno != 0
     geno = geno[:, to_keep]
+    if return_snp is True:
+        snpid = snpid[to_keep]
+        a0 = a0[to_keep]
+        a1 = a1[to_keep]
+        
     maf = maf[to_keep]
     var_geno = var_geno[to_keep]
     geno = (geno - 2 * maf) / np.sqrt(var_geno)
     
     if return_snp is True:
-        snpid = G.variant.variant.to_series().to_list()
-        a0 = G.variant.a0.to_series().to_list()
-        a1 = G.variant.a1.to_series().to_list()
         return geno, indiv_list, (snpid, a0, a1)
-    return geno, indiv_list
+    else:
+        return geno, indiv_list
 
 def compute_grm_from_bed(bedfile_pattern, load_first_n_samples=None, missing_rate_cutoff=0.5):
     
@@ -151,8 +167,6 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g,
             missing_rate_cutoff=missing_rate_cutoff, 
             return_snp=True
         )
-        if i == 22:
-            breakpoint() 
         beta_unscaled_i = geno.T @ beta_partial
         nsnp += geno.shape[1]
         

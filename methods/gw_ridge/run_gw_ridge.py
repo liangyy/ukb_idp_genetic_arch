@@ -6,21 +6,30 @@ from pandas_plink import read_plink1_bin
 # for debugging
 import pdb
 
-def load_genotype_from_bedfile(bedfile, indiv_list, load_first_n_samples=None, missing_rate_cutoff=0.5, return_snp=False):
+def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_first_n_samples=None, 
+    missing_rate_cutoff=0.5, return_snp=False):
     G = read_plink1_bin(bedfile, verbose=False)
     
     if indiv_list is None:
         indiv_list = G.sample.to_series().tolist()
         if load_first_n_samples is not None:
             indiv_list = indiv_list[:load_first_n_samples]
-            
+    
+    snpid = G.variant.variant.to_series().to_list()
+    snpid = np.array([ s.split('_')[1] for s in snpid ])
     if return_snp is True:
-        snpid = G.variant.variant.to_series().to_list()
-        snpid = np.array([ s.split('_')[1] for s in snpid ])
         a0 = G.variant.a0.to_series().to_numpy()
         a1 = G.variant.a1.to_series().to_numpy()        
     
     geno = G.sel(sample=indiv_list).values
+    
+    # filter out unwanted snps
+    geno = geno[:, ~np.isin(snpid, snplist_to_exclude)]
+    snpid = snpid[~np.isin(snpid, snplist_to_exclude)]
+    if return_snp is True:
+        a0 = a0[~np.isin(snpid, snplist_to_exclude)]
+        a1 = a1[~np.isin(snpid, snplist_to_exclude)]
+        
     # filter out genotypes with high missing rate
     missing_rate = np.isnan(geno).mean(axis=0)
     geno = geno[:, missing_rate < missing_rate_cutoff]
@@ -53,11 +62,13 @@ def load_genotype_from_bedfile(bedfile, indiv_list, load_first_n_samples=None, m
     else:
         return geno, indiv_list
 
-def compute_grm_from_bed(bedfile_pattern, load_first_n_samples=None, missing_rate_cutoff=0.5):
+def compute_grm_from_bed(bedfile_pattern, snplist_to_exclude=None, load_first_n_samples=None, missing_rate_cutoff=0.5):
     
     indiv_list = None
     nsnp = 0
     grm = None
+    if snplist_to_exclude is None:
+        snplist_to_exclude = set([])
     
     for i in range(1, 23):
         geno, indiv_list = load_genotype_from_bedfile(
@@ -151,7 +162,7 @@ def evaluate_performance(ypred, yobs):
     r2_ = r2(ypred, yobs)
     return pd.DataFrame({'R2': r2_, 'Pearson': pearson_col, 'Spearman': spearman_col})
 
-def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, 
+def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, snplist_to_exclude=None, 
     load_first_n_samples=None, missing_rate_cutoff=0.5):
     indiv_list = None
     nsnp = 0
@@ -159,11 +170,14 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g,
     snpid = []
     a0 = []
     a1 = []
+    if snplist_to_exclude is None:
+        snplist_to_exclude = set([])
     
     for i in range(1, 23):
         geno, indiv_list, snp_info = load_genotype_from_bedfile(
             bedfile_pattern.format(chr_num=i),
             indiv_list,
+            snplist_to_exclude,
             load_first_n_samples=load_first_n_samples,
             missing_rate_cutoff=missing_rate_cutoff, 
             return_snp=True
@@ -183,7 +197,12 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g,
     
     return beta_hat, snpid, a0, a1
     
-        
+def load_list_as_set(filename):
+    o = []
+    with open(filename, 'r') as f:
+        for i in f:
+            o.append(i.strip())
+    return set(o)    
 
 if __name__ == '__main__':
     import argparse
@@ -220,6 +239,9 @@ if __name__ == '__main__':
         Report the cross-validated R2, 
         Pearson's correlation and Spearman's correlation.
     ''')
+    parser.add_argument('--snplist_to_exclude', default=None, help='''
+        the list of SNP to be excluded in analysis (e.g. duplicated SNPs). 
+    ''')
     parser.add_argument('--train_full_model', action='store_true', help='''
         If specified, the script will generate training model 
         without inner loop of cross-validation 
@@ -241,6 +263,11 @@ if __name__ == '__main__':
     import gw_ridge 
     
     outer_nfold, inner_nfold = args.nfold
+    
+    if args.load_list_as_set is None:
+        snplist_to_exclude = set([])
+    else:
+        snplist_to_exclude = load_list_as_set(args.load_list_as_set)
        
     logging.info('Loading phenotypes.')
     pheno_mat, pheno_indiv_info, pheno_col_info = load_phenotype_parquet(args.phenotype_parquet)
@@ -253,7 +280,9 @@ if __name__ == '__main__':
             grm = tmp['grm']
             grm_indiv_info = tmp['grm_indiv_info']
     else:
-        grm, grm_indiv_info = compute_grm_from_bed(args.geno_bed_pattern, load_first_n_samples=args.first_n_indiv)
+        grm, grm_indiv_info = compute_grm_from_bed(
+            args.geno_bed_pattern, snplist_to_exclude,
+            load_first_n_samples=args.first_n_indiv)
         with gzip.open(grm_cache_file, 'wb') as f:
             tmp = {
                 'grm': grm,
@@ -306,7 +335,8 @@ if __name__ == '__main__':
         beta_partial, best_theta_g = solver.cv_train(rand_seed=args.rand_seed)
         logging.info('Obtaining best betahat from beta_partial, best_theta_g, and genotypes.')
         betahat, snpid, ref, alt = obtain_bhat_from_bed(
-            args.geno_bed_pattern, load_first_n_samples=args.first_n_indiv,
+            args.geno_bed_pattern, snplist_to_exclude,
+            load_first_n_samples=args.first_n_indiv,
             beta_partial=beta_partial, theta_g=best_theta_g
         )
         df_meta = pd.DataFrame({'snpid': snpid, 'a0': ref, 'a1':alt})

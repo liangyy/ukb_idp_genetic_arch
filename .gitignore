@@ -8,3 +8,6 @@ notebook
 .Rproj.user
 *.tsv
 *.rds
+*.parquet
+*.txt
+*.sscore

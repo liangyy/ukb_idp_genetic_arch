@@ -1,6 +1,13 @@
 import numpy as np
 import pandas as pd
 
+BASE_PAIR = {
+    'A': 'T',
+    'T': 'A',
+    'G': 'C',
+    'C': 'G'
+}
+
 def get_partitions(total, npart):
     '''
     Return the partition encoded by [0, 0, 1, 1, 2, 2] for instance.
@@ -65,6 +72,39 @@ def calc_prs_at_worker(bgen, bgi, df_info, worker_idx, chunk_size=20):
         if counter % step_size == 0:
             print('Worker {} has done {} / {}'.format(worker_idx, counter, nchunk))
     return out
+
+def check_direction_and_flip(beta_mat, target, current):
+    n = beta_mat.shape[0]
+    for i in range(n):
+        valid_ret = is_valid(target[i][0], target[i][1], current[i][0], current[i][1])
+        if valid_ret == 0:
+            beta_mat[n, :] = -beta_mat[n, :]
+        elif valid_ret == -1:
+            beta_mat[n, :] = 0
+
+def is_valid(a0, a1, b0, b1):
+    '''
+    Return 0 if exactly match.
+    Return 1 if flip.
+    Return -1 if not valid not ambiguious.
+    '''
+    # remove ambiguious first.
+    if a0 == BASE_PAIR[a1] or b0 == BASE_PAIR[b1]:
+        return -1
+    # exact match
+    if a0 == b0 and a1 == b1:
+        return 0
+    # flip
+    if a0 == b1 and a1 == b0:
+        return 1    
+    # compliment match
+    if a0 == BASE_PAIR[b0] and a1 == BASE_PAIR[b1]:
+        return 0
+    # compliment flip
+    if a0 == BASE_PAIR[b1] and a1 == BASE_PAIR[b0]:
+        return 1    
+    # if all above does not return, it has to be invalid.
+    return -1
 
 def read_sample_file_as_list(fn):
     '''

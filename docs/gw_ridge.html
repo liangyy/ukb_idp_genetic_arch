@@ -370,7 +370,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Genome-wide ridge/lasso regression</h1>
-<h4 class="date">06 October, 2020</h4>
+<h4 class="date">07 October, 2020</h4>
 
 </div>
 
@@ -379,8 +379,16 @@ div.tocify {
 library(ggplot2)
 theme_set(theme_bw(base_size = 15))
 source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
-library(dplyr)
-options(stringsAsFactors = F)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>options(stringsAsFactors = F)
 library(patchwork)</code></pre>
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
@@ -455,7 +463,7 @@ p3 = df_merge %&gt;% ggplot() + geom_point(aes(x = spearman_r, y = Spearman.ridg
   ylab(&#39;New run Spearman Cor&#39;) + 
   coord_equal()
 p1 + p2 + p3</code></pre>
-<p><img src="gw_ridge_files/figure-html/unnamed-chunk-45-1.png" width="1440" /></p>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-9-1.png" width="1440" /></p>
 <p><strong>Take-away</strong>:</p>
 <ul>
 <li>The new run is consistent with the previous result. Namely, an IDP with good result before also has good result in new run.</li>
@@ -465,7 +473,7 @@ p1 + p2 + p3</code></pre>
 <div id="pairwise-comparison-ridge-vs-lassoelastic-net" class="section level1">
 <h1><span class="header-section-number">4</span> Pairwise comparison: ridge vs lasso/elastic net</h1>
 <pre class="r"><code>p1 = df_merge %&gt;% ggplot() + 
-  geom_point(aes(x = R2.ridge, y = R2.lasso, color = &#39;alpha=0&#39;), alpha = 0.2) +  
+  geom_point(aes(x = R2.ridge, y = R2.lasso, color = &#39;alpha=1&#39;), alpha = 0.2) +  
   geom_point(aes(x = R2.ridge, y = R2.en, color = &#39;alpha=0.1&#39;), alpha = 0.2) + 
   th + 
   geom_abline(intercept = 0, slope = 1) +
@@ -474,7 +482,7 @@ p1 + p2 + p3</code></pre>
   coord_equal()
 
 p2 = df_merge %&gt;% ggplot() +
-  geom_point(aes(x = Pearson.ridge, y = Pearson.lasso, color = &#39;alpha=0&#39;), alpha = 0.2) + 
+  geom_point(aes(x = Pearson.ridge, y = Pearson.lasso, color = &#39;alpha=1&#39;), alpha = 0.2) + 
   geom_point(aes(x = Pearson.ridge, y = Pearson.en, color = &#39;alpha=0.1&#39;), alpha = 0.2) + 
   th + 
   geom_abline(intercept = 0, slope = 1) +
@@ -491,7 +499,7 @@ p3 = df_merge %&gt;% ggplot() +
   ylab(&#39;Lasso/EN Spearman Cor&#39;) + 
   coord_equal()
 p1 + p2 + p3</code></pre>
-<p><img src="gw_ridge_files/figure-html/unnamed-chunk-46-1.png" width="1440" /></p>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-10-1.png" width="1440" /></p>
 <p><strong>Take-away</strong>:</p>
 <ul>
 <li>For most of the traits, ridge performs much better than lasso.</li>
@@ -508,7 +516,7 @@ p1 + p2 + p3</code></pre>
   ylab(&#39;Difference of Pearson Correlation \n (lasso - ridge)&#39;) + 
   geom_hline(yintercept = 0, color = &#39;gray&#39;) + 
   th</code></pre>
-<p><img src="gw_ridge_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p><strong>Take-away</strong>:</p>
 <ul>
 <li>Only when the heritability is relatively high, lasso may be better than ridge.</li>
@@ -523,7 +531,7 @@ p1 + p2 + p3</code></pre>
   ylab(&#39;Difference of Pearson Correlation \n (lasso - elastic net)&#39;) + 
   geom_hline(yintercept = 0, color = &#39;gray&#39;) + 
   th</code></pre>
-<p><img src="gw_ridge_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p><strong>Take-away</strong>:</p>
 <ul>
 <li>Only when the heritability is relatively high, elastic net outperforms lasso.</li>
@@ -551,7 +559,7 @@ tmp %&gt;% ggplot() +
   geom_point(aes(x = alpha, y = value), alpha = 0.1) + 
   geom_path(aes(x = alpha, y = value, group = phenotype), alpha = 0.1) + 
   facet_wrap(~var_name) + th2</code></pre>
-<p><img src="gw_ridge_files/figure-html/unnamed-chunk-49-1.png" width="768" /></p>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-13-1.png" width="768" /></p>
 </div>
 
 

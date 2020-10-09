@@ -19,7 +19,8 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
     snpid = np.array([ s.split('_')[1] for s in snpid ])
     if return_snp is True:
         a0 = G.variant.a0.to_series().to_numpy()
-        a1 = G.variant.a1.to_series().to_numpy()        
+        a1 = G.variant.a1.to_series().to_numpy()       
+        chrom = G.variant.chrom.to_series().to_numpy()    
     
     geno = G.sel(sample=indiv_list).values
     
@@ -28,6 +29,8 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
     if return_snp is True:
         a0 = a0[~np.isin(snpid, snplist_to_exclude)]
         a1 = a1[~np.isin(snpid, snplist_to_exclude)]
+        chrom = chrom[~np.isin(snpid, snplist_to_exclude)]
+        
     snpid = snpid[~np.isin(snpid, snplist_to_exclude)]
    
     # filter out genotypes with high missing rate
@@ -37,6 +40,7 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
         snpid = snpid[missing_rate < missing_rate_cutoff]
         a0 = a0[missing_rate < missing_rate_cutoff]
         a1 = a1[missing_rate < missing_rate_cutoff]
+        chrom = chrom[missing_rate < missing_rate_cutoff]
         
     maf = np.nanmean(geno, axis=0) / 2
     
@@ -52,13 +56,14 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
         snpid = snpid[to_keep]
         a0 = a0[to_keep]
         a1 = a1[to_keep]
+        chrom = chrom[to_keep]
         
     maf = maf[to_keep]
     var_geno = var_geno[to_keep]
     geno = (geno - 2 * maf) / np.sqrt(var_geno)
     
     if return_snp is True:
-        return geno, indiv_list, np.sqrt(var_geno), (snpid.tolist(), a0.tolist(), a1.tolist())
+        return geno, indiv_list, np.sqrt(var_geno), (snpid.tolist(), a0.tolist(), a1.tolist(), chrom.tolist())
     else:
         return geno, indiv_list, np.sqrt(var_geno)
 
@@ -339,13 +344,13 @@ if __name__ == '__main__':
         )
         beta_partial, best_theta_g = solver.cv_train(rand_seed=args.rand_seed)
         logging.info('Obtaining best betahat from beta_partial, best_theta_g, and genotypes.')
-        betahat, snpid, ref, alt = obtain_bhat_from_bed(
+        betahat, snpid, ref, alt, chrom = obtain_bhat_from_bed(
             args.geno_bed_pattern, snplist_to_exclude=snplist_to_exclude,
             indiv_list=indiv_info,
             load_first_n_samples=args.first_n_indiv,
             beta_partial=beta_partial, theta_g=best_theta_g
         )
-        df_meta = pd.DataFrame({'snpid': snpid, 'a0': ref, 'a1':alt})
+        df_meta = pd.DataFrame({'snpid': snpid, 'a0': ref, 'a1':alt, 'chr': chrom})
         df_beta = pd.DataFrame(betahat, columns=pheno_col_info)
         df_beta = pd.concat([df_meta, df_beta], axis=1)
         del df_meta

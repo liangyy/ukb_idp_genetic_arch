@@ -4,6 +4,7 @@ e2 = pd.read_csv('test_prs.sscore', sep='\t')
 e = pd.read_parquet('test_prs.parquet')
 e.indiv = e.indiv.astype(int); e = pd.merge(e, e2, left_on='indiv', right_on='#IID')
 ll = [ 'IDP-25303', 'IDP-25304', 'IDP-25305' ]
+# breakpoint()
 for xx in ll:
     for yy in ll:
         print(xx, 'and', yy, np.corrcoef(e[xx], e[yy + '_SUM'])[0,1])

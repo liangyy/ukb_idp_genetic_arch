@@ -20,7 +20,7 @@ def get_partitions(total, npart):
         o += [ i ] * size
         if remain >= i + 1:
             o += [ i ]
-    return o, size + 1 if remain > 0 else 0
+    return o, size + ( 1 if remain > 0 else 0 )
 
 def prepare_args_for_worker(df_info, partitions, bgen, bgi, chunk_size=20):
     '''
@@ -63,7 +63,7 @@ def calc_prs_at_worker(bgen, bgi, df_info, worker_idx, chunk_size=20):
             current=(df_info.iloc[idx, :].a0.tolist(), df_info.iloc[idx, :].a1.tolist()) 
         )
         # dosage: nsnp x nindiv; prs_effect_size: nsnp x ntrait
-        out_i = np.einsum('ij,jk->ik', np.rint(dosage.T).astype(np.float32), prs_effect_size).astype(np.float32)
+        out_i = np.einsum('ij,jk->ik', dosage.T, prs_effect_size).astype(np.float32)
         if out is None:
             out = out_i
         else:

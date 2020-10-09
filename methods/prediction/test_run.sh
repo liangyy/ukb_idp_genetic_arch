@@ -9,12 +9,12 @@ tmp_txt=$tmp_prs.txt
 
 python test_subset_parquet.py --input $prs_parquet --output_prefix $tmp_prs
 
-nthread=6
+nthread=4
 ukb_imp_reader_path=/vol/bmd/yanyul/GitHub/misc-tools/bgen_io
 
 output_prefix=test_prs
 
-# conda activate haplotype_po
+# conda activate ukb_idp
 
 python run_prs.py \
   --ukb_bgen_pattern $bgen \

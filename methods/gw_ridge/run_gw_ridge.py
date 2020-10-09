@@ -175,6 +175,7 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, indiv_list=None
     snpid = []
     a0 = []
     a1 = []
+    chrom = []
     if snplist_to_exclude is None:
         snplist_to_exclude = set([])
     
@@ -195,13 +196,14 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, indiv_list=None
         snpid += snp_info[0]
         a0 += snp_info[1]
         a1 += snp_info[2]
+        chrom += snp_info[3]
         del beta_unscaled_i
         del snp_info
     
     beta_hat = np.concatenate(beta_hat, axis=0)
     beta_hat = theta_g / beta_hat.shape[0] * beta_hat
     
-    return beta_hat, snpid, a0, a1
+    return beta_hat, snpid, a0, a1, chrom
     
 def load_list(filename):
     o = []

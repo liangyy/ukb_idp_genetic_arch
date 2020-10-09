@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 def get_partitions(total, npart):
     '''
@@ -12,7 +13,7 @@ def get_partitions(total, npart):
         o += [ i ] * size
         if remain >= i + 1:
             o += [ i ]
-    return o, size + remain > 0
+    return o, size + 1 if remain > 0 else 0
 
 def prepare_args_for_worker(df_info, partitions, bgen, bgi, chunk_size=20):
     '''
@@ -30,7 +31,7 @@ def prepare_args_for_worker(df_info, partitions, bgen, bgi, chunk_size=20):
     return df_list
 
 def worker_run_wrapper(args):
-    return calc_prs_at_worker(**args)
+    return calc_prs_at_worker(*args)
 
 def calc_prs_at_worker(bgen, bgi, df_info, worker_idx, chunk_size=20):
     '''
@@ -75,7 +76,7 @@ def read_sample_file_as_list(fn):
         next(f)
         next(f)
         for i in f:
-            o.append(.strip())
+            o.append(i.strip())
     return o
 
 if __name__ == '__main__':
@@ -135,7 +136,7 @@ if __name__ == '__main__':
     logging.info('Loading PRS scores.')
     df_var = pd.read_parquet(args.prs_parquet)
     trait_list = df_var.columns[4:].tolist()
-    df_var.iloc[4:] = df_var.iloc[4:].astype(np.float32)
+    df_var = pd.concat([df_var.iloc[:, :4], df_var.iloc[:, 4:].astype(np.float32)], axis=1)
     
     logging.info('Looping over chromosomes.')
     prs = None
@@ -143,7 +144,7 @@ if __name__ == '__main__':
         logging.info(f'Working on chromosome {i}')
         
         logging.info(f'Chr {i}: Preparing data.')
-        df_sub = df_var[ df_var.chr == i ].reset_index(drop=True)
+        df_sub = df_var[ df_var.chr == str(i) ].reset_index(drop=True)
         if df_sub.shape[0] == 0:
             logging.info(f'Chr {i}: No SNP. Skip.')
             continue
@@ -153,9 +154,9 @@ if __name__ == '__main__':
         # score_mat = df_sub.iloc[4:].astype(np.float32).values
         
         logging.info(f'Chr {i}: Dividing the job.')
-        nsnp = len(snp_list)
+        nsnp = df_sub.shape[0]
         partitions, task_size = get_partitions(total=nsnp, npart=nthread)
-        logging.info(f'Chr {i}: Each thread needs to process {} SNPs.'.format(task_size))
+        logging.info(f'Chr {i}: Each thread needs to process {task_size} SNPs.')
         args_by_worker = prepare_args_for_worker(
             df_sub, partitions,
             args.ukb_bgen_pattern.format(chr_num=i),

@@ -7,7 +7,7 @@ tmp_prs=test_prs_weights
 tmp_parquet=$tmp_prs.parquet
 tmp_txt=$tmp_prs.txt
 
-python test_subset_parquet.py --input $prs_parquet --output_prefix $tmp_prs
+echo python test_subset_parquet.py --input $prs_parquet --output_prefix $tmp_prs
 
 nthread=6
 ukb_imp_reader_path=/vol/bmd/yanyul/GitHub/misc-tools/bgen_io
@@ -16,11 +16,11 @@ output_prefix=test_prs
 
 # conda activate haplotype_po
 
-python run_prs.py \
+echo python run_prs.py \
   --ukb_bgen_pattern $bgen \
   --ukb_bgi_pattern $bgi \
   --ukb_sample_file $sample \
-  --prs_parquet $prs_parquet \
+  --prs_parquet $tmp_parquet \
   --nthread $nthread \
   --output $output_prefix.parquet \
   --ukb_imp_reader_path $ukb_imp_reader_path

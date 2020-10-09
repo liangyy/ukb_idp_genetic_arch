@@ -9,6 +9,7 @@ parser.add_argument('--input', help='''
 parser.add_argument('--output_prefix', help='''
     Output prefix of parquet and txt file.
 ''')
+args = parser.parse_args()
 
 import pandas as pd
 import numpy as np
@@ -19,10 +20,10 @@ chrs = [1, 22]
 
 out = []
 for i in chrs:
-    df_sub = df[df.chr == i].reset_index(drop=True)
-    df_sub = df_sub.iloc[np.random.randint(0, 7000, size=(50)), :].reset_index(drop=True)
+    df_sub = df[df.chr == str(i)].reset_index(drop=True)
+    df_sub = df_sub.iloc[np.unique(np.random.randint(0, 7000, size=(50))), :].reset_index(drop=True)
     df_sub = df_sub[df_sub.columns[:7]]
     out.append(df_sub)
-
-out.to_parquet(args.output_prefix + '.parquet', index=False)
+out = pd.concat(out, axis=0)
+out.to_parquet(args.output_prefix + '.parquet')
 out.to_csv(args.output_prefix + '.txt', index=False, sep='\t')

@@ -16,7 +16,7 @@ import numpy as np
 np.random.seed(10)
 
 df = pd.read_parquet(args.input)
-chrs = [1, 22]
+chrs = [ i for i in range(20, 23) ]
 
 out = []
 for i in chrs:

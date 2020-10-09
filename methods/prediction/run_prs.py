@@ -51,19 +51,19 @@ def calc_prs_at_worker(bgen, bgi, df_info, worker_idx, chunk_size=20):
     )
     snplist = df_info.snpid.tolist()
     nchunk = reader.get_nchunk(snplist, chunk_size=chunk_size)
-    step_size = nchunk // 10
+    step_size = max(1, nchunk // 10)
     out = None
     counter = 0
     for res, _, idx in reader.dosage_generator_by_chunk(snplist, chunk_size=chunk_size):
-        dosage, a0, a1 = res
-        prs_effect_size = df_info.iloc[idx, 3:]
+        dosage, a0, a1, _ = res
+        prs_effect_size = df_info.iloc[idx, 3:].values
         check_direction_and_flip(
             prs_effect_size, 
             target=(a0, a1), 
-            current=(df_info[idx].a0.tolist(), df_info[idx].a1.tolist()) 
+            current=(df_info.iloc[idx, :].a0.tolist(), df_info.iloc[idx, :].a1.tolist()) 
         )
-        # dosage: nindiv x nsnp; prs_effect_size: nsnp x ntrait
-        out_i = np.einsum('ij,jk->ik', dosage, prs_effect_size).astype(np.float32)
+        # dosage: nsnp x nindiv; prs_effect_size: nsnp x ntrait
+        out_i = np.einsum('ij,jk->ik', np.rint(dosage.T).astype(np.float32), prs_effect_size).astype(np.float32)
         if out is None:
             out = out_i
         else:
@@ -76,11 +76,11 @@ def calc_prs_at_worker(bgen, bgi, df_info, worker_idx, chunk_size=20):
 def check_direction_and_flip(beta_mat, target, current):
     n = beta_mat.shape[0]
     for i in range(n):
-        valid_ret = is_valid(target[i][0], target[i][1], current[i][0], current[i][1])
-        if valid_ret == 0:
-            beta_mat[n, :] = -beta_mat[n, :]
+        valid_ret = is_valid(target[0][i], target[1][i], current[0][i], current[1][i])
+        if valid_ret == 1:
+            beta_mat[i, :] = -beta_mat[i, :]
         elif valid_ret == -1:
-            beta_mat[n, :] = 0
+            beta_mat[i, :] = 0
 
 def is_valid(a0, a1, b0, b1):
     '''
@@ -116,7 +116,7 @@ def read_sample_file_as_list(fn):
         next(f)
         next(f)
         for i in f:
-            o.append(i.strip())
+            o.append(i.strip().split(' ')[0])
     return o
 
 if __name__ == '__main__':
@@ -217,12 +217,12 @@ if __name__ == '__main__':
     
     df_prs = pd.DataFrame(prs, columns=trait_list)
     df_indiv = pd.DataFrame(
-        read_sample_file_as_list(args.ukb_sample_file), 
-        columns='indiv'
+        { 'indiv': read_sample_file_as_list(args.ukb_sample_file) }, 
     ) 
     df_prs = pd.concat([df_indiv, df_prs], axis=1)
-    df_prs.to_parquet(args.output, index=False)   
+    df_prs.to_parquet(args.output)   
     
+    logging.info('Done.')
     
     
         

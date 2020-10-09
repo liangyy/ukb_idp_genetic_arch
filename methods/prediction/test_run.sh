@@ -7,7 +7,7 @@ tmp_prs=test_prs_weights
 tmp_parquet=$tmp_prs.parquet
 tmp_txt=$tmp_prs.txt
 
-echo python test_subset_parquet.py --input $prs_parquet --output_prefix $tmp_prs
+python test_subset_parquet.py --input $prs_parquet --output_prefix $tmp_prs
 
 nthread=6
 ukb_imp_reader_path=/vol/bmd/yanyul/GitHub/misc-tools/bgen_io
@@ -16,7 +16,7 @@ output_prefix=test_prs
 
 # conda activate haplotype_po
 
-echo python run_prs.py \
+python run_prs.py \
   --ukb_bgen_pattern $bgen \
   --ukb_bgi_pattern $bgi \
   --ukb_sample_file $sample \
@@ -28,3 +28,4 @@ echo python run_prs.py \
 
 /vol/bmd/yanyul/softwares/plink2 --bfile /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all --score $tmp_txt 1 3 header-read cols=scoresums,denom --score-col-nums 5 6 7 --out $output_prefix
 
+python test_check.py

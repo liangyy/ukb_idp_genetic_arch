@@ -188,6 +188,18 @@ if __name__ == '__main__':
         if df_sub.shape[0] == 0:
             logging.info(f'Chr {i}: No SNP. Skip.')
             continue
+        logging.info(f'Chr {i}: Limiting to SNPs that in BGEN.')
+        reader = ukb_imp_reader.UKBReader(
+            args.ukb_bgen_pattern.format(chr_num=i),
+            args.ukb_bgi_pattern.format(chr_num=i),
+            no_var=False
+        )
+        valid_snps = reader.check_rsid(df_sub.snpid.tolist())
+        df_sub = df_sub[ df_sub.snpid.isin(valid_snps) ].reset_index(drop=True)
+        logging.info('Chr {}: {} SNPs left in total.'.format(i, df_sub.shape[0]))
+        if df_sub.shape[0] == 0:
+            logging.info(f'Chr {i}: No SNP. Skip.')
+            continue
         # chr_list = df_sub.chr.tolist()
         # snp_list = df_sub.snpid.tolist()
         # effect_alleles = df_sub.a1.toilst()

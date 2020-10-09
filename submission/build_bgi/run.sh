@@ -9,7 +9,10 @@ prefix=ukb_imp_chr
 
 for chr in `seq 1 22`
 do
-  ln -s $bgen_prefix$chr$bgen_suffix $outdir/$prefix$chr$bgen_suffix
-  $bgenix -g $outdir/$prefix$chr$bgen_suffix -index 
+  if [[ ! -f $outdir/$prefix$chr$bgen_suffix.bgi ]]
+  then
+    ln -s $bgen_prefix$chr$bgen_suffix $outdir/$prefix$chr$bgen_suffix
+    $bgenix -g $outdir/$prefix$chr$bgen_suffix -index 
   unlink $outdir/$prefix$chr$bgen_suffix
+  fi
 done

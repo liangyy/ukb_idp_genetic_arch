@@ -55,7 +55,7 @@ def calc_prs_at_worker(bgen, bgi, df_info, worker_idx, chunk_size=20):
             current=(df_info[idx].a0.tolist(), df_info[idx].a1.tolist()) 
         )
         # dosage: nindiv x nsnp; prs_effect_size: nsnp x ntrait
-        out_i = np.einsum('ij,jk->ik', dosage, prs_effect_size).astype(np.float16)
+        out_i = np.einsum('ij,jk->ik', dosage, prs_effect_size).astype(np.float32)
         if out is None:
             out = out_i
         else:
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     parser.add_argument('--ukb_bgen_pattern', help='''
         UKB imputed genotype (v3).
         It takes {chr_num} as wildcard.
-        We load genotype dosage as float16 to save memory.
+        We load genotype dosage as float32 to save memory.
     ''')
     parser.add_argument('--ukb_bgi_pattern', help='''
         The bgi files that are associated with bgen (for rbgen and bgenix).
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     ''')
     parser.add_argument('--prs_parquet', help='''
         PRS parquet (nsnp x ntrait).
-        We load PRS score as float16 to save memory.
+        We load PRS score as float32 to save memory.
     ''')
     parser.add_argument('--snp_batch_size', type=int, default=20, help='''
         How many variants to retrieve each time.  
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     logging.info('Loading PRS scores.')
     df_var = pd.read_parquet(args.prs_parquet)
     trait_list = df_var.columns[4:].tolist()
-    df_var.iloc[4:] = df_var.iloc[4:].astype(np.float16)
+    df_var.iloc[4:] = df_var.iloc[4:].astype(np.float32)
     
     logging.info('Looping over chromosomes.')
     prs = None
@@ -150,7 +150,7 @@ if __name__ == '__main__':
         # chr_list = df_sub.chr.tolist()
         # snp_list = df_sub.snpid.tolist()
         # effect_alleles = df_sub.a1.toilst()
-        # score_mat = df_sub.iloc[4:].astype(np.float16).values
+        # score_mat = df_sub.iloc[4:].astype(np.float32).values
         
         logging.info(f'Chr {i}: Dividing the job.')
         nsnp = len(snp_list)

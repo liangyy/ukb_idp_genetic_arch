@@ -3,15 +3,16 @@ plink2_exec=/vol/bmd/yanyul/softwares/plink2
 memory_in_mb=60000
 genotype_prefix=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr
 
-# this list of snps were obtained in initial plink1.9 call which returned an error and suggested to exclude them.
-multi_allelic_snplist=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
+# The following is deprecated since we've done SNP QC to remove bad SNPs.
+# # this list of snps were obtained in initial plink1.9 call which returned an error and suggested to exclude them.
+# multi_allelic_snplist=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
 
 outdir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes
 outprefix=IDP_HM3_finalPheno.merged_all
 tempdir=$outdir/temp
 
 # go to working directory
-cd /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/misc_data
+cd $outdir 
 
 # make temporary folder
 mkdir -p $tempdir
@@ -26,13 +27,13 @@ fi
 
 for i in `seq 1 22`
 do
-  echo $tempdir/chr$i >> $tmpfile_bedlist 
-  # need to exclude multi allelic snps
-  $plink_exec \
-    --bfile $genotype_prefix$i \
-    --exclude $multi_allelic_snplist \
-    --make-bed \
-    --out $tempdir/chr$i
+  echo $genotype_prefix$i >> $tmpfile_bedlist 
+  # # need to exclude multi allelic snps
+  # $plink_exec \
+  #   --bfile $genotype_prefix$i \
+  #   --exclude $multi_allelic_snplist \
+  #   --make-bed \
+  #   --out $tempdir/chr$i
 done
 
 $plink_exec \

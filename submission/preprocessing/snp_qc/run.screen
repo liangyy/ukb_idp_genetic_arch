@@ -3,7 +3,7 @@ source /vol/bmd/yanyul/miniconda3/etc/profile.d/conda.sh
 conda activate ukb_idp
 
 # work dir
-cd /vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/preprocessing/snp_qc
+cd /vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/submission/preprocessing/snp_qc
 runscript=/vol/bmd/yanyul/GitHub/misc-tools/ukb_imp_snp_qc/ukb_snp_qc.py
 
 input_snplist=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/hapmap3_eur_snplist/hapmap3_eur_pop_CEU_maf_0.01.txt

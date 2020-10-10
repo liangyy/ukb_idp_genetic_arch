@@ -12,7 +12,7 @@ innerfold=5
 # input
 genotype_bed_pattern=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed
 phenotype_parquet=/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet
-dupsnps=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
+# dupsnps=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
 # output
 output=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge/gw_ridge_default_theta_g_fold_5_5.tsv.gz
 
@@ -22,4 +22,7 @@ python $gw_ridge_script \
   --phenotype_parquet $phenotype_parquet \
   --nfold $outerfold $innerfold \
   --output $output \
-  --snplist_to_exclude $dupsnps > run.log 2>&1
+  > run.log 2>&1
+
+# --snplist_to_exclude $dupsnps 
+

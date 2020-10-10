@@ -6,7 +6,7 @@ plink_mem_in_mb: 10000
 plink_filters:
   - '--maf 0.01'
   
-snplist: '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/hapmap3_eur_snplist/hapmap3_eur_pop_CEU_maf_0.01.txt'
+snplist: '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/hapmap3_eur_snplist/hapmap3_eur_pop_CEU_maf_0.01_with_qc.txt'
 indivlist: '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/final_phenotype_indivlist/2020-05-18_final-phenotypes.indiv_list.txt'
 genotype_bed: '/vol/bmd/meliao/data/genotype/plink/chr-{chr_num}'
 genotype_parquet: '/vol/bmd/meliao/data/genotype/parquet/chr-{chr_num}'

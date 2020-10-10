@@ -33,3 +33,35 @@ python run_gw_ridge.py  \
   --train_full_model \
   --snplist_to_exclude /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
 ```
+
+
+Misc scripts for testing.
+
+```
+# generate prs weights for plink
+import pandas as pd
+e = pd.read_parquet('test_beta.parquet')
+e[['snpid', 'a0', 'a1', 'IDP-25303', 'IDP-25311']].to_csv('test_beta_idp_25311_25304.tsv', sep='\t', index=False)
+
+
+# compare PRS with observed IDP
+import pandas as pd
+f = pd.read_parquet('/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet')
+e = pd.read_csv('test_prs.sscore', sep='\t')
+
+import gzip, pickle
+with gzip.open('test_beta.parquet.grm_cache.pkl.gz', 'rb') as ff:
+    oo = pickle.load(ff)
+
+e['#IID'] = e['#IID'].astype(str)
+e = pd.merge(e, f, left_on='#IID', right_on='individual')
+e = e[ e.individual.isin(oo['grm_indiv_info']) ]
+import numpy as np
+print(
+np.corrcoef(e['IDP-25303_SUM'], e['IDP-25303']), 
+np.corrcoef(e['IDP-25311_SUM'], e['IDP-25311']),
+np.corrcoef(e['IDP-25303_SUM'], e['IDP-25311']), 
+np.corrcoef(e['IDP-25311_SUM'], e['IDP-25303'])
+)
+```
+

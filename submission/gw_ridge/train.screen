@@ -17,10 +17,12 @@ grm_cache=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge/gw_ridge_default_the
 # output
 output=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge/gw_ridge_beta_default_theta_g_fold_5_5.parquet
 # link the run.screen cached GRM as the GRM for the training since they share exactly the same GRM.
-ln -s $grm_cache $output.grm_cache.pkl.gz
+if [[ ! -f $output.grm_cache.pkl.gz ]]
+then
+  ln -s $grm_cache $output.grm_cache.pkl.gz
+fi
 
-
-python $gw_ridge_script \
+echo python $gw_ridge_script \
   --geno_bed_pattern $genotype_bed_pattern \
   --phenotype_parquet $phenotype_parquet \
   --nfold $outerfold $innerfold \

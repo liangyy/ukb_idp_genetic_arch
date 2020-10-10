@@ -10,10 +10,19 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
     missing_rate_cutoff=0.5, return_snp=False):
     G = read_plink1_bin(bedfile, verbose=False)
     
+    df_geno_indiv = pd.DataFrame({'indiv': G.sample.to_series().tolist()})
+    df_geno_indiv['idx'] = [ i for i in range(df_geno_indiv.shape[0]) ]
+    
     if indiv_list is None:
         indiv_list = G.sample.to_series().tolist()
         if load_first_n_samples is not None:
             indiv_list = indiv_list[:load_first_n_samples]
+    df_target_indiv = pd.DataFrame({'indiv': indiv_list})
+    df_geno_indiv = pd.merge(df_geno_indiv, df_target_indiv, on='indiv').sort_values(by=['idx'])
+    if df_geno_indiv.shape[0] != len(indiv_list):
+        raise ValueError('There are input individuals that do not appear in BED file.')
+    query_indiv_list = df_geno_indiv.indiv.tolist()
+    
     
     snpid = G.variant.variant.to_series().to_list()
     snpid = np.array([ s.split('_')[1] for s in snpid ])
@@ -22,7 +31,9 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
         a1 = G.variant.a1.to_series().to_numpy()       
         chrom = G.variant.chrom.to_series().to_numpy()    
     
-    geno = G.sel(sample=indiv_list).values
+    geno = G.sel(sample=query_indiv_list).values
+    # re-order to target indiv_list
+    geno = geno[match_y_to_x(np.array(query_indiv_list), np.array(indiv_list)), :]
     
     # filter out unwanted snps
     geno = geno[:, ~np.isin(snpid, snplist_to_exclude)]

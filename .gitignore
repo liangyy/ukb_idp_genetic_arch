@@ -11,3 +11,6 @@ notebook
 *.parquet
 *.txt
 *.sscore
+*.phe
+batch_list_*
+logs_*

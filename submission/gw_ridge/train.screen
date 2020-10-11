@@ -22,7 +22,7 @@ then
   ln -s $grm_cache $output.grm_cache.pkl.gz
 fi
 
-echo python $gw_ridge_script \
+python $gw_ridge_script \
   --geno_bed_pattern $genotype_bed_pattern \
   --phenotype_parquet $phenotype_parquet \
   --nfold $outerfold $innerfold \

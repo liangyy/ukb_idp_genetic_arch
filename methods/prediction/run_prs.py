@@ -51,7 +51,7 @@ def calc_prs_at_worker(bgen, bgi, df_info, worker_idx, chunk_size=20):
     )
     snplist = df_info.snpid.tolist()
     nchunk = reader.get_nchunk(snplist, chunk_size=chunk_size)
-    step_size = max(1, nchunk // 10)
+    step_size = max(1, nchunk // 100)
     out = None
     counter = 0
     for res, _, idx in reader.dosage_generator_by_chunk(snplist, chunk_size=chunk_size):
@@ -70,7 +70,7 @@ def calc_prs_at_worker(bgen, bgi, df_info, worker_idx, chunk_size=20):
             out += out_i
         counter += 1
         if counter % step_size == 0:
-            print('Worker {} has done {} / {}'.format(worker_idx, counter, nchunk))
+            print('Worker {} has done {} / {}'.format(worker_idx, counter, nchunk), flush=True)
     return out
 
 def check_direction_and_flip(beta_mat, target, current):

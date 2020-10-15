@@ -15,7 +15,7 @@ ukb_imp_reader_path=/vol/bmd/yanyul/GitHub/misc-tools/bgen_io
 output_prefix=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.gw_ridge
 
 
-python run_prs.py \
+python /vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/prediction/run_prs.py \
   --ukb_bgen_pattern $bgen \
   --ukb_bgi_pattern $bgi \
   --ukb_sample_file $sample \

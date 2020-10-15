@@ -1,0 +1,3 @@
+sex: 'continuous'
+recruitment_center: 'categorical'
+age_recruitment: 'continuous'

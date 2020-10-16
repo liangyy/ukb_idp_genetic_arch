@@ -4,7 +4,7 @@ idp=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.gw_ridge.parque
 indiv_list=/vol/bmd/yanyul/UKB/predicted_expression_tf2/British.txt
 
 tmp_indiv=tmp_indiv.txt
-cat $indiv_list | tail -n +2 | cut -f 1 > $tmp_indiv
+cat $indiv_list | tail -n +2 | cut -f 1 -d ' '  > $tmp_indiv
 
 thisdir=`pwd`
 
@@ -16,6 +16,7 @@ python ../run_imagexcan.py \
   --phenotype_yaml pheno.yaml \
   --individual_list $tmp_indiv \
   --idp_table $idp indiv \
+  --first_30_idp \
   --output output.test_run.csv
 
 

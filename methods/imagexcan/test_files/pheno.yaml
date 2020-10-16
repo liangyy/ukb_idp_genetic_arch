@@ -1,2 +1,3 @@
-parent_AD_score: 'logistic_regression'
+# parent_AD_score: 'logistic_regression'
+bipolar_disorder: 'logistic_regression'
 daily_cigarettes: 'linear_regression'

@@ -161,25 +161,26 @@ class BatchLogisticSolver:
             niter += 1
         
         # print(active_p.sum())
-        _, _, XSX[:, :, active_p] = self._calc_Mu_S_XSX(XSX[:, :, active_p], X[:, active_p], C, Wcx[active_p, :])
+        if active_p.sum() > 0:
+            _, _, XSX[:, :, active_p] = self._calc_Mu_S_XSX(XSX[:, :, active_p], X[:, active_p], C, Wcx[active_p, :])
        
-        # print(active_p.sum())
-        if device is None:
-            ONES = torch.eye(k + 1).view(k + 1, k + 1, -1).expand_as(XSX[:, :, active_p])  # Tensor(k + 1, k + 1)
-        else:
-            ONES = torch.eye(k + 1).to(device).view(k + 1, k + 1, -1).expand_as(XSX[:, :, active_p])   
+            # print(active_p.sum())
+            if device is None:
+                ONES = torch.eye(k + 1).view(k + 1, k + 1, -1).expand_as(XSX[:, :, active_p])  # Tensor(k + 1, k + 1)
+            else:
+                ONES = torch.eye(k + 1).to(device).view(k + 1, k + 1, -1).expand_as(XSX[:, :, active_p])   
         
-        VAR, _ = torch.solve(
-            torch.einsum('ijk->kij', ONES), 
-            torch.einsum('ijk->kij', XSX[:, :, active_p])
-        )  # Tensor(k + 1, k + 1, p)
-        SE[:, active_p] = torch.sqrt(torch.diagonal(VAR, dim1=1, dim2=2)).T 
+            VAR, _ = torch.solve(
+                torch.einsum('ijk->kij', ONES), 
+                torch.einsum('ijk->kij', XSX[:, :, active_p])
+            )  # Tensor(k + 1, k + 1, p)
+            SE[:, active_p] = torch.sqrt(torch.diagonal(VAR, dim1=1, dim2=2)).T 
         
         # return B_hat, B_se
         # if max_diff > tol:
         #     print(f'Warning: not converged! max_diff = {max_diff} > tol = {tol}')
         
-        return Wcx.T, SE, diffs < tol
+        return Wcx.T, SE, diffs < tol, diffs
         
     @staticmethod
     def _naive_convergence_checker(w_new, w_old):
@@ -226,7 +227,7 @@ def test_solver(y, x, covar):
     print('---- Testing BatchLogisticSolver ----')
     # BatchLogisticSolver
     solver = BatchLogisticSolver()
-    bhat, se, success = solver.batchIRLS(torch.Tensor(x), torch.Tensor(y[:, np.newaxis]), torch.Tensor(covar))
+    bhat, se, success, _ = solver.batchIRLS(torch.Tensor(x), torch.Tensor(y[:, np.newaxis]), torch.Tensor(covar))
     pval, stat, bhat, se = solver.stat_test(bhat, se, success)
     
     # statsmodels

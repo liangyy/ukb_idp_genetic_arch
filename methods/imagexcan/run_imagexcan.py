@@ -1,4 +1,5 @@
 from util import *
+from solver import *
 
 if __name__ == '__main__':
     import argparse
@@ -35,6 +36,9 @@ if __name__ == '__main__':
         A table in csv format where each row is the test result of one
         observed phenotype and predicted IDP pair.
     ''')
+    parser.add_argument('--first_30_idp', action='store_true', help='''
+        For debugging purpose, if set, only the first 30 IDPs will be tested.
+    ''')
     args = parser.parse_args()
  
     import logging, time, sys, os
@@ -54,26 +58,30 @@ if __name__ == '__main__':
     )
     df_idp = load_idp(args.idp_table)
     indiv_list = load_list(args.individual_list)
-    
-    rearrange_rows(df_covar, indiv_list)
-    rearrange_rows(df_pheno, indiv_list)
-    rearrange_rows(df_idp, indiv_list)
+   
+    df_covar = rearrange_rows(df_covar, indiv_list)
+    df_pheno = rearrange_rows(df_pheno, indiv_list)
+    df_idp = rearrange_rows(df_idp, indiv_list)
     logging.info('There are {} individauls being included.'.format(df_covar.shape[0]))
     
+    if args.first_30_idp:
+        df_idp = df_idp.iloc[:, :31]
+
     Covar = get_matrix(df_covar)
     # add intercept to covariate
     Covar = np.concatenate((np.ones((Covar.shape[0], 1)), Covar), axis=1)
     Idp = get_matrix(df_idp)
     idp_cols = df_idp.columns[1:].to_list()
-    
+
     df_list = []
-    for pheno_col, test_type in list_pheno_info:
+    for pheno_col, test_type in list_pheno_info.items():
+        logging.info(f'Working on {pheno_col}')
         y = df_pheno[pheno_col].to_numpy()
         not_nan = np.logical_not(np.isnan(y))
         if test_type == 'logistic_regression':
-            bhat, pval = logistic_regression(y, X=Idp[not_nan, :], C=Covar[not_nan, :])
+            bhat, pval = logistic_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
         elif test_type == 'linear_regression':
-            bhat, pval = linear_regression(y, X=Idp[not_nan, :], C=Covar[not_nan, :])
+            bhat, pval = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
         df = pd.DataFrame({
             'IDP': idp_cols, 
             'phenotype': pheno_col, 

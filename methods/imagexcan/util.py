@@ -5,7 +5,7 @@ import pandas as pd
 
 def read_yaml(yaml_):
     with open(yaml_, 'r') as f:
-        o = yaml.save_load(f)
+        o = yaml.safe_load(f)
     return o
 
 def load_list(fn):
@@ -18,9 +18,13 @@ def load_list(fn):
 def check_a_in_b(a, b):
     return all(i in b for i in a)
 
+def check_binary(x):
+    xr = np.round_(x)
+    return np.logical_not(np.logical_or(xr == 1, xr == 0)).sum() == 0
+
 def rearrange_rows(df, target_list):
     tmp = pd.DataFrame({'indiv': target_list})
-    return pd.merge(tmp, df, on='indiv')
+    return pd.merge(tmp, df, on='indiv', how='left')
 
 def get_matrix(df):
     '''
@@ -38,7 +42,7 @@ def load_table(file_list):
         df = pd.read_csv(fn)
     elif fn_ext == '.txt' or fn_ext == '.tsv':
         df = pd.read_csv(fn, sep='\s+')
-    for i in df.columns:
+    for i in range(df.shape[1]):
         if df.columns[i] == indiv_col:
             break
     col_list = df.columns.to_list()
@@ -55,26 +59,27 @@ def load_idp(f_list):
 def load_phenotype(file_list, fyaml):
     df = load_table(file_list)
     df_yaml = read_yaml(fyaml)
-    if !check_a_in_b(list(df_yaml.keys()), df.columns[1:].to_list()):
+    if not check_a_in_b(list(df_yaml.keys()), df.columns[1:].to_list()):
         raise ValueError(f'The {file_string} does not match {fyaml}.')
-    df = df.reindex(columns=list(df_yaml.keys()))
+    df = df.reindex(columns=['indiv'] + list(df_yaml.keys()))
+    df.drop_duplicates(subset='indiv', inplace=True)
     return df, df_yaml
 
 def load_covariate(file_list, fyaml):
     df = load_table(file_list)
     df_yaml = read_yaml(fyaml)
-    if !check_a_in_b(list(df_yaml.keys()), df.columns.to_list()):
+    if not check_a_in_b(list(df_yaml.keys()), df.columns.to_list()):
         raise ValueError(f'The {file_string} does not match {fyaml}.')
-    df_res = []
+    df_res = [ pd.DataFrame({'indiv': df.indiv}) ]
     nsample = df.shape[0]
     for col, ctype in df_yaml.items():
         if ctype == 'continuous':
             df_res.append(pd.DataFrame({col: df[col]}))
         if ctype == 'categorical':
             col_values = df[col].values
-            categories = col_values.unique()
+            categories = np.unique(col_values)
             ncate = categories.shape[0]
-            if ncate > 10:
+            if ncate > 25:
                 raise ValueError(f'Too many categories at {col}.')
             mat = np.zeros((nsample, ncate))
             for i in range(ncate):
@@ -85,4 +90,4 @@ def load_covariate(file_list, fyaml):
                     columns=[ f'{col}_{val}' for val in categories.tolist() ]
                 )
             )
-    return pd.concat(df_res, axis=0)
+    return pd.concat(df_res, axis=1)

@@ -14,3 +14,5 @@ notebook
 *.phe
 batch_list_*
 logs_*
+*.npy
+*.csv

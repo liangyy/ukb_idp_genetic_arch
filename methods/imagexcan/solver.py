@@ -7,7 +7,7 @@ import linear_regression_gpu
 from util import check_binary
 
 
-def logistic_regression(y, X, C, batch_size=20, device=None):
+def logistic_regression(y, X, C, batch_size=5, device=None):
     if not check_binary(y):
         raise ValueError('Input y is not binary. Cannot do logistic regression.')
     solver = logistic_regression_gpu.BatchLogisticSolver()

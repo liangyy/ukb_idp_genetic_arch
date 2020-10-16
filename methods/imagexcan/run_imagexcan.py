@@ -64,11 +64,13 @@ if __name__ == '__main__':
     if args.individual_list is not None:
         indiv_lists.append(load_list(args.individual_list))
     indiv_list = take_intersect(indiv_lists)
+    
     if args.individual_list_exclude is not None:
         indiv_list = exclude_b_from_a(
             a=indiv_list, 
             b=load_list(args.individual_list_exclude)
         )
+    
     indiv_list = sorted(indiv_list)
    
     df_covar = rearrange_rows(df_covar, indiv_list)

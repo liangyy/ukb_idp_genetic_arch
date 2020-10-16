@@ -1,13 +1,18 @@
 import numpy as np
 import seaborn as sns
+import matplotlib.pyplot as plt
+import scipy.stats
 
 def plot_binary(f, fn):
     tmp = sns.countplot(y=f) 
     tmp.figure.savefig(fn)
-    
+    plt.clf()
+
 def plot_quant(f, fn):
-    tmp = sns.histplot(x=f) 
+    plt.xlim(np.nanquantile(f, 0), np.nanquantile(f, 0.95))
+    tmp = sns.histplot(x=f, binwidth=1) 
     tmp.figure.savefig(fn)
+    plt.clf()
 
 
 if __name__ == '__main__':
@@ -21,6 +26,7 @@ if __name__ == '__main__':
     idp_train = '/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet'
 
     # output files
+    fig_outdir = 'imagexcan_preprocessing_output'
     covar_out = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_covariate_round_1.parquet'
     pheno_out = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_phenotype_round_1.parquet'
     idp_indiv_out = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/idp_cohort.txt'
@@ -54,20 +60,33 @@ if __name__ == '__main__':
             handedness = dfh[cc].values
         else:
             handedness[ np.isnan(handedness) ] = dfh[cc].values[ np.isnan(handedness) ]
-    df['handedness'] = handedness
-    ad = df['parent_AD_score']
+    hdd_binary = handedness
+    hdd_binary[handedness == 1] = 0
+    hdd_binary[handedness == 2] = 1
+    hdd_binary[np.logical_or(handedness == 3, handedness == -3)] = np.nan
+    dfh['handedness'] = handedness
+    dfh = dfh[ ~ dfh.handedness.isna() ].reset_index(drop=True)
+    df = pd.merge(df, dfh[['eid', 'handedness']], on='eid')
+    ad = df['parent_AD_score'].values
     ad[ad == 2] = 1
     df['parent_AD_score'] = ad
+    dp = df['parent_depression_score'].values
+    dp[dp == 2] = 1
+    df['parent_depression_score'] = dp
     for col in df.columns:
         if col == 'eid':
             continue
         tmp = df[col].values
         num_na = np.isnan(tmp).sum()
         if len(np.unique(tmp)) == 2:
-            plot_binary(tmp, f'pheno_{col}.png')
+            plot_binary(tmp, f'{fig_outdir}/pheno_{col}.png')
+            ncase = np.nansum(tmp)
+            print(f'Binary phenotype {col}, # NA = {num_na}, # case = {ncase}')
         else:
-            plot_quant(tmp, f'pheno_{col}.png')
-        print(f'phenotype {col}, # NA = {num_na}')
+            plot_quant(tmp, f'{fig_outdir}/pheno_{col}.png')
+            max_, min_ = np.nanmax(tmp), np.nanmin(tmp)
+            print(f'Quantitative phenotype {col}, # NA = {num_na}, min = {min_}, max = {max_}')
+    
     df.to_parquet(pheno_out, index=False)
 
     # TASK 3
@@ -85,9 +104,8 @@ if __name__ == '__main__':
     # PTRS project.
 
 
-
 ## meta
-# cat /vol/bmd/meliao/data/psychiatric_trait_phenotypes/2020-04-10_collected-phenotypes.txt | for i in `seq 2 12`; do cat /vol/bmd/meliao/data/psychiatric_trait_phenotypes/2020-04-10_collected-phenotypes.txt | cut -f $i | sort|uniq -c; done
+# cat /vol/bmd/meliao/data/psychiatric_trait_phenotypes/2020-04-10_collected-phenotypes.txt | for i in `seq 2 13`; do cat /vol/bmd/meliao/data/psychiatric_trait_phenotypes/2020-04-10_collected-phenotypes.txt | cut -f $i | sort|uniq -c; done
  # 158159 0.0
  #   5665 1.0
  #  19209 10.0
@@ -386,3 +404,7 @@ if __name__ == '__main__':
  #  54853 1
  #   2011 2
  #      1 parent_AD_score
+ # 458072 0
+ # 42865 1
+ #  1928 2
+ #      1 parent_depression_score

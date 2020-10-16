@@ -28,7 +28,8 @@ if __name__ == '__main__':
     # TASK 1
     # construct a cleaner version of covariates:
     # age, sex, age ^ 2, sex * age, sex * age ^ 2
-
+    
+    print('TASK 1: Covariates.')
     df = pd.read_csv(covariate)
     df = df[['eid', 'age_recruitment', 'sex']].rename(columns={'age_recruitment': 'age'})
     df['age_squared'] = df['age'] ** 2
@@ -42,7 +43,8 @@ if __name__ == '__main__':
     # make sure one individual per row without duplication
     # and add handedness
 
-    df = pd.read_csv(phenotype)
+    print('TASK 2: Phenotypes.')
+    df = pd.read_csv(phenotype, sep='\t')
     df.drop_duplicates(subset='eid', inplace=True)
     dfh = pd.read_csv(phenotype_handedness)
     cols = ['handedness_x_instance_0', 'handedness_x_instance_1', 'handedness_x_instance_2']
@@ -71,6 +73,8 @@ if __name__ == '__main__':
     # TASK 3
     # extract the IDP cohort for prediction model training
     # they will be excluded for the downstream association test
+    
+    print('TASK 3: IDP individual list.')
     df = pd.read_parquet(idp_train)
     df[['individual']].to_csv(idp_indiv_out, header=False, index=False)
 

@@ -15,6 +15,20 @@ def load_list(fn):
             o.append(i.strip())
     return o
 
+def take_intersect(lists):
+    if len(lists) == 0:
+        return lists 
+    o = set(lists[0])
+    for l in lists:
+        o = o.intersection(set(l))
+    return list(o)
+
+def exclude_b_from_a(a, b):
+    a_ = set(a)
+    b_ = set(b)
+    a_ = a_.difference(b_)
+    return list(a_)
+
 def check_a_in_b(a, b):
     return all(i in b for i in a)
 

@@ -23,6 +23,9 @@ if __name__ == '__main__':
     parser.add_argument('--individual_list', help='''
         The list of individuals to include in the analysis.
     ''')
+    parser.add_argument('--individual_list_exclude', default=None, help='''
+        The list of individuals to exclude from the analysis.
+    ''')
     parser.add_argument('--covariate_yaml', default=None, help='''
         If it is not specified, all covariates will be used as quantitative measure.
         Otherwise, specify the list of covariate to use and 
@@ -52,12 +55,21 @@ if __name__ == '__main__':
     from tqdm import tqdm
     
     logging.info('Loading tables.')
-    df_covar = load_covariate(args.covariate_table, args.covariate_yaml)
-    df_pheno, list_pheno_info = load_phenotype(
+    df_covar, indiv_covar = load_covariate(args.covariate_table, args.covariate_yaml)
+    df_pheno, list_pheno_info, indiv_pheno = load_phenotype(
         args.phenotype_table, args.phenotype_yaml
     )
-    df_idp = load_idp(args.idp_table)
-    indiv_list = load_list(args.individual_list)
+    df_idp, indiv_idp = load_idp(args.idp_table)
+    indiv_lists = [indiv_covar, indiv_pheno, indiv_idp]
+    if args.individual_list is not None:
+        indiv_lists.append(load_list(args.individual_list))
+    indiv_list = take_intersect(indiv_lists)
+    if args.individual_list_exclude is not None:
+        indiv_list = exclude_b_from_a(
+            a=indiv_list, 
+            b=load_list(args.individual_list_exclude)
+        )
+    indiv_list = sorted(indiv_list)
    
     df_covar = rearrange_rows(df_covar, indiv_list)
     df_pheno = rearrange_rows(df_pheno, indiv_list)

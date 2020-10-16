@@ -1,6 +1,6 @@
 weekly_alcohol: 'linear_regression'
 recurrent_depressive_disorder: 'linear_regression'
-parent_depression_score: 'linear_regression'
-parent_AD_score: 'linear_regression'
+parent_depression: 'linear_regression'
+parent_AD: 'linear_regression'
 handedness: 'linear_regression'
 daily_coffee: 'linear_regression'

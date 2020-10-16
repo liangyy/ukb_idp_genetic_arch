@@ -55,12 +55,12 @@ if __name__ == '__main__':
     from tqdm import tqdm
     
     logging.info('Loading tables.')
-    df_covar, indiv_covar = load_covariate(args.covariate_table, args.covariate_yaml)
-    df_pheno, list_pheno_info, indiv_pheno = load_phenotype(
+    df_covar = load_covariate(args.covariate_table, args.covariate_yaml)
+    df_pheno, list_pheno_info = load_phenotype(
         args.phenotype_table, args.phenotype_yaml
     )
-    df_idp, indiv_idp = load_idp(args.idp_table)
-    indiv_lists = [indiv_covar, indiv_pheno, indiv_idp]
+    df_idp = load_idp(args.idp_table)
+    indiv_lists = [df_covar.indiv.to_list(), df_pheno.indiv.to_list(), df_idp.indiv.to_list()]
     if args.individual_list is not None:
         indiv_lists.append(load_list(args.individual_list))
     indiv_list = take_intersect(indiv_lists)

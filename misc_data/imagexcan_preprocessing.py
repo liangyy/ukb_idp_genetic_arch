@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
     # input files
     covariate = '/vol/bmd/data/ukbiobank/psychiatric_traits/2019-12-17_psychiatric-trait_covariates.csv'
-    covariate_pc = '/vol/bmd/meliao/data/idp_phenotypes/archive/covariates_all.txt'
+    covariate_pc = '/vol/bmd/yanyul/GitHub/ptrs-ukb/output/query_phenotypes_output.csv'
     phenotype = '/vol/bmd/meliao/data/psychiatric_trait_phenotypes/2020-04-10_collected-phenotypes.txt'
     phenotype_handedness = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/handedness_query.csv'
     idp_train = '/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet'
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     df['age_squared'] = df['age'] ** 2
     df['sex_x_age'] = df['age'] * df['sex']
     df['sex_x_age_squared'] = df['age_squared'] * df['sex']
-    dfp = pd.read_csv(covariate_pc, sep='\t')
+    dfp = pd.read_csv(covariate_pc)
     dfp.rename(columns={'individual': 'eid'}, inplace=True)
     dfp = dfp[['eid'] + [ f'pc{i}' for i in range(1, 11)] ]
     df = pd.merge(df, dfp, on='eid')

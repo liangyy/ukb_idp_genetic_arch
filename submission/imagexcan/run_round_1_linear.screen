@@ -10,22 +10,28 @@ pheno=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_phenotype_round_1.
 idp=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.gw_ridge.parquet
 eur_indiv=/vol/bmd/yanyul/UKB/predicted_expression_tf2/British.txt
 idp_indiv=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/idp_cohort.txt
-covar_yaml=covariate.yaml
+covar_yaml=covariate_round_1.yaml
 pheno_yaml=phenotype_linear.yaml
 
+tmp_indiv=run_round_1_linear.txt
+cat $eur_indiv | tail -n +2 | cut -f 1 -d ' '  > $tmp_indiv
+
 # output file
-outfile=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_round_1.linear.parquet
+outfile=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_round_1.linear.csv
 
 # run
 python $scriptpath \
   --phenotype_table $pheno eid \
   --covariate_table $covar eid \
   --phenotype_yaml $pheno_yaml \
-  --individual_list $eur_indiv \
+  --individual_list $tmp_indiv \
   --individual_list_exclude $idp_indiv \
   --covariate_yaml $covar_yaml \
-  --idp_table $idp \
+  --idp_table $idp indiv \
   --output $outfile \
-  --first_30_idp \
-  > run_linear.log 2>&1
-  
+  > run_round_1_linear.log 2>&1
+
+# --first_30_idp \
+
+rm $tmp_indiv
+

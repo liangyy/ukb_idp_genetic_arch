@@ -74,7 +74,7 @@ def load_phenotype(file_list, fyaml):
     df = load_table(file_list)
     df_yaml = read_yaml(fyaml)
     if not check_a_in_b(list(df_yaml.keys()), df.columns[1:].to_list()):
-        raise ValueError(f'The {file_string} does not match {fyaml}.')
+        raise ValueError(f'The {file_list} does not match {fyaml}.')
     df = df.reindex(columns=['indiv'] + list(df_yaml.keys()))
     df.drop_duplicates(subset='indiv', inplace=True)
     return df, df_yaml

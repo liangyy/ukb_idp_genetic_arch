@@ -42,6 +42,10 @@ if __name__ == '__main__':
     parser.add_argument('--first_30_idp', action='store_true', help='''
         For debugging purpose, if set, only the first 30 IDPs will be tested.
     ''')
+    parser.add_argument('--inv_norm', action='store_true', help='''
+        For linear regression, specify if want to perform inverse normalization 
+        on phenotype. 
+    ''')
     args = parser.parse_args()
  
     import logging, time, sys, os
@@ -95,6 +99,8 @@ if __name__ == '__main__':
         if test_type == 'logistic_regression':
             bhat, pval = logistic_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
         elif test_type == 'linear_regression':
+            if args.inv_norm is True:
+                y[not_nan] = inv_norm_vec(y[not_nan])
             bhat, pval = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
         df = pd.DataFrame({
             'IDP': idp_cols, 

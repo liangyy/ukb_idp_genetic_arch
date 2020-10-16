@@ -21,6 +21,7 @@ if __name__ == '__main__':
 
     # input files
     covariate = '/vol/bmd/data/ukbiobank/psychiatric_traits/2019-12-17_psychiatric-trait_covariates.csv'
+    covariate_pc = '/vol/bmd/data/ukbiobank/psychiatric_traits/2019-12-17_psychiatric-trait_covariates.csv'
     phenotype = '/vol/bmd/meliao/data/psychiatric_trait_phenotypes/2020-04-10_collected-phenotypes.txt'
     phenotype_handedness = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/handedness_query.csv'
     idp_train = '/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet'
@@ -41,6 +42,9 @@ if __name__ == '__main__':
     df['age_squared'] = df['age'] ** 2
     df['sex_x_age'] = df['age'] * df['sex']
     df['sex_x_age_squared'] = df['age_squared'] * df['sex']
+    dfp = pd.read_csv(covariate_pc, sep='\t')
+    dfp = dfp[['eid'] + [ f'pc{i}' for i in range(1, 11)] ]
+    df = pd.merge(df, dfp, on='eid')
     df.to_parquet(covar_out, index=False)
 
     # TASK 2
@@ -73,6 +77,10 @@ if __name__ == '__main__':
     dp = df['parent_depression_score'].values
     dp[dp == 2] = 1
     df['parent_depression_score'] = dp
+    df.rename(columns={
+        'parent_AD_score': 'parent_AD',
+        'parent_depression_score': 'parent_depression'
+    })
     for col in df.columns:
         if col == 'eid':
             continue

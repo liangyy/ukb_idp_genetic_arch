@@ -17,3 +17,4 @@ logs_*
 *.npy
 *.csv
 *.DS_Store
+._*

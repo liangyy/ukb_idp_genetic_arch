@@ -1,6 +1,12 @@
 if 'outdir' not in config:
     config['outdir'] = 'output'
-    
+
+pheno_list = load_list(config['phenotype_list'])
+
+rule all:
+    input:
+        [ '{outdir}/gcta_out.{pheno_name}.hsq'.format(**config) for pheno_name in pheno_list ]
+
 rule prep_pheno:
     input:
         config['phenotype_parquet']

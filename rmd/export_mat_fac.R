@@ -46,13 +46,19 @@ eig_res = eigen(cor_mat2)
 
 p = list()
 for(top_n in c(0, 1, 2, 5, 10, 20, 40, 50)) {
-  pve = sum(eig_res$values[1:top_n]) / sum(eig_res$values)
-  top_n_pc = mat_centered %*% eig_res$vectors[, 1 : top_n]
-  tmp = qr(top_n_pc)
-  Q_ = qr.Q(tmp)
+  if(top_n == 0) {
+    pve = 0
+    mat_res2 = mat_centered
+  } else{
+    pve = sum(eig_res$values[1:top_n]) / sum(eig_res$values)
+    top_n_pc = mat_centered %*% eig_res$vectors[, 1 : top_n]
+    tmp = qr(top_n_pc)
+    Q_ = qr.Q(tmp)
+    
+    # mat_res = mat - Q_ %*% (t(Q_) %*% mat)
+    mat_res2 = mat_centered - Q_ %*% (t(Q_) %*% mat_centered)
+  }
   
-  # mat_res = mat - Q_ %*% (t(Q_) %*% mat)
-  mat_res2 = mat_centered - Q_ %*% (t(Q_) %*% mat_centered)
   
   plist = c()
   clist = c()

@@ -1,0 +1,29 @@
+if 'outdir' not in config:
+    config['outdir'] = 'output'
+    
+rule prep_pheno:
+    input:
+        config['phenotype_parquet']
+    output:
+        '{outdir}/gcta_tmp.{pheno_name}.pheno'
+    shell:
+        'python parquet2pheno.py \
+          --input {input[0]} \
+          --pheno_col {wildcard.pheno_name} \
+          --indiv_col {config[indiv_col]} \
+          --output {output[0]}'
+
+rule run_reml:
+    input:
+        grm = config['grm'] + '.grm.gz',
+        pheno = temp('{outdir}/gcta_tmp.{pheno_name}.pheno')
+    output:
+        '{outdir}/gcta_out.{pheno_name}.hsq'
+    params:
+        '{outdir}/gcta_out.{pheno_name}'
+    shell:
+        'config[gcta_exec] \
+          --reml \
+          --grm {config[grm]} \
+          --pheno {input.pheno} \
+          --out {params[0]}'

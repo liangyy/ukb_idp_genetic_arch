@@ -18,3 +18,5 @@ logs_*
 *.csv
 *.DS_Store
 ._*
+*.out
+*.err

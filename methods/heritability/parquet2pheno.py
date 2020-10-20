@@ -35,7 +35,6 @@ if __name__ == '__main__':
     
     logging.info('Loading phenotypes.')
     df = pd.read_parquet(args.input, columns=[args.indiv_col, args.pheno_col])
-    
     df.rename(columns={args.indiv_col: 'indiv', args.pheno_col: 'pheno'}, inplace=True)
     
     logging.info('Writing to disk.')

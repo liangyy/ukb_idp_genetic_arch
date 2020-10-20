@@ -1,11 +1,18 @@
 if 'outdir' not in config:
     config['outdir'] = 'output'
 
+def load_list(fn):
+    with open(fn, 'r') as f:
+        o = []
+        for i in f:
+            o.append(i.strip())
+    return o
+
 pheno_list = load_list(config['phenotype_list'])
 
 rule all:
     input:
-        [ '{outdir}/gcta_out.{pheno_name}.hsq'.format(**config) for pheno_name in pheno_list ]
+        [ '{outdir}/gcta_out.{pheno_name}.hsq'.format(pheno_name=i, **config) for i in pheno_list ]
 
 rule prep_pheno:
     input:
@@ -15,7 +22,7 @@ rule prep_pheno:
     shell:
         'python parquet2pheno.py \
           --input {input[0]} \
-          --pheno_col {wildcard.pheno_name} \
+          --pheno_col {wildcards.pheno_name} \
           --indiv_col {config[indiv_col]} \
           --output {output[0]}'
 
@@ -28,9 +35,9 @@ rule run_reml:
     params:
         '{outdir}/gcta_out.{pheno_name}'
     shell:
-        'config[gcta_exec] \
+        '{config[gcta_exec]} \
           --reml \
-          --grm {config[grm]} \
+          --grm-gz {config[grm]} \
           --pheno {input.pheno} \
           --out {params[0]}'
           

@@ -1,4 +1,5 @@
 phenotype_parquet: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/phenotypes/2020-05-18_final-phenotypes.parquet'
+grm: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.merged_all.maf_gt_0.05'
 indiv_col: 'individual'
 gcta_exec: 'gcta'
 phenotype_list: 'test_pheno.txt'

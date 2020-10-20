@@ -1,0 +1,27 @@
+#PBS -S /bin/bash
+#PBS -l walltime=48:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=8gb
+#PBS -e logs_gcta/run_$BATCH.err
+#PBS -o logs_gcta/run_$BATCH.out
+
+
+
+source ~/.bash_profile
+source ~/.bashrc
+
+SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snakemake
+
+module load gcc/6.2.0
+module load gcta
+
+conda activate mixqtl
+
+cd ${PBS_O_WORKDIR}
+cd ../../methods/heritability
+
+
+$SNMK -s run_gcta.snmk --configfile $PBS_O_WORKDIR/config.gcta.yaml -p \
+  --config phenotype_list=$BATCH \
+  > $PBS_O_WORKDIR/logs_gcta/run_$BATCH.log 2>&1
+

@@ -27,3 +27,4 @@ rule run_reml:
           --grm {config[grm]} \
           --pheno {input.pheno} \
           --out {params[0]}'
+          

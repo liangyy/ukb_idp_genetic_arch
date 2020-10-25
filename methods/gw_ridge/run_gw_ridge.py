@@ -223,6 +223,28 @@ def load_list(filename):
             o.append(i.strip())
     return list(set(o))    
 
+
+def load_grm_id(grm_id):
+    o = []
+    with open(grm_id, 'r') as f:
+        for i in f:
+            i = i.strip()
+            o.append(i.split('\t')[1])
+    return o
+
+def load_grm(grm_txt_gz, grm_id):
+    grm_indiv = load_grm_id(grm_id)
+    nindiv = len(grm_indiv)
+    grm_mat = np.zeros((nindiv, nindiv))
+    with gzip.open(grm_txt_gz, 'rt') as f:
+        for i in f:
+            i = i.strip()
+            x, y, _, val = i.split('\t')
+            x, y, val = int(x), int(y), float(val)
+            grm_mat[x - 1, y - 1] = val
+            grm_mat[y - 1, x - 1] = val
+    return grm_mat, grm_indiv
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(prog='run_gw_ridge.py', description='''
@@ -233,6 +255,12 @@ if __name__ == '__main__':
     parser.add_argument('--geno_bed_pattern', help='''
         Genotype file in binary PED format (plink).
         It takes {chr_num} as wildcard.
+    ''')
+    parser.add_argument('--gcta_grm_prefix', default=None, help='''
+        Optional. If it is specified, the script will use
+        GCTA GRM format. 
+        It assumes there are 
+        [gcta_grm_prefix].grm.gz and [gcta_grm_prefix].grm.id files.
     ''')
     parser.add_argument('--phenotype_parquet', help='''
         Phenotype in parquet format.
@@ -296,22 +324,28 @@ if __name__ == '__main__':
     pheno_mat, pheno_indiv_info, pheno_col_info = load_phenotype_parquet(args.phenotype_parquet)
     
     logging.info('Computing GRM.')
-    grm_cache_file = args.output + '.grm_cache.pkl.gz'
-    if os.path.isfile(grm_cache_file):
-        with gzip.open(grm_cache_file, 'rb') as f:
-            tmp = pickle.load(f)
-            grm = tmp['grm']
-            grm_indiv_info = tmp['grm_indiv_info']
+    if args.gcta_grm_prefix is None:
+        grm_cache_file = args.output + '.grm_cache.pkl.gz'
+        if os.path.isfile(grm_cache_file):
+            with gzip.open(grm_cache_file, 'rb') as f:
+                tmp = pickle.load(f)
+                grm = tmp['grm']
+                grm_indiv_info = tmp['grm_indiv_info']
+        else:
+            grm, grm_indiv_info = compute_grm_from_bed(
+                args.geno_bed_pattern, snplist_to_exclude,
+                load_first_n_samples=args.first_n_indiv)
+            with gzip.open(grm_cache_file, 'wb') as f:
+                tmp = {
+                    'grm': grm,
+                    'grm_indiv_info': grm_indiv_info
+                }
+                pickle.dump(tmp, f, protocol=4)
     else:
-        grm, grm_indiv_info = compute_grm_from_bed(
-            args.geno_bed_pattern, snplist_to_exclude,
-            load_first_n_samples=args.first_n_indiv)
-        with gzip.open(grm_cache_file, 'wb') as f:
-            tmp = {
-                'grm': grm,
-                'grm_indiv_info': grm_indiv_info
-            }
-            pickle.dump(tmp, f, protocol=4)
+        grm, grm_indiv_info = load_grm(
+            args.gcta_grm_prefix + '.grm.gz', 
+            args.gcta_grm_prefix + '.grm.id'
+        )
     
     logging.info('Finalizing GRM and phenotype matrices.')
     indiv_info = intersection(pheno_indiv_info, grm_indiv_info)

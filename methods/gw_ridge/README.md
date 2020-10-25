@@ -34,6 +34,17 @@ python run_gw_ridge.py  \
   --snplist_to_exclude /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
 ```
 
+Use GCTA GRM.
+
+```
+python run_gw_ridge.py \
+  --gcta_grm_prefix /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all.maf_gt_0.05 \
+  --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
+  --nfold 5 5 \
+  --first_n_indiv 500 \
+  --output test_gcta_grm.tsv.gz \
+  --snplist_to_exclude /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
+```
 
 Misc scripts for testing.
 

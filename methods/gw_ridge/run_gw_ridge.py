@@ -6,9 +6,15 @@ from pandas_plink import read_plink1_bin
 # for debugging
 import pdb
 
-def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_first_n_samples=None, 
+def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, chromosome=None, load_first_n_samples=None, 
     missing_rate_cutoff=0.5, return_snp=False):
     G = read_plink1_bin(bedfile, verbose=False)
+    
+    if chromosome is not None:
+        chr_str = G.chrom[0].values
+        if 'chr' in chr_str:
+            chromosome = 'chr' + str(chromosome)
+        G = G.where(G.chrom == chromosome, drop=True)
     
     df_geno_indiv = pd.DataFrame({'indiv': G.sample.to_series().tolist()})
     df_geno_indiv['idx'] = [ i for i in range(df_geno_indiv.shape[0]) ]
@@ -32,6 +38,7 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
         chrom = G.variant.chrom.to_series().to_numpy()    
     
     geno = G.sel(sample=query_indiv_list).values
+        
     # re-order to target indiv_list
     geno = geno[match_y_to_x(np.array(query_indiv_list), np.array(indiv_list)), :]
     
@@ -86,14 +93,29 @@ def compute_grm_from_bed(bedfile_pattern, snplist_to_exclude=None, load_first_n_
     if snplist_to_exclude is None:
         snplist_to_exclude = set([])
     
+    read_by_file = False
+    if '{chr_num}' in bedfile_pattern:
+        read_by_file = True
+    
     for i in range(1, 23):
-        geno, indiv_list, _ = load_genotype_from_bedfile(
-            bedfile_pattern.format(chr_num=i),
-            indiv_list,
-            snplist_to_exclude,
-            load_first_n_samples=load_first_n_samples,
-            missing_rate_cutoff=missing_rate_cutoff
-        )
+        
+        if read_by_file is True:
+            geno, indiv_list, _ = load_genotype_from_bedfile(
+                bedfile_pattern.format(chr_num=i),
+                indiv_list,
+                snplist_to_exclude,
+                load_first_n_samples=load_first_n_samples,
+                missing_rate_cutoff=missing_rate_cutoff
+            )
+        else:
+            geno, indiv_list, _ = load_genotype_from_bedfile(
+                bedfile_pattern,
+                indiv_list,
+                snplist_to_exclude,
+                chromosome=i,
+                load_first_n_samples=load_first_n_samples,
+                missing_rate_cutoff=missing_rate_cutoff
+            )
         
         # calc sub-GRM
         M = geno.shape[1]
@@ -190,15 +212,33 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, indiv_list=None
     if snplist_to_exclude is None:
         snplist_to_exclude = set([])
     
+    
+    read_by_file = False
+    if '{chr_num}' in bedfile_pattern:
+        read_by_file = True
+
     for i in range(1, 23):
-        geno, indiv_list, geno_sd, snp_info = load_genotype_from_bedfile(
-            bedfile_pattern.format(chr_num=i),
-            indiv_list,
-            snplist_to_exclude,
-            load_first_n_samples=load_first_n_samples,
-            missing_rate_cutoff=missing_rate_cutoff, 
-            return_snp=True
-        )
+        
+        if read_by_file is True:
+            geno, indiv_list, geno_sd, snp_info = load_genotype_from_bedfile(
+                bedfile_pattern.format(chr_num=i),
+                indiv_list,
+                snplist_to_exclude,
+                chromosome=i,
+                load_first_n_samples=load_first_n_samples,
+                missing_rate_cutoff=missing_rate_cutoff, 
+                return_snp=True
+            )
+        else:
+            geno, indiv_list, geno_sd, snp_info = load_genotype_from_bedfile(
+                bedfile_pattern,
+                indiv_list,
+                snplist_to_exclude,
+                chromosome=i,
+                load_first_n_samples=load_first_n_samples,
+                missing_rate_cutoff=missing_rate_cutoff, 
+                return_snp=True
+            )
         
         beta_unscaled_i = geno.T @ beta_partial / geno_sd[:, np.newaxis]
         nsnp += geno.shape[1]
@@ -255,12 +295,19 @@ if __name__ == '__main__':
     parser.add_argument('--geno_bed_pattern', help='''
         Genotype file in binary PED format (plink).
         It takes {chr_num} as wildcard.
+        If you have all chromosomes in one bed file, no wildcard is needed and
+        the script will load one chromosome at a time assuming the genotype file
+        has 1 .. 22 chromosomes. 
     ''')
     parser.add_argument('--gcta_grm_prefix', default=None, help='''
         Optional. If it is specified, the script will use
         GCTA GRM format. 
         It assumes there are 
         [gcta_grm_prefix].grm.gz and [gcta_grm_prefix].grm.id files.
+        CAUTION: the GRM should be constructed using EXACTLY the same SNP set of
+        the --geno_bed_pattern file (no extra SNP filters applied). 
+        We highly discourage user using this option if they are unsure about 
+        how the GRM is constructed. 
     ''')
     parser.add_argument('--phenotype_parquet', help='''
         Phenotype in parquet format.

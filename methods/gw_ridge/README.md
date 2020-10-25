@@ -52,6 +52,26 @@ python run_gw_ridge.py \
   --geno_bed_pattern /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed 
 ```
 
+Load one chromosome at a time.
+
+
+```
+python run_gw_ridge.py \
+  --geno_bed_pattern /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed \
+  --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
+  --nfold 5 5 \
+  --output test_load_chr.tsv.gz 
+```
+
+```
+python run_gw_ridge.py \
+  --geno_bed_pattern /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed \
+  --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
+  --output test_load_chr_beta.parquet \
+  --train_full_model \
+  --nfold 5 5 
+```
+
 Misc scripts for testing.
 
 ```

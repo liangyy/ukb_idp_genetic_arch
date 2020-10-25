@@ -30,7 +30,7 @@ class LinearRegSolver:
         pval = scipy.stats.t.sf(np.abs((bhat / se)), df=dof) * 2
         return pval, tval
     
-def test_solver(y, x, covar):
+def test_solver(y, x, covar, return_val=False):
     '''
     Input y, x, covar are numpy array
     y: n x 1
@@ -61,5 +61,7 @@ def test_solver(y, x, covar):
     print('se mean abs difference = {}'.format(np.abs((se - se2)).mean()))
     print('tval mean abs difference = {}'.format(np.abs((stat - stat2)).mean()))
     print('log p mean abs difference = {}'.format(np.abs((np.log(pval) - np.log(pval2))).mean()))
-        
+    
+    if return_val is True:
+        return bhat, pval, bhat2, pval2
         

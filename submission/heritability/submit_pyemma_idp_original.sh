@@ -3,7 +3,7 @@ grm=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno
 idp=/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet
 outdir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/heritability
 
-nametag=pyemma.idp_pc0
+nametag=pyemma.idp_original
 
 
-screen -dmS $nametag bash -c "$bash $runscript $grm $idp $outdir/$nametag"
+screen -dmS $nametag bash -c "bash $runscript $idp $grm $outdir/$nametag"

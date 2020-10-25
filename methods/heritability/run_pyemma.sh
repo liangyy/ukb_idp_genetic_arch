@@ -10,6 +10,8 @@ export PYTHONPATH=/vol/bmd/yanyul/GitHub/misc-tools/pyemma:/vol/bmd/yanyul/GitHu
 python /vol/bmd/yanyul/GitHub/misc-tools/pyemma/run_pyemma.py \
   --grm $2 \
   --grm_cache $2.pyemma_cache \
-  --y_table $1 \
-  --output $3.tsv.gz > $3.log &2>1
-  
+  --y_table $1 individual \
+  --reml \
+  --output $3.tsv.gz > $3.log 2>&1
+# --reml \
+

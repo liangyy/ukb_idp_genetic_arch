@@ -11,9 +11,11 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, chromoso
     G = read_plink1_bin(bedfile, verbose=False)
     
     if chromosome is not None:
-        chr_str = G.chrom[0].values
+        chr_str = G.chrom[0].values.tolist()
         if 'chr' in chr_str:
             chromosome = 'chr' + str(chromosome)
+        else:
+            chromosome = str(chromosome)
         G = G.where(G.chrom == chromosome, drop=True)
     
     df_geno_indiv = pd.DataFrame({'indiv': G.sample.to_series().tolist()})
@@ -38,7 +40,7 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, chromoso
         chrom = G.variant.chrom.to_series().to_numpy()    
     
     geno = G.sel(sample=query_indiv_list).values
-        
+
     # re-order to target indiv_list
     geno = geno[match_y_to_x(np.array(query_indiv_list), np.array(indiv_list)), :]
     

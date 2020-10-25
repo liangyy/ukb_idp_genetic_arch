@@ -1,0 +1,88 @@
+---
+title: "Individual-level ImageXcan (round 1)"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+```
+
+# About
+
+See running setup at `submission/imagexcan/run_round_1_linear.screen` and `submission/imagexcan/run_round_1_logistic.screen`.
+
+# Load data
+
+```{r}
+# linear solver
+df_lm = read.csv('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear.csv')
+hist(df_lm$pval)
+df_lm %>% group_by(phenotype) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval))) + facet_wrap(~phenotype) + geom_abline(slope = 1, intercept = 0)
+```
+
+```{r}
+# linear solver
+df_lm2 = read.csv('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear_inrt.csv')
+hist(df_lm2$pval)
+df_lm2 %>% group_by(phenotype) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval))) + facet_wrap(~phenotype) + geom_abline(slope = 1, intercept = 0)
+```
+
+
+```{r}
+tmp = df_lm %>% reshape2::dcast(IDP ~ phenotype, value.var = 'pval')  
+xmat = tmp %>% select(-IDP) %>% as.matrix()
+heatmap(xmat)
+```
+
+
+```{r}
+# linear solver
+df_lm3 = read.csv('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear_small_covar.csv')
+hist(df_lm3$pval)
+df_lm3 %>% group_by(phenotype) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval))) + facet_wrap(~phenotype) + geom_abline(slope = 1, intercept = 0)
+df_lm3 %>% ggplot() + geom_histogram(aes(x = pval)) + facet_wrap(~phenotype) + geom_abline(slope = 1, intercept = 0)
+```
+
+
+```{r}
+df_both = inner_join(df_lm, df_lm2, by = c('phenotype', 'IDP'))
+```
+
+
+```{r}
+plot(df_both$bhat.x, df_both$bhat.y)
+# hist(df_both$bhat.y)
+plot(-log(df_both$pval.x), -log(df_both$pval.y))
+```
+
+# Owen's result
+
+```{r}
+dfo = read.delim2('~/Downloads/ImageXcan_Associations_first-run.txt.gz')
+# dfos = fread("zcat < ~/Downloads/S-ImageXcan_Associations_first-run.txt.gz | cut -f 2-15 -d ' '", sep = ' ', )
+dfo$pvalue = as.numeric(dfo$pvalue)
+dfo %>% group_by(pheno_name) %>% mutate(pexp = rank(pvalue) / (n() + 1)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pvalue))) + facet_wrap(~pheno_name) + geom_abline(slope = 1, intercept = 0)
+```
+
+```{r}
+df_all = inner_join(df_both, dfo, by = c('phenotype' = 'pheno_name', 'IDP' = 'gene'))
+plot(df_all$bhat.y, df_all$effect)
+plot(-log(df_all$pval.y), -log(df_all$pvalue))
+```
+
+
+```{r}
+# linear solver
+df_lo = read.csv('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.logistic.csv')
+df_lo = df_lo[ !is.na(df_lo$pval), ]
+df_lo %>% group_by(phenotype) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval))) + facet_wrap(~phenotype) + geom_abline(slope = 1, intercept = 0)
+```

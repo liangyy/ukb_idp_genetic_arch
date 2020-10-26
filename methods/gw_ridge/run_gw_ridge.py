@@ -346,6 +346,11 @@ if __name__ == '__main__':
         Doing `plink2 --score` with 'cols=scoresums' gives the desired 
         PRS with a mean shift (the mean shift is due to 2 * MAF * betahat).
     ''')
+    parser.add_argument('--grm_cache', default=None, help='''
+        If specified, will try to load [grm_cache]. If the file does not exist,
+        will load genotype and cache the GRM to this path.
+        Otherwise, will cache the GRM to [output].grm_cache.pkl.gz
+    ''')
     args = parser.parse_args()
  
     import logging, time, sys, os
@@ -374,7 +379,10 @@ if __name__ == '__main__':
     
     logging.info('Computing GRM.')
     if args.gcta_grm_prefix is None:
-        grm_cache_file = args.output + '.grm_cache.pkl.gz'
+        if args.grm_cache is not None:
+            grm_cache_file = args.grm_cache
+        else:
+            grm_cache_file = args.output + '.grm_cache.pkl.gz'
         if os.path.isfile(grm_cache_file):
             with gzip.open(grm_cache_file, 'rb') as f:
                 tmp = pickle.load(f)

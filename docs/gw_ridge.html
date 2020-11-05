@@ -370,7 +370,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Genome-wide ridge/lasso regression</h1>
-<h4 class="date">10 October, 2020</h4>
+<h4 class="date">01 November, 2020</h4>
 
 </div>
 
@@ -552,6 +552,15 @@ tmp %&gt;% ggplot() +
   geom_path(aes(x = alpha, y = value, group = phenotype), alpha = 0.1) + 
   facet_wrap(~var_name) + th2</code></pre>
 <p><img src="gw_ridge_files/figure-html/unnamed-chunk-13-1.png" width="768" /></p>
+<pre class="r"><code>df_h2 = read.delim(&#39;~/Desktop/tmp/ukb_idp/heritability/pyemma.idp_original.tsv.gz&#39;)
+tmp = inner_join(df_h2, df_merge, by = &#39;phenotype&#39;) %&gt;% filter(Chisq_pval &lt; 0.05)
+tmp %&gt;% mutate(rank = rank(h2)) %&gt;% ggplot() + 
+  geom_errorbar(aes(x = rank, ymin = h2 - h2_SE * 1.96, ymax = h2 + h2_SE * 1.96), color = &#39;gray&#39;) +
+  geom_point(aes(x = rank, y = h2)) + 
+  geom_point(aes(x = rank, y = R2.ridge, color = &#39;ridge R2&#39;), alpha = 0.2) + 
+  geom_point(aes(x = rank, y = R2.lasso, color = &#39;lasso R2&#39;), alpha = 0.2) + 
+  geom_point(aes(x = rank, y = R2.en, color = &#39;EN R2&#39;), alpha = 0.2) + th</code></pre>
+<p><img src="gw_ridge_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 
 

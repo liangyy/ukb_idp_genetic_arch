@@ -1,4 +1,5 @@
 # ARGS: the list of nPCs
+npcs=$1
 
 for pc in $npcs
 do

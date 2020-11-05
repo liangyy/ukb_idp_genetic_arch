@@ -1,4 +1,4 @@
-setwd('~/Documents/repo/github/ukb_idp_genetic_arch/misc_data/process_dmri/')
+# setwd('~/Documents/repo/github/ukb_idp_genetic_arch/misc_data/process_dmri/')
 
 library(dplyr)
 library(ggplot2)

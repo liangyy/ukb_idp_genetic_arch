@@ -16,7 +16,7 @@ SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snake
 conda activate snpnet
 
 cd ${PBS_O_WORKDIR}
-cd ../../methods/gw_lasso
+cd ../../../methods/gw_lasso
 
 
 $SNMK -s gw_lasso.snmk --configfile $PBS_O_WORKDIR/config.en.yaml -p \

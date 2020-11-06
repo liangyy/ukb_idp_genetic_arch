@@ -17,10 +17,10 @@ do
     tmp=`cat logs_lasso/run_$i.log | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l`
     if [[ $tmp = 1 ]]
     then
-      echo qsub -v BATCH=$i -N gw_lasso_$i run_lasso.qsub
+      qsub -v BATCH=$i -N gw_lasso_$i run_lasso.qsub
     fi
   else
-     :
+    :
     # qsub -v BATCH=$i -N gw_lasso_$i run_lasso.qsub
   fi
 done

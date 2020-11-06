@@ -4,9 +4,11 @@
 options(stringsAsFactors = F)
 library(dplyr)
 df_list = data.table::fread('cat list.txt | awk \'{print $1,$2,$3,$4}\'', data.table = F)
+df_list$V1[19] = 19
 df_info = readLines('list_last_col.txt')
 df_info = stringr::str_remove(df_info, ' $')
 df_list$info = df_info
+df_list = df_list[ df_list$info != '', ]
 df_ukb = read.delim2('~/Downloads/Data_Dictionary_Showcase.tsv')
 
 
@@ -25,7 +27,7 @@ bag_of_char = function(s) {
 str_washer = function(ss) {
   ss = lapply(strsplit(ss, ' '), function(x) { remove_special_char(x)})
   ss = unlist(lapply(ss, function(x) {paste0(tolower(x), collapse = '')}))
-  ss = sapply(ss, function(x){remove_special_char(x, char = c('intaskfmridata$', 'fromdmridata$', 'fromt1brainimage$'))})
+  ss = sapply(ss, function(x){remove_special_char(x, char = c('intaskfmridata$', 'fromdmridata$', 'fromt1brainimage$', '^total', 'calculatedwithbianca', 'brainimage$', 'images$'))})
   sapply(ss, function(x){bag_of_char(x)})
 }
 
@@ -56,5 +58,5 @@ table(df_list$modality)
 colnames(df_list)[1:3] = c('code_in_their_paper', 'id_in_their_paper', 'id2_in_their_paper')
 df_list = df_list %>% select(-footprint, -footprint2) %>% rename(footprint = ss)
 df_list$modality = unlist(lapply(strsplit(df_list$id_in_their_paper, '_'), function(x){x[[1]]}))
-df_list$modality[1:17] = 'covariate'
+df_list$modality[1:16] = 'covariate'
 saveRDS(df_list, 'cleanup_annot_our_idps.rds')

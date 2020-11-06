@@ -232,3 +232,14 @@ tmp %>% ggplot() +
   facet_wrap(~var_name) + th2
 ```
 
+```{r}
+df_h2 = read.delim('~/Desktop/tmp/ukb_idp/heritability/pyemma.idp_original.tsv.gz')
+tmp = inner_join(df_h2, df_merge, by = 'phenotype') %>% filter(Chisq_pval < 0.05)
+tmp %>% mutate(rank = rank(h2)) %>% ggplot() + 
+  geom_errorbar(aes(x = rank, ymin = h2 - h2_SE * 1.96, ymax = h2 + h2_SE * 1.96), color = 'gray') +
+  geom_point(aes(x = rank, y = h2)) + 
+  geom_point(aes(x = rank, y = R2.ridge, color = 'ridge R2'), alpha = 0.2) + 
+  geom_point(aes(x = rank, y = R2.lasso, color = 'lasso R2'), alpha = 0.2) + 
+  geom_point(aes(x = rank, y = R2.en, color = 'EN R2'), alpha = 0.2) + th
+```
+

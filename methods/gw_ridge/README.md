@@ -19,21 +19,57 @@ python run_gw_ridge.py \
   --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
   --nfold 5 5 \
   --first_n_indiv 500 \
-  --output test.tsv.gz \
-  --snplist_to_exclude /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
+  --output test.tsv.gz
 ```
 
 ```
 python run_gw_ridge.py  \
   --geno_bed_pattern /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed  \
   --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
-  --nfold 5 5 \
   --first_n_indiv 500 \
   --output test_beta.parquet \
-  --train_full_model \
-  --snplist_to_exclude /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
+  --nfold 5 5 \
+  --train_full_model 
 ```
 
+Use GCTA GRM.
+
+```
+python run_gw_ridge.py \
+  --gcta_grm_prefix first_500 \
+  --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
+  --nfold 5 5 \
+  --output test_gcta_grm.tsv.gz 
+```
+
+```
+python run_gw_ridge.py \
+  --gcta_grm_prefix first_500 \
+  --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
+  --output test_gcta_grm_beta.parquet \
+  --train_full_model \
+  --nfold 5 5 \
+  --geno_bed_pattern /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed 
+```
+
+Load one chromosome at a time.
+
+```
+python run_gw_ridge.py \
+  --geno_bed_pattern first_500.bed  \
+  --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
+  --nfold 5 5 \
+  --output test_load_chr.tsv.gz 
+```
+
+```
+python run_gw_ridge.py \
+  --geno_bed_pattern first_500.bed \
+  --phenotype_parquet /vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet \
+  --output test_load_chr_beta.parquet \
+  --train_full_model \
+  --nfold 5 5
+```
 
 Misc scripts for testing.
 

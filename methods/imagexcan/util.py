@@ -2,6 +2,7 @@ import yaml
 import os
 import numpy as np
 import pandas as pd
+import scipy.stats
 
 def myrank(vec):
     argsort = np.argsort(vec)
@@ -14,7 +15,7 @@ def inv_norm_vec(x, offset = 1):
     Assume 1-d np.array. Do inverse normalization.
     '''
     rank = myrank(x)
-    return norm.ppf(rank / (len(rank) + offset), loc = 0, scale = 1)
+    return scipy.stats.norm.ppf(rank / (len(rank) + offset), loc = 0, scale = 1)
 
 def read_yaml(yaml_):
     with open(yaml_, 'r') as f:

@@ -1,0 +1,31 @@
+# ARGS1: nPCs being regressed out 
+
+# environment setup
+source /vol/bmd/yanyul/miniconda3/etc/profile.d/conda.sh
+conda activate ukb_idp
+
+nPC=$1
+
+# script path
+gw_ridge_script=/vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge/run_gw_ridge.py
+
+# script parameters
+outerfold=5
+innerfold=5
+
+# input
+genotype_bed_pattern=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed
+phenotype_parquet=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/regress_out_idp_pcs/2020-05-18_final-phenotypes.regress_out_${nPC}PCs.parquet
+grm_cache=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge/gw_ridge_default_theta_g_fold_5_5.tsv.gz.grm_cache.pkl.gz
+# dupsnps=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
+# output
+output=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge/gw_ridge.${nPC}PC.default_theta_g_fold_5_5.tsv.gz
+
+
+python $gw_ridge_script \
+  --geno_bed_pattern $genotype_bed_pattern \
+  --phenotype_parquet $phenotype_parquet \
+  --grm_cache $grm_cache \
+  --nfold $outerfold $innerfold \
+  --output $output \
+  > run_idp_pcs.${nPC}PC.log 2>&1

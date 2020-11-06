@@ -6,9 +6,17 @@ from pandas_plink import read_plink1_bin
 # for debugging
 import pdb
 
-def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_first_n_samples=None, 
+def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, chromosome=None, load_first_n_samples=None, 
     missing_rate_cutoff=0.5, return_snp=False):
     G = read_plink1_bin(bedfile, verbose=False)
+    
+    if chromosome is not None:
+        chr_str = G.chrom[0].values.tolist()
+        if 'chr' in chr_str:
+            chromosome = 'chr' + str(chromosome)
+        else:
+            chromosome = str(chromosome)
+        G = G.where(G.chrom == chromosome, drop=True)
     
     df_geno_indiv = pd.DataFrame({'indiv': G.sample.to_series().tolist()})
     df_geno_indiv['idx'] = [ i for i in range(df_geno_indiv.shape[0]) ]
@@ -32,6 +40,7 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, load_fir
         chrom = G.variant.chrom.to_series().to_numpy()    
     
     geno = G.sel(sample=query_indiv_list).values
+
     # re-order to target indiv_list
     geno = geno[match_y_to_x(np.array(query_indiv_list), np.array(indiv_list)), :]
     
@@ -86,14 +95,29 @@ def compute_grm_from_bed(bedfile_pattern, snplist_to_exclude=None, load_first_n_
     if snplist_to_exclude is None:
         snplist_to_exclude = set([])
     
+    read_by_file = False
+    if '{chr_num}' in bedfile_pattern:
+        read_by_file = True
+    
     for i in range(1, 23):
-        geno, indiv_list, _ = load_genotype_from_bedfile(
-            bedfile_pattern.format(chr_num=i),
-            indiv_list,
-            snplist_to_exclude,
-            load_first_n_samples=load_first_n_samples,
-            missing_rate_cutoff=missing_rate_cutoff
-        )
+        
+        if read_by_file is True:
+            geno, indiv_list, _ = load_genotype_from_bedfile(
+                bedfile_pattern.format(chr_num=i),
+                indiv_list,
+                snplist_to_exclude,
+                load_first_n_samples=load_first_n_samples,
+                missing_rate_cutoff=missing_rate_cutoff
+            )
+        else:
+            geno, indiv_list, _ = load_genotype_from_bedfile(
+                bedfile_pattern,
+                indiv_list,
+                snplist_to_exclude,
+                chromosome=i,
+                load_first_n_samples=load_first_n_samples,
+                missing_rate_cutoff=missing_rate_cutoff
+            )
         
         # calc sub-GRM
         M = geno.shape[1]
@@ -190,15 +214,33 @@ def obtain_bhat_from_bed(bedfile_pattern, beta_partial, theta_g, indiv_list=None
     if snplist_to_exclude is None:
         snplist_to_exclude = set([])
     
+    
+    read_by_file = False
+    if '{chr_num}' in bedfile_pattern:
+        read_by_file = True
+
     for i in range(1, 23):
-        geno, indiv_list, geno_sd, snp_info = load_genotype_from_bedfile(
-            bedfile_pattern.format(chr_num=i),
-            indiv_list,
-            snplist_to_exclude,
-            load_first_n_samples=load_first_n_samples,
-            missing_rate_cutoff=missing_rate_cutoff, 
-            return_snp=True
-        )
+        
+        if read_by_file is True:
+            geno, indiv_list, geno_sd, snp_info = load_genotype_from_bedfile(
+                bedfile_pattern.format(chr_num=i),
+                indiv_list,
+                snplist_to_exclude,
+                chromosome=i,
+                load_first_n_samples=load_first_n_samples,
+                missing_rate_cutoff=missing_rate_cutoff, 
+                return_snp=True
+            )
+        else:
+            geno, indiv_list, geno_sd, snp_info = load_genotype_from_bedfile(
+                bedfile_pattern,
+                indiv_list,
+                snplist_to_exclude,
+                chromosome=i,
+                load_first_n_samples=load_first_n_samples,
+                missing_rate_cutoff=missing_rate_cutoff, 
+                return_snp=True
+            )
         
         beta_unscaled_i = geno.T @ beta_partial / geno_sd[:, np.newaxis]
         nsnp += geno.shape[1]
@@ -223,6 +265,28 @@ def load_list(filename):
             o.append(i.strip())
     return list(set(o))    
 
+
+def load_grm_id(grm_id):
+    o = []
+    with open(grm_id, 'r') as f:
+        for i in f:
+            i = i.strip()
+            o.append(i.split('\t')[1])
+    return o
+
+def load_grm(grm_txt_gz, grm_id):
+    grm_indiv = load_grm_id(grm_id)
+    nindiv = len(grm_indiv)
+    grm_mat = np.zeros((nindiv, nindiv))
+    with gzip.open(grm_txt_gz, 'rt') as f:
+        for i in f:
+            i = i.strip()
+            x, y, _, val = i.split('\t')
+            x, y, val = int(x), int(y), float(val)
+            grm_mat[x - 1, y - 1] = val
+            grm_mat[y - 1, x - 1] = val
+    return grm_mat, grm_indiv
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(prog='run_gw_ridge.py', description='''
@@ -233,6 +297,19 @@ if __name__ == '__main__':
     parser.add_argument('--geno_bed_pattern', help='''
         Genotype file in binary PED format (plink).
         It takes {chr_num} as wildcard.
+        If you have all chromosomes in one bed file, no wildcard is needed and
+        the script will load one chromosome at a time assuming the genotype file
+        has 1 .. 22 chromosomes. 
+    ''')
+    parser.add_argument('--gcta_grm_prefix', default=None, help='''
+        Optional. If it is specified, the script will use
+        GCTA GRM format. 
+        It assumes there are 
+        [gcta_grm_prefix].grm.gz and [gcta_grm_prefix].grm.id files.
+        CAUTION: the GRM should be constructed using EXACTLY the same SNP set of
+        the --geno_bed_pattern file (no extra SNP filters applied). 
+        We highly discourage user using this option if they are unsure about 
+        how the GRM is constructed. 
     ''')
     parser.add_argument('--phenotype_parquet', help='''
         Phenotype in parquet format.
@@ -269,6 +346,11 @@ if __name__ == '__main__':
         Doing `plink2 --score` with 'cols=scoresums' gives the desired 
         PRS with a mean shift (the mean shift is due to 2 * MAF * betahat).
     ''')
+    parser.add_argument('--grm_cache', default=None, help='''
+        If specified, will try to load [grm_cache]. If the file does not exist,
+        will load genotype and cache the GRM to this path.
+        Otherwise, will cache the GRM to [output].grm_cache.pkl.gz
+    ''')
     args = parser.parse_args()
  
     import logging, time, sys, os
@@ -296,22 +378,34 @@ if __name__ == '__main__':
     pheno_mat, pheno_indiv_info, pheno_col_info = load_phenotype_parquet(args.phenotype_parquet)
     
     logging.info('Computing GRM.')
-    grm_cache_file = args.output + '.grm_cache.pkl.gz'
-    if os.path.isfile(grm_cache_file):
-        with gzip.open(grm_cache_file, 'rb') as f:
-            tmp = pickle.load(f)
-            grm = tmp['grm']
-            grm_indiv_info = tmp['grm_indiv_info']
+    if args.gcta_grm_prefix is None:
+        if args.grm_cache is not None:
+            grm_cache_file = args.grm_cache
+        else:
+            grm_cache_file = args.output + '.grm_cache.pkl.gz'
+        if os.path.isfile(grm_cache_file):
+            with gzip.open(grm_cache_file, 'rb') as f:
+                tmp = pickle.load(f)
+                grm = tmp['grm']
+                grm_indiv_info = tmp['grm_indiv_info']
+        else:
+            grm, grm_indiv_info = compute_grm_from_bed(
+                args.geno_bed_pattern, snplist_to_exclude,
+                load_first_n_samples=args.first_n_indiv)
+            with gzip.open(grm_cache_file, 'wb') as f:
+                tmp = {
+                    'grm': grm,
+                    'grm_indiv_info': grm_indiv_info
+                }
+                pickle.dump(tmp, f, protocol=4)
     else:
-        grm, grm_indiv_info = compute_grm_from_bed(
-            args.geno_bed_pattern, snplist_to_exclude,
-            load_first_n_samples=args.first_n_indiv)
-        with gzip.open(grm_cache_file, 'wb') as f:
-            tmp = {
-                'grm': grm,
-                'grm_indiv_info': grm_indiv_info
-            }
-            pickle.dump(tmp, f, protocol=4)
+        grm, grm_indiv_info = load_grm(
+            args.gcta_grm_prefix + '.grm.gz', 
+            args.gcta_grm_prefix + '.grm.id'
+        )
+        if args.first_n_indiv is not None:
+            grm = grm[:, :500][:500, :]
+            grm_indiv_info = grm_indiv_info[:500]
     
     logging.info('Finalizing GRM and phenotype matrices.')
     indiv_info = intersection(pheno_indiv_info, grm_indiv_info)

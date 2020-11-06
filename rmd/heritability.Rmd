@@ -80,3 +80,41 @@ pairs(df_pc2[, -1], main = 'Pairwise comparison of h2 for differnt nPC')
 ```{r, fig.height=8, fig.width=4}
 df_pc %>% ggplot() + geom_histogram(aes(x = h2)) + facet_wrap(~npc, ncol = 1, labeller = label_both) + th2
 ```
+
+# dMRI new data (after PCA)
+
+```{r}
+dmri_annot = readRDS('../misc_data/download_some_matching_files/annot_dmri_idps.rds')
+dmri_annot$idp = paste0('IDP-', dmri_annot$FieldID)
+dmri_annot = dmri_annot %>% select(idp, type, position, measure, lr)
+df_dmri = read.table('~/Desktop/tmp/ukb_idp/heritability/pyemma.idp_dmri.tsv.gz', header = T)
+df_dmri = df_dmri %>% mutate(type = unlist(lapply(strsplit(phenotype, '-'), function(x){x[[1]]}))) %>% 
+   mutate(type2 = unlist(lapply(strsplit(phenotype, '-'), function(x){as.numeric(x[[2]])})))
+df_dmri %>% filter(type == 'IDP') %>% ggplot() + 
+  geom_histogram(aes(x = h2)) + 
+  geom_vline(data = df_dmri %>% filter(type == 'PC'), aes(xintercept = h2)) +
+  geom_label(data = df_dmri %>% filter(type == 'PC'), aes(x = h2, y = type2 * 5, label = phenotype)) + th
+```
+
+```{r}
+tmp = inner_join(df_dmri, df_h2, by = 'phenotype', suffix = c('.dmri', '.original'))
+tmp = inner_join(tmp, dmri_annot, by = c('phenotype' = 'idp'))
+tmp %>% ggplot() + geom_point(aes(x = h2.original, y = h2.dmri, color = measure), alpha = 0.5) + 
+  th + geom_abline(slope = 1, intercept = 0) +
+  stat_ellipse(aes(x = h2.original, y = h2.dmri, color = measure, group = measure),type = "norm")
+tmp %>% select(phenotype, measure, lr, position, h2.original, h2.dmri) %>% 
+  reshape2::melt(id.var = c('phenotype', 'measure', 'lr', 'position')) %>% 
+  ggplot() + geom_density(aes(x = value, fill = measure), alpha = 0.5) + 
+  th2 + 
+  facet_wrap(~variable, ncol = 1)
+tmp %>% select(phenotype, measure, lr, position, h2.original, h2.dmri) %>% 
+  reshape2::melt(id.var = c('phenotype', 'measure', 'lr', 'position')) %>% 
+  ggplot() + geom_boxplot(aes(x = position, y = value, fill = variable), alpha = 0.5) + 
+  th + theme(legend.position = 'bottom')
+tmp %>% filter(!is.na(lr)) %>% select(type.y, measure, position, lr, h2.original, h2.dmri) %>% reshape2::dcast(type.y + measure + position ~ lr, value.var = 'h2.original') %>%
+  ggplot() + geom_point(aes(x = left, y = right), alpha = 0.4) + th + coord_equal() +
+  geom_abline(slope = 1, intercept = 0) + ggtitle('h2.original')
+tmp %>% filter(!is.na(lr)) %>% select(type.y, measure, position, lr, h2.original, h2.dmri) %>% reshape2::dcast(type.y + measure + position ~ lr, value.var = 'h2.dmri') %>%
+  ggplot() + geom_point(aes(x = left, y = right), alpha = 0.4) + th + coord_equal() +
+  geom_abline(slope = 1, intercept = 0) + ggtitle('h2.dmri')
+```

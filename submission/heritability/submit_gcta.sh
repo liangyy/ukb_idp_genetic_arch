@@ -17,10 +17,10 @@ do
     tmp=`cat logs_gcta/run_$i.log | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l`
     if [[ $tmp = 1 ]]
     then
-      echo qsub -v BATCH=$i -N gcta_$i run_gcta.qsub
+      qsub -v BATCH=$i -N gcta_$i run_gcta.qsub
     fi
   else
-     :
-    # qsub -v BATCH=$i -N gw_lasso_$i run_lasso.qsub
+    :
+    # qsub -v BATCH=$i -N gcta_$i run_gcta.qsub
   fi
 done

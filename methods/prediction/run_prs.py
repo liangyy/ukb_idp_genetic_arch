@@ -155,6 +155,9 @@ if __name__ == '__main__':
     parser.add_argument('--ukb_imp_reader_path', help='''
         Path to ukb_imp_reader script.
     ''')
+    parser.add_argument('--chromosomes', nargs='+', default=None, type=int, help='''
+        The list of chromosomes to work on.
+    ''')
     args = parser.parse_args()
  
     import logging, time, sys, os
@@ -171,6 +174,11 @@ if __name__ == '__main__':
     sys.path.insert(0, args.ukb_imp_reader_path)
     import ukb_imp_reader
     
+    if args.chromosomes is None:
+        chromosomes= [ i for i in range(1, 23) ]
+    else:
+        chromosomes = args.chromosomes
+        
     nthread = args.nthread
     
     logging.info('Loading PRS scores.')
@@ -180,7 +188,7 @@ if __name__ == '__main__':
     
     logging.info('Looping over chromosomes.')
     prs = None
-    for i in range(1, 23):
+    for i in chromosomes:
         logging.info(f'Working on chromosome {i}')
         
         logging.info(f'Chr {i}: Preparing data.')

@@ -28,7 +28,7 @@ output_prefix=test_prs
 
 # conda activate ukb_idp
 
-# python run_prs.py \
+python run_prs.py \
   --ukb_bgen_pattern $bgen \
   --ukb_bgi_pattern $bgi \
   --ukb_sample_file $sample \

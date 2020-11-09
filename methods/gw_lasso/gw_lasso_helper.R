@@ -4,7 +4,7 @@ load_phenotype = function(phenotype_file, indiv_col, pheno_list) {
   colnames(df_pheno) = fix_str(colnames(df_pheno))
   phenotypes = load_list(pheno_list)
   df_indiv = data.frame(FID = df_pheno[[indiv_col]], IID = df_pheno[[indiv_col]])
-  df_pheno = df_pheno[, phenotypes]
+  df_pheno = df_pheno[, phenotypes, drop = F]
   cbind(df_indiv, df_pheno)
 }
 

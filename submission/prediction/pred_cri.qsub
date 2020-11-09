@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
-#PBS -l walltime=48:00:00
-#PBS -l nodes=1:ppn=9
-#PBS -l mem=256gb
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=5
+#PBS -l mem=64gb
 #PBS -e logs/pred_cri_${NAME}_$CHR.err
 #PBS -o logs/pred_cri_${NAME}_$CHR.out
 
@@ -19,11 +19,12 @@ sample=/gpfs/data/ukb-share/genotypes/ukb19526_imp_chr1_v3_s487395.sample
 # prs_parquet=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/gw_ridge/gw_ridge_beta.dmri.default_theta_g_fold_5_5.parquet
 
 
-nthread=8
+nthread=4
 ukb_imp_reader_path=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/bgen_io
 
 output_prefix=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/predicted_idp/pred_idp.$NAME.chr$CHR
 
+echo $bgi
 
 python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/prediction/run_prs.py \
   --ukb_bgen_pattern $bgen \

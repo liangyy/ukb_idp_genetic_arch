@@ -31,12 +31,12 @@ if __name__ == '__main__':
     df = pd.read_parquet(args.input_pattern.format(chr_num=1))
     cols = df.columns
     for i in range(2, 23):
-        logging.info(f'On chromosome {chr_num}.')
+        logging.info(f'On chromosome {i}.')
         tmp = pd.read_parquet(args.input_pattern.format(chr_num=i))
         tmp2 = pd.DataFrame({args.indiv_col : df[args.indiv_col]})
         tmp = pd.merge(tmp2, tmp, on=args.indiv_col)
         tmp = tmp[cols]
-        df.iloc[, 1:] = df.iloc[, 1:] + tmp.iloc[, 1:]
+        df.iloc[:, 1:] = df.iloc[:, 1:] + tmp.iloc[:, 1:]
     
     logging.info('Saving.')
     df.to_parquet(args.output)

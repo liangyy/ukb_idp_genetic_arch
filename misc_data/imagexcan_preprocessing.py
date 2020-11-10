@@ -88,7 +88,7 @@ if __name__ == '__main__':
     df_ptrs = pd.read_csv(phenotype_ptrs)
     cols = ['height', 'dbp', 'sbp', 'bmi', 'wbc', 'rbc', 'hb', 'ht', 'mcv', 'mch', 'mchc', 'platelet', 'lymphocyte', 'monocyte', 'neutrophil', 'eosinophil', 'basophil']
     df_ptrs = df_ptrs[['eid'] + cols]
-    df = df.merge(df, df_ptrs, on='eid')
+    df = pd.merge(df, df_ptrs, on='eid')
     
     for col in df.columns:
         if col == 'eid':

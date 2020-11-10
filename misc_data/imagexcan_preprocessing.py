@@ -105,10 +105,11 @@ if __name__ == '__main__':
             plot_quant(tmp, f'{fig_outdir}/pheno_{col}.png')
             max_, min_ = np.nanmax(tmp), np.nanmin(tmp)
             print(f'Quantitative phenotype {col}, # NA = {num_na}, min = {min_}, max = {max_}')
-    
+   
+    np.random.seed(2020)
     for i in range(nrandom):
         colname = f'random_pheno_{i}'
-        df[colname] = np.random.rand(df.shape[0])
+        df[colname] = np.random.normal(size=df.shape[0])
     
     
     df.to_parquet(pheno_out, index=False)

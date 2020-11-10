@@ -12,3 +12,13 @@ load_gcta_hsq = function(fn) {
   # }
   data.frame(h2 = as.numeric(tmp[2]), h2_SE = as.numeric(tmp[3]))
 }
+
+# obtained from https://gist.github.com/hakyim/05ede4ba5e51d00196ee0f70e4cd8fa7
+## this is robust to correlation between entries
+## it uses the fact that the average of Cauchy r.v. is Cauchy regardless of correlation between them
+## https://www.cell.com/ajhg/pdfExtended/S0002-9297(19)30002-3
+acat = function(pvec) 
+{
+  TT = sum( tan( (0.5 - pvec) *pi ) )
+  .5 - atan(TT / length(pvec)) / pi
+}

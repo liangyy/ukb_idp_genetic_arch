@@ -26,6 +26,7 @@ if __name__ == '__main__':
     phenotype_handedness = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/handedness_query.csv'
     phenotype_ptrs = '/vol/bmd/yanyul/GitHub/ptrs-ukb/output/query_phenotypes_cleaned_up.csv'
     idp_train = '/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet'
+    nrandom = 10
 
     # output files
     fig_outdir = 'imagexcan_preprocessing_output'
@@ -55,6 +56,7 @@ if __name__ == '__main__':
     # make sure one individual per row without duplication
     # and add handedness
     # and also add the 17 quantitative traits composed for UKB PTRS project
+    # and a set of 10 random phenotypes.
 
     print('TASK 2: Phenotypes.')
     df = pd.read_csv(phenotype, sep='\t')
@@ -103,6 +105,10 @@ if __name__ == '__main__':
             plot_quant(tmp, f'{fig_outdir}/pheno_{col}.png')
             max_, min_ = np.nanmax(tmp), np.nanmin(tmp)
             print(f'Quantitative phenotype {col}, # NA = {num_na}, min = {min_}, max = {max_}')
+    
+    for i in range(nrandom):
+        colname = f'random_pheno_{i}'
+        df[colname] = np.random.rand(df.shape[0])
     
     
     df.to_parquet(pheno_out, index=False)

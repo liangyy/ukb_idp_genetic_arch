@@ -118,3 +118,56 @@ tmp %>% filter(!is.na(lr)) %>% select(type.y, measure, position, lr, h2.original
   ggplot() + geom_point(aes(x = left, y = right), alpha = 0.4) + th + coord_equal() +
   geom_abline(slope = 1, intercept = 0) + ggtitle('h2.dmri')
 ```
+
+# Ridge regression (dMRI)
+
+```{r}
+ridge_dmri = read.table('~/Desktop/tmp/ukb_idp/gw_ridge/gw_ridge.dmri.default_theta_g_fold_5_5.tsv.gz', header = T)
+tmp = inner_join(ridge_dmri, df_dmri, by = 'phenotype') 
+tmp$rank = rank(tmp$h2)
+tmp %>% ggplot() + geom_point(aes(x = rank, y = h2)) + geom_point(aes(x = rank, y = R2)) +
+  geom_vline(data = tmp %>% filter(type == 'PC'), aes(xintercept = rank)) + 
+  geom_label(data = tmp %>% filter(type == 'PC'), aes(x = rank, y = type2 / 20, label = phenotype)) +
+  th + ylab('h2 or R2') + 
+  geom_hline(yintercept = 0, color = 'red')
+tmp %>% ggplot() + geom_histogram(aes(x = Pearson)) + th
+```
+
+For the downstream analysis, we may consider dropping these phenotypes with small Pearson correlation or R2.
+
+# Lasso (dMRI)
+
+```{r}
+nbatch = 343
+lasso_dmri = list()
+for(i in 1 : nbatch) {
+  lasso_dmri[[length(lasso_dmri) + 1]] = read.table(paste0('~/Desktop/tmp/ukb_idp/gw_lasso_dmri/batch', stringi::stri_pad_left(i - 1, 3, 0), '.gw_lasso.performance.tsv'), header = T)
+}
+lasso_dmri = do.call(rbind, lasso_dmri)
+lasso_dmri$phenotype = stringr::str_replace(lasso_dmri$phenotype, 'x', '-')
+# fill in zero for missing values since they are the worst performance
+lasso_dmri[is.na(lasso_dmri)] = 0 
+lasso_dmri = lasso_dmri[ lasso_dmri$phenotype != 'individual', ] 
+
+tmp = inner_join(lasso_dmri, df_dmri, by = 'phenotype') 
+tmp$rank = rank(tmp$h2)
+tmp %>% ggplot() + geom_point(aes(x = rank, y = h2)) + geom_point(aes(x = rank, y = R2)) +
+  geom_vline(data = tmp %>% filter(type == 'PC'), aes(xintercept = rank)) + 
+  geom_label(data = tmp %>% filter(type == 'PC'), aes(x = rank, y = type2 / 20, label = phenotype)) +
+  th + ylab('h2 or R2') + 
+  geom_hline(yintercept = 0, color = 'red')
+tmp %>% ggplot() + geom_histogram(aes(x = Pearson)) + th
+```
+
+Ridge vs Lasso (dMRI)
+
+```{r, fig.width=10, fig.height=4}
+tmp = inner_join(lasso_dmri, ridge_dmri, by = 'phenotype', suffix = c('.lasso', '.ridge'))
+p1 = tmp %>% ggplot() + geom_point(aes(x = R2.ridge, y = R2.lasso), alpha = 0.2) + th + 
+  coord_equal() + geom_abline(slope = 1, intercept = 0, color = 'red')
+p2 = tmp %>% ggplot() + geom_point(aes(x = Pearson.ridge, y = Pearson.lasso), alpha = 0.2) + th + 
+  coord_equal() + geom_abline(slope = 1, intercept = 0, color = 'red')
+p3 = tmp %>% ggplot() + geom_point(aes(x = Spearman.ridge, y = Spearman.lasso), alpha = 0.2) + th + 
+  coord_equal() + geom_abline(slope = 1, intercept = 0, color = 'red')
+p1 + p2 + p3
+```

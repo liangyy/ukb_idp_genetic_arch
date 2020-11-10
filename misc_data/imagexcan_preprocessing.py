@@ -26,7 +26,10 @@ if __name__ == '__main__':
     phenotype_handedness = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/handedness_query.csv'
     phenotype_ptrs = '/vol/bmd/yanyul/GitHub/ptrs-ukb/output/query_phenotypes_cleaned_up.csv'
     idp_train = '/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet'
+    idp_dmri = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.dmri_ridge.parquet'
+    idp_orig = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.gw_ridge.parquet'
     nrandom = 10
+    nsinsig = 10
 
     # output files
     fig_outdir = 'imagexcan_preprocessing_output'
@@ -57,6 +60,7 @@ if __name__ == '__main__':
     # and add handedness
     # and also add the 17 quantitative traits composed for UKB PTRS project
     # and a set of 10 random phenotypes.
+    # and a set of 10 phenotypes associated with a random dMRI IDP
 
     print('TASK 2: Phenotypes.')
     df = pd.read_csv(phenotype, sep='\t')
@@ -110,6 +114,24 @@ if __name__ == '__main__':
     for i in range(nrandom):
         colname = f'random_pheno_{i}'
         df[colname] = np.random.normal(size=df.shape[0])
+    
+    df_idp = pd.read_parquet(idp_dmri)
+    idps = list(df_idp.columns)
+    idps = [ i for i in idps if 'IDP' in i ]
+    df_idp = df_idp[['indiv'] + idps]
+    for i in range(nsinsig):
+        colname = f'single_sig_dmri_{i}'
+        df_idp[colname] = np.random.rand(scale = 2, df_idp.shape[0]) + df_idp.iloc[:, np.random.randint(1, high=df_idp.shape[1])]
+        df = df.merge(df, df_idp[['indiv', colname]], left_on='eid', right_on='indiv') 
+    
+    
+    df_idp = pd.read_parquet(idp_orig)
+    df_idp = df_idp[['indiv'] + idps]
+    for i in range(nsinsig):
+        colname = f'single_sig_orig_{i}'
+        df_idp[colname] = np.random.rand(scale = 2, df_idp.shape[0]) + df_idp.iloc[:, np.random.randint(1, high=df_idp.shape[1])]
+        df = df.merge(df, df_idp[['indiv', colname]], left_on='eid', right_on='indiv') 
+    
     
     
     df.to_parquet(pheno_out, index=False)

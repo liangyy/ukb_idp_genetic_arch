@@ -17,6 +17,7 @@ options(datatable.fread.datatable = F)
 pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes')
 pheno_bcc = c('wbc', 'rbc', 'platelet', 'lymphocyte', 'monocyte', 'neutrophil', 'eosinophil', 'basophil')
 pheno_ht = c('dbp', 'sbp') # , 'ht', 'hb', 'mcv', 'mch', 'mchc')
+pheno_rand = paste0('random_pheno_', 0 : 9)
 source('rlib.R')
 ```
 
@@ -58,7 +59,7 @@ df_lm$lr[ is.na(df_lm$lr) ] = 'NA'
 
 # Overall QQ-plot
 
-```{r, fig.width=20, fig.height=5}
+```{r, fig.width=16, fig.height=12}
 p1 = df_lm %>% filter(phenotype %in% pheno_interest) %>% group_by(phenotype, idp_type) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% 
   ggplot() + 
   geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
@@ -73,12 +74,18 @@ p3 = df_lm %>% filter(phenotype %in% pheno_ht) %>% group_by(phenotype, idp_type)
   ggplot() + 
   geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
   facet_wrap(~phenotype, scales = 'free_y') + th2 + geom_abline(slope = 1, intercept = 0)
-p1 + p2 + p3
+
+p4 = df_lm %>% filter(phenotype %in% pheno_rand) %>% group_by(phenotype, idp_type) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = 'free_y') + th2 + geom_abline(slope = 1, intercept = 0)
+
+(p1 + p2) / (p3 + p4)
 ```
 
 # Focus on one brain region
 
-```{r, fig.width=20, fig.height=5}
+```{r, fig.width=16, fig.height=12}
 region = 'medial lemniscus'
 p1 = df_lm %>% filter(phenotype %in% pheno_interest, position == region) %>% group_by(phenotype, idp_type) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% 
   ggplot() + 
@@ -94,12 +101,18 @@ p3 = df_lm %>% filter(phenotype %in% pheno_ht, position == region) %>% group_by(
   ggplot() + 
   geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
   facet_wrap(~phenotype, scales = 'free_y') + th2 + geom_abline(slope = 1, intercept = 0)
-p1 + p2 + p3
+
+p4 = df_lm %>% filter(phenotype %in% pheno_rand, position == region) %>% group_by(phenotype, idp_type) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = 'free_y') + th2 + geom_abline(slope = 1, intercept = 0)
+
+(p1 + p2) / (p3 + p4)
 ```
 
 # Aggregate using ACAT for each region
 
-```{r, fig.width=20, fig.height=5}
+```{r, fig.width=16, fig.height=12}
 df_agg = df_lm %>% group_by(idp_type, phenotype, position) %>% summarize(p_acat = acat(pval)) %>% ungroup()
 
 p1 = df_agg %>% filter(phenotype %in% pheno_interest) %>% group_by(phenotype, idp_type) %>% mutate(pexp = rank(p_acat) / (n() + 1)) %>% 
@@ -116,7 +129,13 @@ p3 = df_agg %>% filter(phenotype %in% pheno_ht) %>% group_by(phenotype, idp_type
   ggplot() + 
   geom_point(aes(x = -log10(pexp), y = -log10(p_acat), color = idp_type)) + 
   facet_wrap(~phenotype, scales = 'free_y') + th2 + geom_abline(slope = 1, intercept = 0)
-p1 + p2 + p3
+
+p4 = df_agg %>% filter(phenotype %in% pheno_rand) %>% group_by(phenotype, idp_type) %>% mutate(pexp = rank(p_acat) / (n() + 1)) %>% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(p_acat), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = 'free_y') + th2 + geom_abline(slope = 1, intercept = 0)
+
+(p1 + p2) / (p3 + p4)
 ```
 
 # Bonferroni significant hits

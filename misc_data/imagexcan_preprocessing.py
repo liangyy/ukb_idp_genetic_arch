@@ -119,19 +119,22 @@ if __name__ == '__main__':
     idps = list(df_idp.columns)
     idps = [ i for i in idps if 'IDP' in i ]
     df_idp = df_idp[['indiv'] + idps]
+    df_idp.indiv = df_idp.indiv.astype(int)
     for i in range(nsinsig):
         colname = f'single_sig_dmri_{i}'
-        df_idp[colname] = np.random.rand(scale = 2, df_idp.shape[0]) + df_idp.iloc[:, np.random.randint(1, high=df_idp.shape[1])]
-        df = df.merge(df, df_idp[['indiv', colname]], left_on='eid', right_on='indiv') 
-    
+        df_idp[colname] = np.random.normal(scale = 2, size=df_idp.shape[0]) + df_idp.iloc[:, np.random.randint(1, high=df_idp.shape[1])]
+        df = pd.merge(df, df_idp[['indiv', colname]], left_on='eid', right_on='indiv') 
+        df.drop(columns='indiv', inplace=True) 
     
     df_idp = pd.read_parquet(idp_orig)
     df_idp = df_idp[['indiv'] + idps]
+    df_idp.indiv = df_idp.indiv.astype(int)
     for i in range(nsinsig):
         colname = f'single_sig_orig_{i}'
-        df_idp[colname] = np.random.rand(scale = 2, df_idp.shape[0]) + df_idp.iloc[:, np.random.randint(1, high=df_idp.shape[1])]
-        df = df.merge(df, df_idp[['indiv', colname]], left_on='eid', right_on='indiv') 
-    
+        df_idp[colname] = np.random.normal(scale = 2, size=df_idp.shape[0]) + df_idp.iloc[:, np.random.randint(1, high=df_idp.shape[1])]
+        df = pd.merge(df, df_idp[['indiv', colname]], left_on='eid', right_on='indiv') 
+        df.drop(columns='indiv', inplace=True) 
+
     
     
     df.to_parquet(pheno_out, index=False)

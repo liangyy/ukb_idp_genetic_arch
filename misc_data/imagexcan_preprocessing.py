@@ -24,6 +24,7 @@ if __name__ == '__main__':
     covariate_pc = '/vol/bmd/yanyul/GitHub/ptrs-ukb/output/query_phenotypes_output.csv'
     phenotype = '/vol/bmd/meliao/data/psychiatric_trait_phenotypes/2020-04-10_collected-phenotypes.txt'
     phenotype_handedness = '/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/handedness_query.csv'
+    phenotype_ptrs = '/vol/bmd/yanyul/GitHub/ptrs-ukb/output/query_phenotypes_cleaned_up.csv'
     idp_train = '/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet'
 
     # output files
@@ -53,6 +54,7 @@ if __name__ == '__main__':
     # make binary trait really binary trait.
     # make sure one individual per row without duplication
     # and add handedness
+    # and also add the 17 quantitative traits composed for UKB PTRS project
 
     print('TASK 2: Phenotypes.')
     df = pd.read_csv(phenotype, sep='\t')
@@ -82,6 +84,12 @@ if __name__ == '__main__':
         'parent_AD_score': 'parent_AD',
         'parent_depression_score': 'parent_depression'
     }, inplace=True)
+    
+    df_ptrs = pd.read_csv(phenotype_ptrs)
+    cols = ['height', 'dbp', 'sbp', 'bmi', 'wbc', 'rbc', 'hb', 'ht', 'mcv', 'mch', 'mchc', 'platelet', 'lymphocyte', 'monocyte', 'neutrophil', 'eosinophil', 'basophil']
+    df_ptrs = df_ptrs[['eid'] + cols]
+    df = df.merge(df, df_ptrs, on='eid')
+    
     for col in df.columns:
         if col == 'eid':
             continue
@@ -95,6 +103,7 @@ if __name__ == '__main__':
             plot_quant(tmp, f'{fig_outdir}/pheno_{col}.png')
             max_, min_ = np.nanmax(tmp), np.nanmin(tmp)
             print(f'Quantitative phenotype {col}, # NA = {num_na}, min = {min_}, max = {max_}')
+    
     
     df.to_parquet(pheno_out, index=False)
 

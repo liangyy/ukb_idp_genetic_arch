@@ -11,8 +11,13 @@ def bhat_pval_to_zscore(bhat, pval):
     z_abs = scipy.stats.norm.isf(pval / 2)
     return z_abs * np.sign(bhat)
 
-def calc_cor(x):
-    x_std = standardize_by_col(x)
+def calc_cor(x, covar=None):
+    if covar is not None:
+        tmpq, tmpr = np.linalg.qr(covar, mode='reduced')
+        x_std = x - tmpq @ (tmpq.T @ x)
+        x_std = standardize_by_col(x_std)
+    else:
+        x_std = standardize_by_col(x)
     return (x_std.T @ x_std) / x_std.shape[0]
 
 def read_yaml(yaml_):

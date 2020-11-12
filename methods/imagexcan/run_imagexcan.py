@@ -110,7 +110,7 @@ if __name__ == '__main__':
                 y[not_nan] = inv_norm_vec(y[not_nan])
             bhat, pval = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
             zscore = bhat_pval_to_zscore(bhat, pval)
-            cor = calc_cor(Idp[not_nan, :])
+            cor = calc_cor(Idp[not_nan, :], covar=Covar[not_nan, :])
             breakpoint()
             pip, cs = run_susie_wrapper(zscore, cor)
             res = { 'pip': pip, 'cs': cs }

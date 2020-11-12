@@ -418,7 +418,7 @@ if __name__ == '__main__':
     pheno_std = pheno_mat.std(axis=0)
     pheno_non_constant_idx = np.where(pheno_std != 0)[0]
     pheno_mat = pheno_mat[:, pheno_non_constant_idx]
-    pheno_col_info = pheno_col_info[pheno_non_constant_idx]
+    pheno_col_info = [ pheno_col_info[i] for i in pheno_non_constant_idx ] # pheno_col_info[pheno_non_constant_idx]
     npheno = pheno_mat.shape[1]
     logging.info('-> {} phenotypes have been removed since they have constant value.'.format(npheno0 - npheno))
     logging.info(

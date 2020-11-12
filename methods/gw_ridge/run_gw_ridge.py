@@ -412,11 +412,19 @@ if __name__ == '__main__':
     pheno_mat = rearrange(pheno_mat, pheno_indiv_info, indiv_info, mode='row')
     grm = rearrange(grm, grm_indiv_info, indiv_info, mode='both')
     nsample = grm.shape[0]
+    logging.info('-> Filtering out phenotypes with constant values.')
+    # add a checker to filter out phenotypes with constant values
+    npheno0 = pheno_mat.shape[1]
+    pheno_std = pheno_mat.std(axis=0)
+    pheno_non_constant_idx = np.where(pheno_std != 0)[0]
+    pheno_mat = pheno_mat[:, pheno_non_constant_idx]
+    pheno_col_info = pheno_col_info[pheno_non_constant_idx]
     npheno = pheno_mat.shape[1]
+    logging.info('-> {} phenotypes have been removed since they have constant value.'.format(npheno0 - npheno))
     logging.info(
         'There are {} individuals and {} phenotypes in the final evaluation.'.format(
-            grm.shape[0],
-            pheno_mat.shape[1]
+            nsample,
+            npheno
         )
     )
     

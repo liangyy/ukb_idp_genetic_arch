@@ -8,12 +8,12 @@ import scipy.stats
 from pystat import inv_norm_vec, standardize_by_col
 
 def bhat_pval_to_zscore(bhat, pval):
-    z_abs = scipy.stats.norm.isf(pval)
+    z_abs = scipy.stats.norm.isf(pval / 2)
     return z_abs * np.sign(bhat)
 
 def calc_cor(x):
     x_std = standardize_by_col(x)
-    return (t(x_std) @ x_std) / x_std.shape[1]
+    return (x_std.T @ x_std) / x_std.shape[0]
 
 def read_yaml(yaml_):
     with open(yaml_, 'r') as f:

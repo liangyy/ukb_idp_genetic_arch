@@ -111,9 +111,9 @@ if __name__ == '__main__':
             bhat, pval = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
             zscore = bhat_pval_to_zscore(bhat, pval)
             cor = calc_cor(Idp[not_nan, :])
+            breakpoint()
             pip, cs = run_susie_wrapper(zscore, cor)
             res = { 'pip': pip, 'cs': cs }
-        if 
         df = pd.DataFrame({ 'IDP': idp_cols, 'phenotype': pheno_col, **res })
         df_list.append(df)
     df_list = pd.concat(df_list, axis=0)

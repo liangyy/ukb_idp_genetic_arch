@@ -103,15 +103,14 @@ if __name__ == '__main__':
         elif test_type == 'linear_regression':
             if args.inv_norm is True:
                 y[not_nan] = inv_norm_vec(y[not_nan])
-            bhat, pval = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
+            bhat, pval, _ = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
             res = { 'bhat': bhat, 'pval': pval }
         elif test_type == 'susie':
             if args.inv_norm is True:
                 y[not_nan] = inv_norm_vec(y[not_nan])
-            bhat, pval = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
-            zscore = bhat_pval_to_zscore(bhat, pval)
+            bhat, pval, se = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
+            zscore = bhat / se  # bhat_pval_to_zscore(bhat, pval)
             cor = calc_cor(Idp[not_nan, :], covar=Covar[not_nan, :])
-            breakpoint()
             pip, cs = run_susie_wrapper(zscore, cor)
             res = { 'pip': pip, 'cs': cs }
         df = pd.DataFrame({ 'IDP': idp_cols, 'phenotype': pheno_col, **res })

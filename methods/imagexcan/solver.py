@@ -6,6 +6,14 @@ import logistic_regression_gpu
 import linear_regression_gpu
 from util import check_binary
 
+import rpy2.robjects as ro
+from rpy2.robjects.packages import importr
+from rpy2.robjects import pandas2ri
+from rpy2.robjects.conversion import localconverter
+from rpy2.robjects import numpy2ri
+numpy2ri.activate()
+r_base = importr('base')
+r_susieR = importr('susieR')
 
 def logistic_regression(y, X, C, batch_size=5, device=None):
     if not check_binary(y):
@@ -43,3 +51,10 @@ def linear_regression(y, X, C, device=None):
     )
     pval, _ = solver.stat_test(bhat, se, dof)
     return bhat, pval
+
+def run_susie_wrapper(z, R):
+    r_susieR.susie_rss(z, R)
+    df_ = r_base.summary(mod)
+    with localconverter(ro.default_converter + pandas2ri.converter):
+        df_ = ro.conversion.rpy2py(df_)
+    return list(df_.variable_prob), list(df_.cs)

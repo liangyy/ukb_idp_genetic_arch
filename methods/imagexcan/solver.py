@@ -57,5 +57,7 @@ def run_susie_wrapper(z, R):
     df_ = r_base.summary(mod).rx2('vars')
     with localconverter(ro.default_converter + pandas2ri.converter):
         df_ = ro.conversion.rpy2py(df_)
-    return list(df_.variable_prob), list(df_.cs)
+    df_ = pd.DataFrame({'pip': list(df_.variable_prob), 'cs': list(df_.cs), 'idx': list(df_.variable)})
+    df_.sort_values(by='idx', inplace=True)
+    return list(df_.pip), list(df_.cs)
 

@@ -9,6 +9,7 @@ cat $indiv_list | tail -n +2 | cut -f 1 -d ' '  > $tmp_indiv
 thisdir=`pwd`
 
 # conda activate ukb_idp
+export PYTHONPATH=/vol/bmd/yanyul/GitHub/misc-tools/pyutil
 python ../run_imagexcan.py \
   --covariate_table $covariate eid \
   --phenotype_table $phenotype eid \

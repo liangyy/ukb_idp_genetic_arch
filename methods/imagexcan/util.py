@@ -4,18 +4,21 @@ import numpy as np
 import pandas as pd
 import scipy.stats
 
-def myrank(vec):
-    argsort = np.argsort(vec)
-    ranks = np.empty_like(argsort)
-    ranks[argsort] = np.arange(len(vec))
-    return ranks + 1  # rank starts from 1
+# need to export PYTHONPATH to include https://github.com/liangyy/misc-tools/blob/master/pyutil/
+from pystat import inv_norm_vec, standardize_by_col
 
-def inv_norm_vec(x, offset = 1):
-    '''
-    Assume 1-d np.array. Do inverse normalization.
-    '''
-    rank = myrank(x)
-    return scipy.stats.norm.ppf(rank / (len(rank) + offset), loc = 0, scale = 1)
+def bhat_pval_to_zscore(bhat, pval):
+    z_abs = scipy.stats.norm.isf(pval / 2)
+    return z_abs * np.sign(bhat)
+
+def calc_cor(x, covar=None):
+    if covar is not None:
+        tmpq, tmpr = np.linalg.qr(covar, mode='reduced')
+        x_std = x - tmpq @ (tmpq.T @ x)
+        x_std = standardize_by_col(x_std)
+    else:
+        x_std = standardize_by_col(x)
+    return (x_std.T @ x_std) / x_std.shape[0]
 
 def read_yaml(yaml_):
     with open(yaml_, 'r') as f:

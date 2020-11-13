@@ -5,6 +5,9 @@ load_phenotype = function(phenotype_file, indiv_col, pheno_list) {
   phenotypes = load_list(pheno_list)
   df_indiv = data.frame(FID = df_pheno[[indiv_col]], IID = df_pheno[[indiv_col]])
   df_pheno = df_pheno[, phenotypes, drop = F]
+  # remove phenotypes with constant value
+  pheno_sd = apply(df_pheno, 2, sd)
+  df_pheno = df_pheno[, pheno_sd > 1e-10, drop = F]
   cbind(df_indiv, df_pheno)
 }
 

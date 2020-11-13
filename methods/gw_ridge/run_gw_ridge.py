@@ -135,6 +135,7 @@ def compute_grm_from_bed(bedfile_pattern, snplist_to_exclude=None, load_first_n_
 
 def load_phenotype_parquet(filename):
     df = pd.read_parquet(filename)
+    df.individual = df.individual.astype(str)
     indiv_list = df.individual.tolist()
     pheno_info = df.columns[1:].tolist()
     mat = df.iloc[:, 1:].values
@@ -416,7 +417,7 @@ if __name__ == '__main__':
     # add a checker to filter out phenotypes with constant values
     npheno0 = pheno_mat.shape[1]
     pheno_std = pheno_mat.std(axis=0)
-    pheno_non_constant_idx = np.where(pheno_std != 0)[0]
+    pheno_non_constant_idx = np.where(pheno_std > 1e-10)[0]
     pheno_mat = pheno_mat[:, pheno_non_constant_idx]
     pheno_col_info = [ pheno_col_info[i] for i in pheno_non_constant_idx ] # pheno_col_info[pheno_non_constant_idx]
     npheno = pheno_mat.shape[1]

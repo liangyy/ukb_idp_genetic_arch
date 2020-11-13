@@ -37,6 +37,9 @@ option_list <- list(
     make_option(c("-i", "--indiv_col"), type="character", default=NULL,
                 help="Name of individual ID column in phenotype table.",
                 metavar="character"),
+    make_option(c("-f", "--family_col"), type="character", default=NULL,
+                help="Name of family ID column in phenotype table.",
+                metavar="character"),
     make_option(c("-e", "--pheno_list"), type="character", default=NULL,
                 help="The list of phenotype to work with.",
                 metavar="character"),
@@ -79,6 +82,7 @@ logging::loginfo('Loading phenotype table.')
 df_phenotype = load_phenotype(
   opt$phenotype_table, 
   indiv_col = opt$indiv_col,
+  family_col = opt$family_col,
   pheno_list = opt$pheno_list
 )
 # df_phenotype: first 2 columns are FID and IID and they are followed by phenotypes.

@@ -1,9 +1,12 @@
-load_phenotype = function(phenotype_file, indiv_col, pheno_list) {
+load_phenotype = function(phenotype_file, indiv_col, pheno_list, family_col = NULL) {
   df_pheno = data.table::fread(phenotype_file, sep = '\t', header = T, data.table = F)
   # replace '-' with 'x' in the string
   colnames(df_pheno) = fix_str(colnames(df_pheno))
   phenotypes = load_list(pheno_list)
-  df_indiv = data.frame(FID = df_pheno[[indiv_col]], IID = df_pheno[[indiv_col]])
+  if(is.null(family_col)) {
+    family_col = indiv_col
+  }
+  df_indiv = data.frame(FID = df_pheno[[family_col]], IID = df_pheno[[indiv_col]])
   df_pheno = df_pheno[, phenotypes, drop = F]
   # remove phenotypes with constant value
   pheno_sd = apply(df_pheno, 2, sd)

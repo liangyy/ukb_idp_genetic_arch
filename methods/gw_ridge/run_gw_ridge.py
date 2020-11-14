@@ -409,8 +409,8 @@ if __name__ == '__main__':
             args.gcta_grm_prefix + '.grm.id'
         )
         if args.first_n_indiv is not None:
-            grm = grm[:, :500][:500, :]
-            grm_indiv_info = grm_indiv_info[:500]
+            grm = grm[:, :args.first_n_indiv][:args.first_n_indiv, :]
+            grm_indiv_info = grm_indiv_info[:args.first_n_indiv]
     
     logging.info('Finalizing GRM and phenotype matrices.')
     indiv_info = intersection(pheno_indiv_info, grm_indiv_info)

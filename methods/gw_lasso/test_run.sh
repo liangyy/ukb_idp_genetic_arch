@@ -6,13 +6,13 @@ nfold=5
 innernfold=5
 indiv_col=IID
 snpnet_config=test_files/snpnet.yaml
-output_prefix=test_files/output
+output_prefix=test_files/output_test
 
 # conda activate snpnet
 
 # cd /vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_lasso
 
-Rscript run_gw_lasso.R \
+Rscript run_gw_lasso_debug.R \
   --genotype $genofile \
   --phenotype_table $phenofile \
   --nfold $nfold \
@@ -21,5 +21,5 @@ Rscript run_gw_lasso.R \
   --pheno_list $phenolist \
   --snpnet_config $snpnet_config \
   --output_prefix $output_prefix \
-  > test_run.log 2>&1
+  > test_files/test_run.log 2>&1
   

@@ -5,4 +5,6 @@ This step is done at `../../misc_data/merge_plink_bed.sh` following the post [he
 
 To obtain the prediction performance, we follow the procedure similar to `../gw_ridge/`. 
 Essentially, we want to obtain the prediction on held-out data.
-To do so, we split the data into K fold and at each fold we use the rest K-1 fold to training a lasso/elastic net model where the hyperparameter is determined by an inner round of cross-validation (among the K-1 folds). 
+To do so, we split the data into K fold and at each fold we use the rest K-1 fold to training a lasso/elastic net model where the hyperparameter is determined by an inner round of cross-validation (among the K-1 folds).
+
+I found one minor issue with `snpnet` code where they handle early stopping option lossly. I recommend using this [repo](https://github.com/liangyy/snpnet) which did some minor fixes on this issue.

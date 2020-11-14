@@ -53,6 +53,7 @@ pd = import('pandas')
 df = pd$read_parquet('/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-phenotypes.parquet')
 
 # df = arrow::read_parquet('~/Desktop/tmp/ukb_idp/idp_phenotypes/2020-05-18_final-phenotypes.parquet')
+# the RDS in the below is generated in ../download_some_matching_files/explore_dmri.R
 df_annot = readRDS('../download_some_matching_files/annot_dmri_idps.rds')
 df = df[, c('individual', paste0('IDP-', as.character(df_annot$FieldID)))]
 mat = as.matrix(df[, -1])

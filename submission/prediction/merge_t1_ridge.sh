@@ -14,5 +14,5 @@ python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/pred
   --input_pattern /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/predicted_idp/pred_idp.t1_ridge.chr{chr_num}.parquet \
   --indiv_col indiv \
   --output /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/predicted_idp/pred_idp.t1_ridge.parquet \
-  > logs/merge_t1_ridge.log 2>&1
+  > ${PBS_O_WORKDIR}/logs/merge_t1_ridge.log 2>&1
   

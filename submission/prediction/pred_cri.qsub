@@ -34,4 +34,5 @@ python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/pred
   --nthread $nthread \
   --output $output_prefix.parquet \
   --chromosomes $CHR \
-  --ukb_imp_reader_path $ukb_imp_reader_path > pred_cri_${NAME}_$CHR.log 2>&1
+  --ukb_imp_reader_path $ukb_imp_reader_path > \
+  /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/prediction/logs/pred_cri_${NAME}_$CHR.log 2>&1

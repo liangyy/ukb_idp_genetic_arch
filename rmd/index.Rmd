@@ -5,3 +5,4 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 ---
 
 * Genome-wode ridge regression (with comparison to Owen's result) [link](gw_ridge.html)
+* Compare `snpnet` lasso (old code and updated code) [link](gw_lasso_update.html)

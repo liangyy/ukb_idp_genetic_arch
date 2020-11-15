@@ -1,0 +1,74 @@
+---
+title: "Genome-wide lasso regression (updated code vs the old result)"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+```
+
+# About
+
+Recently we found (with Festus) an issue on handling the early stopping in `snpnet` code. 
+I did a minor fix which has been pushed to [https://github.com/liangyy/snpnet](https://github.com/liangyy/snpnet).
+Here I compared the performance of the updated code and the old code on UKB IDP dMRI (after regressing out PCs).
+
+# Load data
+
+Load lasso results (old).
+
+```{r}
+nbatch = 343
+df_lasso = list()
+for(i in 1 : nbatch) {
+  df_lasso[[length(df_lasso) + 1]] = read.table(paste0('~/Desktop/tmp/ukb_idp/gw_lasso_dmri_old/batch', stringi::stri_pad_left(i - 1, 3, 0), '.gw_lasso.performance.tsv'), header = T)
+}
+df_lasso = do.call(rbind, df_lasso)
+df_lasso$phenotype = stringr::str_replace(df_lasso$phenotype, 'x', '-')
+# fill in zero for missing values since they are the worst performance
+df_lasso[is.na(df_lasso)] = 0 
+df_lasso = df_lasso[-1, ] # remove the wrong run
+```
+
+Load lasso results (updated).
+
+```{r}
+nbatch = 342
+df_lasso2 = list()
+for(i in 1 : nbatch) {
+  df_lasso2[[length(df_lasso2) + 1]] = read.table(paste0('~/Desktop/tmp/ukb_idp/gw_lasso_dmri/batch', stringi::stri_pad_left(i - 1, 3, 0), '.gw_lasso.performance.tsv'), header = T)
+}
+df_lasso2 = do.call(rbind, df_lasso2)
+df_lasso2$phenotype = stringr::str_replace(df_lasso2$phenotype, 'x', '-')
+# fill in zero for missing values since they are the worst performance
+df_lasso2[is.na(df_lasso2)] = 0 
+```
+
+Merge the two.
+
+```{r}
+df_lasso = rbind(
+  df_lasso %>% mutate(version = 'old'),
+  df_lasso2 %>% mutate(version = 'updated')
+)
+```
+
+# Pairwise comparison: old vs new
+
+```{r, fig.width=10, fig.height=4}
+p1 = df_lasso %>% reshape2::dcast(phenotype ~ version, value.var = 'R2') %>% ggplot() + geom_point(aes(x = old, y = updated), alpha = 0.2) + geom_abline(slope = 1, intercept = 0) + th + coord_equal() + ggtitle('R2')
+p2 = df_lasso %>% reshape2::dcast(phenotype ~ version, value.var = 'Pearson') %>% ggplot() + geom_point(aes(x = old, y = updated), alpha = 0.2) + geom_abline(slope = 1, intercept = 0) + th + coord_equal() + ggtitle('Pearson')
+p3 = df_lasso %>% reshape2::dcast(phenotype ~ version, value.var = 'Spearman') %>% ggplot() + geom_point(aes(x = old, y = updated), alpha = 0.2) + geom_abline(slope = 1, intercept = 0) + th + coord_equal() + ggtitle('Spearman')
+p1 + p2 + p3
+```
+
+**Take-away**: Overall, the results are quite similar.
+
+

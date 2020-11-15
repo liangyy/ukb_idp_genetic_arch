@@ -11,7 +11,7 @@
 
 
 
-<title>Analysis</title>
+<title>Genome-wide lasso regression (updated code vs the old result)</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -380,16 +380,61 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Analysis</h1>
+<h1 class="title toc-ignore">Genome-wide lasso regression (updated code vs the old result)</h1>
 <h4 class="date">15 November, 2020</h4>
 
 </div>
 
 
-<ul>
-<li>Genome-wode ridge regression (with comparison to Owen’s result) <a href="gw_ridge.html">link</a></li>
-<li>Compare <code>snpnet</code> lasso (old code and updated code) <a href="gw_lasso_update.html">link</a></li>
-</ul>
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>Recently we found (with Festus) an issue on handling the early stopping in <code>snpnet</code> code. I did a minor fix which has been pushed to <a href="https://github.com/liangyy/snpnet">https://github.com/liangyy/snpnet</a>. Here I compared the performance of the updated code and the old code on UKB IDP dMRI (after regressing out PCs).</p>
+</div>
+<div id="load-data" class="section level1">
+<h1><span class="header-section-number">2</span> Load data</h1>
+<p>Load lasso results (old).</p>
+<pre class="r"><code>nbatch = 343
+df_lasso = list()
+for(i in 1 : nbatch) {
+  df_lasso[[length(df_lasso) + 1]] = read.table(paste0(&#39;~/Desktop/tmp/ukb_idp/gw_lasso_dmri_old/batch&#39;, stringi::stri_pad_left(i - 1, 3, 0), &#39;.gw_lasso.performance.tsv&#39;), header = T)
+}
+df_lasso = do.call(rbind, df_lasso)
+df_lasso$phenotype = stringr::str_replace(df_lasso$phenotype, &#39;x&#39;, &#39;-&#39;)
+# fill in zero for missing values since they are the worst performance
+df_lasso[is.na(df_lasso)] = 0 
+df_lasso = df_lasso[-1, ] # remove the wrong run</code></pre>
+<p>Load lasso results (updated).</p>
+<pre class="r"><code>nbatch = 342
+df_lasso2 = list()
+for(i in 1 : nbatch) {
+  df_lasso2[[length(df_lasso2) + 1]] = read.table(paste0(&#39;~/Desktop/tmp/ukb_idp/gw_lasso_dmri/batch&#39;, stringi::stri_pad_left(i - 1, 3, 0), &#39;.gw_lasso.performance.tsv&#39;), header = T)
+}
+df_lasso2 = do.call(rbind, df_lasso2)
+df_lasso2$phenotype = stringr::str_replace(df_lasso2$phenotype, &#39;x&#39;, &#39;-&#39;)
+# fill in zero for missing values since they are the worst performance
+df_lasso2[is.na(df_lasso2)] = 0 </code></pre>
+<p>Merge the two.</p>
+<pre class="r"><code>df_lasso = rbind(
+  df_lasso %&gt;% mutate(version = &#39;old&#39;),
+  df_lasso2 %&gt;% mutate(version = &#39;updated&#39;)
+)</code></pre>
+</div>
+<div id="pairwise-comparison-old-vs-new" class="section level1">
+<h1><span class="header-section-number">3</span> Pairwise comparison: old vs new</h1>
+<pre class="r"><code>p1 = df_lasso %&gt;% reshape2::dcast(phenotype ~ version, value.var = &#39;R2&#39;) %&gt;% ggplot() + geom_point(aes(x = old, y = updated), alpha = 0.2) + geom_abline(slope = 1, intercept = 0) + th + coord_equal() + ggtitle(&#39;R2&#39;)
+p2 = df_lasso %&gt;% reshape2::dcast(phenotype ~ version, value.var = &#39;Pearson&#39;) %&gt;% ggplot() + geom_point(aes(x = old, y = updated), alpha = 0.2) + geom_abline(slope = 1, intercept = 0) + th + coord_equal() + ggtitle(&#39;Pearson&#39;)
+p3 = df_lasso %&gt;% reshape2::dcast(phenotype ~ version, value.var = &#39;Spearman&#39;) %&gt;% ggplot() + geom_point(aes(x = old, y = updated), alpha = 0.2) + geom_abline(slope = 1, intercept = 0) + th + coord_equal() + ggtitle(&#39;Spearman&#39;)
+p1 + p2 + p3</code></pre>
+<p><img src="gw_lasso_update_files/figure-html/unnamed-chunk-69-1.png" width="960" /></p>
+<p><strong>Take-away</strong>: Overall, the results are quite similar.</p>
+</div>
 
 
 

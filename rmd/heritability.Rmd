@@ -96,6 +96,8 @@ df_dmri %>% filter(type == 'IDP') %>% ggplot() +
   geom_label(data = df_dmri %>% filter(type == 'PC'), aes(x = h2, y = type2 * 5, label = phenotype)) + th
 ```
 
+Original vs new.
+
 ```{r}
 tmp = inner_join(df_dmri, df_h2, by = 'phenotype', suffix = c('.dmri', '.original'))
 tmp = inner_join(tmp, dmri_annot, by = c('phenotype' = 'idp'))
@@ -119,7 +121,7 @@ tmp %>% filter(!is.na(lr)) %>% select(type.y, measure, position, lr, h2.original
   geom_abline(slope = 1, intercept = 0) + ggtitle('h2.dmri')
 ```
 
-# Ridge regression (dMRI)
+## Ridge regression (dMRI)
 
 ```{r}
 ridge_dmri = read.table('~/Desktop/tmp/ukb_idp/gw_ridge/gw_ridge.dmri.default_theta_g_fold_5_5.tsv.gz', header = T)
@@ -135,7 +137,7 @@ tmp %>% ggplot() + geom_histogram(aes(x = Pearson)) + th
 
 For the downstream analysis, we may consider dropping these phenotypes with small Pearson correlation or R2.
 
-# Lasso (dMRI)
+## Lasso (dMRI)
 
 ```{r}
 nbatch = 343
@@ -159,7 +161,7 @@ tmp %>% ggplot() + geom_point(aes(x = rank, y = h2)) + geom_point(aes(x = rank, 
 tmp %>% ggplot() + geom_histogram(aes(x = Pearson)) + th
 ```
 
-Ridge vs Lasso (dMRI)
+## Ridge vs Lasso (dMRI)
 
 ```{r, fig.width=10, fig.height=4}
 tmp = inner_join(lasso_dmri, ridge_dmri, by = 'phenotype', suffix = c('.lasso', '.ridge'))
@@ -170,4 +172,56 @@ p2 = tmp %>% ggplot() + geom_point(aes(x = Pearson.ridge, y = Pearson.lasso), al
 p3 = tmp %>% ggplot() + geom_point(aes(x = Spearman.ridge, y = Spearman.lasso), alpha = 0.2) + th + 
   coord_equal() + geom_abline(slope = 1, intercept = 0, color = 'red')
 p1 + p2 + p3
+```
+
+# T1 new data (after adjusting for PCs)
+
+```{r}
+t1_annot = readRDS('../misc_data/process_t1/t1_meta.rds')
+t1_annot$idp = paste0('IDP-', t1_annot$FieldID)
+t1_annot = t1_annot %>% select(idp, position, lr, matter_type, normalized_by_head_size)
+df_t1 = read.table('~/Desktop/tmp/ukb_idp/heritability/pyemma.idp_t1.tsv.gz', header = T)
+df_t1 = df_t1 %>% mutate(type = unlist(lapply(strsplit(phenotype, '-'), function(x){x[[1]]}))) %>% 
+   mutate(type2 = unlist(lapply(strsplit(phenotype, '-'), function(x){as.numeric(x[[2]])})))
+df_t1 %>% filter(type == 'IDP') %>% ggplot() + 
+  geom_histogram(aes(x = h2)) + 
+  geom_vline(data = df_t1 %>% filter(type == 'PC'), aes(xintercept = h2)) +
+  geom_label(data = df_t1 %>% filter(type == 'PC'), aes(x = h2, y = type2 * 5, label = phenotype)) + th
+```
+
+```{r}
+tmp = inner_join(df_t1, df_h2, by = 'phenotype', suffix = c('.t1', '.original'))
+tmp = inner_join(tmp, t1_annot, by = c('phenotype' = 'idp'))
+tmp %>% ggplot() + geom_point(aes(x = h2.original, y = h2.t1, color = matter_type), alpha = 0.5) + 
+  th + geom_abline(slope = 1, intercept = 0) # +
+  # stat_ellipse(aes(x = h2.original, y = h2.t1, color = matter_type, group = matter_type),type = "norm")
+tmp %>% select(phenotype, matter_type, lr, position, h2.original, h2.t1) %>% 
+  reshape2::melt(id.var = c('phenotype', 'matter_type', 'lr', 'position')) %>% 
+  ggplot() + geom_histogram(aes(x = value), alpha = 0.5) + 
+  th2 + 
+  facet_wrap(~variable, ncol = 1)
+# tmp %>% select(phenotype, matter_type, lr, position, h2.original, h2.t1) %>% 
+#   reshape2::melt(id.var = c('phenotype', 'matter_type', 'lr', 'position')) %>% 
+#   ggplot() + geom_boxplot(aes(x = position, y = value, fill = variable), alpha = 0.5) + 
+#   th + theme(legend.position = 'bottom')
+tmp %>% filter(!is.na(lr)) %>% select(matter_type, position, lr, h2.original, h2.t1) %>% reshape2::dcast(matter_type + position ~ lr, value.var = 'h2.original') %>%
+  ggplot() + geom_point(aes(x = left, y = right), alpha = 0.4) + th + coord_equal() +
+  geom_abline(slope = 1, intercept = 0) + ggtitle('h2.original')
+tmp %>% filter(!is.na(lr)) %>% select(matter_type, position, lr, h2.original, h2.t1) %>% reshape2::dcast(matter_type + position ~ lr, value.var = 'h2.t1') %>%
+  ggplot() + geom_point(aes(x = left, y = right), alpha = 0.4) + th + coord_equal() +
+  geom_abline(slope = 1, intercept = 0) + ggtitle('h2.t1')
+```
+
+## Ridge regression (T1)
+
+```{r}
+ridge_t1 = read.table('~/Desktop/tmp/ukb_idp/gw_ridge/gw_ridge.t1.default_theta_g_fold_5_5.tsv.gz', header = T)
+tmp = inner_join(ridge_t1, df_t1, by = 'phenotype') 
+tmp$rank = rank(tmp$h2)
+tmp %>% ggplot() + geom_point(aes(x = rank, y = h2)) + geom_point(aes(x = rank, y = R2)) +
+  geom_vline(data = tmp %>% filter(type == 'PC'), aes(xintercept = rank)) + 
+  geom_label(data = tmp %>% filter(type == 'PC'), aes(x = rank, y = type2 / 20, label = phenotype)) +
+  th + ylab('h2 or R2') + 
+  geom_hline(yintercept = 0, color = 'red')
+tmp %>% ggplot() + geom_histogram(aes(x = Pearson)) + th
 ```

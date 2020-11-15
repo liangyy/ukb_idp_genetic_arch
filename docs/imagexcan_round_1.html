@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Individual-level ImageXcan (round 1)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Individual-level ImageXcan (round 1)</h1>
+<h4 class="date">12 November, 2020</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+pheno_interest = c(&#39;weekly_alcohol&#39;, &#39;recurrent_depressive_disorder&#39;, &#39;parent_depression&#39;, &#39;parent_AD&#39;, &#39;handedness&#39;, &#39;daily_coffee&#39;, &#39;daily_cigarettes&#39;)
+pheno_bcc = c(&#39;wbc&#39;, &#39;rbc&#39;, &#39;platelet&#39;, &#39;lymphocyte&#39;, &#39;monocyte&#39;, &#39;neutrophil&#39;, &#39;eosinophil&#39;, &#39;basophil&#39;)
+pheno_ht = c(&#39;dbp&#39;, &#39;sbp&#39;) # , &#39;ht&#39;, &#39;hb&#39;, &#39;mcv&#39;, &#39;mch&#39;, &#39;mchc&#39;)
+pheno_rand = paste0(&#39;random_pheno_&#39;, 0 : 9)
+pheno_dmri = paste0(&#39;single_sig_dmri_&#39;, 0 : 9)
+pheno_orig = paste0(&#39;single_sig_orig_&#39;, 0 : 9)
+source(&#39;rlib.R&#39;)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>See running setup at</p>
+<ul>
+<li>The original IDPs (residual obtained by Owen): <code>submission/imagexcan/run_round_1_linear.orignal.screen</code>.</li>
+<li>dMRI IDP adjusted for first 9 PCs: <code>submission/imagexcan/run_round_1_linear.dmri.screen</code>.</li>
+</ul>
+<p>The current results are generated by linear regression. The logistic regression is ready to go but it has some numerical issue when including too many covariates.</p>
+<p>We have special focus on dMRI IDPs.</p>
+</div>
+<div id="load-data" class="section level1">
+<h1><span class="header-section-number">2</span> Load data</h1>
+<p>dMRI IDPs.</p>
+<pre class="r"><code>dmri = readRDS(&#39;../misc_data/download_some_matching_files/annot_dmri_idps.rds&#39;)
+dmri = dmri %&gt;% mutate(IDP = paste0(&#39;IDP-&#39;, FieldID))</code></pre>
+<p>Load results with original IDPs and adjusted IDPs.</p>
+<pre class="r"><code># linear solver
+df_lm = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear.original.csv&#39;) %&gt;% filter(IDP %in% dmri$IDP)
+df_lm_resid = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear.dmri.csv&#39;) %&gt;% filter(IDP %in% dmri$IDP)
+df_lm = rbind(
+  df_lm %&gt;% mutate(idp_type = &#39;original&#39;),
+  df_lm_resid %&gt;% mutate(idp_type = &#39;regress_out&#39;)
+)
+df_lm = df_lm %&gt;% left_join(dmri %&gt;% select(IDP, measure, position, type, lr), by = &#39;IDP&#39;)
+df_lm$lr[ is.na(df_lm$lr) ] = &#39;NA&#39;</code></pre>
+</div>
+<div id="overall-qq-plot" class="section level1">
+<h1><span class="header-section-number">3</span> Overall QQ-plot</h1>
+<pre class="r"><code>p1 = df_lm %&gt;% filter(phenotype %in% pheno_interest) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p2 = df_lm %&gt;% filter(phenotype %in% pheno_bcc) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p3 = df_lm %&gt;% filter(phenotype %in% pheno_ht) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p4 = df_lm %&gt;% filter(phenotype %in% pheno_rand) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p5 = df_lm %&gt;% filter(phenotype %in% pheno_dmri) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;random adj IDP&#39;)
+
+
+p6 = df_lm %&gt;% filter(phenotype %in% pheno_orig) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;random original IDP&#39;)
+
+(p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
+<p><img src="imagexcan_round_1_files/figure-html/unnamed-chunk-3-1.png" width="1536" /></p>
+</div>
+<div id="focus-on-one-brain-region" class="section level1">
+<h1><span class="header-section-number">4</span> Focus on one brain region</h1>
+<pre class="r"><code>region = &#39;medial lemniscus&#39;
+p1 = df_lm %&gt;% filter(phenotype %in% pheno_interest, position == region) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p2 = df_lm %&gt;% filter(phenotype %in% pheno_bcc, position == region) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p3 = df_lm %&gt;% filter(phenotype %in% pheno_ht, position == region) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p4 = df_lm %&gt;% filter(phenotype %in% pheno_rand, position == region) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p5 = df_lm %&gt;% filter(phenotype %in% pheno_dmri, position == region) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;random adj IDP&#39;)
+
+p6 = df_lm %&gt;% filter(phenotype %in% pheno_orig, position == region) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;random original IDP&#39;)
+
+
+(p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
+<p><img src="imagexcan_round_1_files/figure-html/unnamed-chunk-4-1.png" width="1536" /></p>
+</div>
+<div id="aggregate-using-acat-for-each-region" class="section level1">
+<h1><span class="header-section-number">5</span> Aggregate using ACAT for each region</h1>
+<pre class="r"><code>df_agg = df_lm %&gt;% group_by(idp_type, phenotype, position) %&gt;% summarize(p_acat = acat(pval)) %&gt;% ungroup()
+
+p1 = df_agg %&gt;% filter(phenotype %in% pheno_interest) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(p_acat) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(p_acat), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p2 = df_agg %&gt;% filter(phenotype %in% pheno_bcc) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(p_acat) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(p_acat), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p3 = df_agg %&gt;% filter(phenotype %in% pheno_ht) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(p_acat) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(p_acat), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p4 = df_agg %&gt;% filter(phenotype %in% pheno_rand) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(p_acat) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(p_acat), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p5 = df_agg %&gt;% filter(phenotype %in% pheno_dmri) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(p_acat) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(p_acat), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;random adj IDP&#39;)
+
+p6 = df_agg %&gt;% filter(phenotype %in% pheno_orig) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(p_acat) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(p_acat), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;random original IDP&#39;)
+
+(p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
+<p><img src="imagexcan_round_1_files/figure-html/unnamed-chunk-5-1.png" width="1536" /></p>
+</div>
+<div id="bonferroni-significant-hits" class="section level1">
+<h1><span class="header-section-number">6</span> Bonferroni significant hits</h1>
+<pre class="r"><code>df_lm %&gt;% filter(idp_type == &#39;regress_out&#39;, phenotype %in% pheno_interest) %&gt;% mutate(p_adj = pval * n()) %&gt;% filter(p_adj &lt; 0.05) %&gt;% pander::pander(caption = &#39;Bonferroni significant IDP-level (alpha = 0.05) among all focal traits&#39;)</code></pre>
+<table style="width:100%;">
+<caption>Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (continued below)</caption>
+<colgroup>
+<col width="14%" />
+<col width="39%" />
+<col width="13%" />
+<col width="14%" />
+<col width="17%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">bhat</th>
+<th align="center">pval</th>
+<th align="center">idp_type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25106</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.7063</td>
+<td align="center">4.095e-06</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25458</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">1.936</td>
+<td align="center">1.171e-07</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25565</td>
+<td align="center">recurrent_depressive_disorder</td>
+<td align="center">-0.01256</td>
+<td align="center">1.01e-05</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25691</td>
+<td align="center">recurrent_depressive_disorder</td>
+<td align="center">-0.01822</td>
+<td align="center">8.602e-06</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25238</td>
+<td align="center">parent_depression</td>
+<td align="center">0.02026</td>
+<td align="center">5.471e-06</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25247</td>
+<td align="center">handedness</td>
+<td align="center">0.02336</td>
+<td align="center">4.613e-06</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25314</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.5045</td>
+<td align="center">2.654e-07</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25366</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.4942</td>
+<td align="center">9.966e-06</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25372</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">-0.7247</td>
+<td align="center">2.899e-06</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25388</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.2919</td>
+<td align="center">5.848e-06</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25507</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">-1.092</td>
+<td align="center">3.228e-07</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25669</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">-0.865</td>
+<td align="center">8.509e-09</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25670</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">-0.7703</td>
+<td align="center">2.243e-07</td>
+<td align="center">regress_out</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="13%" />
+<col width="41%" />
+<col width="33%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">measure</th>
+<th align="center">position</th>
+<th align="center">type</th>
+<th align="center">lr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">MD</td>
+<td align="center">genu of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center">ISOVF</td>
+<td align="center">posterior limb of internal capsule</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">MO</td>
+<td align="center">superior thalamic radiation</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">OD</td>
+<td align="center">inferior longitudinal fasciculus</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">left</td>
+</tr>
+<tr class="odd">
+<td align="center">L1</td>
+<td align="center">fornix cres+stria terminalis</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">L1</td>
+<td align="center">tapetum</td>
+<td align="center">mean</td>
+<td align="center">left</td>
+</tr>
+<tr class="odd">
+<td align="center">L3</td>
+<td align="center">posterior limb of internal capsule</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">ICVF</td>
+<td align="center">anterior corona radiata</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">ICVF</td>
+<td align="center">posterior thalamic radiation</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">ICVF</td>
+<td align="center">uncinate fasciculus</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">FA</td>
+<td align="center">posterior thalamic radiation</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">ICVF</td>
+<td align="center">posterior thalamic radiation</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">left</td>
+</tr>
+<tr class="odd">
+<td align="center">ICVF</td>
+<td align="center">posterior thalamic radiation</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">right</td>
+</tr>
+</tbody>
+</table>
+<table style="width:17%;">
+<colgroup>
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">p_adj</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">0.01935</td>
+</tr>
+<tr class="even">
+<td align="center">0.0005535</td>
+</tr>
+<tr class="odd">
+<td align="center">0.04774</td>
+</tr>
+<tr class="even">
+<td align="center">0.04065</td>
+</tr>
+<tr class="odd">
+<td align="center">0.02585</td>
+</tr>
+<tr class="even">
+<td align="center">0.02179</td>
+</tr>
+<tr class="odd">
+<td align="center">0.001254</td>
+</tr>
+<tr class="even">
+<td align="center">0.04709</td>
+</tr>
+<tr class="odd">
+<td align="center">0.0137</td>
+</tr>
+<tr class="even">
+<td align="center">0.02763</td>
+</tr>
+<tr class="odd">
+<td align="center">0.001525</td>
+</tr>
+<tr class="even">
+<td align="center">4.02e-05</td>
+</tr>
+<tr class="odd">
+<td align="center">0.00106</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>df_agg %&gt;% filter(idp_type == &#39;regress_out&#39;, phenotype %in% pheno_interest) %&gt;% mutate(p_adj = p_acat * n()) %&gt;% filter(p_adj &lt; 0.05) %&gt;% pander::pander(caption = &#39;Bonferroni significant region-level (alpha = 0.05) among all focal traits&#39;)</code></pre>
+<table>
+<caption>Bonferroni significant region-level (alpha = 0.05) among all focal traits (continued below)</caption>
+<colgroup>
+<col width="17%" />
+<col width="41%" />
+<col width="41%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">idp_type</th>
+<th align="center">phenotype</th>
+<th align="center">position</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">regress_out</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">anterior corona radiata</td>
+</tr>
+<tr class="even">
+<td align="center">regress_out</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">posterior limb of internal capsule</td>
+</tr>
+<tr class="odd">
+<td align="center">regress_out</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">posterior thalamic radiation</td>
+</tr>
+<tr class="even">
+<td align="center">regress_out</td>
+<td align="center">handedness</td>
+<td align="center">tapetum</td>
+</tr>
+<tr class="odd">
+<td align="center">regress_out</td>
+<td align="center">parent_depression</td>
+<td align="center">fornix cres+stria terminalis</td>
+</tr>
+<tr class="even">
+<td align="center">regress_out</td>
+<td align="center">recurrent_depressive_disorder</td>
+<td align="center">inferior longitudinal fasciculus</td>
+</tr>
+<tr class="odd">
+<td align="center">regress_out</td>
+<td align="center">recurrent_depressive_disorder</td>
+<td align="center">superior thalamic radiation</td>
+</tr>
+<tr class="even">
+<td align="center">regress_out</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">genu of corpus callosum</td>
+</tr>
+<tr class="odd">
+<td align="center">regress_out</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">posterior limb of internal capsule</td>
+</tr>
+</tbody>
+</table>
+<table style="width:33%;">
+<colgroup>
+<col width="16%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">p_acat</th>
+<th align="center">p_adj</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">0.0001583</td>
+<td align="center">0.03989</td>
+</tr>
+<tr class="even">
+<td align="center">4.77e-06</td>
+<td align="center">0.001202</td>
+</tr>
+<tr class="odd">
+<td align="center">2.87e-07</td>
+<td align="center">7.232e-05</td>
+</tr>
+<tr class="even">
+<td align="center">6.346e-05</td>
+<td align="center">0.01599</td>
+</tr>
+<tr class="odd">
+<td align="center">8.659e-05</td>
+<td align="center">0.02182</td>
+</tr>
+<tr class="even">
+<td align="center">0.0001124</td>
+<td align="center">0.02832</td>
+</tr>
+<tr class="odd">
+<td align="center">0.0001118</td>
+<td align="center">0.02818</td>
+</tr>
+<tr class="even">
+<td align="center">2.941e-05</td>
+<td align="center">0.007412</td>
+</tr>
+<tr class="odd">
+<td align="center">2.103e-06</td>
+<td align="center">0.0005301</td>
+</tr>
+</tbody>
+</table>
+<!-- ```{r, fig.height=9, fig.width=16} -->
+<!-- for(mm in unique(df_lm$measure)) { -->
+<!--   p = df_lm %>% filter(measure == mm) %>% group_by(phenotype, idp_type, lr) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + facet_grid(lr~phenotype) + geom_abline(slope = 1, intercept = 0) + ggtitle(paste0('Measurement = ', mm)) -->
+<!--   print(p) -->
+<!--   # ggsave(paste0('imagexcan_dmri.', mm, '.png'), p, width = 16, height = 9) -->
+<!-- } -->
+<!-- ``` -->
+<!-- # Right vs Left -->
+<!-- ```{r} -->
+<!-- df_lm %>% filter(idp_type == 'regress_out', lr != 'NA') %>% reshape2::dcast(phenotype + idp_type + measure + position + type ~ lr, value.var = 'bhat') %>% ggplot() + geom_point(aes(x = left, y = right), alpha = 0.2) + facet_wrap(~phenotype, scales = 'free') + ggtitle('Bhat comparison') + geom_abline(slope = 1, intercept = 0, color = 'gray') -->
+<!-- df_lm %>% filter(idp_type == 'regress_out', lr != 'NA') %>% reshape2::dcast(phenotype + idp_type + measure + position + type ~ lr, value.var = 'pval') %>% ggplot() + geom_point(aes(x = -log10(left), y = -log(right)), alpha = 0.2) + facet_wrap(~phenotype, scales = 'free') + ggtitle('P-value comparison')  -->
+<!-- ``` -->
+</div>
+<div id="susie-based-runs" class="section level1">
+<h1><span class="header-section-number">7</span> Susie based runs</h1>
+<p>Besides the marginal test, we explored the possibilility of multiple regression and Bayesian variable selection in this context (see post <a href="https://github.com/hakyimlab/yanyu-notebook/blob/master/notes/date_111120.Rmd">here</a>).</p>
+<p>The submission script is <code>submission/imagexcan/run_round_1_susie.dmri.screen</code>.</p>
+<pre class="r"><code># susie solver
+df_susie_resid = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.susie.dmri.csv&#39;) # %&gt;% filter(IDP %in% dmri$IDP)
+df_susie_resid = df_susie_resid %&gt;% left_join(dmri %&gt;% select(IDP, measure, position, type, lr), by = &#39;IDP&#39;)
+df_susie_resid$lr[ is.na(df_susie_resid$lr) ] = &#39;NA&#39;</code></pre>
+<div id="visualizing-pips" class="section level2">
+<h2><span class="header-section-number">7.1</span> Visualizing PIPs</h2>
+<pre class="r"><code>p1 = df_susie_resid %&gt;% filter(phenotype %in% pheno_interest) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + 
+  theme(axis.text.x = element_blank())
+
+p2 = df_susie_resid %&gt;% filter(phenotype %in% pheno_bcc) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + 
+  theme(axis.text.x = element_blank())
+
+p3 = df_susie_resid %&gt;% filter(phenotype %in% pheno_ht) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + 
+  theme(axis.text.x = element_blank())
+
+p4 = df_susie_resid %&gt;% filter(phenotype %in% pheno_rand) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + 
+  theme(axis.text.x = element_blank())
+
+p5 = df_susie_resid %&gt;% filter(phenotype %in% pheno_dmri) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + 
+  theme(axis.text.x = element_blank()) + ggtitle(&#39;random adj IDP&#39;)
+
+
+p6 = df_susie_resid %&gt;% filter(phenotype %in% pheno_orig) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + 
+  theme(axis.text.x = element_blank()) + ggtitle(&#39;random original IDP&#39;)
+
+(p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
+<p><img src="imagexcan_round_1_files/figure-html/unnamed-chunk-8-1.png" width="1536" /></p>
+</div>
+<div id="extracting-95-credible-sets" class="section level2">
+<h2><span class="header-section-number">7.2</span> Extracting 95% credible sets</h2>
+<pre class="r"><code>df_susie_resid %&gt;% filter(cs &gt; 0) %&gt;% filter(phenotype %in% pheno_interest) %&gt;% pander::pander(caption = &#39;IDP in 95% CS among all focal traits&#39;)</code></pre>
+<table style="width:76%;">
+<caption>IDP in 95% CS among all focal traits (continued below)</caption>
+<colgroup>
+<col width="16%" />
+<col width="26%" />
+<col width="12%" />
+<col width="6%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">pip</th>
+<th align="center">cs</th>
+<th align="center">measure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25106</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.4981</td>
+<td align="center">2</td>
+<td align="center">MD</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25298</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.4791</td>
+<td align="center">2</td>
+<td align="center">L3</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25458</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.9786</td>
+<td align="center">1</td>
+<td align="center">ISOVF</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25507</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.9635</td>
+<td align="center">1</td>
+<td align="center">FA</td>
+</tr>
+<tr class="odd">
+<td align="center">PC-6</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.9825</td>
+<td align="center">2</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+<table style="width:89%;">
+<colgroup>
+<col width="43%" />
+<col width="34%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">position</th>
+<th align="center">type</th>
+<th align="center">lr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">genu of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center">genu of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="odd">
+<td align="center">posterior limb of internal capsule</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">posterior thalamic radiation</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">left</td>
+</tr>
+<tr class="odd">
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="extracting-pip-0.5" class="section level2">
+<h2><span class="header-section-number">7.3</span> Extracting PIP &gt; 0.5</h2>
+<pre class="r"><code>df_susie_resid %&gt;% filter(pip &gt; 0.5) %&gt;% filter(phenotype %in% pheno_interest) %&gt;% pander::pander(caption = &#39;PIP &gt; 0.5 among all focal traits&#39;)</code></pre>
+<table style="width:78%;">
+<caption>PIP &gt; 0.5 among all focal traits (continued below)</caption>
+<colgroup>
+<col width="16%" />
+<col width="27%" />
+<col width="12%" />
+<col width="6%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">pip</th>
+<th align="center">cs</th>
+<th align="center">measure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25458</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.9786</td>
+<td align="center">1</td>
+<td align="center">ISOVF</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25238</td>
+<td align="center">parent_depression</td>
+<td align="center">0.5536</td>
+<td align="center">-1</td>
+<td align="center">L1</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25247</td>
+<td align="center">handedness</td>
+<td align="center">0.6067</td>
+<td align="center">-1</td>
+<td align="center">L1</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25314</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.9081</td>
+<td align="center">-1</td>
+<td align="center">L3</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25507</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.9635</td>
+<td align="center">1</td>
+<td align="center">FA</td>
+</tr>
+<tr class="even">
+<td align="center">PC-6</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.9825</td>
+<td align="center">2</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+<table style="width:89%;">
+<colgroup>
+<col width="43%" />
+<col width="34%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">position</th>
+<th align="center">type</th>
+<th align="center">lr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">posterior limb of internal capsule</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">fornix cres+stria terminalis</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">tapetum</td>
+<td align="center">mean</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">posterior limb of internal capsule</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">posterior thalamic radiation</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

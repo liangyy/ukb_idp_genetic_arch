@@ -11,7 +11,7 @@
 
 
 
-<title>Analysis</title>
+<title>Heritability of IDPs</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -25,19 +25,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
-<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
-
-<style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -380,16 +369,76 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Analysis</h1>
-<h4 class="date">15 November, 2020</h4>
+<h1 class="title toc-ignore">Heritability of IDPs</h1>
+<h4 class="date">01 November, 2020</h4>
 
 </div>
 
 
-<ul>
-<li>Genome-wode ridge regression (with comparison to Owen’s result) <a href="gw_ridge.html">link</a></li>
-<li>Compare <code>snpnet</code> lasso (old code and updated code) <a href="gw_lasso_update.html">link</a></li>
-</ul>
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+source(&#39;rlib.R&#39;)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>Here I ran heritability estimation using EMMA based approach (see <a href="https://github.com/liangyy/misc-tools/tree/master/pyemma">pyemma at here</a>).</p>
+</div>
+<div id="load-data" class="section level1">
+<h1><span class="header-section-number">2</span> Load data</h1>
+<p>Load heritability estimates done by Owen. And merge with the my results.</p>
+<pre class="r"><code>df_h2_owen = read.table(&#39;~/Desktop/tmp/ukb_idp/owen_heritability/2020-08-11_idp-heritability-estimates.txt.gz&#39;, header = T)
+df_h2 = read.delim(&#39;~/Desktop/tmp/ukb_idp/heritability/pyemma.idp_original.tsv.gz&#39;)
+df_merge = inner_join(df_h2_owen, df_h2, by = c(&#39;gene&#39; = &#39;phenotype&#39;))
+df_merge %&gt;% ggplot() +
+  geom_errorbar(aes(x = Variance, ymin = h2 - h2_SE * 1.96, ymax = h2 + h2_SE * 1.96), color = &#39;gray&#39;) + 
+  geom_errorbarh(aes(xmin = Variance - SE * 1.96, xmax = Variance + SE * 1.96, y = h2), color = &#39;gray&#39;) +
+  geom_point(aes(x = Variance, y = h2), alpha = 0.2) + th + 
+  geom_abline(slope = 1, intercept = 0) +
+  coord_equal() +
+  xlab(&#39;h2 (Owen)&#39;) +
+  ylab(&#39;h2 (new run)&#39;)</code></pre>
+<p><img src="heritability_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p>Load a few GCTA runs.</p>
+<pre class="r"><code>ll = list()
+for(idp in unique(df_merge$gene)) {
+  fn = paste0(&#39;~/Desktop/tmp/ukb_idp/heritability/gcta_out.&#39;, idp, &#39;.hsq&#39;)
+  if(file.exists(fn)) {
+    ll[[length(ll) + 1]] = load_gcta_hsq(fn) %&gt;% mutate(phenotype = idp)
+  }
+}
+df_gcta = do.call(rbind, ll)
+df_gcta = inner_join(df_merge, df_gcta, by = c(&#39;gene&#39; = &#39;phenotype&#39;), suffix = c(&#39;.pyemma&#39;, &#39;.gcta&#39;))
+df_gcta %&gt;% ggplot() + geom_errorbar(aes(x = h2.gcta, ymin = h2.pyemma - h2_SE.pyemma * 1.96, ymax = h2.pyemma + h2_SE.pyemma * 1.96), color = &#39;gray&#39;) + 
+  geom_errorbarh(aes(xmin = h2.gcta - h2_SE.gcta * 1.96, xmax = h2.gcta + h2_SE.gcta * 1.96, y = h2.pyemma), color = &#39;gray&#39;) +
+  geom_point(aes(x = h2.gcta, y = h2.pyemma), alpha = 0.2) + th + 
+  geom_abline(slope = 1, intercept = 0) +
+  coord_equal() +
+  xlab(&#39;h2 (gcta)&#39;) +
+  ylab(&#39;h2 (pyemma)&#39;)</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_errorbar).</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_errorbarh).</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<p><img src="heritability_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<p>Load the heritability runs with different number of PCs being regressed out.</p>
+<pre class="r"><code>npcs = c(0, 1, 2, 5, 10, 20, 50)
+df_pc = list()
+for(pc in npcs) {
+  tmp = read.table(paste0(&#39;~/Desktop/tmp/ukb_idp/heritability/pyemma.idp_pc&#39;, pc, &#39;.tsv.gz&#39;), header = T)
+  df_pc[[length(df_pc) + 1]] = tmp %&gt;% mutate(npc = pc)
+}
+df_pc = do.call(rbind, df_pc)</code></pre>
+<pre class="r"><code>df_pc$npc = factor(df_pc$npc, levels = unique(df_pc$npc))
+df_pc2 = reshape2::dcast(rbind(df_pc, df_h2 %&gt;% mutate(npc = &#39;original&#39;)), phenotype ~ npc, value.var = &#39;h2&#39;)
+pairs(df_pc2[, -1], main = &#39;Pairwise comparison of h2 for differnt nPC&#39;)</code></pre>
+<p><img src="heritability_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
+<pre class="r"><code>df_pc %&gt;% ggplot() + geom_histogram(aes(x = h2)) + facet_wrap(~npc, ncol = 1, labeller = label_both) + th2</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="heritability_files/figure-html/unnamed-chunk-32-1.png" width="384" /></p>
+</div>
 
 
 
@@ -402,7 +451,7 @@ div.tocify {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -441,7 +490,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

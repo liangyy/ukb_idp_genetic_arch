@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Individual-level ImageXcan (round 1) T1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Individual-level ImageXcan (round 1) T1</h1>
+<h4 class="date">15 November, 2020</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+pheno_interest = c(&#39;weekly_alcohol&#39;, &#39;recurrent_depressive_disorder&#39;, &#39;parent_depression&#39;, &#39;parent_AD&#39;, &#39;handedness&#39;, &#39;daily_coffee&#39;, &#39;daily_cigarettes&#39;)
+pheno_bcc = c(&#39;wbc&#39;, &#39;rbc&#39;, &#39;platelet&#39;, &#39;lymphocyte&#39;, &#39;monocyte&#39;, &#39;neutrophil&#39;, &#39;eosinophil&#39;, &#39;basophil&#39;)
+pheno_ht = c(&#39;dbp&#39;, &#39;sbp&#39;) # , &#39;ht&#39;, &#39;hb&#39;, &#39;mcv&#39;, &#39;mch&#39;, &#39;mchc&#39;)
+pheno_rand = paste0(&#39;random_pheno_&#39;, 0 : 9)
+pheno_sig_dmri = paste0(&#39;single_sig_dmri_&#39;, 0 : 9)
+pheno_sig_orig = paste0(&#39;single_sig_orig_&#39;, 0 : 9)
+source(&#39;rlib.R&#39;)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>See running setup at</p>
+<ul>
+<li>The original IDPs (residual obtained by Owen): <code>submission/imagexcan/run_round_1_linear.orignal.screen</code>.</li>
+<li>T1 IDP adjusted for first 5 PCs: <code>submission/imagexcan/run_round_1_linear.dmri.screen</code>.</li>
+</ul>
+<p>The current results are generated by linear regression. The logistic regression is ready to go but it has some numerical issue when including too many covariates.</p>
+<p>We have special focus on T1 IDPs.</p>
+</div>
+<div id="load-data" class="section level1">
+<h1><span class="header-section-number">2</span> Load data</h1>
+<p>T1 IDPs.</p>
+<pre class="r"><code>t1 = readRDS(&#39;../misc_data/process_t1/t1_meta.rds&#39;)
+t1 = t1 %&gt;% mutate(IDP = paste0(&#39;IDP-&#39;, FieldID))</code></pre>
+<p>Load results with original IDPs and adjusted IDPs.</p>
+<pre class="r"><code># linear solver
+df_lm = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear.original.csv&#39;) %&gt;% filter(IDP %in% t1$IDP)
+df_lm_resid = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear.t1.csv&#39;) %&gt;% filter(IDP %in% t1$IDP)
+df_lm = rbind(
+  df_lm %&gt;% mutate(idp_type = &#39;original&#39;),
+  df_lm_resid %&gt;% mutate(idp_type = &#39;regress_out&#39;)
+)
+
+df_lm = df_lm %&gt;% left_join(t1 %&gt;% select(IDP, normalized_by_head_size, position, matter_type, lr), by = &#39;IDP&#39;)
+df_lm$lr[ is.na(df_lm$lr) ] = &#39;NA&#39;
+df_lm$matter_type[ is.na(df_lm$matter_type) ] = &#39;NA&#39;</code></pre>
+</div>
+<div id="overall-qq-plot" class="section level1">
+<h1><span class="header-section-number">3</span> Overall QQ-plot</h1>
+<pre class="r"><code>p1 = df_lm %&gt;% filter(phenotype %in% pheno_interest) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+p2 = df_lm %&gt;% filter(phenotype %in% pheno_bcc) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+p3 = df_lm %&gt;% filter(phenotype %in% pheno_ht) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+p4 = df_lm %&gt;% filter(phenotype %in% pheno_rand) %&gt;% group_by(phenotype, idp_type) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+(p1 + p2) / (p3 + p4) </code></pre>
+<p><img src="imagexcan_round_1_t1_files/figure-html/unnamed-chunk-21-1.png" width="1536" /></p>
+</div>
+<div id="bonferroni-significant-hits" class="section level1">
+<h1><span class="header-section-number">4</span> Bonferroni significant hits</h1>
+<pre class="r"><code>df_lm %&gt;% filter(idp_type == &#39;regress_out&#39;) %&gt;% mutate(p_adj = pval * n()) %&gt;% filter(p_adj &lt; 0.05, phenotype %in% pheno_interest) %&gt;% pander::pander(caption = &#39;Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (adjusted IDP)&#39;)</code></pre>
+<table style="width:90%;">
+<caption>Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (adjusted IDP) (continued below)</caption>
+<colgroup>
+<col width="16%" />
+<col width="23%" />
+<col width="13%" />
+<col width="16%" />
+<col width="19%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">bhat</th>
+<th align="center">pval</th>
+<th align="center">idp_type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25882</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">-0.7494</td>
+<td align="center">9.457e-09</td>
+<td align="center">regress_out</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25883</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">-0.704</td>
+<td align="center">8.401e-08</td>
+<td align="center">regress_out</td>
+</tr>
+</tbody>
+</table>
+<table style="width:99%;">
+<colgroup>
+<col width="36%" />
+<col width="15%" />
+<col width="19%" />
+<col width="11%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">normalized_by_head_size</th>
+<th align="center">position</th>
+<th align="center">matter_type</th>
+<th align="center">lr</th>
+<th align="center">p_adj</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">FALSE</td>
+<td align="center">putamen</td>
+<td align="center">grey matter</td>
+<td align="center">left</td>
+<td align="center">8.376e-05</td>
+</tr>
+<tr class="even">
+<td align="center">FALSE</td>
+<td align="center">putamen</td>
+<td align="center">grey matter</td>
+<td align="center">right</td>
+<td align="center">0.000744</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>df_lm %&gt;% filter(idp_type == &#39;original&#39;) %&gt;% mutate(p_adj = pval * n()) %&gt;% filter(p_adj &lt; 0.05, phenotype %in% pheno_interest) %&gt;% pander::pander(caption = &#39;Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (original IDP)&#39;)</code></pre>
+<table style="width:90%;">
+<caption>Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (original IDP) (continued below)</caption>
+<colgroup>
+<col width="16%" />
+<col width="26%" />
+<col width="13%" />
+<col width="16%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">bhat</th>
+<th align="center">pval</th>
+<th align="center">idp_type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25884</td>
+<td align="center">daily_coffee</td>
+<td align="center">-0.1491</td>
+<td align="center">1.98e-06</td>
+<td align="center">original</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25877</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.2663</td>
+<td align="center">5.345e-07</td>
+<td align="center">original</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25888</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">-0.3725</td>
+<td align="center">3.322e-06</td>
+<td align="center">original</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25864</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">-0.3691</td>
+<td align="center">3.669e-06</td>
+<td align="center">original</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="34%" />
+<col width="36%" />
+<col width="18%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">normalized_by_head_size</th>
+<th align="center">position</th>
+<th align="center">matter_type</th>
+<th align="center">lr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">FALSE</td>
+<td align="center">pallidum</td>
+<td align="center">grey matter</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">FALSE</td>
+<td align="center">occipital pole</td>
+<td align="center">grey matter</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">FALSE</td>
+<td align="center">amygdala</td>
+<td align="center">grey matter</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">FALSE</td>
+<td align="center">central opercular cortex</td>
+<td align="center">grey matter</td>
+<td align="center">left</td>
+</tr>
+</tbody>
+</table>
+<table style="width:15%;">
+<colgroup>
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">p_adj</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">0.01754</td>
+</tr>
+<tr class="even">
+<td align="center">0.004733</td>
+</tr>
+<tr class="odd">
+<td align="center">0.02942</td>
+</tr>
+<tr class="even">
+<td align="center">0.03249</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="susier-run" class="section level1">
+<h1><span class="header-section-number">5</span> Susier run</h1>
+<pre class="r"><code>df_susie = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.susie.t1.csv&#39;) # %&gt;% filter(IDP %in% dmri$IDP)
+df_susie = df_susie %&gt;% left_join(t1 %&gt;% select(IDP, normalized_by_head_size, position, matter_type, lr), by = &#39;IDP&#39;)
+df_susie$lr[ is.na(df_susie$lr) ] = &#39;NA&#39;
+df_susie$matter_type[ is.na(df_susie$matter_type) ] = &#39;NA&#39;</code></pre>
+</div>
+<div id="pip-plot" class="section level1">
+<h1><span class="header-section-number">6</span> PIP plot</h1>
+<pre class="r"><code>p1 = df_susie %&gt;% filter(phenotype %in% pheno_interest) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank())
+p2 = df_susie %&gt;% filter(phenotype %in% pheno_bcc) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank())
+p3 = df_susie %&gt;% filter(phenotype %in% pheno_ht) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank())
+p4 = df_susie %&gt;% filter(phenotype %in% pheno_rand) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank())
+
+(p1 + p2) / (p3 + p4)</code></pre>
+<p><img src="imagexcan_round_1_t1_files/figure-html/unnamed-chunk-24-1.png" width="1536" /></p>
+</div>
+<div id="credible-set" class="section level1">
+<h1><span class="header-section-number">7</span> 95% credible set</h1>
+<pre class="r"><code>df_susie %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(cs &gt; 0) %&gt;% pander::pander(caption = &#39;IDP in 95% credible set among all focal phenotypes&#39;)</code></pre>
+<table style="width:99%;">
+<caption>IDP in 95% credible set among all focal phenotypes (continued below)</caption>
+<colgroup>
+<col width="16%" />
+<col width="26%" />
+<col width="12%" />
+<col width="6%" />
+<col width="36%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">pip</th>
+<th align="center">cs</th>
+<th align="center">normalized_by_head_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25882</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.8862</td>
+<td align="center">1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25883</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.1364</td>
+<td align="center">1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="center">PC-5</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+<table style="width:46%;">
+<colgroup>
+<col width="15%" />
+<col width="19%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">position</th>
+<th align="center">matter_type</th>
+<th align="center">lr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">putamen</td>
+<td align="center">grey matter</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">putamen</td>
+<td align="center">grey matter</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="pip-0.25" class="section level1">
+<h1><span class="header-section-number">8</span> PIP &gt; 0.25</h1>
+<pre class="r"><code>df_susie %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(pip &gt; 0.25) %&gt;% pander::pander(caption = &#39;IDP in 95% credible set among all focal phenotypes&#39;)</code></pre>
+<table style="width:99%;">
+<caption>IDP in 95% credible set among all focal phenotypes (continued below)</caption>
+<colgroup>
+<col width="16%" />
+<col width="26%" />
+<col width="12%" />
+<col width="6%" />
+<col width="36%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">pip</th>
+<th align="center">cs</th>
+<th align="center">normalized_by_head_size</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25024</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.268</td>
+<td align="center">-1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25852</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.658</td>
+<td align="center">-1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25882</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.8862</td>
+<td align="center">1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25863</td>
+<td align="center">handedness</td>
+<td align="center">0.297</td>
+<td align="center">-1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25793</td>
+<td align="center">daily_coffee</td>
+<td align="center">0.332</td>
+<td align="center">-1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25884</td>
+<td align="center">daily_coffee</td>
+<td align="center">0.3568</td>
+<td align="center">-1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="center">PC-3</td>
+<td align="center">daily_coffee</td>
+<td align="center">0.2959</td>
+<td align="center">-1</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25024</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.3055</td>
+<td align="center">-1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25825</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.3808</td>
+<td align="center">-1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25864</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.3156</td>
+<td align="center">-1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25879</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">0.2738</td>
+<td align="center">-1</td>
+<td align="center">FALSE</td>
+</tr>
+<tr class="even">
+<td align="center">PC-5</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+<table style="width:74%;">
+<colgroup>
+<col width="43%" />
+<col width="19%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">position</th>
+<th align="center">matter_type</th>
+<th align="center">lr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">accumbens</td>
+<td align="center">NA</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">lingual gyrus</td>
+<td align="center">grey matter</td>
+<td align="center">left</td>
+</tr>
+<tr class="odd">
+<td align="center">putamen</td>
+<td align="center">grey matter</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">frontal operculum cortex</td>
+<td align="center">grey matter</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">inferior frontal gyrus, pars opercularis</td>
+<td align="center">grey matter</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">pallidum</td>
+<td align="center">grey matter</td>
+<td align="center">left</td>
+</tr>
+<tr class="odd">
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center">accumbens</td>
+<td align="center">NA</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">lateral occipital cortex, superior division</td>
+<td align="center">grey matter</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">central opercular cortex</td>
+<td align="center">grey matter</td>
+<td align="center">left</td>
+</tr>
+<tr class="odd">
+<td align="center">thalamus</td>
+<td align="center">grey matter</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -6,3 +6,6 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 * Genome-wode ridge regression (with comparison to Owen's result) [link](gw_ridge.html)
 * Compare `snpnet` lasso (old code and updated code) [link](gw_lasso_update.html)
+* ImageXcan round 1:
+    - [dMRI](imagexcan_round_1_dmri.html)
+    - [T1](imagexcan_round_1_t1.html)

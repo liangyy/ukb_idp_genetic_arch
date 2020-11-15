@@ -176,8 +176,13 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     test_pred = full_pred$prediction$val
     opt_idx = min(which.max(inner_fit$metric.val), ncol(test_pred)) 
     ypred_test = test_pred[, opt_idx]  # this is from the best lambda
-    df_out$ypred[match(names(ypred_test), df_out$indiv)] = as.numeric(ypred_test)
-    
+    if(!is.null(names(ypred_test))) {
+      df_out$ypred[match(names(ypred_test), df_out$indiv)] = as.numeric(ypred_test)
+    } else {
+      # degenerate model
+      df_out$ypred[ test_idx ] = as.numeric(ypred_test)[1]
+    }
+ 
     # clean up intermediate file 
     system(paste0('rm ', tmp_pheno_file))
   }

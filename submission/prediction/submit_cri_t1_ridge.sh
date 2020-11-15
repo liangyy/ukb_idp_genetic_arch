@@ -2,7 +2,19 @@ prs_parquet=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/gw_ridge/gw_ridge_beta.t1.d
 NAME=t1_ridge
 logdir=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/prediction/logs
 
-for i in `seq 1 22`; do e=`cat $logdir/pred_cri_t1_ridge_$i.log|tail -n 1 | grep sqlite3`; if [[ ! -z $e ]]; then echo $i; fi; done > tmp
+for i in `seq 1 22`
+do 
+  if [[ -f $logdir/pred_cri_t1_ridge_$i.log ]]
+  then
+    e=`cat $logdir/pred_cri_t1_ridge_$i.log|tail -n 1 | grep 'sqlite3\|ModuleNotFoundError'` 
+    if [[ ! -z $e ]]
+    then 
+      echo $i
+    fi
+  else
+    echo $i
+  fi
+done > tmp
 
 for i in `cat tmp`
 do 

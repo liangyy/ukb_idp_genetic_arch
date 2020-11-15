@@ -1,0 +1,12 @@
+parquet2tsv_script: '/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/parquet2table/parquet2tsv.py'
+phenotype:
+  path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/regress_out_idp_pcs/2020-05-18_final-phenotypes.cleaned_up_T1.parquet'
+  list: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/gw_lasso/t1/batch_list_en/{name_tag}'
+  indiv_col: 'individual'
+genotype_prefix: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.merged_all'
+snpnet_config: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/gw_lasso/snpnet.yaml'
+inner_nfold: 5
+nfold: 5
+plink_mem_in_mb: 8000
+glmnet_alpha: 0.1
+outdir: '/scratch/t.cri.yliang/ukb_idp/gw_elastic_net_t1'

@@ -1,16 +1,16 @@
-# setwd('~/Documents/repo/github/ukb_idp_genetic_arch/misc_data/process_dmri/')
+# setwd('~/Documents/repo/github/ukb_idp_genetic_arch/misc_data/process_t1/')
 
 library(dplyr)
 library(ggplot2)
 
-# For the dMRI
-# We perform PCA on the dMRI matrix.
+# For the T1
+# We perform PCA on the T1 matrix.
 
 # For each PCA analysis, we keep both the aggregated PC and the residual.
 # The number of PCs to regress out depends on the overall PVE. 
-# We aim at PVE >= 50%
+# We aim at PVE >= 30%
 
-pve_cutoff = 0.5
+pve_cutoff = 0.3
 
 standardize = function(x) {
   apply(x, 2, function(y) { (y - mean(y)) / sd(y) })
@@ -28,11 +28,12 @@ split_by_pca = function(x, pve_cutoff = 0.5) {
 
 myplot_magic = function(df) {
   mytmp = df # 
-  mytmp_g = mytmp[!duplicated(mytmp$Var1), ] %>% mutate(order = order(Var1)) %>% group_by(measure.1) %>% summarize(pos = mean(order))
+  # mytmp_g = mytmp[!duplicated(mytmp$Var1), ] %>% mutate(order = order(Var1)) %>% group_by(matter_type.1) %>% summarize(pos = mean(order))
   mytmp %>% ggplot() +
     theme_bw() + 
     geom_raster(aes(x = as.character(Var1), y = as.character(Var2), fill = value)) + scale_fill_gradient2(low = 'blue', high = 'red', mid = 'white') +
-    annotate(geom = "text", x = mytmp_g$pos, y = -20, label = mytmp_g$measure.1, size = 4) + coord_equal(expand = FALSE, clip = "off", ylim = c(0, sum(!duplicated(mytmp$Var1)))) +
+    # annotate(geom = "text", x = mytmp_g$pos, y = -20, label = mytmp_g$matter_type.1, size = 4) + 
+    coord_equal(expand = FALSE, clip = "off", ylim = c(0, sum(!duplicated(mytmp$Var1)))) +
     theme(
       plot.margin = unit(c(0.1, 0.1, 2, 0.1), "cm"),
       axis.title.x = element_blank(),
@@ -54,7 +55,7 @@ df = pd$read_parquet('/vol/bmd/meliao/data/idp_phenotypes/2020-05-18_final-pheno
 
 # df = arrow::read_parquet('~/Desktop/tmp/ukb_idp/idp_phenotypes/2020-05-18_final-phenotypes.parquet')
 # the RDS in the below is generated in ../download_some_matching_files/explore_dmri.R
-df_annot = readRDS('../download_some_matching_files/annot_dmri_idps.rds')
+df_annot = readRDS('../process_t1/t1_meta.rds')
 df = df[, c('individual', paste0('IDP-', as.character(df_annot$FieldID)))]
 mat = as.matrix(df[, -1])
 
@@ -65,18 +66,12 @@ pc_all = res$pc
 
 corr = cor(mat_res)
 df_corr = corr %>% reshape2::melt() %>% 
-  inner_join(df_annot %>% mutate(idp = paste0('IDP-', FieldID)) %>% select(idp, type, position, measure, lr), by = c('Var1' = 'idp')) %>%
-  inner_join(df_annot %>% mutate(idp = paste0('IDP-', FieldID)) %>% select(idp, type, position, measure, lr), by = c('Var2' = 'idp'), suffix = c('.1', '.2'))
-df_corr = df_corr %>% mutate(
-  label1 = paste0(Var1, '\n', measure.1),
-  label2 = paste0(Var2, '\n', measure.2)
-)
-p1 = myplot_magic(df_corr %>% filter(type.1 == 'mean', type.2 == 'mean') )
-p2 = myplot_magic(df_corr %>% filter(type.1 == 'weighted_mean_in_tract', type.2 == 'weighted_mean_in_tract') )
-p3 = myplot_magic(df_corr %>% filter(type.1 == 'weighted_mean_in_tract', type.2 == 'mean') )
-ggsave('dmri_residual_mean_corr.png', p1)
-ggsave('dmri_residual_weighted_mean_corr.png', p2)
-ggsave('dmri_residual_cross_corr.png', p3)
+  inner_join(df_annot %>% mutate(idp = paste0('IDP-', FieldID)) %>% 
+  select(idp, normalized_by_head_size, position, matter_type, lr), by = c('Var1' = 'idp')) %>%
+  inner_join(df_annot %>% mutate(idp = paste0('IDP-', FieldID)) %>% 
+  select(idp, normalized_by_head_size, position, matter_type, lr), by = c('Var2' = 'idp'), suffix = c('.1', '.2'))
+p0 = myplot_magic(df_corr)
+ggsave('t1_residual_corr.png', p1)
 
 
 mat_res = as.data.frame(mat_res)
@@ -86,4 +81,4 @@ colnames(pc_all) = paste0('PC-', 1 : ncol(pc_all))
 df_out = data.frame(individual = df$individual)
 df_out = cbind(df_out, mat_res, pc_all)
 tmp = r_to_py(df_out)
-tmp$to_parquet('/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/regress_out_idp_pcs/2020-05-18_final-phenotypes.cleaned_up_dMRI.parquet', index = F)
+tmp$to_parquet('/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/regress_out_idp_pcs/2020-05-18_final-phenotypes.cleaned_up_T1.parquet', index = F)

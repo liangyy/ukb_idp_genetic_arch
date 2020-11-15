@@ -3,6 +3,8 @@ Here I implement the ridge regression for genome-wide SNPs.
 
 **Dependencies**: Tested on `pandas=1.1.1`, `numpy=1.19.1`, and `fastparquet=0.4.1`.
 
+**Note**: We assume that there is not intercept. Please make sure that the input phenotypes are centers around zero. If you want to center the phenotypes, use the option `--center_y`.
+
 The script is designed to use the genotype in PLINK binary PED format.
 And it outputs the cross-validated prediction performance of the ridge regression, where the hyper-parameter is determined by a nested round of cross-validation within training folds.
 

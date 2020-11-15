@@ -20,7 +20,7 @@ do
       qsub -v BATCH=$i -N gw_lasso_$i run_lasso.qsub
     fi
   else
-    :
-    # qsub -v BATCH=$i -N gw_lasso_$i run_lasso.qsub
+    # :
+    qsub -v BATCH=$i -N gw_lasso_$i run_lasso.qsub
   fi
 done

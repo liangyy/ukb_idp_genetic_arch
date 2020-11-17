@@ -457,7 +457,7 @@ p6 = df_lm %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;% group_by(phenotyp
   facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
   ggtitle(&#39;Single signal in original&#39;)
 (p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
-<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-22-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-4-1.png" width="1536" /></p>
 </div>
 <div id="focus-on-one-brain-region" class="section level1">
 <h1><span class="header-section-number">4</span> Focus on one brain region</h1>
@@ -489,7 +489,7 @@ p6 = df_lm %&gt;% filter(phenotype %in% pheno_sig_orig, position == region) %&gt
   facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
   ggtitle(&#39;Single signal in original&#39;)
 (p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
-<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-23-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-5-1.png" width="1536" /></p>
 </div>
 <div id="aggregate-using-acat-for-each-region" class="section level1">
 <h1><span class="header-section-number">5</span> Aggregate using ACAT for each region</h1>
@@ -521,13 +521,242 @@ p6 = df_agg %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;% group_by(phenoty
   facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
   ggtitle(&#39;Single signal in original&#39;)
 (p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
-<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-24-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-6-1.png" width="1536" /></p>
 </div>
 <div id="bonferroni-significant-hits" class="section level1">
 <h1><span class="header-section-number">6</span> Bonferroni significant hits</h1>
-<pre class="r"><code>df_lm %&gt;% filter(idp_type == &#39;regress_out&#39;) %&gt;% mutate(p_adj = pval * n()) %&gt;% filter(p_adj &lt; 0.05, phenotype %in% pheno_interest) %&gt;% pander::pander(caption = &#39;Bonferroni significant IDP-level (alpha = 0.05) among all focal traits&#39;)</code></pre>
+<pre class="r"><code>df_lm %&gt;% filter(idp_type == &#39;original&#39;) %&gt;% mutate(p_adj = pval * n()) %&gt;% filter(p_adj &lt; 0.05, phenotype %in% pheno_interest) %&gt;% pander::pander(caption = &#39;Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (original IDP)&#39;)</code></pre>
+<table>
+<caption>Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (original IDP) (continued below)</caption>
+<colgroup>
+<col width="15%" />
+<col width="40%" />
+<col width="13%" />
+<col width="15%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">bhat</th>
+<th align="center">pval</th>
+<th align="center">idp_type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25298</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.4833</td>
+<td align="center">9.915e-10</td>
+<td align="center">original</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25250</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.4991</td>
+<td align="center">4.835e-07</td>
+<td align="center">original</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25058</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">-0.4974</td>
+<td align="center">3.459e-07</td>
+<td align="center">original</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25186</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">-0.531</td>
+<td align="center">2.53e-08</td>
+<td align="center">original</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25106</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.5995</td>
+<td align="center">6.295e-09</td>
+<td align="center">original</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25108</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.5247</td>
+<td align="center">2.043e-07</td>
+<td align="center">original</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25151</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.4882</td>
+<td align="center">4.339e-07</td>
+<td align="center">original</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25547</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">-0.4886</td>
+<td align="center">5.994e-07</td>
+<td align="center">original</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25691</td>
+<td align="center">recurrent_depressive_disorder</td>
+<td align="center">-0.01758</td>
+<td align="center">1.217e-06</td>
+<td align="center">original</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25238</td>
+<td align="center">parent_depression</td>
+<td align="center">0.02266</td>
+<td align="center">1.151e-07</td>
+<td align="center">original</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25247</td>
+<td align="center">handedness</td>
+<td align="center">0.01471</td>
+<td align="center">9.873e-07</td>
+<td align="center">original</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="13%" />
+<col width="41%" />
+<col width="33%" />
+<col width="10%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">measure</th>
+<th align="center">position</th>
+<th align="center">type</th>
+<th align="center">lr</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">L3</td>
+<td align="center">genu of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center">L2</td>
+<td align="center">genu of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="odd">
+<td align="center">FA</td>
+<td align="center">genu of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center">MO</td>
+<td align="center">cingulum cingulate gyrus</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">MD</td>
+<td align="center">genu of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center">MD</td>
+<td align="center">splenium of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="odd">
+<td align="center">MD</td>
+<td align="center">tapetum</td>
+<td align="center">mean</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">MO</td>
+<td align="center">cingulate gyrus part of cingulum</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">OD</td>
+<td align="center">inferior longitudinal fasciculus</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">left</td>
+</tr>
+<tr class="even">
+<td align="center">L1</td>
+<td align="center">fornix cres+stria terminalis</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="odd">
+<td align="center">L1</td>
+<td align="center">tapetum</td>
+<td align="center">mean</td>
+<td align="center">left</td>
+</tr>
+</tbody>
+</table>
+<table style="width:17%;">
+<colgroup>
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">p_adj</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">3.614e-05</td>
+</tr>
+<tr class="even">
+<td align="center">0.01763</td>
+</tr>
+<tr class="odd">
+<td align="center">0.01261</td>
+</tr>
+<tr class="even">
+<td align="center">0.0009222</td>
+</tr>
+<tr class="odd">
+<td align="center">0.0002294</td>
+</tr>
+<tr class="even">
+<td align="center">0.007447</td>
+</tr>
+<tr class="odd">
+<td align="center">0.01581</td>
+</tr>
+<tr class="even">
+<td align="center">0.02185</td>
+</tr>
+<tr class="odd">
+<td align="center">0.04437</td>
+</tr>
+<tr class="even">
+<td align="center">0.004196</td>
+</tr>
+<tr class="odd">
+<td align="center">0.03599</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>df_lm %&gt;% filter(idp_type == &#39;regress_out&#39;) %&gt;% mutate(p_adj = pval * n()) %&gt;% filter(p_adj &lt; 0.05, phenotype %in% pheno_interest) %&gt;% pander::pander(caption = &#39;Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (adjusted IDP)&#39;)</code></pre>
 <table style="width:100%;">
-<caption>Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (continued below)</caption>
+<caption>Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (adjusted IDP) (continued below)</caption>
 <colgroup>
 <col width="15%" />
 <col width="24%" />
@@ -637,9 +866,9 @@ p6 = df_agg %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;% group_by(phenoty
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>df_agg %&gt;% filter(idp_type == &#39;regress_out&#39;) %&gt;% mutate(p_adj = p_acat * n()) %&gt;% filter(p_adj &lt; 0.05, phenotype %in% pheno_interest) %&gt;% pander::pander(caption = &#39;Bonferroni significant region-level (alpha = 0.05) among all focal traits&#39;)</code></pre>
+<pre class="r"><code>df_agg %&gt;% filter(idp_type == &#39;regress_out&#39;) %&gt;% mutate(p_adj = p_acat * n()) %&gt;% filter(p_adj &lt; 0.05, phenotype %in% pheno_interest) %&gt;% pander::pander(caption = &#39;Bonferroni significant region-level (alpha = 0.05) among all focal traits (adjusted IDP)&#39;)</code></pre>
 <table>
-<caption>Bonferroni significant region-level (alpha = 0.05) among all focal traits (continued below)</caption>
+<caption>Bonferroni significant region-level (alpha = 0.05) among all focal traits (adjusted IDP) (continued below)</caption>
 <colgroup>
 <col width="18%" />
 <col width="25%" />
@@ -738,7 +967,7 @@ p6 = df_susie %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;%
   ggtitle(&#39;Single signal in original&#39;) +
   theme(axis.text.x = element_blank())
 (p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
-<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-27-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-9-1.png" width="1536" /></p>
 </div>
 <div id="credible-set" class="section level1">
 <h1><span class="header-section-number">9</span> 95% credible set</h1>

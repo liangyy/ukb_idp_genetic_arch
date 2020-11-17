@@ -160,8 +160,9 @@ p6 = df_agg %>% filter(phenotype %in% pheno_sig_orig) %>% group_by(phenotype, id
 # Bonferroni significant hits
 
 ```{r}
-df_lm %>% filter(idp_type == 'regress_out') %>% mutate(p_adj = pval * n()) %>% filter(p_adj < 0.05, phenotype %in% pheno_interest) %>% pander::pander(caption = 'Bonferroni significant IDP-level (alpha = 0.05) among all focal traits')
-df_agg %>% filter(idp_type == 'regress_out') %>% mutate(p_adj = p_acat * n()) %>% filter(p_adj < 0.05, phenotype %in% pheno_interest) %>% pander::pander(caption = 'Bonferroni significant region-level (alpha = 0.05) among all focal traits')
+df_lm %>% filter(idp_type == 'original') %>% mutate(p_adj = pval * n()) %>% filter(p_adj < 0.05, phenotype %in% pheno_interest) %>% pander::pander(caption = 'Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (original IDP)')
+df_lm %>% filter(idp_type == 'regress_out') %>% mutate(p_adj = pval * n()) %>% filter(p_adj < 0.05, phenotype %in% pheno_interest) %>% pander::pander(caption = 'Bonferroni significant IDP-level (alpha = 0.05) among all focal traits (adjusted IDP)')
+df_agg %>% filter(idp_type == 'regress_out') %>% mutate(p_adj = p_acat * n()) %>% filter(p_adj < 0.05, phenotype %in% pheno_interest) %>% pander::pander(caption = 'Bonferroni significant region-level (alpha = 0.05) among all focal traits (adjusted IDP)')
 ```
 
 # Susier run

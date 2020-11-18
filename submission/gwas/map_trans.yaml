@@ -1,0 +1,3 @@
+# to save all results
+pval_threshold: 1.1  
+maf_threshold: 0

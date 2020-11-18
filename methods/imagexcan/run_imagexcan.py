@@ -26,9 +26,8 @@ if __name__ == '__main__':
     parser.add_argument('--individual_list_exclude', default=None, help='''
         The list of individuals to exclude from the analysis.
     ''')
-    parser.add_argument('--covariate_yaml', default=None, help='''
-        If it is not specified, all covariates will be used as quantitative measure.
-        Otherwise, specify the list of covariate to use and 
+    parser.add_argument('--covariate_yaml', help='''
+        Specify the list of covariate to use and 
         the type of the covariate (continuous or categorical).
     ''')
     parser.add_argument('--idp_table', nargs='+', help='''

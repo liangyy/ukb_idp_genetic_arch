@@ -9,3 +9,5 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 * ImageXcan round 1:
     - [dMRI](imagexcan_round_1_dmri.html)
     - [T1](imagexcan_round_1_t1.html)
+* Downstream Mendelian randomization:
+    - An example run with cigarette intake and IDP-25882 [link](example_mr.html)

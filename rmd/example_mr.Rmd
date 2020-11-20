@@ -1,0 +1,142 @@
+---
+title: "Example MR run"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+source('https://raw.githubusercontent.com/liangyy/misc-tools/master/plot_tool/plot_tools.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+library(TwoSampleMR)
+source('rlib.R')
+```
+
+# About
+
+As the downstream analysis of ImageXcan run. 
+We want to perform Mendelian Randomization to see if the IDP being identified is the exposure of the outcome.
+Here I take an example `weekly_alcohol` and `IDP-25882` (as suggested by [this post](imagexcan_round_1_t1.html)).
+I use the `TwoSampleMR` package to perform MR.
+Since I could not find `weekly_alcohol` in UKB, I will use [Alcohol intake frequency](https://biobank.ctsu.ox.ac.uk/crystal/field.cgi?id=1558) `ukb-b-5779` in open gwas database [link](https://gwas.mrcieu.ac.uk/datasets/ukb-b-5779/).
+
+# Load IDP GWAS
+
+```{r}
+idp_code = 'IDP-25882'
+idp_gwas = list()
+for(i in 1 : 22) {
+  idp_gwas[[length(idp_gwas) + 1]] = arrow::read_parquet(paste0('~/Desktop/tmp/ukb_idp/idp_gwas/trans_qtl.T1.chr', i, '/', idp_code, '.parquet'))
+}
+idp_gwas = do.call(rbind, idp_gwas)
+qqplot_by_group(idp_gwas$pval[ idp_gwas$pval < 0.01 ], 1, pval_cutoff = 0.01) + th
+```
+
+We need to load more meta information of the SNPs.
+
+```{r}
+snp_meta = list()
+for(i in 1 : 22) {
+  snp_meta[[length(snp_meta) + 1]] = read.table(paste0('~/Desktop/tmp/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr', i, '.bim'), header = F) 
+}
+snp_meta = do.call(rbind, snp_meta)
+snp_meta = snp_meta %>% select(V2, V5, V6) %>% rename(rsid = V2, ref = V5, alt = V6)
+idp_gwas = left_join(idp_gwas, snp_meta, by = c('variant_id' = 'rsid'))
+```
+
+# IDP -> alcohol intake frequency
+
+Set up the exposure GWAS.
+
+```{r}
+idp_exp_dat = format_data(
+  data.frame(SNP = idp_gwas$variant_id, beta = idp_gwas$b, se = idp_gwas$b_se, effect_allele = idp_gwas$alt, other_allele = idp_gwas$ref)
+)
+```
+
+Do LD clumping on data.
+
+```{r}
+idp_exp_dat = clump_data(
+  idp_exp_dat, 
+  pop = 'EUR',
+  clump_p1 = 5e-08,
+  clump_p2 = 5e-08,
+  clump_r2 = 0.001,
+  clump_kb = 10000
+)
+```
+
+Set up the outcome GWAS.
+
+```{r}
+ukb_code = 'ukb-b-5779'
+outcome_dat <- extract_outcome_data(
+	snps = idp_exp_dat$SNP,
+	outcomes = ukb_code
+)
+```
+
+Run MR.
+
+```{r}
+if(!exists('dat_forward')) {
+  dat_forward <- harmonise_data(idp_exp_dat, outcome_dat)
+}
+# Perform MR
+res_forward <- mr(dat_forward)
+res_forward %>% pander::pander(caption = 'IDP -> phenotype')
+```
+
+Visualization.
+
+```{r}
+dat_forward %>% filter(pval.exposure < 1e-6) %>% ggplot() + 
+  geom_vline(xintercept = 0, color = 'grey') + geom_hline(yintercept = 0, color = 'grey') + 
+  geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + th 
+```
+
+# alcohol intake frequency -> IDP
+
+Load instrument GWAS.
+
+```{r}
+exp_dat2 <- extract_instruments(outcomes = ukb_code)
+```
+
+Load IDP as outcome GWAS.
+
+```{r}
+idp_dat = format_data(
+  data.frame(SNP = idp_gwas$variant_id, beta = idp_gwas$b, se = idp_gwas$b_se, effect_allele = idp_gwas$alt, other_allele = idp_gwas$ref),
+  type = 'outcome',
+  snps = exp_dat2$SNP
+)
+```
+
+Run MR.
+
+```{r}
+if(!exists('dat_backward')) {
+  dat_backward <- harmonise_data(exp_dat2, idp_dat)
+}
+# Perform MR
+res_backward <- mr(dat_backward)
+res_backward %>% pander::pander(caption = 'phenotype -> IDP')
+```
+
+Visualization.
+
+```{r}
+dat_backward %>% ggplot() + 
+  geom_vline(xintercept = 0, color = 'grey') + geom_hline(yintercept = 0, color = 'grey') + 
+  geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + th 
+```
+

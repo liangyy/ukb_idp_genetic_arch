@@ -1,0 +1,10 @@
+pheno2idp:
+  clump_p: 5e-8
+  clump_r2: 0.001
+  clump_kb: 10000
+idp2pheno:
+  clump_p: 5e-8
+  clump_r2: 0.001
+  clump_kb: 10000  
+plink_executable: 'plink
+bfile: '/gpfs/data/im-lab/nas40t2/yanyul/data/ieugwasr/EUR'

@@ -1,7 +1,7 @@
 load_idp_gwas = function(file_pattern) {
   idp_gwas = list()
   for(chr_num in 1 : 22) {
-    idp_gwas[[length(idp_gwas) + 1]] = arrow::read_parquet(glue::glue(file_pattern))
+    idp_gwas[[length(idp_gwas) + 1]] = arrow::read_parquet(glue::glue(file_pattern, .open = '[', .close = ']'))
   }
   do.call(rbind, idp_gwas)
 }
@@ -9,7 +9,7 @@ load_idp_gwas = function(file_pattern) {
 load_snp_meta = function(bim_pattern) {
   snp_meta = list()
   for(chr_num in 1 : 22) {
-    snp_meta[[length(snp_meta) + 1]] = read.table(glue::glue(bim_pattern), header = F) 
+    snp_meta[[length(snp_meta) + 1]] = read.table(glue::glue(bim_pattern, .open = '[', .close = ']'), header = F) 
   }
   snp_meta = do.call(rbind, snp_meta)
   snp_meta = snp_meta %>% select(V2, V5, V6) %>% rename(rsid = V2, ref = V5, alt = V6)

@@ -11,6 +11,9 @@ source ~/.bashrc
 conda activate two_sample_mr
 SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snakemake
 
+module load gcc
+module load plink/1.90
+
 cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/mr
 
 $SNMK -s run.snmk \

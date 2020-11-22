@@ -1,5 +1,5 @@
 name_tag: 'test'
-idp: 'IDP-25882'
+idp_id: 'IDP-25882'
 pheno: 'alcohol_intake_freq'
 pheno_code: 'ukb-b-5779'
 idp_type: 'T1'

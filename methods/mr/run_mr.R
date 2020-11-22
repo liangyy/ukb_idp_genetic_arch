@@ -10,10 +10,10 @@ library(optparse)
 
 option_list <- list(
     make_option(c("-g", "--idp_gwas_pattern"), type="character", default=NULL,
-                help="The IDP GWAS files (should contain {chr_num} as wildcards).",
+                help="The IDP GWAS files (should contain [chr_num] as wildcards).",
                 metavar="character"),
     make_option(c("-s", "--snp_meta"), type="character", default=NULL,
-                help="SNP meta information in plink BIM files.",
+                help="SNP meta information in plink BIM files. (should contain [chr_num] as wildcards)",
                 metavar="character"),
     make_option(c("-l", "--ld_clump_yaml"), type="character", default=NULL,
                 help="LD clumping dependent files and parameters are specified in this YAML file.",

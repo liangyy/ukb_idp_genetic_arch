@@ -6,10 +6,10 @@ if 'outdir' not in config:
 idp_pheno = {}
 if 'idp_pheno_table' in config:
     tmp = pd.read_csv(config['idp_pheno_table'], sep='\t')
-    for idp, pheno in zip(tmp.idp, tmp.pheno, tmp.pheno_code):
+    for idp, pheno, pheno_code in zip(tmp.idp, tmp.pheno, tmp.pheno_code):
         idp_pheno[f'{idp}_x_{pheno}'] = pheno_code
-elif 'idp' in config and 'pheno' in config and 'pheno_code' in config:
-    idp_pheno[config['idp'] + '_x_' + config['pheno']] = config['pheno_code']
+elif 'idp_id' in config and 'pheno' in config and 'pheno_code' in config:
+    idp_pheno[config['idp_id'] + '_x_' + config['pheno']] = config['pheno_code']
 else:
     raise ValueError('Need to have idp, pheno, pheno_code or idp_pheno_table specified.')
 
@@ -17,20 +17,22 @@ rule all:
     input:
         [ '{outdir}/MR.{name_tag}.{idp_x_gwas_code}.rds'.format(idp_x_gwas_code=n, **config) for n in idp_pheno.keys() ]
 
-idp_pattern = config['idp_gwas_pattern'].format(chr_num='{chr_num}', **config)
+# idp_pattern = config['idp_gwas_pattern'].format(chr_num='{chr_num}', **config)
 rule mr:
     input:
         ld = config['ld_clump_yaml'],
-        idp_gwas = lambda wildcards: [ config['idp_gwas_pattern'].format(chr_num=i, **config) for i in range(1, 23) ],
+        idp_gwas = lambda wildcards: [ config['idp_gwas_pattern'].format(chr_num=i, idp=wildcards.idp, **config) for i in range(1, 23) ],
         snp_bim = [ config['snp_bim'].format(chr_num=i) for i in range(1, 23) ]
     params:
-        gwas_code = lambda wildcards: idp_pheno[wildcards.idp + '_x_' + wildcards.gwas_name]
+        gwas_code = lambda wildcards: idp_pheno[wildcards.idp + '_x_' + wildcards.gwas_name],
+        idp_pattern = lambda wildcards: config['idp_gwas_pattern'].format(chr_num='[chr_num]', idp=wildcards.idp, **config),
+        bim_pattern = config['snp_bim'].format(chr_num='[chr_num]')
     output:
         '{outdir}/MR.{name_tag}.{idp}_x_{gwas_name}.rds'
     shell:
         'Rscript run_mr.R \
-          --idp_gwas_pattern {idp_pattern} \
-          --snp_meta {config[snp_bim]} \
+          --idp_gwas_pattern {params.idp_pattern} \
+          --snp_meta {params.bim_pattern} \
           --ld_clump_yaml {input.ld} \
           --open_gwas_id {params.gwas_code} \
           --output {output[0]}'

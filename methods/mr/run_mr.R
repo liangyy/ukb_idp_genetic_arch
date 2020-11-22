@@ -18,7 +18,7 @@ option_list <- list(
     make_option(c("-l", "--ld_clump_yaml"), type="character", default=NULL,
                 help="LD clumping dependent files and parameters are specified in this YAML file.",
                 metavar="character"),
-    make_option(c("-g2", "--open_gwas_id"), type="character", default=NULL,
+    make_option(c("-f", "--open_gwas_id"), type="character", default=NULL,
                 help="The GWAS ID in open GWAS database.",
                 metavar="character"),
     make_option(c("-o", "--output"), type="character", default=NULL,
@@ -102,12 +102,12 @@ res_backward %>% pander::pander(caption = 'Phenotype -> IDP')
 
 logging::loginfo('Saving results.')
 saveRDS(
-  opt$output, 
   list(
     idp2pheno = list(data = dat_forward, mr = res_forward),
     pheno2idp = list(data = dat_backward, mr = res_backward),
     gwas_code = gwas_code
-  )
+  ),
+  opt$output
 )
 
 logging::loginfo('Done.')

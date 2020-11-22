@@ -60,17 +60,22 @@ idp_exp_dat = format_data(
 logging::loginfo('Working on IDP -> Phenotype.')
 logging::loginfo('** IDP -> Phenotype: LD clumping')
 idp_exp_dat = ld_clump_local(idp_exp_dat, ld_clump_param, mode = 'idp2pheno')
+if(!is.na(idp_exp_dat)) {
+  logging::loginfo('** IDP -> Phenotype: Extracting outcome GWAS.')
+  outcome_dat = extract_outcome_data(
+  	snps = idp_exp_dat$SNP,
+  	outcomes = gwas_code
+  )
 
-logging::loginfo('** IDP -> Phenotype: Extracting outcome GWAS.')
-outcome_dat = extract_outcome_data(
-	snps = idp_exp_dat$SNP,
-	outcomes = gwas_code
-)
+  logging::loginfo('** IDP -> Phenotype: Running MR.')
+  dat_forward = harmonise_data(idp_exp_dat, outcome_dat)
+  res_forward = mr(dat_forward)
+  res_forward %>% pander::pander(caption = 'IDP -> Phenotype')
+} else {
+  res_forward = NA
+  dat_forward = NA
+}
 
-logging::loginfo('** IDP -> Phenotype: Running MR.')
-dat_forward = harmonise_data(idp_exp_dat, outcome_dat)
-res_forward = mr(dat_forward)
-res_forward %>% pander::pander(caption = 'IDP -> Phenotype')
 
 logging::loginfo('Working on Phenotype -> IDP.')
 logging::loginfo('** Phenotype -> IDP: Loading instrument GWAS.')

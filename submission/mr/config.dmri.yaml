@@ -1,0 +1,7 @@
+name_tag: 'dmri'
+idp_pheno_table: ''
+idp_type: 'dMRI'
+
+ld_clump_yaml: 'test.ld_clump.yaml'
+idp_gwas_pattern: '/scratch/t.cri.yliang/ukb_idp/idp_gwas/trans_qtl.{idp_type}.chr{chr_num}/{idp}.parquet'
+snp_bim: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bim'

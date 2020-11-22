@@ -381,7 +381,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Individual-level ImageXcan (round 1) dMRI</h1>
-<h4 class="date">15 November, 2020</h4>
+<h4 class="date">22 November, 2020</h4>
 
 </div>
 
@@ -457,7 +457,7 @@ p6 = df_lm %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;% group_by(phenotyp
   facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
   ggtitle(&#39;Single signal in original&#39;)
 (p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
-<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-4-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-36-1.png" width="1536" /></p>
 </div>
 <div id="focus-on-one-brain-region" class="section level1">
 <h1><span class="header-section-number">4</span> Focus on one brain region</h1>
@@ -489,7 +489,7 @@ p6 = df_lm %&gt;% filter(phenotype %in% pheno_sig_orig, position == region) %&gt
   facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
   ggtitle(&#39;Single signal in original&#39;)
 (p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
-<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-5-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-37-1.png" width="1536" /></p>
 </div>
 <div id="aggregate-using-acat-for-each-region" class="section level1">
 <h1><span class="header-section-number">5</span> Aggregate using ACAT for each region</h1>
@@ -521,7 +521,7 @@ p6 = df_agg %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;% group_by(phenoty
   facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
   ggtitle(&#39;Single signal in original&#39;)
 (p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
-<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-6-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-38-1.png" width="1536" /></p>
 </div>
 <div id="bonferroni-significant-hits" class="section level1">
 <h1><span class="header-section-number">6</span> Bonferroni significant hits</h1>
@@ -967,7 +967,7 @@ p6 = df_susie %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;%
   ggtitle(&#39;Single signal in original&#39;) +
   theme(axis.text.x = element_blank())
 (p1 + p2) / (p3 + p4) / (p5 + p6)</code></pre>
-<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-9-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_dmri_files/figure-html/unnamed-chunk-41-1.png" width="1536" /></p>
 </div>
 <div id="credible-set" class="section level1">
 <h1><span class="header-section-number">9</span> 95% credible set</h1>
@@ -1070,14 +1070,14 @@ p6 = df_susie %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;%
 </tbody>
 </table>
 </div>
-<div id="pip-0.5" class="section level1">
-<h1><span class="header-section-number">10</span> PIP &gt; 0.5</h1>
-<pre class="r"><code>df_susie %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(pip &gt; 0.5) %&gt;% pander::pander(caption = &#39;IDP in 95% credible set among all focal phenotypes&#39;)</code></pre>
-<table style="width:78%;">
+<div id="pip-0.25" class="section level1">
+<h1><span class="header-section-number">10</span> PIP &gt; 0.25</h1>
+<pre class="r"><code>df_susie %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(pip &gt; 0.25) %&gt;% pander::pander(caption = &#39;IDP in 95% credible set among all focal phenotypes&#39;)</code></pre>
+<table style="width:94%;">
 <caption>IDP in 95% credible set among all focal phenotypes (continued below)</caption>
 <colgroup>
 <col width="16%" />
-<col width="27%" />
+<col width="44%" />
 <col width="12%" />
 <col width="6%" />
 <col width="13%" />
@@ -1093,41 +1093,90 @@ p6 = df_susie %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;%
 </thead>
 <tbody>
 <tr class="odd">
+<td align="center">IDP-25057</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.2509</td>
+<td align="center">-1</td>
+<td align="center">FA</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25106</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.4981</td>
+<td align="center">2</td>
+<td align="center">MD</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25298</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.4791</td>
+<td align="center">2</td>
+<td align="center">L3</td>
+</tr>
+<tr class="even">
 <td align="center">IDP-25458</td>
 <td align="center">weekly_alcohol</td>
 <td align="center">0.9786</td>
 <td align="center">1</td>
 <td align="center">ISOVF</td>
 </tr>
+<tr class="odd">
+<td align="center">IDP-25604</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.2595</td>
+<td align="center">-1</td>
+<td align="center">L2</td>
+</tr>
 <tr class="even">
+<td align="center">IDP-25691</td>
+<td align="center">recurrent_depressive_disorder</td>
+<td align="center">0.282</td>
+<td align="center">-1</td>
+<td align="center">OD</td>
+</tr>
+<tr class="odd">
 <td align="center">IDP-25238</td>
 <td align="center">parent_depression</td>
 <td align="center">0.5536</td>
 <td align="center">-1</td>
 <td align="center">L1</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">IDP-25247</td>
 <td align="center">handedness</td>
 <td align="center">0.6067</td>
 <td align="center">-1</td>
 <td align="center">L1</td>
 </tr>
+<tr class="odd">
+<td align="center">IDP-25507</td>
+<td align="center">daily_coffee</td>
+<td align="center">0.2611</td>
+<td align="center">-1</td>
+<td align="center">FA</td>
+</tr>
 <tr class="even">
+<td align="center">PC-5</td>
+<td align="center">daily_coffee</td>
+<td align="center">0.2875</td>
+<td align="center">-1</td>
+<td align="center">NA</td>
+</tr>
+<tr class="odd">
 <td align="center">IDP-25314</td>
 <td align="center">daily_cigarettes</td>
 <td align="center">0.9081</td>
 <td align="center">-1</td>
 <td align="center">L3</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="center">IDP-25507</td>
 <td align="center">daily_cigarettes</td>
 <td align="center">0.9635</td>
 <td align="center">1</td>
 <td align="center">FA</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="center">PC-6</td>
 <td align="center">daily_cigarettes</td>
 <td align="center">0.9825</td>
@@ -1151,24 +1200,44 @@ p6 = df_susie %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;%
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">posterior limb of internal capsule</td>
+<td align="center">pontine crossing tract</td>
 <td align="center">mean</td>
-<td align="center">right</td>
+<td align="center">NA</td>
 </tr>
 <tr class="even">
-<td align="center">fornix cres+stria terminalis</td>
+<td align="center">genu of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="odd">
+<td align="center">genu of corpus callosum</td>
+<td align="center">mean</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center">posterior limb of internal capsule</td>
 <td align="center">mean</td>
 <td align="center">right</td>
 </tr>
 <tr class="odd">
-<td align="center">tapetum</td>
-<td align="center">mean</td>
+<td align="center">corticospinal tract</td>
+<td align="center">weighted_mean_in_tract</td>
 <td align="center">left</td>
 </tr>
 <tr class="even">
-<td align="center">posterior limb of internal capsule</td>
+<td align="center">inferior longitudinal fasciculus</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">left</td>
+</tr>
+<tr class="odd">
+<td align="center">fornix cres+stria terminalis</td>
 <td align="center">mean</td>
 <td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">tapetum</td>
+<td align="center">mean</td>
+<td align="center">left</td>
 </tr>
 <tr class="odd">
 <td align="center">posterior thalamic radiation</td>
@@ -1180,8 +1249,34 @@ p6 = df_susie %&gt;% filter(phenotype %in% pheno_sig_orig) %&gt;%
 <td align="center">NA</td>
 <td align="center">NA</td>
 </tr>
+<tr class="odd">
+<td align="center">posterior limb of internal capsule</td>
+<td align="center">mean</td>
+<td align="center">right</td>
+</tr>
+<tr class="even">
+<td align="center">posterior thalamic radiation</td>
+<td align="center">weighted_mean_in_tract</td>
+<td align="center">left</td>
+</tr>
+<tr class="odd">
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
 </tbody>
 </table>
+</div>
+<div id="obtaining-the-list-of-significant-pairs-95-cs-or-pip-0.25" class="section level1">
+<h1><span class="header-section-number">11</span> Obtaining the list of significant pairs (95% CS or PIP &gt; 0.25)</h1>
+<pre class="r"><code>tmp = rbind(
+  df_susie %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(cs &gt; 0),
+  df_susie %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(pip &gt; 0.25)
+)
+df_gwas = read.csv(&#39;../misc_data/pheno_of_interest.meta_table.csv&#39;)
+tmp = tmp %&gt;% select(IDP, phenotype) %&gt;% distinct()
+tmp = left_join(tmp, df_gwas, by = &#39;phenotype&#39;)
+tmp %&gt;% select(phenotype, IDP, gwas_code) %&gt;% rename(pheno = phenotype, idp = IDP, pheno_code = gwas_code) %&gt;% write.table(&#39;../misc_data/imagexcan_round_1.dmri.signif.tsv&#39;, sep = &#39;\t&#39;, quo = F, row = F, col = T)</code></pre>
 </div>
 
 

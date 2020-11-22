@@ -381,7 +381,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Individual-level ImageXcan (round 1) T1</h1>
-<h4 class="date">15 November, 2020</h4>
+<h4 class="date">22 November, 2020</h4>
 
 </div>
 
@@ -450,7 +450,7 @@ p4 = df_lm %&gt;% filter(phenotype %in% pheno_rand) %&gt;% group_by(phenotype, i
   facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
 
 (p1 + p2) / (p3 + p4) </code></pre>
-<p><img src="imagexcan_round_1_t1_files/figure-html/unnamed-chunk-21-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_t1_files/figure-html/unnamed-chunk-5-1.png" width="1536" /></p>
 </div>
 <div id="bonferroni-significant-hits" class="section level1">
 <h1><span class="header-section-number">4</span> Bonferroni significant hits</h1>
@@ -673,7 +673,7 @@ p4 = df_susie %&gt;% filter(phenotype %in% pheno_rand) %&gt;%
   theme(axis.text.x = element_blank())
 
 (p1 + p2) / (p3 + p4)</code></pre>
-<p><img src="imagexcan_round_1_t1_files/figure-html/unnamed-chunk-24-1.png" width="1536" /></p>
+<p><img src="imagexcan_round_1_t1_files/figure-html/unnamed-chunk-8-1.png" width="1536" /></p>
 </div>
 <div id="credible-set" class="section level1">
 <h1><span class="header-section-number">7</span> 95% credible set</h1>
@@ -936,6 +936,17 @@ p4 = df_susie %&gt;% filter(phenotype %in% pheno_rand) %&gt;%
 </tr>
 </tbody>
 </table>
+</div>
+<div id="obtaining-the-list-of-significant-pairs-95-cs-or-pip-0.25" class="section level1">
+<h1><span class="header-section-number">9</span> Obtaining the list of significant pairs (95% CS or PIP &gt; 0.25)</h1>
+<pre class="r"><code>tmp = rbind(
+  df_susie %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(cs &gt; 0),
+  df_susie %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(pip &gt; 0.25)
+)
+df_gwas = read.csv(&#39;../misc_data/pheno_of_interest.meta_table.csv&#39;)
+tmp = tmp %&gt;% select(IDP, phenotype) %&gt;% distinct()
+tmp = left_join(tmp, df_gwas, by = &#39;phenotype&#39;)
+tmp %&gt;% select(id, IDP, gwas_code) %&gt;% rename(pheno = id, idp = IDP, pheno_code = gwas_code) %&gt;% write.table(&#39;../misc_data/imagexcan_round_1.t1.signif.tsv&#39;, sep = &#39;\t&#39;, quo = F, row = F, col = T)</code></pre>
 </div>
 
 

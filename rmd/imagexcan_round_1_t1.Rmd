@@ -138,3 +138,17 @@ df_susie %>% filter(phenotype %in% pheno_interest) %>% filter(cs > 0) %>% pander
 ```{r}
 df_susie %>% filter(phenotype %in% pheno_interest) %>% filter(pip > 0.25) %>% pander::pander(caption = 'IDP in 95% credible set among all focal phenotypes')
 ```
+
+# Obtaining the list of significant pairs (95% CS or PIP > 0.25)
+
+```{r}
+tmp = rbind(
+  df_susie %>% filter(phenotype %in% pheno_interest) %>% filter(cs > 0),
+  df_susie %>% filter(phenotype %in% pheno_interest) %>% filter(pip > 0.25)
+)
+df_gwas = read.csv('../misc_data/pheno_of_interest.meta_table.csv')
+tmp = tmp %>% select(IDP, phenotype) %>% distinct()
+tmp = left_join(tmp, df_gwas, by = 'phenotype')
+tmp %>% select(id, IDP, gwas_code) %>% rename(pheno = id, idp = IDP, pheno_code = gwas_code) %>% write.table('../misc_data/imagexcan_round_1.t1.signif.tsv', sep = '\t', quo = F, row = F, col = T)
+```
+

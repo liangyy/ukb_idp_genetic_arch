@@ -60,7 +60,7 @@ idp_exp_dat = format_data(
 logging::loginfo('Working on IDP -> Phenotype.')
 logging::loginfo('** IDP -> Phenotype: LD clumping')
 idp_exp_dat = ld_clump_local(idp_exp_dat, ld_clump_param, mode = 'idp2pheno')
-if(!is.na(idp_exp_dat)) {
+if(!is.null(idp_exp_dat)) {
   logging::loginfo('** IDP -> Phenotype: Extracting outcome GWAS.')
   outcome_dat = extract_outcome_data(
   	snps = idp_exp_dat$SNP,
@@ -88,22 +88,34 @@ exp_dat2 = extract_instruments(
 )
 
 logging::loginfo('** Phenotype -> IDP: Loading IDP as outcome.')
-idp_dat = format_data(
-  data.frame(
-    SNP = idp_gwas$variant_id, 
-    beta = idp_gwas$b, 
-    se = idp_gwas$b_se, 
-    effect_allele = idp_gwas$alt, 
-    other_allele = idp_gwas$ref
-  ),
-  type = 'outcome',
-  snps = exp_dat2$SNP
+idp_dat = tryCatch(
+  {
+    format_data(
+      data.frame(
+        SNP = idp_gwas$variant_id, 
+        beta = idp_gwas$b, 
+        se = idp_gwas$b_se, 
+        effect_allele = idp_gwas$alt, 
+        other_allele = idp_gwas$ref
+      ),
+      type = 'outcome',
+      snps = exp_dat2$SNP
+    )
+  }, error = function(cond) {
+    message('Something went wrong when extracting IDP as outcome')
+    return(NULL)
+  }
 )
 
-logging::loginfo('** Phenotype -> IDP: Running MR.')
-dat_backward = harmonise_data(exp_dat2, idp_dat)
-res_backward = mr(dat_backward)
-res_backward %>% pander::pander(caption = 'Phenotype -> IDP')
+if(!is.null(idp_dat)) {
+  logging::loginfo('** Phenotype -> IDP: Running MR.')
+  dat_backward = harmonise_data(exp_dat2, idp_dat)
+  res_backward = mr(dat_backward)
+  res_backward %>% pander::pander(caption = 'Phenotype -> IDP')
+} else {
+  dat_backward = NA
+  res_backward = NA
+}
 
 logging::loginfo('Saving results.')
 saveRDS(

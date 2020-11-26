@@ -20,18 +20,22 @@ ld_clump_local = function(dat, ld_clump_param, mode = 'idp2pheno') {
   out = tryCatch(
     {
       ieugwasr::ld_clump(
-      d, 
-      clump_kb = ld_clump_param[[mode]]$clump_kb, 
-      clump_r2 = ld_clump_param[[mode]]$clump_r2, 
-      clump_p = ld_clump_param[[mode]]$clump_p,
-      plink_bin = ld_clump_param$plink_executable,
-      bfile = ld_clump_param$bfile
+        d, 
+        clump_kb = ld_clump_param[[mode]]$clump_kb, 
+        clump_r2 = ld_clump_param[[mode]]$clump_r2, 
+        clump_p = ld_clump_param[[mode]]$clump_p,
+        plink_bin = ld_clump_param$plink_executable,
+        bfile = ld_clump_param$bfile
+      )
     },
     error = function(cond) {
       message('Cannot do LD clump with the current setting.', list2str(ld_clump_param[[mode]]))
       return(NULL)
     }
   )
+  if(is.null(out)) {
+    return(out)
+  }
   keep = paste(dat$SNP, dat$id.exposure) %in% paste(out$rsid, out$id)
   dat[keep, ]
 }

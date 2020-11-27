@@ -15,6 +15,7 @@ notebook
 batch_list_*
 logs_*
 *.npy
+*.npz
 *.csv
 *.DS_Store
 ._*
@@ -26,14 +27,9 @@ logs_*
 *.fam
 *.bim*.fam
 *.bim*.fam
-*.bim*.fam
-*.bim*.fam
-*.bim*.fam
-*.bim*.fam
-*.bim*.fam
-*.bim*.fam
 *.bim
 *.grm.id
 *.grm.bin
 *.grm.gz
 *.ipynb
+

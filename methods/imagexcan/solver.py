@@ -53,8 +53,8 @@ def linear_regression(y, X, C, device=None):
     pval, _ = solver.stat_test(bhat, se, dof)
     return bhat, pval, se
 
-def run_susie_wrapper(z, R):
-    mod = r_susieR.susie_rss(r_base.as_vector(z), R)
+def run_susie_wrapper(z, R, params={}):# kwargs={}):
+    mod = r_susieR.susie_rss(r_base.as_vector(z), R, **params)
     df_ = r_base.summary(mod).rx2('vars')
     with localconverter(ro.default_converter + pandas2ri.converter):
         df_ = ro.conversion.rpy2py(df_)

@@ -138,13 +138,17 @@ class CovMatrix:
         tmp = self.fn.split('.')
         return tmp[-2]
     def eval_matmul_on_left(self, left_mat, param=None):
+        '''
+        Retur cov @ left_mat along with the diag 
+        '''
         if self.mode in ['banded', 'cap']:
             return self._eval_matmul_on_left_npz(left_mat)
         elif self.mode == 'naive':
             return self._eval_matmul_on_left_h5(left_mat, batch_size=param)
     def _eval_matmul_on_left_npz(self, mat):
         csr = load_npz(self.fn).tocsr()
-        return csr.dot(mat) + csr.transpose().dot(mat) - csr.diagonal()[:, np.newaxis] * mat
+        diag_csr = csr.diagonal()
+        return csr.dot(mat) + csr.transpose().dot(mat) - diag_csr[:, np.newaxis] * mat, diag_csr
     def _eval_matmul_on_left_h5(self, mat, batch_size=None):
         import h5py
         f = h5py.File(self.fn, 'r')
@@ -166,5 +170,5 @@ class CovMatrix:
             diag_cov[s : e] = f['cov'][s : e, s : e].diagonal()
         res -= diag_cov[:, np.newaxis] * mat
         f.close()
-        return res
+        return res, diag_cov
         

@@ -1,18 +1,24 @@
 from run_gw_ridge import load_genotype_from_bedfile
 from CovConstructor import CovConstructor
+import numpy as np
 
 def load_mode(mode_list):
     if mode_list[0] not in ['naive', 'cap', 'banded']:
         raise ValueError('Wrong mode.')
-    elif mode_list[0] in ['cap', 'banded']:
+    else:
         if len(mode_list) != 2:
             raise ValueError('Wrong number of parameters for mode.')
         if mode_list[0] == 'cap':
             param = int(mode_list[1])
-        else:
+        elif mode_list[0] == 'banded':
             param = float(mode_list[1])
-    else:
-        param = None
+        elif mode_list[0] == 'naive':
+            if mode_list[1] == 'f32':
+                param = np.float32
+            elif mode_list[1] == 'f64':
+                param = np.float64
+            else:
+                raise ValueError('Wrong parameter in mode = naive: {}'.format(mode_list[1]))
     return mode_list[0], param
 
 if __name__ == '__main__':
@@ -29,6 +35,8 @@ if __name__ == '__main__':
     parser.add_argument('--mode', nargs='+', help='''
         Support mode: 1. naive; 2. cap; 3. banded.
         For naive, it will construct a dense matrix and save it as HDF5.
+        Need to set the dtype (so that we could control the disk usage of the 
+        resulting matrix). For instance: f64 for np.float64.
         For cap, need to set the threshold to push to zero and the result will 
         be saved as 
     ''')

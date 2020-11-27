@@ -16,6 +16,8 @@ batch_list_*
 logs_*
 *.npy
 *.npz
+*.h5
+*.hdf5
 *.csv
 *.DS_Store
 ._*
@@ -25,8 +27,6 @@ logs_*
 *.bed
 *.bgz
 *.fam
-*.bim*.fam
-*.bim*.fam
 *.bim
 *.grm.id
 *.grm.bin

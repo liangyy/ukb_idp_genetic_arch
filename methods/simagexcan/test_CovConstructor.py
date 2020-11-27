@@ -1,3 +1,4 @@
+import h5py
 import numpy as np
 from scipy.sparse import load_npz 
 from CovConstructor import CovConstructor
@@ -20,6 +21,11 @@ constructor = CovConstructor(
     nbatch=8
 )
 constructor.compute_to_disk(
+    mode='naive',
+    param=None,
+    output_prefix=output_prefix
+)
+constructor.compute_to_disk(
     mode='cap',
     param=threshold,
     output_prefix=output_prefix
@@ -34,6 +40,8 @@ constructor.compute_to_disk(
     param=band2,
     output_prefix=output_prefix + '2'
 )
+with h5py.File(f'{output_prefix}.naive.h5') as f:
+    res0 = f['cov'][:]
 res1 = load_npz(f'{output_prefix}.cap.npz').todense()
 res2 = load_npz(f'{output_prefix}.banded.npz').todense()
 res3 = load_npz(f'{output_prefix}2.banded.npz').todense()
@@ -43,6 +51,11 @@ cov2 = mat_centered.T @ mat_centered / (mat_centered.shape[0] - 1)
 
 
 for cov in [ cov1, cov2 ]:
+    
+    # naive
+    tmp = cov.copy()
+    tmp = np.triu(tmp)
+    print('naive', np.allclose(res0, tmp))
     
     # cap
     tmp = cov.copy()

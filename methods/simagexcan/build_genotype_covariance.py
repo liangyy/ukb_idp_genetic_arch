@@ -56,6 +56,7 @@ if __name__ == '__main__':
         format = '%(asctime)s  %(message)s',
         datefmt = '%Y-%m-%d %I:%M:%S %p'
     )
+    import pandas as pd
     
     # sanity check on mode
     mode, param = load_mode(args.mode)
@@ -78,6 +79,16 @@ if __name__ == '__main__':
         param=param,
         output_prefix=args.output_prefix
     )
+    
+    logging.info('Saving SNP meta information.')
+    snpid, a0, a1, chrom = snp_info
+    df_snp = pd.DataFrame({
+        'snpid': snpid, 
+        'effect_allele': a0, 
+        'non_effect_allele': a1, 
+        'chr': chrom
+    }
+    df_snp.to_parquet(args.output_prefix + f'.{mode}.snp_meta.parquet')
     
     logging.info('Done.')
     

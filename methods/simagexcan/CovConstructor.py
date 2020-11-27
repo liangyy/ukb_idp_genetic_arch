@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import coo_matrix, save_npz
+from scipy.sparse import coo_matrix, save_npz, load_npz
 
 class CovConstructor:
     def __init__(self, data, nbatch=None):
@@ -125,6 +125,46 @@ class CovConstructor:
             (value_all, (row_all, col_all)), 
             shape=(self.ncol, self.ncol)
         )
-        save_npz(fn, cov_coo)            
-            
-            
+        save_npz(fn, cov_coo)    
+
+class CovMatrix:
+    def __init__(self, fn):
+        self.fn = fn
+        self.mode = self._init_mode()
+    def _init_mode(self):
+        import pathlib
+        if not pathlib.Path(self.fn).is_file():
+            raise ValueError('Input file does not exist.') 
+        tmp = self.fn.split('.')
+        return tmp[-2]
+    def eval_matmul_on_left(self, left_mat, param=None):
+        if self.mode in ['banded', 'cap']:
+            return self._eval_matmul_on_left_npz(left_mat)
+        elif self.mode == 'naive':
+            return self._eval_matmul_on_left_h5(left_mat, batch_size=param)
+    def _eval_matmul_on_left_npz(self, mat):
+        csr = load_npz(self.fn).tocsr()
+        return csr.dot(mat) + csr.transpose().dot(mat) - csr.diagonal()[:, np.newaxis] * mat
+    def _eval_matmul_on_left_h5(self, mat, batch_size=None):
+        import h5py
+        f = h5py.File(self.fn, 'r')
+        nrow = f['cov'].shape[0]
+        ncol = mat.shape[1]
+        res = np.zeros((nrow, ncol))
+        if batch_size is None:
+            nbatch = 1
+            batch_size = nrow
+        else:
+            nbatch = nrow // batch_size
+            if nbatch * batch_size < nrow:
+                nbatch += 1
+        s, e = 0, batch_size
+        diag_cov = np.zeros((nrow))
+        for i in range(nbatch):
+            res[s : e, :] = f['cov'][s : e, :] @ mat
+            res[s : e, :] += f['cov'][s : e, :].T @ mat
+            diag_cov[s : e] = f['cov'][s : e, s : e].diagonal()
+        res -= diag_cov[:, np.newaxis] * mat
+        f.close()
+        return res
+        

@@ -41,8 +41,8 @@ if __name__ == '__main__':
         else:
             fintel[ np.isnan(fintel) ] = df[cc].values[ np.isnan(fintel) ]
     df['fluid_intelligence'] = fintel
-    df = df[ ~ df.handedness.isna() ].reset_index(drop=True)
-    
+    df = df[ ~ df.fluid_intelligence.isna() ].reset_index(drop=True)
+    df = df[ ['eid', 'fluid_intelligence'] ] 
     for col in df.columns:
         if col == 'eid':
             continue

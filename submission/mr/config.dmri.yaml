@@ -1,4 +1,4 @@
-name_tag: 'fintel_dmri'
+name_tag: 'dmri'
 idp_pheno_table: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/imagexcan_round_1.fintel.dmri.signif.tsv'
 idp_type: 'dMRI'
 

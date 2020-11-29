@@ -1,6 +1,6 @@
-name_tag: 'fintel_dmri'
-idp_pheno_table: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/imagexcan_round_1.fintel.dmri.signif.tsv'
-idp_type: 'dMRI'
+name_tag: 't1'
+idp_pheno_table: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/imagexcan_round_1.t1.signif.tsv'
+idp_type: 'T1'
 
 ld_clump_yaml: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mr/ld_clump.yaml'
 idp_gwas_pattern: '/scratch/t.cri.yliang/ukb_idp/idp_gwas/trans_qtl.{idp_type}.chr{chr_num}/{idp}.parquet'

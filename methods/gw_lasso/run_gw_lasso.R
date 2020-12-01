@@ -227,9 +227,13 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     # save model weights
     if(mode == 'model_training') {
       mod = full_fit$beta[[length(full_fit$beta)]]
-      beta_out = data.frame(snpid = names(mod), weight = as.numeric(mod))
+      snpid_infos = parse_snp(names(mod))
+      beta_out = data.frame(snpid = snpid_infos$snpid, alt = snpid_infos$allele, weight = as.numeric(mod))
       beta_out = beta_out[ beta_out$weight != 0, ]
       beta_out = inner_join(beta_out, df_snp %>% select(ID, REF, ALT, CHR), by = c('snpid' = 'ID'))
+      # the sign of the weights should be relative to df_snp as always
+      beta_out$weight[beta_out$alt == beta_out$REF] = - beta_out$weight[beta_out$alt == beta_out$REF]
+      beta_out = beta_out %>% select(-alt)
       beta_list[[length(beta_list) + 1]] = beta_out %>% mutate(phenotype = pheno)
     }
     

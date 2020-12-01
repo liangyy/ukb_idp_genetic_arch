@@ -45,3 +45,11 @@ eval_perf = function(ypred, yobs) {
   spearman = cor(ypred, yobs, method = 'spearman')
   data.frame(R2 = R2, Pearson = pearson, Spearman = spearman)
 }
+
+parse_snp = function(str) {
+  str = as.character(str)
+  tmp = strsplit(str, '_')
+  snpid = lapply(tmp, function(x) { x[1] })
+  allele = lapply(tmp, function(x) { x[2] })
+  list(snpid = snpid, allele = allele)
+}

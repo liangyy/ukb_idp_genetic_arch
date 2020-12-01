@@ -226,7 +226,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     }
     # save model weights
     if(mode == 'model_training') {
-      mod = full_fit$beta[[length(full_fit$beta)]]
+      mod = full_fit$beta[[opt_idx]]
       snpid_infos = parse_snp(names(mod))
       beta_out = data.frame(snpid = snpid_infos$snpid, alt = snpid_infos$allele, weight = as.numeric(mod))
       print(head(beta_out))

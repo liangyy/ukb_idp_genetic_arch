@@ -60,6 +60,9 @@ option_list <- list(
                 metavar="character"),
     make_option(c("-m", "--mem"), type="numeric", default=10000,
                 help="Memory usage for plink2 in MB",
+                metavar="character"),
+    make_option(c("-d", "--mode"), type="character", default='cv_performance',
+                help="mode = cv_performance or model_training. Default = cv_performance.",
                 metavar="character")
 )
 
@@ -75,6 +78,17 @@ logging::basicConfig(level = opt$log_level)
 # set random seed
 set.seed(opt$random_seed)
 
+# sanity check on mode
+# we only allow: cv_performance and model_training for now!
+if(opt$mode == 'cv_performance') {
+  mode = 'cv_performance'
+}  else if(opt$mode == 'model_training') {
+  mode = 'model_training'
+} else {
+  message('Wrong mode = ', opt$mode)
+  quit()
+}
+
 # load snpnet configuration
 snpnet_config = yaml::read_yaml(opt$snpnet_config)
 
@@ -88,11 +102,27 @@ df_phenotype = load_phenotype(
 # df_phenotype: first 2 columns are FID and IID and they are followed by phenotypes.
 nsample = nrow(df_phenotype)
 
-logging::loginfo('Splitting into folds.')
-partitions = get_partitions(nsample, opt$nfold)
+if(mode == 'cv_performance') {
+  logging::loginfo('Splitting into folds.')
+  partitions = get_partitions(nsample, opt$nfold)
+} else {
+  # add trivial partition
+  partitions = rep(2, nsample)
+  # set nfold to 1 
+  opt$nfold = 1
+  # load snp meta info
+  df_snp = data.table::fread(
+    paste0('zstdcat ', opt$genotype, '.pval.zst'), 
+    header = T, 
+    sep = '\t'
+  )
+  colnames(df_snp)[which(colnames(df_snp) == '#CHROM')] = 'CHR'
+}
+
 
 logging::loginfo('Looping over phenotypes.')
 pred_list = list()
+beta_list = list()
 for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
   df_out = data.frame(indiv = paste0(df_phenotype$FID, '_', df_phenotype$IID), yobs = df_phenotype[[pheno]], ypred = NA)
   for(k in 1 : opt$nfold) {
@@ -148,7 +178,12 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
       alpha = opt$alpha,
       mem = opt$mem
     )
-    
+    to_predict = 'val'
+    to_predict_idx = test_idx
+    if(mode == 'model_training') {
+      to_predict = 'train'
+      to_predict_idx = c(train_idx, valid_idx)
+    } 
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Predict.'))
     full_pred = tryCatch(
       {
@@ -158,13 +193,13 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
           new_phenotype_file = tmp_pheno_file, 
           phenotype = pheno, 
           split_col = "split_refit", 
-          split_name = 'val',
+          split_name = to_predict,
           configs = snpnet_config
         )
       }, error = function(e) {
         list(
           prediction = list(
-            val = matrix(mean(df_out$yobs[test_idx]), ncol = length(inner_fit$full.lams[1:max_idx]), nrow = length(test_idx))
+            val = matrix(mean(df_out$yobs[to_predict_idx]), ncol = length(inner_fit$full.lams[1:max_idx]), nrow = length(to_predict_idx))
           )
         )
       }
@@ -173,15 +208,25 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     saveRDS(list(inner_fit = inner_fit, full_fit = full_fit, full_pred = full_pred), cache_file)
      
     # record results
-    test_pred = full_pred$prediction$val
+    # prediction on held-out data (cv_performance) or full data (model_training)
+    test_pred = full_pred$prediction[[to_predict]]
     opt_idx = min(which.max(inner_fit$metric.val), ncol(test_pred)) 
     ypred_test = test_pred[, opt_idx]  # this is from the best lambda
     if(!is.null(names(ypred_test))) {
       df_out$ypred[match(names(ypred_test), df_out$indiv)] = as.numeric(ypred_test)
     } else {
       # degenerate model
-      df_out$ypred[ test_idx ] = as.numeric(ypred_test)[1]
+      df_out$ypred[ to_predict_idx ] = as.numeric(ypred_test)[1]
     }
+    # save model weights
+    if(mode == 'model_training') {
+      mod = full_fit$beta[[length(full_fit$beta)]]
+      beta_out = data.frame(snpid = names(mod), weight = as.numeric(mod))
+      beta_out = beta_out[ beta_out$weight != 0, ]
+      beta_out = inner_join(beta_out, df_snp %>% select(ID, REF, ALT, CHROM), by = c('snpid' = 'ID'))
+      beta_list[[length(beta_list) + 1]] = beta_out %>% mutate(phenotype = pheno)
+    }
+    
  
     # clean up intermediate file 
     system(paste0('rm ', tmp_pheno_file))
@@ -189,21 +234,32 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
   pred_list[[pheno]] = df_out
 }
 
-logging::loginfo('Calculate performance.')
-out = list()
-for(pheno in names(pred_list)) {
-  df_perf = eval_perf(pred_list[[pheno]]$ypred, pred_list[[pheno]]$yobs)
-  df_perf$phenotype = pheno
-  out[[length(out) + 1]] = df_perf
-}
-out = do.call(rbind, out)
+if(mode == 'cv_performance') {
+  logging::loginfo('Calculate performance.')
+  out = list()
+  for(pheno in names(pred_list)) {
+    df_perf = eval_perf(pred_list[[pheno]]$ypred, pred_list[[pheno]]$yobs)
+    df_perf$phenotype = pheno
+    out[[length(out) + 1]] = df_perf
+  }
+  out = do.call(rbind, out)
 
-logging::loginfo('Writing results to disk.')
-saveRDS(pred_list, paste0(opt$output_prefix, '.yval.rds'))
-write.table(
-  out, paste0(opt$output_prefix, '.performance.tsv'), 
-  col = T, row = F, quo = F, sep = '\t'
-)
+  logging::loginfo('Writing results to disk.')
+  saveRDS(pred_list, paste0(opt$output_prefix, '.yval.rds'))
+  write.table(
+    out, paste0(opt$output_prefix, '.performance.tsv'), 
+    col = T, row = F, quo = F, sep = '\t'
+  )
+} else {
+  logging::loginfo('Saving model weights.')
+  beta_list = do.call(rbind, beta_list)
+  gz1 <- gzfile(paste0(opt$output_prefix, '.weights.tsv.gz'), "w")
+  write.table(beta_list, gz1, quo = F, row = F, col = T, sep = '\t')
+  close(gz1)
+  logging::loginfo('Saving predicted values (in sample prediction).')
+  saveRDS(pred_list, paste0(opt$output_prefix, '.y_insample.rds'))
+}
+
 
 logging::loginfo('Done.')
 

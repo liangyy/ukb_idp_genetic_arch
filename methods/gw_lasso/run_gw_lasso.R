@@ -71,6 +71,7 @@ opt <- parse_args(opt_parser)
 
 # helper functions
 source('gw_lasso_helper.R')
+library(dplyr)
 
 # logging config
 logging::basicConfig(level = opt$log_level)
@@ -112,7 +113,7 @@ if(mode == 'cv_performance') {
   opt$nfold = 1
   # load snp meta info
   df_snp = data.table::fread(
-    paste0('zstdcat ', opt$genotype, '.pval.zst'), 
+    paste0('zstdcat ', opt$genotype, '.pvar.zst'), 
     header = T, 
     sep = '\t'
   )
@@ -165,25 +166,30 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
       mem = opt$mem
     )
     max_idx <- sum(!is.na(inner_fit$metric.val))
-    
+   
+    # need some different handling when running on full data.
+    to_predict = 'val'
+    to_predict_idx = test_idx
+    to_split_col = 'split_refit'
+    if(mode == 'model_training') {
+      to_predict = 'train'
+      to_predict_idx = c(train_idx, valid_idx)
+      to_split_col = NULL
+    }    
+ 
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Full fit.'))
     snpnet_config[['early.stopping']] = FALSE
     full_fit = snpnet::snpnet(
       genotype.pfile = opt$genotype, 
       phenotype.file = tmp_pheno_file, 
       phenotype = pheno, 
-      split.col = "split_refit", 
+      split.col = to_split_col, 
       configs = snpnet_config,
       lambda = inner_fit$full.lams[1:max_idx],
       alpha = opt$alpha,
       mem = opt$mem
     )
-    to_predict = 'val'
-    to_predict_idx = test_idx
-    if(mode == 'model_training') {
-      to_predict = 'train'
-      to_predict_idx = c(train_idx, valid_idx)
-    } 
+    
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Predict.'))
     full_pred = tryCatch(
       {
@@ -192,7 +198,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
           new_genotype_file = opt$genotype, 
           new_phenotype_file = tmp_pheno_file, 
           phenotype = pheno, 
-          split_col = "split_refit", 
+          split_col = to_split_col, 
           split_name = to_predict,
           configs = snpnet_config
         )
@@ -223,7 +229,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
       mod = full_fit$beta[[length(full_fit$beta)]]
       beta_out = data.frame(snpid = names(mod), weight = as.numeric(mod))
       beta_out = beta_out[ beta_out$weight != 0, ]
-      beta_out = inner_join(beta_out, df_snp %>% select(ID, REF, ALT, CHROM), by = c('snpid' = 'ID'))
+      beta_out = inner_join(beta_out, df_snp %>% select(ID, REF, ALT, CHR), by = c('snpid' = 'ID'))
       beta_list[[length(beta_list) + 1]] = beta_out %>% mutate(phenotype = pheno)
     }
     

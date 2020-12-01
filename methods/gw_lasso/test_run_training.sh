@@ -12,7 +12,7 @@ output_prefix=test_files/output_test_training
 
 # cd /vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_lasso
 
-Rscript run_gw_lasso_debug.R \
+Rscript run_gw_lasso.R \
   --genotype $genofile \
   --phenotype_table $phenofile \
   --nfold $nfold \

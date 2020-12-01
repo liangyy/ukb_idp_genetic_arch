@@ -49,7 +49,7 @@ eval_perf = function(ypred, yobs) {
 parse_snp = function(str) {
   str = as.character(str)
   tmp = strsplit(str, '_')
-  snpid = lapply(tmp, function(x) { x[1] })
-  allele = lapply(tmp, function(x) { x[2] })
+  snpid = unlist(lapply(tmp, function(x) { paste0(x[-length(x)], collapse = '_') }))
+  allele = unlist(lapply(tmp, function(x) { x[length(x)] }))
   list(snpid = snpid, allele = allele)
 }

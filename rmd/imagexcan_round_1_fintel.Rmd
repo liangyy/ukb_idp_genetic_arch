@@ -1,0 +1,175 @@
+---
+title: "Individual-level ImageXcan (round 1): Fluid intelligence"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+source('https://gist.githubusercontent.com/liangyy/4c647634fe00b3f042ebd1599dda65c7/raw/9977562b65d0fb63a693fa7fa60035a37641ad2f/qqplot_by_group')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+source('rlib.R')
+library(pander)
+panderOptions("table.split.table", Inf)
+library(ggpubr)
+```
+
+# About
+
+Here we focus on fluid intelligence phenotype in UK Biobank.
+Specifically, we extract information from [20016](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=20016) and [20191](https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=20191).
+The phenotype query was done by Sabrina and the resulting files are at `/gpfs/data/im-lab/nas40t2/Data/UKB/ukbrest-queries/2020-11-24-fluid-intelligence`.
+The proprocessing of the raw query was done by `misc_data/imagexcan_preprocessing_intelligence.py`.
+And the ImageXcan run was done in `submission/imagexcan/run_round_1_fintel.screen`
+
+# Load data
+
+Load dMRI and T1 IDP annotations.
+
+```{r}
+t1 = readRDS('../misc_data/process_t1/t1_meta.rds')
+t1 = t1 %>% mutate(IDP = paste0('IDP-', FieldID))
+dmri = readRDS('../misc_data/download_some_matching_files/annot_dmri_idps.rds')
+dmri = dmri %>% mutate(IDP = paste0('IDP-', FieldID))
+idps = c('t1', 'dmri')
+df_annot = rbind(
+  t1 %>% select(IDP, Field),
+  dmri %>% select(IDP, Field)
+)
+```
+
+Load ImageXcan results.
+
+```{r}
+df_xcan = list()
+for(idp in idps) {
+  tmp = read.csv(paste0('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.fintel.linear.', idp, '.csv'))
+  tmp2 = read.csv(paste0('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.fintel.susie.', idp, '.csv'))
+  tmp = inner_join(tmp, tmp2, by = c('IDP', 'phenotype'))
+  df_xcan[[length(df_xcan) + 1]] = tmp %>% mutate(type = idp)
+}
+df_xcan = do.call(rbind, df_xcan)
+```
+
+# Overall QQ-plot
+
+```{r, fig.width=6, fig.height=4}
+qqplot_by_group(df_xcan$pval, df_xcan$type) + th
+```
+
+# Overall PIP
+
+```{r, fig.width=6, fig.height=4}
+df_xcan %>% ggplot() + geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~type, scales = 'free_x', ncol = 1) + 
+  th2 + 
+  theme(axis.text.x = element_blank())
+```
+
+# Bonferroni significant hits
+
+```{r}
+df_xcan %>% mutate(p_adj = pval * n()) %>% filter(p_adj < 0.05) %>% inner_join(df_annot, by = 'IDP') %>% pander(caption = 'Bonferroni significant IDP-level (alpha = 0.05)') 
+```
+
+
+# PIP > 0.25 or within 95% CS
+
+```{r}
+df_xcan %>% filter(pip > 0.25) %>% inner_join(df_annot, by = 'IDP') %>% pander(caption = 'PIP > 25%') 
+```
+
+
+```{r}
+df_xcan %>% filter(cs > 0) %>% inner_join(df_annot, by = 'IDP')  %>% pander(caption = 'Within 95% credible set') 
+```
+
+# Compose the list of IDPs to run MR
+
+There are two openGWAS datasets of interest:
+
+* [ebi-a-GCST006250](https://gwas.mrcieu.ac.uk/datasets/ebi-a-GCST006250/)
+* [ukb-b-5238](https://gwas.mrcieu.ac.uk/datasets/ukb-b-5238/)
+
+We focus on the ones within 95% CS along with 25004, 25006, 25008, and 25010 since they appear in a recent [paper](https://www.nature.com/articles/s41467-020-19378-5) analyzing the genetic basis of intelligence and brain volume. 
+Note that this is NOT a direct replication of their work since they use the sum of 25004, 25006, 25008 which do not appear in our IDP set. 
+Also, they may use intelligence GWASs other than the one we used.
+
+```{r}
+opengwass = data.frame(pheno = c('intelligence', 'fluid_intelligence'), pheno_code = c('ebi-a-GCST006250', 'ukb-b-5238'))
+selected_idps = rbind(
+  df_xcan %>% filter(cs > 0) %>% select(IDP, type), 
+  data.frame(IDP = paste0('IDP-', 25000 + c(4, 6, 8, 10)), type = 't1')
+) %>% distinct()
+for(type_ in unique(selected_idps$type)) {
+  sub = selected_idps %>% filter(type == type_) 
+  tmp = cbind(opengwass, rep(sub$IDP, each = nrow(opengwass)))
+  colnames(tmp)[3] = 'idp'
+  write.table(tmp, paste0('../misc_data/imagexcan_round_1.fintel.', type_, '.signif.tsv'), quo = F, row = F, col = T, sep = '\t')
+}
+```
+
+# MR results
+
+Here we only show results that at least one direction has two p-values < 0.05.
+
+```{r}
+df = list()
+for(type_ in unique(selected_idps$type)) {
+  df[[length(df) + 1]] = read.table(paste0('../misc_data/imagexcan_round_1.fintel.', type_, '.signif.tsv'), header = T) %>% mutate(type = type_)
+}
+df = do.call(rbind, df)
+collector_mr = list()
+collector_data = list()
+for(i in 1 : nrow(df)) {
+  tmp = readRDS(paste0('~/Desktop/tmp/ukb_idp/mr/MR.fintel_', df$type[i], '.', df$idp[i], '_x_', df$pheno[i], '.rds'))
+  if(sum(tmp$idp2pheno$mr$pval < 0.05) > 2 | sum(tmp$pheno2idp$mr$pval < 0.05) > 2) {
+    collector_mr[[length(collector_mr) + 1]] = rbind(
+      tmp$idp2pheno$mr %>% mutate(direction = 'idp2pheno', pheno = df$pheno[i], idp = df$idp[i]),
+      tmp$pheno2idp$mr %>% mutate(direction = 'pheno2idp', pheno = df$pheno[i], idp = df$idp[i])
+    )
+    collector_data[[length(collector_data) + 1]] = rbind(
+      tmp$idp2pheno$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'idp2pheno', pheno = df$pheno[i], idp = df$idp[i]),
+      tmp$pheno2idp$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'pheno2idp', pheno = df$pheno[i], idp = df$idp[i])
+    )
+  }
+}
+df_data = do.call(rbind, collector_data) %>% inner_join(df_annot, by = c('idp' = 'IDP'))
+df_mr = do.call(rbind, collector_mr) %>% inner_join(df_annot, by = c('idp' = 'IDP'))
+```
+
+The selected MR pairs.
+
+```{r}
+df_mr %>% select(pheno, idp) %>% distinct() %>% pander
+df_tmp = df_mr %>% select(pheno, idp) %>% distinct()
+```
+
+Show the plot.
+
+```{r, fig.width=15, fig.height=5}
+for(i in 1 : nrow(df_tmp)) {
+  mydat = df_data %>% filter(pheno == df_tmp$pheno[i], idp == df_tmp$idp[i])
+  mymr = df_mr %>% filter(pheno == df_tmp$pheno[i], idp == df_tmp$idp[i])
+  idp_name = mydat$Field[1]
+  gwas_name = mydat$pheno[1]
+  plist = list()
+  plist[[length(plist) + 1]] = mydat %>% filter(direction == 'idp2pheno') %>% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = 'lightgray') + geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(idp_name, ' -> \n ', gwas_name)) +
+    theme(legend.position = 'none')
+  plist[[length(plist) + 1]] = mydat %>% filter(direction == 'pheno2idp') %>% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = 'lightgray') + geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(gwas_name, ' -> \n ', idp_name)) +
+    theme(legend.position = 'none')
+  # plist[[length(plist) + 1]] = gridExtra::tableGrob(df_mr %>% select(method, nsnp, b, pval, direction))
+  qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr %>% select(method, nsnp, b, pval, direction), digits = 3)), ncol = 3)
+  print(qq)
+}
+
+```
+
+

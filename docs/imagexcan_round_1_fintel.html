@@ -1,0 +1,2164 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Individual-level ImageXcan (round 1): Fluid intelligence</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Individual-level ImageXcan (round 1): Fluid intelligence</h1>
+<h4 class="date">29 November, 2020</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+source(&#39;https://gist.githubusercontent.com/liangyy/4c647634fe00b3f042ebd1599dda65c7/raw/9977562b65d0fb63a693fa7fa60035a37641ad2f/qqplot_by_group&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+source(&#39;rlib.R&#39;)
+library(pander)
+panderOptions(&quot;table.split.table&quot;, Inf)
+library(ggpubr)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>Here we focus on fluid intelligence phenotype in UK Biobank. Specifically, we extract information from <a href="https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=20016">20016</a> and <a href="https://biobank.ndph.ox.ac.uk/showcase/field.cgi?id=20191">20191</a>. The phenotype query was done by Sabrina and the resulting files are at <code>/gpfs/data/im-lab/nas40t2/Data/UKB/ukbrest-queries/2020-11-24-fluid-intelligence</code>. The proprocessing of the raw query was done by <code>misc_data/imagexcan_preprocessing_intelligence.py</code>. And the ImageXcan run was done in <code>submission/imagexcan/run_round_1_fintel.screen</code></p>
+</div>
+<div id="load-data" class="section level1">
+<h1><span class="header-section-number">2</span> Load data</h1>
+<p>Load dMRI and T1 IDP annotations.</p>
+<pre class="r"><code>t1 = readRDS(&#39;../misc_data/process_t1/t1_meta.rds&#39;)
+t1 = t1 %&gt;% mutate(IDP = paste0(&#39;IDP-&#39;, FieldID))
+dmri = readRDS(&#39;../misc_data/download_some_matching_files/annot_dmri_idps.rds&#39;)
+dmri = dmri %&gt;% mutate(IDP = paste0(&#39;IDP-&#39;, FieldID))
+idps = c(&#39;t1&#39;, &#39;dmri&#39;)
+df_annot = rbind(
+  t1 %&gt;% select(IDP, Field),
+  dmri %&gt;% select(IDP, Field)
+)</code></pre>
+<p>Load ImageXcan results.</p>
+<pre class="r"><code>df_xcan = list()
+for(idp in idps) {
+  tmp = read.csv(paste0(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.fintel.linear.&#39;, idp, &#39;.csv&#39;))
+  tmp2 = read.csv(paste0(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.fintel.susie.&#39;, idp, &#39;.csv&#39;))
+  tmp = inner_join(tmp, tmp2, by = c(&#39;IDP&#39;, &#39;phenotype&#39;))
+  df_xcan[[length(df_xcan) + 1]] = tmp %&gt;% mutate(type = idp)
+}
+df_xcan = do.call(rbind, df_xcan)</code></pre>
+</div>
+<div id="overall-qq-plot" class="section level1">
+<h1><span class="header-section-number">3</span> Overall QQ-plot</h1>
+<pre class="r"><code>qqplot_by_group(df_xcan$pval, df_xcan$type) + th</code></pre>
+<p><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-28-1.png" width="576" /></p>
+</div>
+<div id="overall-pip" class="section level1">
+<h1><span class="header-section-number">4</span> Overall PIP</h1>
+<pre class="r"><code>df_xcan %&gt;% ggplot() + geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~type, scales = &#39;free_x&#39;, ncol = 1) + 
+  th2 + 
+  theme(axis.text.x = element_blank())</code></pre>
+<p><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-29-1.png" width="576" /></p>
+</div>
+<div id="bonferroni-significant-hits" class="section level1">
+<h1><span class="header-section-number">5</span> Bonferroni significant hits</h1>
+<pre class="r"><code>df_xcan %&gt;% mutate(p_adj = pval * n()) %&gt;% filter(p_adj &lt; 0.05) %&gt;% inner_join(df_annot, by = &#39;IDP&#39;) %&gt;% pander(caption = &#39;Bonferroni significant IDP-level (alpha = 0.05)&#39;) </code></pre>
+<table style="width:100%;">
+<caption>Bonferroni significant IDP-level (alpha = 0.05)</caption>
+<colgroup>
+<col width="9%" />
+<col width="16%" />
+<col width="8%" />
+<col width="9%" />
+<col width="9%" />
+<col width="4%" />
+<col width="5%" />
+<col width="9%" />
+<col width="26%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">bhat</th>
+<th align="center">pval</th>
+<th align="center">pip</th>
+<th align="center">cs</th>
+<th align="center">type</th>
+<th align="center">p_adj</th>
+<th align="center">Field</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25002</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-1.137</td>
+<td align="center">5.69e-05</td>
+<td align="center">0.09814</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">0.04853</td>
+<td align="center">Volume of peripheral cortical grey matter</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25003</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2455</td>
+<td align="center">8.784e-09</td>
+<td align="center">0.4813</td>
+<td align="center">3</td>
+<td align="center">t1</td>
+<td align="center">7.492e-06</td>
+<td align="center">Volume of ventricular cerebrospinal fluid (normalised for head size)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25004</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2458</td>
+<td align="center">7.964e-09</td>
+<td align="center">0.5222</td>
+<td align="center">3</td>
+<td align="center">t1</td>
+<td align="center">6.793e-06</td>
+<td align="center">Volume of ventricular cerebrospinal fluid</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25005</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-1.08</td>
+<td align="center">3.719e-05</td>
+<td align="center">0.03936</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">0.03173</td>
+<td align="center">Volume of grey matter (normalised for head size)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25011</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1848</td>
+<td align="center">4.809e-06</td>
+<td align="center">0.2438</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">0.004102</td>
+<td align="center">Volume of thalamus (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25783</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2857</td>
+<td align="center">4.393e-08</td>
+<td align="center">0.9999</td>
+<td align="center">2</td>
+<td align="center">t1</td>
+<td align="center">3.748e-05</td>
+<td align="center">Volume of grey matter in Frontal Pole (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25784</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1634</td>
+<td align="center">1.244e-05</td>
+<td align="center">0.05285</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">0.01061</td>
+<td align="center">Volume of grey matter in Insular Cortex (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25804</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.4037</td>
+<td align="center">1.617e-06</td>
+<td align="center">0.2473</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">0.001379</td>
+<td align="center">Volume of grey matter in Middle Temporal Gyrus, posterior division (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25819</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3585</td>
+<td align="center">1.484e-05</td>
+<td align="center">0.09282</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">0.01265</td>
+<td align="center">Volume of grey matter in Supramarginal Gyrus, anterior division (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25825</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3789</td>
+<td align="center">1.262e-05</td>
+<td align="center">0.151</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">0.01077</td>
+<td align="center">Volume of grey matter in Lateral Occipital Cortex, superior division (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25862</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3743</td>
+<td align="center">1.484e-05</td>
+<td align="center">0.1434</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">0.01266</td>
+<td align="center">Volume of grey matter in Frontal Operculum Cortex (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25874</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2872</td>
+<td align="center">1.001e-08</td>
+<td align="center">0.1336</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">8.537e-06</td>
+<td align="center">Volume of grey matter in Supracalcarine Cortex (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25875</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3015</td>
+<td align="center">9.522e-10</td>
+<td align="center">0.9523</td>
+<td align="center">1</td>
+<td align="center">t1</td>
+<td align="center">8.122e-07</td>
+<td align="center">Volume of grey matter in Supracalcarine Cortex (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25880</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.1983</td>
+<td align="center">2.679e-06</td>
+<td align="center">0.13</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">0.002285</td>
+<td align="center">Volume of grey matter in Caudate (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25057</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2899</td>
+<td align="center">1.76e-08</td>
+<td align="center">0.0001202</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">1.501e-05</td>
+<td align="center">Mean FA in pontine crossing tract on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25059</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2988</td>
+<td align="center">1.454e-10</td>
+<td align="center">0.2925</td>
+<td align="center">1</td>
+<td align="center">dmri</td>
+<td align="center">1.241e-07</td>
+<td align="center">Mean FA in body of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25068</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1763</td>
+<td align="center">9.203e-08</td>
+<td align="center">0.07003</td>
+<td align="center">7</td>
+<td align="center">dmri</td>
+<td align="center">7.85e-05</td>
+<td align="center">Mean FA in superior cerebellar peduncle on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25069</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1777</td>
+<td align="center">5.607e-08</td>
+<td align="center">0.02787</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">4.782e-05</td>
+<td align="center">Mean FA in superior cerebellar peduncle on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25091</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.302</td>
+<td align="center">5.463e-11</td>
+<td align="center">0.0004638</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">4.66e-08</td>
+<td align="center">Mean FA in cingulum cingulate gyrus on FA skeleton (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25104</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3984</td>
+<td align="center">5.136e-09</td>
+<td align="center">0.001593</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">4.381e-06</td>
+<td align="center">Mean MD in middle cerebellar peduncle on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25106</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2563</td>
+<td align="center">2.234e-08</td>
+<td align="center">0.000126</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">1.905e-05</td>
+<td align="center">Mean MD in genu of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25107</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2541</td>
+<td align="center">1.559e-08</td>
+<td align="center">2.967e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">1.33e-05</td>
+<td align="center">Mean MD in body of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25108</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2749</td>
+<td align="center">1.925e-05</td>
+<td align="center">3.125e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.01642</td>
+<td align="center">Mean MD in splenium of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25126</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.4868</td>
+<td align="center">5.786e-07</td>
+<td align="center">0.005681</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.0004936</td>
+<td align="center">Mean MD in anterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25130</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.4054</td>
+<td align="center">6.715e-06</td>
+<td align="center">6.466e-08</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.005728</td>
+<td align="center">Mean MD in posterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25140</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.5159</td>
+<td align="center">1.753e-06</td>
+<td align="center">1.105e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.001495</td>
+<td align="center">Mean MD in cingulum hippocampus on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25156</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2775</td>
+<td align="center">1.563e-08</td>
+<td align="center">0.9988</td>
+<td align="center">6</td>
+<td align="center">dmri</td>
+<td align="center">1.333e-05</td>
+<td align="center">Mean MO in splenium of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25187</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.237</td>
+<td align="center">4.722e-06</td>
+<td align="center">4.248e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.004028</td>
+<td align="center">Mean MO in cingulum cingulate gyrus on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25191</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1766</td>
+<td align="center">1.355e-09</td>
+<td align="center">0.0004395</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">1.156e-06</td>
+<td align="center">Mean MO in fornix cres+stria terminalis on FA skeleton (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25200</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2219</td>
+<td align="center">4.74e-06</td>
+<td align="center">1.056e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.004043</td>
+<td align="center">Mean L1 in middle cerebellar peduncle on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25202</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1605</td>
+<td align="center">7.45e-06</td>
+<td align="center">1.434e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.006355</td>
+<td align="center">Mean L1 in genu of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25204</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1191</td>
+<td align="center">2.454e-05</td>
+<td align="center">1.368e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.02093</td>
+<td align="center">Mean L1 in splenium of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25222</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3486</td>
+<td align="center">2.093e-08</td>
+<td align="center">0.9933</td>
+<td align="center">10</td>
+<td align="center">dmri</td>
+<td align="center">1.785e-05</td>
+<td align="center">Mean L1 in anterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25226</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2874</td>
+<td align="center">4.473e-05</td>
+<td align="center">1.745e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.03816</td>
+<td align="center">Mean L1 in posterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25235</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2321</td>
+<td align="center">1.555e-09</td>
+<td align="center">2.69e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">1.326e-06</td>
+<td align="center">Mean L1 in cingulum cingulate gyrus on FA skeleton (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25239</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2527</td>
+<td align="center">2.415e-08</td>
+<td align="center">0.1725</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">2.06e-05</td>
+<td align="center">Mean L1 in fornix cres+stria terminalis on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25240</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3891</td>
+<td align="center">5.607e-09</td>
+<td align="center">0.007449</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">4.782e-06</td>
+<td align="center">Mean L1 in superior longitudinal fasciculus on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25241</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2334</td>
+<td align="center">8.453e-08</td>
+<td align="center">0.9909</td>
+<td align="center">9</td>
+<td align="center">dmri</td>
+<td align="center">7.211e-05</td>
+<td align="center">Mean L1 in superior longitudinal fasciculus on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25248</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3006</td>
+<td align="center">2.426e-05</td>
+<td align="center">1.009e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.0207</td>
+<td align="center">Mean L2 in middle cerebellar peduncle on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25249</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3095</td>
+<td align="center">3.39e-05</td>
+<td align="center">7.873e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.02892</td>
+<td align="center">Mean L2 in pontine crossing tract on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25251</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2749</td>
+<td align="center">4.876e-09</td>
+<td align="center">0.008204</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">4.16e-06</td>
+<td align="center">Mean L2 in body of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25283</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2176</td>
+<td align="center">4.56e-06</td>
+<td align="center">3.626e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.00389</td>
+<td align="center">Mean L2 in cingulum cingulate gyrus on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25284</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2298</td>
+<td align="center">3.735e-05</td>
+<td align="center">1.554e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.03186</td>
+<td align="center">Mean L2 in cingulum hippocampus on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25296</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3372</td>
+<td align="center">3.074e-06</td>
+<td align="center">5.111e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.002622</td>
+<td align="center">Mean L3 in middle cerebellar peduncle on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25297</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.9131</td>
+<td align="center">5.935e-09</td>
+<td align="center">0.002293</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">5.063e-06</td>
+<td align="center">Mean L3 in pontine crossing tract on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25298</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2768</td>
+<td align="center">8.38e-09</td>
+<td align="center">0.0004508</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">7.148e-06</td>
+<td align="center">Mean L3 in genu of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25299</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.34</td>
+<td align="center">1.742e-13</td>
+<td align="center">0.6967</td>
+<td align="center">1</td>
+<td align="center">dmri</td>
+<td align="center">1.486e-10</td>
+<td align="center">Mean L3 in body of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25331</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3611</td>
+<td align="center">6.74e-07</td>
+<td align="center">5.593e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.000575</td>
+<td align="center">Mean L3 in cingulum cingulate gyrus on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25346</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2444</td>
+<td align="center">3.998e-10</td>
+<td align="center">0.001467</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">3.41e-07</td>
+<td align="center">Mean ICVF in genu of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25347</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.174</td>
+<td align="center">2.53e-05</td>
+<td align="center">4.861e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.02158</td>
+<td align="center">Mean ICVF in body of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25356</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.162</td>
+<td align="center">5.371e-07</td>
+<td align="center">0.7704</td>
+<td align="center">7</td>
+<td align="center">dmri</td>
+<td align="center">0.0004581</td>
+<td align="center">Mean ICVF in superior cerebellar peduncle on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25357</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1553</td>
+<td align="center">1.662e-06</td>
+<td align="center">0.1173</td>
+<td align="center">7</td>
+<td align="center">dmri</td>
+<td align="center">0.001418</td>
+<td align="center">Mean ICVF in superior cerebellar peduncle on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25366</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3876</td>
+<td align="center">4.529e-08</td>
+<td align="center">0.0001671</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">3.863e-05</td>
+<td align="center">Mean ICVF in anterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25367</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3416</td>
+<td align="center">1.214e-06</td>
+<td align="center">0.0001688</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.001035</td>
+<td align="center">Mean ICVF in anterior corona radiata on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25379</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3093</td>
+<td align="center">3.514e-07</td>
+<td align="center">7.012e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.0002997</td>
+<td align="center">Mean ICVF in cingulum cingulate gyrus on FA skeleton (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25388</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.1766</td>
+<td align="center">1.52e-05</td>
+<td align="center">2.326e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.01297</td>
+<td align="center">Mean ICVF in uncinate fasciculus on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25404</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.1265</td>
+<td align="center">2.844e-05</td>
+<td align="center">4.883e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.02426</td>
+<td align="center">Mean OD in superior cerebellar peduncle on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25405</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.1246</td>
+<td align="center">4.147e-05</td>
+<td align="center">6.367e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.03538</td>
+<td align="center">Mean OD in superior cerebellar peduncle on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25408</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2425</td>
+<td align="center">5.788e-07</td>
+<td align="center">0.002889</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.0004937</td>
+<td align="center">Mean OD in anterior limb of internal capsule on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25414</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.225</td>
+<td align="center">1.347e-05</td>
+<td align="center">0.0001234</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.01149</td>
+<td align="center">Mean OD in anterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25419</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2269</td>
+<td align="center">1.623e-05</td>
+<td align="center">5.529e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.01385</td>
+<td align="center">Mean OD in posterior corona radiata on FA skeleton (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25427</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3069</td>
+<td align="center">1.575e-08</td>
+<td align="center">5.548e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">1.343e-05</td>
+<td align="center">Mean OD in cingulum cingulate gyrus on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25431</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.1963</td>
+<td align="center">2.035e-05</td>
+<td align="center">1.511e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.01736</td>
+<td align="center">Mean OD in fornix cres+stria terminalis on FA skeleton (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25440</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.7762</td>
+<td align="center">1.028e-12</td>
+<td align="center">0.9982</td>
+<td align="center">3</td>
+<td align="center">dmri</td>
+<td align="center">8.77e-10</td>
+<td align="center">Mean ISOVF in middle cerebellar peduncle on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25464</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">1.063</td>
+<td align="center">1.338e-05</td>
+<td align="center">5.838e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.01141</td>
+<td align="center">Mean ISOVF in superior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25466</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.4182</td>
+<td align="center">1.063e-11</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">dmri</td>
+<td align="center">9.063e-09</td>
+<td align="center">Mean ISOVF in posterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25480</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.7376</td>
+<td align="center">6.504e-09</td>
+<td align="center">2.532e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">5.548e-06</td>
+<td align="center">Mean ISOVF in superior longitudinal fasciculus on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25484</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.4544</td>
+<td align="center">6.215e-08</td>
+<td align="center">1.322e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">5.301e-05</td>
+<td align="center">Mean ISOVF in uncinate fasciculus on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25492</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.5487</td>
+<td align="center">3.492e-08</td>
+<td align="center">9.704e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">2.979e-05</td>
+<td align="center">Weighted-mean FA in tract cingulate gyrus part of cingulum (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25494</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.4873</td>
+<td align="center">2.55e-08</td>
+<td align="center">1.445e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">2.175e-05</td>
+<td align="center">Weighted-mean FA in tract parahippocampal part of cingulum (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25495</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.208</td>
+<td align="center">8.494e-06</td>
+<td align="center">1.622e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.007245</td>
+<td align="center">Weighted-mean FA in tract parahippocampal part of cingulum (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25508</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.7703</td>
+<td align="center">2.565e-09</td>
+<td align="center">0.7603</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">2.188e-06</td>
+<td align="center">Weighted-mean FA in tract posterior thalamic radiation (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25521</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3991</td>
+<td align="center">8.594e-06</td>
+<td align="center">5.869e-08</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.007331</td>
+<td align="center">Weighted-mean MD in tract parahippocampal part of cingulum (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25522</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.1975</td>
+<td align="center">5.406e-05</td>
+<td align="center">4.153e-08</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.04611</td>
+<td align="center">Weighted-mean MD in tract parahippocampal part of cingulum (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25525</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2436</td>
+<td align="center">3.215e-06</td>
+<td align="center">0.97</td>
+<td align="center">8</td>
+<td align="center">dmri</td>
+<td align="center">0.002742</td>
+<td align="center">Weighted-mean MD in tract forceps major</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25530</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.5208</td>
+<td align="center">7.301e-07</td>
+<td align="center">1</td>
+<td align="center">4</td>
+<td align="center">dmri</td>
+<td align="center">0.0006228</td>
+<td align="center">Weighted-mean MD in tract inferior longitudinal fasciculus (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25540</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3485</td>
+<td align="center">1.639e-06</td>
+<td align="center">2.589e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.001398</td>
+<td align="center">Weighted-mean MD in tract uncinate fasciculus (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25545</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1939</td>
+<td align="center">1.486e-05</td>
+<td align="center">8.76e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.01268</td>
+<td align="center">Weighted-mean MO in tract anterior thalamic radiation (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25546</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.5781</td>
+<td align="center">3.109e-09</td>
+<td align="center">0.0007075</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">2.652e-06</td>
+<td align="center">Weighted-mean MO in tract cingulate gyrus part of cingulum (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25548</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.204</td>
+<td align="center">1.574e-06</td>
+<td align="center">4.166e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.001343</td>
+<td align="center">Weighted-mean MO in tract parahippocampal part of cingulum (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25549</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3934</td>
+<td align="center">1.149e-06</td>
+<td align="center">5.083e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.0009805</td>
+<td align="center">Weighted-mean MO in tract parahippocampal part of cingulum (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25573</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.6356</td>
+<td align="center">1.348e-10</td>
+<td align="center">0.0003157</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">1.15e-07</td>
+<td align="center">Weighted-mean L1 in tract cingulate gyrus part of cingulum (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25579</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2451</td>
+<td align="center">5.64e-07</td>
+<td align="center">0.008541</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.0004811</td>
+<td align="center">Weighted-mean L1 in tract forceps major</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25581</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3486</td>
+<td align="center">2.404e-06</td>
+<td align="center">4.121e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.002051</td>
+<td align="center">Weighted-mean L1 in tract inferior fronto-occipital fasciculus (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25584</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.354</td>
+<td align="center">7.426e-06</td>
+<td align="center">1.89e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.006335</td>
+<td align="center">Weighted-mean L1 in tract inferior longitudinal fasciculus (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25594</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.336</td>
+<td align="center">3.015e-07</td>
+<td align="center">1.198e-05</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.0002572</td>
+<td align="center">Weighted-mean L1 in tract uncinate fasciculus (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25595</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3512</td>
+<td align="center">9.751e-08</td>
+<td align="center">0.0001087</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">8.318e-05</td>
+<td align="center">Weighted-mean L1 in tract uncinate fasciculus (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25600</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3936</td>
+<td align="center">3.116e-09</td>
+<td align="center">0.0005194</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">2.658e-06</td>
+<td align="center">Weighted-mean L2 in tract cingulate gyrus part of cingulum (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25602</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.4699</td>
+<td align="center">1.322e-07</td>
+<td align="center">1.333e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.0001128</td>
+<td align="center">Weighted-mean L2 in tract parahippocampal part of cingulum (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25603</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.229</td>
+<td align="center">2.413e-06</td>
+<td align="center">6.066e-08</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.002058</td>
+<td align="center">Weighted-mean L2 in tract parahippocampal part of cingulum (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25611</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.4076</td>
+<td align="center">2.705e-05</td>
+<td align="center">7.42e-08</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.02308</td>
+<td align="center">Weighted-mean L2 in tract inferior longitudinal fasciculus (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25629</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.4221</td>
+<td align="center">2.473e-06</td>
+<td align="center">9.944e-08</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.00211</td>
+<td align="center">Weighted-mean L3 in tract parahippocampal part of cingulum (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25630</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.1979</td>
+<td align="center">3.873e-05</td>
+<td align="center">5.039e-08</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.03304</td>
+<td align="center">Weighted-mean L3 in tract parahippocampal part of cingulum (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25654</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2821</td>
+<td align="center">5.358e-05</td>
+<td align="center">1.252e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.04571</td>
+<td align="center">Weighted-mean ICVF in tract cingulate gyrus part of cingulum (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25681</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.4777</td>
+<td align="center">5.599e-08</td>
+<td align="center">0.000129</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">4.776e-05</td>
+<td align="center">Weighted-mean OD in tract cingulate gyrus part of cingulum (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25697</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.4246</td>
+<td align="center">2.628e-06</td>
+<td align="center">0.05706</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.002242</td>
+<td align="center">Weighted-mean OD in tract posterior thalamic radiation (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25719</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.4308</td>
+<td align="center">2.2e-09</td>
+<td align="center">5.511e-08</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">1.876e-06</td>
+<td align="center">Weighted-mean ISOVF in tract inferior longitudinal fasciculus (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25720</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.3787</td>
+<td align="center">3.793e-05</td>
+<td align="center">6.774e-08</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.03236</td>
+<td align="center">Weighted-mean ISOVF in tract middle cerebellar peduncle</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25726</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2998</td>
+<td align="center">5.517e-05</td>
+<td align="center">1.063e-06</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.04706</td>
+<td align="center">Weighted-mean ISOVF in tract superior longitudinal fasciculus (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25729</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.4408</td>
+<td align="center">9.228e-06</td>
+<td align="center">5.637e-07</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">0.007872</td>
+<td align="center">Weighted-mean ISOVF in tract uncinate fasciculus (left)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="pip-0.25-or-within-95-cs" class="section level1">
+<h1><span class="header-section-number">6</span> PIP &gt; 0.25 or within 95% CS</h1>
+<pre class="r"><code>df_xcan %&gt;% filter(pip &gt; 0.25) %&gt;% inner_join(df_annot, by = &#39;IDP&#39;) %&gt;% pander(caption = &#39;PIP &gt; 25%&#39;) </code></pre>
+<table>
+<caption>PIP &gt; 25%</caption>
+<colgroup>
+<col width="11%" />
+<col width="19%" />
+<col width="9%" />
+<col width="11%" />
+<col width="8%" />
+<col width="4%" />
+<col width="6%" />
+<col width="30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">bhat</th>
+<th align="center">pval</th>
+<th align="center">pip</th>
+<th align="center">cs</th>
+<th align="center">type</th>
+<th align="center">Field</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25003</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2455</td>
+<td align="center">8.784e-09</td>
+<td align="center">0.4813</td>
+<td align="center">3</td>
+<td align="center">t1</td>
+<td align="center">Volume of ventricular cerebrospinal fluid (normalised for head size)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25004</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2458</td>
+<td align="center">7.964e-09</td>
+<td align="center">0.5222</td>
+<td align="center">3</td>
+<td align="center">t1</td>
+<td align="center">Volume of ventricular cerebrospinal fluid</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25783</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2857</td>
+<td align="center">4.393e-08</td>
+<td align="center">0.9999</td>
+<td align="center">2</td>
+<td align="center">t1</td>
+<td align="center">Volume of grey matter in Frontal Pole (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25795</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1856</td>
+<td align="center">8.116e-05</td>
+<td align="center">0.9741</td>
+<td align="center">5</td>
+<td align="center">t1</td>
+<td align="center">Volume of grey matter in Precentral Gyrus (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25875</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3015</td>
+<td align="center">9.522e-10</td>
+<td align="center">0.9523</td>
+<td align="center">1</td>
+<td align="center">t1</td>
+<td align="center">Volume of grey matter in Supracalcarine Cortex (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25920</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.1236</td>
+<td align="center">8.885e-05</td>
+<td align="center">0.2775</td>
+<td align="center">-1</td>
+<td align="center">t1</td>
+<td align="center">Volume of grey matter in X Cerebellum (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25059</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2988</td>
+<td align="center">1.454e-10</td>
+<td align="center">0.2925</td>
+<td align="center">1</td>
+<td align="center">dmri</td>
+<td align="center">Mean FA in body of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25156</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2775</td>
+<td align="center">1.563e-08</td>
+<td align="center">0.9988</td>
+<td align="center">6</td>
+<td align="center">dmri</td>
+<td align="center">Mean MO in splenium of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25222</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3486</td>
+<td align="center">2.093e-08</td>
+<td align="center">0.9933</td>
+<td align="center">10</td>
+<td align="center">dmri</td>
+<td align="center">Mean L1 in anterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25241</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2334</td>
+<td align="center">8.453e-08</td>
+<td align="center">0.9909</td>
+<td align="center">9</td>
+<td align="center">dmri</td>
+<td align="center">Mean L1 in superior longitudinal fasciculus on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25299</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.34</td>
+<td align="center">1.742e-13</td>
+<td align="center">0.6967</td>
+<td align="center">1</td>
+<td align="center">dmri</td>
+<td align="center">Mean L3 in body of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25356</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.162</td>
+<td align="center">5.371e-07</td>
+<td align="center">0.7704</td>
+<td align="center">7</td>
+<td align="center">dmri</td>
+<td align="center">Mean ICVF in superior cerebellar peduncle on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25440</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.7762</td>
+<td align="center">1.028e-12</td>
+<td align="center">0.9982</td>
+<td align="center">3</td>
+<td align="center">dmri</td>
+<td align="center">Mean ISOVF in middle cerebellar peduncle on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25466</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.4182</td>
+<td align="center">1.063e-11</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">dmri</td>
+<td align="center">Mean ISOVF in posterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25508</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.7703</td>
+<td align="center">2.565e-09</td>
+<td align="center">0.7603</td>
+<td align="center">-1</td>
+<td align="center">dmri</td>
+<td align="center">Weighted-mean FA in tract posterior thalamic radiation (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25525</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2436</td>
+<td align="center">3.215e-06</td>
+<td align="center">0.97</td>
+<td align="center">8</td>
+<td align="center">dmri</td>
+<td align="center">Weighted-mean MD in tract forceps major</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25530</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.5208</td>
+<td align="center">7.301e-07</td>
+<td align="center">1</td>
+<td align="center">4</td>
+<td align="center">dmri</td>
+<td align="center">Weighted-mean MD in tract inferior longitudinal fasciculus (right)</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>df_xcan %&gt;% filter(cs &gt; 0) %&gt;% inner_join(df_annot, by = &#39;IDP&#39;)  %&gt;% pander(caption = &#39;Within 95% credible set&#39;) </code></pre>
+<table style="width:100%;">
+<caption>Within 95% credible set</caption>
+<colgroup>
+<col width="10%" />
+<col width="19%" />
+<col width="9%" />
+<col width="10%" />
+<col width="9%" />
+<col width="4%" />
+<col width="6%" />
+<col width="30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">bhat</th>
+<th align="center">pval</th>
+<th align="center">pip</th>
+<th align="center">cs</th>
+<th align="center">type</th>
+<th align="center">Field</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25003</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2455</td>
+<td align="center">8.784e-09</td>
+<td align="center">0.4813</td>
+<td align="center">3</td>
+<td align="center">t1</td>
+<td align="center">Volume of ventricular cerebrospinal fluid (normalised for head size)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25004</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2458</td>
+<td align="center">7.964e-09</td>
+<td align="center">0.5222</td>
+<td align="center">3</td>
+<td align="center">t1</td>
+<td align="center">Volume of ventricular cerebrospinal fluid</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25783</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2857</td>
+<td align="center">4.393e-08</td>
+<td align="center">0.9999</td>
+<td align="center">2</td>
+<td align="center">t1</td>
+<td align="center">Volume of grey matter in Frontal Pole (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25795</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1856</td>
+<td align="center">8.116e-05</td>
+<td align="center">0.9741</td>
+<td align="center">5</td>
+<td align="center">t1</td>
+<td align="center">Volume of grey matter in Precentral Gyrus (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25875</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3015</td>
+<td align="center">9.522e-10</td>
+<td align="center">0.9523</td>
+<td align="center">1</td>
+<td align="center">t1</td>
+<td align="center">Volume of grey matter in Supracalcarine Cortex (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25059</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.2988</td>
+<td align="center">1.454e-10</td>
+<td align="center">0.2925</td>
+<td align="center">1</td>
+<td align="center">dmri</td>
+<td align="center">Mean FA in body of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25068</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1763</td>
+<td align="center">9.203e-08</td>
+<td align="center">0.07003</td>
+<td align="center">7</td>
+<td align="center">dmri</td>
+<td align="center">Mean FA in superior cerebellar peduncle on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25156</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2775</td>
+<td align="center">1.563e-08</td>
+<td align="center">0.9988</td>
+<td align="center">6</td>
+<td align="center">dmri</td>
+<td align="center">Mean MO in splenium of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25222</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.3486</td>
+<td align="center">2.093e-08</td>
+<td align="center">0.9933</td>
+<td align="center">10</td>
+<td align="center">dmri</td>
+<td align="center">Mean L1 in anterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25241</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2334</td>
+<td align="center">8.453e-08</td>
+<td align="center">0.9909</td>
+<td align="center">9</td>
+<td align="center">dmri</td>
+<td align="center">Mean L1 in superior longitudinal fasciculus on FA skeleton (left)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25299</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.34</td>
+<td align="center">1.742e-13</td>
+<td align="center">0.6967</td>
+<td align="center">1</td>
+<td align="center">dmri</td>
+<td align="center">Mean L3 in body of corpus callosum on FA skeleton</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25356</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.162</td>
+<td align="center">5.371e-07</td>
+<td align="center">0.7704</td>
+<td align="center">7</td>
+<td align="center">dmri</td>
+<td align="center">Mean ICVF in superior cerebellar peduncle on FA skeleton (right)</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25357</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.1553</td>
+<td align="center">1.662e-06</td>
+<td align="center">0.1173</td>
+<td align="center">7</td>
+<td align="center">dmri</td>
+<td align="center">Mean ICVF in superior cerebellar peduncle on FA skeleton (left)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25440</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">-0.7762</td>
+<td align="center">1.028e-12</td>
+<td align="center">0.9982</td>
+<td align="center">3</td>
+<td align="center">dmri</td>
+<td align="center">Mean ISOVF in middle cerebellar peduncle on FA skeleton</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25466</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.4182</td>
+<td align="center">1.063e-11</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">dmri</td>
+<td align="center">Mean ISOVF in posterior corona radiata on FA skeleton (right)</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25525</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.2436</td>
+<td align="center">3.215e-06</td>
+<td align="center">0.97</td>
+<td align="center">8</td>
+<td align="center">dmri</td>
+<td align="center">Weighted-mean MD in tract forceps major</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25530</td>
+<td align="center">fluid_intelligence</td>
+<td align="center">0.5208</td>
+<td align="center">7.301e-07</td>
+<td align="center">1</td>
+<td align="center">4</td>
+<td align="center">dmri</td>
+<td align="center">Weighted-mean MD in tract inferior longitudinal fasciculus (right)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="compose-the-list-of-idps-to-run-mr" class="section level1">
+<h1><span class="header-section-number">7</span> Compose the list of IDPs to run MR</h1>
+<p>There are two openGWAS datasets of interest:</p>
+<ul>
+<li><a href="https://gwas.mrcieu.ac.uk/datasets/ebi-a-GCST006250/">ebi-a-GCST006250</a></li>
+<li><a href="https://gwas.mrcieu.ac.uk/datasets/ukb-b-5238/">ukb-b-5238</a></li>
+</ul>
+<p>We focus on the ones within 95% CS along with 25004, 25006, 25008, and 25010 since they appear in a recent <a href="https://www.nature.com/articles/s41467-020-19378-5">paper</a> analyzing the genetic basis of intelligence and brain volume. Note that this is NOT a direct replication of their work since they use the sum of 25004, 25006, 25008 which do not appear in our IDP set. Also, they may use intelligence GWASs other than the one we used.</p>
+<pre class="r"><code>opengwass = data.frame(pheno = c(&#39;intelligence&#39;, &#39;fluid_intelligence&#39;), pheno_code = c(&#39;ebi-a-GCST006250&#39;, &#39;ukb-b-5238&#39;))
+selected_idps = rbind(
+  df_xcan %&gt;% filter(cs &gt; 0) %&gt;% select(IDP, type), 
+  data.frame(IDP = paste0(&#39;IDP-&#39;, 25000 + c(4, 6, 8, 10)), type = &#39;t1&#39;)
+) %&gt;% distinct()
+for(type_ in unique(selected_idps$type)) {
+  sub = selected_idps %&gt;% filter(type == type_) 
+  tmp = cbind(opengwass, rep(sub$IDP, each = nrow(opengwass)))
+  colnames(tmp)[3] = &#39;idp&#39;
+  write.table(tmp, paste0(&#39;../misc_data/imagexcan_round_1.fintel.&#39;, type_, &#39;.signif.tsv&#39;), quo = F, row = F, col = T, sep = &#39;\t&#39;)
+}</code></pre>
+</div>
+<div id="mr-results" class="section level1">
+<h1><span class="header-section-number">8</span> MR results</h1>
+<p>Here we only show results that at least one direction has two p-values &lt; 0.05.</p>
+<pre class="r"><code>df = list()
+for(type_ in unique(selected_idps$type)) {
+  df[[length(df) + 1]] = read.table(paste0(&#39;../misc_data/imagexcan_round_1.fintel.&#39;, type_, &#39;.signif.tsv&#39;), header = T) %&gt;% mutate(type = type_)
+}
+df = do.call(rbind, df)
+collector_mr = list()
+collector_data = list()
+for(i in 1 : nrow(df)) {
+  tmp = readRDS(paste0(&#39;~/Desktop/tmp/ukb_idp/mr/MR.fintel_&#39;, df$type[i], &#39;.&#39;, df$idp[i], &#39;_x_&#39;, df$pheno[i], &#39;.rds&#39;))
+  if(sum(tmp$idp2pheno$mr$pval &lt; 0.05) &gt; 2 | sum(tmp$pheno2idp$mr$pval &lt; 0.05) &gt; 2) {
+    collector_mr[[length(collector_mr) + 1]] = rbind(
+      tmp$idp2pheno$mr %&gt;% mutate(direction = &#39;idp2pheno&#39;, pheno = df$pheno[i], idp = df$idp[i]),
+      tmp$pheno2idp$mr %&gt;% mutate(direction = &#39;pheno2idp&#39;, pheno = df$pheno[i], idp = df$idp[i])
+    )
+    collector_data[[length(collector_data) + 1]] = rbind(
+      tmp$idp2pheno$data %&gt;% select(beta.exposure, beta.outcome, pval.exposure) %&gt;% mutate(direction = &#39;idp2pheno&#39;, pheno = df$pheno[i], idp = df$idp[i]),
+      tmp$pheno2idp$data %&gt;% select(beta.exposure, beta.outcome, pval.exposure) %&gt;% mutate(direction = &#39;pheno2idp&#39;, pheno = df$pheno[i], idp = df$idp[i])
+    )
+  }
+}
+df_data = do.call(rbind, collector_data) %&gt;% inner_join(df_annot, by = c(&#39;idp&#39; = &#39;IDP&#39;))
+df_mr = do.call(rbind, collector_mr) %&gt;% inner_join(df_annot, by = c(&#39;idp&#39; = &#39;IDP&#39;))</code></pre>
+<p>The selected MR pairs.</p>
+<pre class="r"><code>df_mr %&gt;% select(pheno, idp) %&gt;% distinct() %&gt;% pander</code></pre>
+<table style="width:46%;">
+<colgroup>
+<col width="29%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">pheno</th>
+<th align="center">idp</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">fluid_intelligence</td>
+<td align="center">IDP-25783</td>
+</tr>
+<tr class="even">
+<td align="center">fluid_intelligence</td>
+<td align="center">IDP-25008</td>
+</tr>
+<tr class="odd">
+<td align="center">fluid_intelligence</td>
+<td align="center">IDP-25010</td>
+</tr>
+<tr class="even">
+<td align="center">intelligence</td>
+<td align="center">IDP-25068</td>
+</tr>
+<tr class="odd">
+<td align="center">fluid_intelligence</td>
+<td align="center">IDP-25068</td>
+</tr>
+<tr class="even">
+<td align="center">intelligence</td>
+<td align="center">IDP-25356</td>
+</tr>
+<tr class="odd">
+<td align="center">fluid_intelligence</td>
+<td align="center">IDP-25356</td>
+</tr>
+<tr class="even">
+<td align="center">intelligence</td>
+<td align="center">IDP-25357</td>
+</tr>
+<tr class="odd">
+<td align="center">fluid_intelligence</td>
+<td align="center">IDP-25357</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>df_tmp = df_mr %&gt;% select(pheno, idp) %&gt;% distinct()</code></pre>
+<p>Show the plot.</p>
+<pre class="r"><code>for(i in 1 : nrow(df_tmp)) {
+  mydat = df_data %&gt;% filter(pheno == df_tmp$pheno[i], idp == df_tmp$idp[i])
+  mymr = df_mr %&gt;% filter(pheno == df_tmp$pheno[i], idp == df_tmp$idp[i])
+  idp_name = mydat$Field[1]
+  gwas_name = mydat$pheno[1]
+  plist = list()
+  plist[[length(plist) + 1]] = mydat %&gt;% filter(direction == &#39;idp2pheno&#39;) %&gt;% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = &#39;lightgray&#39;) + geom_hline(yintercept = 0, color = &#39;lightgray&#39;) + th + ggtitle(paste0(idp_name, &#39; -&gt; \n &#39;, gwas_name)) +
+    theme(legend.position = &#39;none&#39;)
+  plist[[length(plist) + 1]] = mydat %&gt;% filter(direction == &#39;pheno2idp&#39;) %&gt;% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = &#39;lightgray&#39;) + geom_hline(yintercept = 0, color = &#39;lightgray&#39;) + th + ggtitle(paste0(gwas_name, &#39; -&gt; \n &#39;, idp_name)) +
+    theme(legend.position = &#39;none&#39;)
+  # plist[[length(plist) + 1]] = gridExtra::tableGrob(df_mr %&gt;% select(method, nsnp, b, pval, direction))
+  qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr %&gt;% select(method, nsnp, b, pval, direction), digits = 3)), ncol = 3)
+  print(qq)
+}</code></pre>
+<p><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-36-1.png" width="1440" /><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-36-2.png" width="1440" /><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-36-3.png" width="1440" /><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-36-4.png" width="1440" /><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-36-5.png" width="1440" /><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-36-6.png" width="1440" /><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-36-7.png" width="1440" /><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-36-8.png" width="1440" /><img src="imagexcan_round_1_fintel_files/figure-html/unnamed-chunk-36-9.png" width="1440" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

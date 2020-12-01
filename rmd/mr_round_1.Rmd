@@ -1,0 +1,74 @@
+---
+title: "Mendelian Randomization (round 1)"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+library(ggpubr)
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes')
+pheno_bcc = c('wbc', 'rbc', 'platelet', 'lymphocyte', 'monocyte', 'neutrophil', 'eosinophil', 'basophil')
+pheno_ht = c('dbp', 'sbp') # , 'ht', 'hb', 'mcv', 'mch', 'mchc')
+pheno_rand = paste0('random_pheno_', 0 : 9)
+pheno_sig_dmri = paste0('single_sig_dmri_', 0 : 9)
+pheno_sig_orig = paste0('single_sig_orig_', 0 : 9)
+source('rlib.R')
+```
+
+# About
+
+Here we extract the susieR based significant hits (95% CS or PIP > 0.25).
+And we run MR of both directions using related GWASs.
+
+# Load data
+
+```{r}
+df = rbind(
+  read.table('../misc_data/imagexcan_round_1.t1.signif.tsv', header = T) %>% mutate(type = 't1'),
+  read.table('../misc_data/imagexcan_round_1.dmri.signif.tsv', header = T) %>% mutate(type = 'dmri')
+)
+df_meta = read.csv('../misc_data/pheno_of_interest.meta_table.csv')
+df_idp = readRDS('../misc_data/download_some_matching_files/cleanup_annot_our_idps.rds') %>% mutate(idp = paste0('IDP-', FieldID))
+data_list = list()
+mr_list = list()
+data_cols = c('SNP', 'beta.exposure', 'beta.outcome', 'pval.exposure', 'pval.outcome')
+for(i in 1 : nrow(df)) {
+  tmp = readRDS(paste0('~/Desktop/tmp/ukb_idp/mr/MR.', df$type[i], '.', df$idp[i], '_x_', df$pheno[i], '.rds'))
+  if((!is.data.frame(tmp$pheno2idp$data)) | (!is.data.frame(tmp$idp2pheno$data))) next
+  if(nrow(tmp$idp2pheno$data) < 10 | nrow(tmp$pheno2idp$data) < 10) next
+  data_list[[length(data_list) + 1]] = rbind(
+    tmp$idp2pheno$data[, data_cols] %>% mutate(type = 'idp -> phenotype'), 
+    tmp$pheno2idp$data[, data_cols] %>% mutate(type = 'phenotype -> idp')
+  ) %>% mutate(idp = df$idp[i], phenotype = df$pheno[i], type2 = df$type[i])
+  mr_list[[length(mr_list) + 1]] = rbind(tmp$idp2pheno$mr %>% mutate(type = 'idp -> phenotype'), tmp$pheno2idp$mr %>% mutate(type = 'phenotype -> idp')) %>% mutate(idp = df$idp[i], phenotype = df$pheno[i], type2 = df$type[i])
+}
+```
+
+# Visualization
+
+```{r}
+for(i in 1 : length(mr_list)) {
+  idp_name = mr_list[[i]]$idp[1]  # df_idp$Field[df_idp$idp == mr_list[[i]]$idp[1]]
+  gwas_name = df_meta$trait[df_meta$id == mr_list[[i]]$phenotype[1]]
+  plist = list()
+  plist[[length(plist) + 1]] = data_list[[i]] %>% filter(type == 'idp -> phenotype') %>% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = 'lightgray') + geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(idp_name, ' -> \n ', gwas_name)) +
+    theme(legend.position = 'none')
+  plist[[length(plist) + 1]] = data_list[[i]] %>% filter(type == 'phenotype -> idp') %>% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = 'lightgray') + geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(gwas_name, ' -> \n ', idp_name)) +
+    theme(legend.position = 'none')
+  plist[[length(plist) + 1]] = gridExtra::tableGrob(mr_list[[i]] %>% select(method, nsnp, b, pval, type))
+  qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mr_list[[i]] %>% select(method, nsnp, b, pval, type), digits = 3)), ncol = 3)
+  ggsave(paste0('../misc_data/mr_round_1_output/', mr_list[[i]]$idp[1], '_x_', mr_list[[i]]$phenotype[1], '.', mr_list[[i]]$type2[1], '.png'), qq, width = 18, height = 6)
+}
+```
+
+
+

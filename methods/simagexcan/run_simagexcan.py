@@ -130,7 +130,7 @@ if __name__ == '__main__':
         The output CSV filename.
         Will return both marginal test result and also the susieR result.
     ''')
-    parser.add_argument('--z_ld_weight', type=float, help='''
+    parser.add_argument('--z_ld_weight', type=float, default=0.01, help='''
         LD = (1 - z_ld_weight) * LD + z_ld_weight * (Z @ Z.T)
         to avoid mis-specified LD.
     ''')
@@ -187,35 +187,41 @@ if __name__ == '__main__':
     numer_b = np.zeros((nidp))
     numer_z = np.zeros((nidp))
     for i in tqdm(range(1, 23)):
-    
+        
+        df_gwas_sub = df_gwas[ df_gwas.chr == i ].reset_index(drop=True)
+        df_weight_sub = df_weight[ df_weight.chr == i ].reset_index(drop=True)
+        if df_gwas_sub.shape[0] == 0:
+            continue
+        
         logging.info(f'Chromosome {i}: Loading genotype covariance meta information.')
         df_cov_meta = load_cov_meta(args.genotype_covariance.format(chr_num=i))
         
         # step0
-        n0 = df_weight.shape[0]  # for book keeping
-        # we enforce the GWAS table to have the same SNPs as the IDP weights
+        n0 = df_weight_sub.shape[0]  # for book keeping
+        # we enforce the GWAS table and the IDP weights to have 
+        # the same SNPs as genotype covariance
         # the weights of the missing ones are set to NaN.
-        df_gwas = rearrage_df_by_target(
-            df=df_gwas, 
+        df_gwas_sub = rearrage_df_by_target(
+            df=df_gwas_sub, 
             target=df_cov_meta
             df_value_cols=['effect_size']
         )
-        df_weight = rearrage_df_by_target(
-            df=df_gwas, 
+        df_weight_sub = rearrage_df_by_target(
+            df=df_weight_sub, 
             target=df_cov_meta
             df_value_cols=list(df_weight.columns[4:])
         )
-        n1 = df_gwas.effect_size.notna().sum()
+        n1 = df_gwas_sub.effect_size.notna().sum()
         logging.info('Step0 Chromosome {i}: {} out of {} SNPs in IDP/GWAS are used.'.format(n1, n0)
         
         logging.info('Step1 Chromosome {i}: Working with genotype covariance.')
         
-        weight = df_weight.iloc[:, 4 : ].to_numpy(copy=True)
+        weight = df_weight_sub.iloc[:, 4 : ].to_numpy(copy=True)
         weight[np.isnan(weight)] = 0
         
-        b_gwas = df_gwas.effect_size.to_numpy(copy=True)
+        b_gwas = df_gwas_sub.effect_size.to_numpy(copy=True)
         b_gwas[np.isnan(b_gwas)] = 0
-        se_gwas = df_gwas.effect_size.to_numpy(copy=True)
+        se_gwas = df_gwas_sub.effect_size_se.to_numpy(copy=True)
         se_gwas[np.isnan(se_gwas)] = 1
         z_gwas = b_gwas / se_gwas
         

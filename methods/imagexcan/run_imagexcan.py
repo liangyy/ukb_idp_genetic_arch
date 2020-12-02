@@ -96,7 +96,7 @@ if __name__ == '__main__':
     if Covar is not None:
         Covar = np.concatenate((np.ones((Covar.shape[0], 1)), Covar), axis=1)
     else:
-        Covar = np.ones((Covar.shape[0], 1)   
+        Covar = np.ones((df_pheno.shape[0], 1))   
     Idp = get_matrix(df_idp)
     idp_cols = df_idp.columns[1:].to_list()
 

@@ -25,7 +25,7 @@ for i, k in enumerate(list(rand_idps)):
     name = '{}_null'.format(i, df.columns[k])
     out[name] = np.random.normal(scale=4, size=df.shape[0]) + np.random.randint(-5, 5, size=1)
 out = pd.DataFrame(out)
-out.to_parquet(file_out1)
+out.to_csv(file_out1, index=False)
 
 with open(file_out2, 'w') as f:
     yaml.dump({ k: 'linear_regression' for k in out.keys()[1:] }, f)

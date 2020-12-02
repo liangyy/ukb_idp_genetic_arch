@@ -219,7 +219,6 @@ if __name__ == '__main__':
     logging.info('IDP SNP = {} and number of IDPs = {}'.format(df_weight.shape[0], nidp))
     
     logging.info('Harmonizing GWAS and IDP weights.')
-    breakpoint()
     # harmonize GWAS and IDP weight table so that they have the same set of 
     # SNPs (including direction).
     df_gwas, df_weight = harmonize_gwas_and_weight(df_gwas, df_weight)
@@ -243,10 +242,10 @@ if __name__ == '__main__':
     D = np.zeros((nidp, nidp))
     numer_b = np.zeros((nidp))
     numer_z = np.zeros((nidp))
-    for i in tqdm(range(1, 23)):
+    for i in range(1, 23):
         
-        df_gwas_sub = df_gwas[ df_gwas.chr == i ].reset_index(drop=True)
-        df_weight_sub = df_weight[ df_weight.chr == i ].reset_index(drop=True)
+        df_gwas_sub = df_gwas[ df_gwas.chr == str(i) ].reset_index(drop=True)
+        df_weight_sub = df_weight[ df_weight.chr == str(i) ].reset_index(drop=True)
         if df_gwas_sub.shape[0] == 0:
             continue
         
@@ -297,7 +296,7 @@ if __name__ == '__main__':
     S_D = np.sqrt(D.diagonal())
     beta_imagexcan = numer_b / np.power(S_D, 2)
     z_imagexcan = numer_z / S_D
-    
+   
     logging.info('Step3: Running susieR.')
     Sigma =  D / S_D[:, np.newaxis] / S_D[np.newaxis, ]
     susie_pip, susie_cs = run_susie_wrapper(z_imagexcan, Sigma, params={'z_ld_weight': args.z_ld_weight})

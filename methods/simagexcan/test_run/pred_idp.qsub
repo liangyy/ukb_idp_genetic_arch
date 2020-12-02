@@ -12,27 +12,28 @@ source ~/.bashrc
 
 conda activate ukb_idp
 
-bgen=/gpfs/data/ukb-share/genotypes/v3/ukb_imp_chr{chr_num}_v3.bgen
-bgi=/gpfs/data/ukb-share/genotypes/v3/ukb_imp_chr{chr_num}_v3.bgen.bgi
-sample=/gpfs/data/ukb-share/genotypes/ukb19526_imp_chr1_v3_s487395.sample
+bgen=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run/geno_for_test.chr{chr_num}.bgen
+bgi=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run/geno_for_test.chr{chr_num}.bgen.bgi
+sample_prefix=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run/geno_for_test.chr
 
-# prs_parquet=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/gw_ridge/gw_ridge_beta.dmri.default_theta_g_fold_5_5.parquet
+prs_parquet=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run/idp_weights.parquet
 
 
-nthread=4
+nthread=2
 ukb_imp_reader_path=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/bgen_io
 
-output_prefix=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/predicted_idp/pred_idp.$NAME.chr$CHR
+output_prefix=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run/idp_weights.chr
 
-echo $bgi
-
-python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/prediction/run_prs.py \
-  --ukb_bgen_pattern $bgen \
-  --ukb_bgi_pattern $bgi \
-  --ukb_sample_file $sample \
-  --prs_parquet $prs_parquet \
-  --nthread $nthread \
-  --output $output_prefix.parquet \
-  --chromosomes $CHR \
-  --ukb_imp_reader_path $ukb_imp_reader_path > \
-  /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/prediction/logs/pred_cri_${NAME}_$CHR.log 2>&1
+for chr in `seq 21 22`
+do
+  python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/prediction/run_prs.py \
+    --ukb_bgen_pattern $bgen \
+    --ukb_bgi_pattern $bgi \
+    --ukb_sample_file $sample_prefix$chr.sample \
+    --prs_parquet $prs_parquet \
+    --nthread $nthread \
+    --output $output_prefix$chr.parquet \
+    --chromosomes $chr \
+    --ukb_imp_reader_path $ukb_imp_reader_path > \
+    /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run/pred_idp.chr$chr.log 2>&1
+done

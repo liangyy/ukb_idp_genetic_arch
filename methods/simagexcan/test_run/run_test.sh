@@ -2,10 +2,29 @@
 # See more details in README.md
 # For simplicity, we work on chr21 and chr22
 
+module load gcc/6.2.0; module load bgen
+
+conda activate ukb_idp
+
+plink2_exec=/gpfs/data/im-lab/nas40t2/yanyul/softwares/plink2
 outdir=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run
 mkdir -p $outdir
 
 # step0: subset genotype to pre-select 
+# select the first 500 individuals in IDP cohort
+# make a copy of plink BED genotypes.
+# make a copy of BGEN genotypes.
+input_geno_prefix=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr
+indiv_list=$outdir/tmp_indiv_list.txt
+output_geno_prefix=$outdir/geno_for_test.chr
+chr=22
+cat $input_geno_prefix$chr.fam | head -n 500 > $indiv_list
+for chr in `seq 21 22`
+do
+  $plink2_exec --bfile $input_geno_prefix$chr --keep $indiv_list --make-bed --out $output_geno_prefix$chr
+  $plink2_exec --bfile $output_geno_prefix$chr --export bgen-1.2 'ref-first' --out $output_geno_prefix$chr
+  bgenix -g $output_geno_prefix$chr.bgen -index -clobber
+done 
 
 # step1: simulate IDP model weights
 # instead of simulating, we use the t1 weights directly.
@@ -24,7 +43,7 @@ input_step2=$outdir/idp_weights.parquet
 output_step2=$outdir/predicted_idp.parquet
 if[[ ! -f $output_step2 ]]
 then
-  qsub pred_idp.qsub 
+  bash pred_idp.qsub 
 fi
 
 # step3: simulate phenotype

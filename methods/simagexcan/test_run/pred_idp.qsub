@@ -22,7 +22,7 @@ prs_parquet=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run/idp_weig
 nthread=2
 ukb_imp_reader_path=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/bgen_io
 
-output_prefix=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run/idp_weights.chr
+output_prefix=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run/pred_idp.chr
 
 for chr in `seq 21 22`
 do

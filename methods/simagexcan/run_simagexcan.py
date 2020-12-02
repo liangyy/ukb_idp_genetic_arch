@@ -96,14 +96,19 @@ def harmonize_gwas_and_weight(gwas, weight):
     df_common = df_common[ to_keep_ind ].reset_index(drop=True)
     flip_factor = flip_factor[ to_keep_ind ]
     
+    df_common.drop(columns=['effect_allele_gwas', 'non_effect_allele_gwas'], inplace=True)
+    df_common.rename(columns={'effect_allele_weight': 'effect_allele', 'non_effect_allele_weight': 'non_effect_allele'}, inplace=True)
+
     df_gwas = pd.merge(
-        df_common[['snpid', 'chr']], gwas, 
+        df_common[['snpid', 'chr', 'effect_allele', 'non_effect_allele']], 
+        gwas.drop(columns=['effect_allele', 'non_effect_allele']), 
         on=['snpid', 'chr']
     )
     df_gwas.effect_size = df_gwas.effect_size * flip_factor
     
     df_weight = pd.merge(
-        df_common[['snpid', 'chr']], weight, 
+        df_common[['snpid', 'chr', 'effect_allele', 'non_effect_allele']], 
+        weight.drop(columns=['effect_allele', 'non_effect_allele']), 
         on=['snpid', 'chr']
     )
     return df_gwas, df_weight

@@ -50,6 +50,7 @@ def rearrage_df_by_target(df, target, df_value_cols):
         suffixes=['_res', '_df'],
         how='left'
     )
+    breakpoint()
     flip_factor = check_flip(
         a1=df_res.effect_allele_res, 
         a2=df_res.non_effect_allele_res,
@@ -159,6 +160,8 @@ def load_idp(args_list):
     return df
 
 def load_cov_meta(fn):
+    fn = '.'.join(fn.split('.')[:-1])
+    fn = fn + '.snp_meta.parquet'
     return pd.read_parquet(fn)
 
 if __name__ == '__main__':

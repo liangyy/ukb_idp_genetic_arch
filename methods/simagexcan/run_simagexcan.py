@@ -88,7 +88,10 @@ def _parse_gwas_args(args_list):
         'effect_size', 'effect_size_se', 'chr'
     ]
     fn, rename_dict = _parse_args(args_list, desired_cols)
-    snpid_name = rename_dict['snpid']
+    for k, v in rename_dict.items():
+        if v == 'snpid':
+            snpid_name = k
+            break
     return fn, rename_dict, snpid_name    
     
 def load_gwas(gwas_args_list):
@@ -96,6 +99,7 @@ def load_gwas(gwas_args_list):
     df = read_table(fn, indiv_col=snpid_col)
     df.rename(columns={'indiv': snpid_col}, inplace=True)
     df.rename(columns=rename_dict, inplace=True)
+    df.chr = df.chr.astype(str)
     return df[rename_dict.values()]
 
 def _parse_idp_args(args_list):
@@ -103,15 +107,13 @@ def _parse_idp_args(args_list):
         'snpid', 'non_effect_allele', 'effect_allele', 'chr'
     ]
     fn, rename_dict = _parse_args(args_list, desired_cols)
+    return fn, rename_dict
         
 def load_idp(args_list):
     fn, rename_dict = _parse_idp_args(args_list)
     df = pd.read_parquet(fn)
     df.rename(columns=rename_dict, inplace=True)
-    # if 'a0' in df.columns:
-    #     df.rename(columns={'a0': 'effect_allele'})
-    # if 'a1' in df.columns:
-    #     df.rename(columns={'a1': 'non_effect_allele'})
+    df.chr = df.chr.astype(str)
     return df
 
 if __name__ == '__main__':
@@ -175,6 +177,7 @@ if __name__ == '__main__':
     logging.info('IDP SNP = {} and number of IDPs = {}'.format(df_weight.shape[0], nidp))
     
     logging.info('Harmonizing GWAS and IDP weights.')
+    breakpoint()
     # harmonize GWAS and IDP weight table so that they have the same set of 
     # SNPs (including direction).
     df_gwas, df_weight = harmonize_gwas_and_weight(df_gwas, df_weight)

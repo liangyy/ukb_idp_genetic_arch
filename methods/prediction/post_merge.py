@@ -16,6 +16,9 @@ if __name__ == '__main__':
     parser.add_argument('--output', help='''
         The output is saved as one parquet file.
     ''')
+    parser.add_argument('--chromosomes', nargs='+', default=None, help='''
+        The output is saved as one parquet file.
+    ''')
     args = parser.parse_args()
  
     import logging, time, sys, os
@@ -27,10 +30,15 @@ if __name__ == '__main__':
         datefmt = '%Y-%m-%d %I:%M:%S %p'
     )
     
+    if args.chromosomes is None:
+        chrs = [ i for i in range(1, 23) ]
+    else:
+        chrs = args.chromosomes
+    
     logging.info('On chromosome 1.')
-    df = pd.read_parquet(args.input_pattern.format(chr_num=1))
+    df = pd.read_parquet(args.input_pattern.format(chr_num=chrs[0]))
     cols = df.columns
-    for i in range(2, 23):
+    for i in chrs[1:]:
         logging.info(f'On chromosome {i}.')
         tmp = pd.read_parquet(args.input_pattern.format(chr_num=i))
         tmp2 = pd.DataFrame({args.indiv_col : df[args.indiv_col]})

@@ -60,6 +60,7 @@ if[[ ! -f $output_step3 ]]
 then
   python simulate_phenotype.py \
     $input_step3 \
+    $output_step3 \
     $output_step3_marginal \
     $output_step3_susie
 fi

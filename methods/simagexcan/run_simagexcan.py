@@ -158,6 +158,9 @@ def load_idp(args_list):
     df.chr = df.chr.astype(str)
     return df
 
+def load_cov_meta(fn):
+    return pd.read_parquet(fn)
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(prog='run_simagexcan.py', description='''

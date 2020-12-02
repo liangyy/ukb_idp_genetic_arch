@@ -12,7 +12,7 @@ if __name__ == '__main__':
         In parquet or csv format.
         Specify the filename followed by the column of individual ID.
     ''')
-    parser.add_argument('--covariate_table', nargs='+', help='''
+    parser.add_argument('--covariate_table', nargs='+', default=None, help='''
         In parquet or csv format.
         Specify the filename followed by the column of individual ID.
     ''')
@@ -59,12 +59,17 @@ if __name__ == '__main__':
     
     
     logging.info('Loading tables.')
-    df_covar = load_covariate(args.covariate_table, args.covariate_yaml)
+    if args.covariate_table is not None:
+        df_covar = load_covariate(args.covariate_table, args.covariate_yaml)
+        indiv_lists = [ df_covar.indiv.to_list() ]
+    else:
+        df_covar = None
+        indiv_lists = []
     df_pheno, list_pheno_info = load_phenotype(
         args.phenotype_table, args.phenotype_yaml
     )
     df_idp = load_idp(args.idp_table)
-    indiv_lists = [df_covar.indiv.to_list(), df_pheno.indiv.to_list(), df_idp.indiv.to_list()]
+    indiv_lists += [ df_pheno.indiv.to_list(), df_idp.indiv.to_list() ]
     if args.individual_list is not None:
         indiv_lists.append(load_list(args.individual_list))
     indiv_list = take_intersect(indiv_lists)
@@ -77,17 +82,21 @@ if __name__ == '__main__':
     
     indiv_list = sorted(indiv_list)
    
-    df_covar = rearrange_rows(df_covar, indiv_list)
+    if df_covar is not None:
+        df_covar = rearrange_rows(df_covar, indiv_list)
     df_pheno = rearrange_rows(df_pheno, indiv_list)
     df_idp = rearrange_rows(df_idp, indiv_list)
-    logging.info('There are {} individauls being included.'.format(df_covar.shape[0]))
+    logging.info('There are {} individauls being included.'.format(df_pheno.shape[0]))
     
     if args.first_30_idp:
         df_idp = df_idp.iloc[:, :31]
-
+    
     Covar = get_matrix(df_covar)
     # add intercept to covariate
-    Covar = np.concatenate((np.ones((Covar.shape[0], 1)), Covar), axis=1)
+    if Covar is not None:
+        Covar = np.concatenate((np.ones((Covar.shape[0], 1)), Covar), axis=1)
+    else:
+        Covar = np.ones((Covar.shape[0], 1)   
     Idp = get_matrix(df_idp)
     idp_cols = df_idp.columns[1:].to_list()
 

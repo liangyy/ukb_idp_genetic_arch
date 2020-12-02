@@ -6,6 +6,8 @@ module load gcc/6.2.0; module load bgen
 
 conda activate ukb_idp
 
+export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/pyutil
+
 plink2_exec=/gpfs/data/im-lab/nas40t2/yanyul/softwares/plink2
 outdir=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run
 mkdir -p $outdir
@@ -66,6 +68,9 @@ then
 fi
 
 # step4: run imagexcan
+conda deactivate
+conda activate pytorch-1.4.0-cpu_py37
+
 input_step4=$outdir/phenotype.csv
 output_step4_marginal=$outdir/imagexcan_marginal.csv
 output_step4_susie=$outdir/imagexcan_susie.csv

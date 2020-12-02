@@ -62,7 +62,10 @@ def get_matrix(df):
     Assume first col is individual id.
     Return the values without individual id.
     '''
-    return df.iloc[:, 1:].values
+    if df is None:
+        return None
+    else:
+        return df.iloc[:, 1:].values
 
 def load_table(file_list):
     fn, indiv_col = file_list[:2]

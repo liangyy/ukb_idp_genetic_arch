@@ -213,7 +213,7 @@ if __name__ == '__main__':
         datefmt = '%Y-%m-%d %I:%M:%S %p'
     )
     from CovConstructor import CovMatrix
-    from solver import run_susie_wrapper
+    from susie_wrapper import run_susie_wrapper
     from pystat import z2p
     
     logging.info('Loading GWAS.')

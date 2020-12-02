@@ -1,5 +1,6 @@
 from util import *
 from solver import *
+from susie_wrapper import run_susie_wrapper
 
 if __name__ == '__main__':
     import argparse

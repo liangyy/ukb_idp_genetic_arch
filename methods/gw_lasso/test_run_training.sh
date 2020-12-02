@@ -27,8 +27,9 @@ Rscript run_gw_lasso.R \
 # check whether the weights generated is as expected.
 # run plink2 --score and compare with the in sample prediction output by snpnet
 plink2_exe=/gpfs/data/im-lab/nas40t2/yanyul/softwares/plink2
-bedgeno=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.merged_all
 tmp_txt=QPHE.prs.txt
 zcat $output_prefix.weights.tsv.gz | grep QPHE > $tmp_txt
 
-$plink2_exe --pfile $bedgeno 'vzs' --score $tmp_txt 1 4 2 cols=scoresums,denom --out $output_prefix
+$plink2_exe --pfile $genofile 'vzs' --score $tmp_txt 1 4 2 cols=scoresums,denom --out $output_prefix
+
+Rscript test_files/test_run_training_check_with_plink.R

@@ -40,7 +40,7 @@ def harmonize_gwas_and_weight(gwas, weight):
     df_common = pd.merge(
         gwas[['snpid', 'chr', 'effect_allele', 'non_effect_allele']],
         weight[['snpid', 'chr', 'effect_allele', 'non_effect_allele']],
-        on=['snpid', 'chr']
+        on=['snpid', 'chr'],
         suffixes=['_gwas', '_weight']
     )
     flip_factor = check_flip(
@@ -63,7 +63,7 @@ def harmonize_gwas_and_weight(gwas, weight):
 def _parse_gwas_args(args_list):
     fn = args_list[0]
     if not pathlib.Path(fn).is_file():
-    raise ValueError('Filename is wrong. Cannot find the file.')
+        raise ValueError('Filename is wrong. Cannot find the file.')
     dict = {}
     desired_cols = [
         'snpid', 'non_effect_allele', 'effect_allele', 
@@ -75,9 +75,9 @@ def _parse_gwas_args(args_list):
         tmp = i.split(':')
         if len(tmp) != 2:
             raise ValueError('Wrong gwas args list. Need [col]:[name] pairs.')
+        col, name = tmp
         if col not in desired_cols:
             raise ValueError(f'Wrong col = {col}.')
-        col, name = tmp
         dict[col] = name
     rename_dict = OrderedDict()
     for dd in desired_cols:
@@ -91,11 +91,11 @@ def _parse_gwas_args(args_list):
 def load_gwas(gwas_args_list):
     fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list)
     df = read_table(fn, indiv_col=snpid_col)
-    df.rename(columns={'indiv_col': snpid_col}, inplace=True)
+    df.rename(columns={'indiv': snpid_col}, inplace=True)
     df.rename(columns=rename_dict, inplace=True)
-    return df[rename_dict.keys()]
+    return df[rename_dict.values()]
 
-def df_weight(fn):
+def load_idp(fn):
     df = pd.read_parquet(fn)
     if 'a0' in df.columns:
         df.rename(columns={'a0': 'effect_allele'})
@@ -114,10 +114,10 @@ if __name__ == '__main__':
         Accept wildcard {chr_num}.
         Will automatically search for the corresponding meta SNP file.
     ''')
-    parser.add_argument('--gwas ', nargs='+', help='''
+    parser.add_argument('--gwas', nargs='+', help='''
         Need to have column names for: 
-            rsID, non_effect_allele, effect_allele, 
-            effect_size, effect_size_se, chromosome.
+            snpid, non_effect_allele, effect_allele, 
+            effect_size, effect_size_se, chr.
         like: rsID:rsid_col, ..., chromosome:chr
     ''')
     parser.add_argument('--idp_weight', help='''
@@ -203,16 +203,16 @@ if __name__ == '__main__':
         # the weights of the missing ones are set to NaN.
         df_gwas_sub = rearrage_df_by_target(
             df=df_gwas_sub, 
-            target=df_cov_meta
+            target=df_cov_meta,
             df_value_cols=['effect_size']
         )
         df_weight_sub = rearrage_df_by_target(
             df=df_weight_sub, 
-            target=df_cov_meta
+            target=df_cov_meta,
             df_value_cols=list(df_weight.columns[4:])
         )
         n1 = df_gwas_sub.effect_size.notna().sum()
-        logging.info('Step0 Chromosome {i}: {} out of {} SNPs in IDP/GWAS are used.'.format(n1, n0)
+        logging.info('Step0 Chromosome {i}: {} out of {} SNPs in IDP/GWAS are used.'.format(n1, n0))
         
         logging.info('Step1 Chromosome {i}: Working with genotype covariance.')
         

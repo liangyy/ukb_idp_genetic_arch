@@ -75,7 +75,7 @@ if __name__ == '__main__':
         nbatch=args.nbatch
     )
     constructor.compute_to_disk(
-        mode=mode
+        mode=mode,
         param=param,
         output_prefix=args.output_prefix
     )
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         'effect_allele': a0, 
         'non_effect_allele': a1, 
         'chr': chrom
-    }
+    })
     df_snp.to_parquet(args.output_prefix + f'.{mode}.snp_meta.parquet')
     
     logging.info('Done.')

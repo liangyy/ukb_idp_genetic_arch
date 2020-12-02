@@ -7,6 +7,7 @@ module load gcc/6.2.0; module load bgen
 conda activate ukb_idp
 
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/pyutil
+export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/softwares/tensorqtl/tensorqtl:$PYTHONPATH
 
 plink2_exec=/gpfs/data/im-lab/nas40t2/yanyul/softwares/plink2
 outdir=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run
@@ -89,20 +90,22 @@ then
 fi
 
 # step5: run gwas on phenotype
+conda deactivate 
+conda activate tensorqtl
 output_step5=$outdir/gwas_phenotype.tsv.gz
 if[[ ! -f $output_step5 ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/run_trans_qtl.py \
-    --geno_bed_prefix /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr21 \
+    --geno_bed_prefix $outdir/geno_for_test.chr21 \
     --phenotype_table $input_step4 indiv \
-    --output_prefix $outdir/gwas_phenotype.chr21 \
-    --map_trans_params /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/config.test.yaml
+    --output_prefix $outdir/gwas_phenotype.chr21. \
+    --map_trans_params /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/map_trans.yaml
     
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/run_trans_qtl.py \
-    --geno_bed_prefix /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr22 \
+    --geno_bed_prefix $outdir/geno_for_test.chr22 \
     --phenotype_table $input_step4 indiv \
-    --output_prefix $outdir/gwas_phenotype.chr22 \
-    --map_trans_params /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/config.test.yaml 
+    --output_prefix $outdir/gwas_phenotype.chr22. \
+    --map_trans_params /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/map_trans.yaml 
     
   python postprocess_gwas.py \
     $outdir/gwas_phenotype.chr21.parquet \

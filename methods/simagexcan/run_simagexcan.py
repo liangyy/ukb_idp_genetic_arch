@@ -20,10 +20,12 @@ def check_flip(a1, a2, b1, b2):
 def _check_flip(a0, a1, b0, b1):
     '''
     check if (a0, a1) and (b0, b1) are of the same direction.
-    If they don't match at all or ambiguious return nan
+    If there is nan or they don't match at all or ambiguious return nan
     Else if they are in the same direction, return 1
     Else return -1
     '''
+    if a0 is np.nan or a1 is np.nan or b0 is np.nan or b1 is np.nan:
+        return np.nan
     # remove ambiguious first.
     if a0 == BASE_PAIR[a1] or b0 == BASE_PAIR[b1]:
         return np.nan
@@ -50,18 +52,15 @@ def rearrage_df_by_target(df, target, df_value_cols):
         suffixes=['_res', '_df'],
         how='left'
     )
-    breakpoint()
     flip_factor = check_flip(
         a1=df_res.effect_allele_res, 
         a2=df_res.non_effect_allele_res,
         b1=df_res.effect_allele_df, 
         b2=df_res.non_effect_allele_df
     )
-    # need to remove the invalid variant before moving on
-    to_keep_ind = np.logical_not(np.isnan(flip_factor))
-    df_res = df_res[ to_keep_ind ].reset_index(drop=True)
-    flip_factor = flip_factor[ to_keep_ind ]
-    df_res[df_value_cols] = df_res[df_value_cols] * flip_factor[:, np.newaxis]
+    # we need to carry the missingness when we move on
+    with np.errstate(invalid='ignore'):
+        df_res[df_value_cols] = df_res[df_value_cols] * flip_factor[:, np.newaxis]
     df_res.drop(
         columns=['effect_allele_df', 'non_effect_allele_df'], inplace=True
     )
@@ -91,12 +90,18 @@ def harmonize_gwas_and_weight(gwas, weight):
         b1=df_common.effect_allele_weight, 
         b2=df_common.non_effect_allele_weight
     )
+    
+    # need to remove the invalid variant before moving on
+    to_keep_ind = np.logical_not(np.isnan(flip_factor))
+    df_common = df_common[ to_keep_ind ].reset_index(drop=True)
+    flip_factor = flip_factor[ to_keep_ind ]
+    
     df_gwas = pd.merge(
         df_common[['snpid', 'chr']], gwas, 
         on=['snpid', 'chr']
     )
-    with np.errstate(invalid='ignore'):
-        df_gwas.effect_size = df_gwas.effect_size * flip_factor
+    df_gwas.effect_size = df_gwas.effect_size * flip_factor
+    
     df_weight = pd.merge(
         df_common[['snpid', 'chr']], weight, 
         on=['snpid', 'chr']

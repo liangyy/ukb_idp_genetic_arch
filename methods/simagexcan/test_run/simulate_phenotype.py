@@ -10,7 +10,7 @@ file_out1 = sys.argv[2]
 file_out2 = sys.argv[3]
 file_out3 = sys.argv[4]
 
-K = 20
+K = 5
 
 df = pd.read_parquet(file_in)
 rand_idps = np.random.randint(0, df.shape[1] - 1, size=K) + 1  # the offset is indiv col
@@ -20,10 +20,10 @@ out['indiv'] = df.indiv
 for i, k in enumerate(list(rand_idps)):
     name = '{}_{}'.format(i, df.columns[k])
     tmp = df.iloc[:, k].values
-    tmp = (tmp - tmp.mean()) / tmp.std()
-    out[name] = tmp + np.random.normal(scale=4, size=df.shape[0]) + np.random.randint(-5, 5, size=1)
+    tmp = tmp - tmp.mean()
+    out[name] = tmp + np.random.normal(scale=4 * tmp.std(), size=df.shape[0]) + np.random.randint(-5, 5, size=1)
     name = '{}_null'.format(i, df.columns[k])
-    out[name] = np.random.normal(scale=4, size=df.shape[0]) + np.random.randint(-5, 5, size=1)
+    out[name] = np.random.normal(scale=4 * tmp.std(), size=df.shape[0]) + np.random.randint(-5, 5, size=1)
 out = pd.DataFrame(out)
 out.to_csv(file_out1, index=False)
 

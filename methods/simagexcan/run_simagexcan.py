@@ -279,9 +279,9 @@ if __name__ == '__main__':
             df_value_cols=list(df_weight.columns[4:])
         )
         n1 = df_gwas_sub.effect_size.notna().sum()
-        logging.info('Step0 Chromosome {i}: {} out of {} SNPs in IDP/GWAS are used.'.format(n1, n0))
+        logging.info('Step0 Chromosome {}: {} out of {} SNPs in IDP/GWAS are used.'.format(i, n1, n0))
         
-        logging.info('Step1 Chromosome {i}: Working with genotype covariance.')
+        logging.info(f'Step1 Chromosome {i}: Working with genotype covariance.')
         
         weight = df_weight_sub.iloc[:, 4 : ].to_numpy(copy=True)
         weight[np.isnan(weight)] = 0
@@ -292,7 +292,7 @@ if __name__ == '__main__':
         se_gwas[np.isnan(se_gwas)] = 1
         z_gwas = b_gwas / se_gwas
         
-        cov_mat = CovMatrix(args.genotype_covariance)
+        cov_mat = CovMatrix(args.genotype_covariance.format(chr_num=i))
         cov_x_weight, diag_cov = cov_mat.eval_matmul_on_left(weight)
         D_chr = weight.T @ cov_x_weight
         del cov_x_weight

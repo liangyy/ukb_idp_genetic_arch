@@ -6,6 +6,8 @@ file_out = sys.argv[2]
 
 df = pd.read_parquet(file_in)
 df = df[ df.chr.isin(['21', '22']) ].reset_index(drop=True)
-
+df1 = df.iloc[ :10, : ]
+df2 = df.iloc[ -10:, : ]
+df = pd.concat([df1, df2], axis=0).reset_index(drop=True)
 df.to_parquet(file_out)
 

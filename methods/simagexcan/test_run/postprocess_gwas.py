@@ -15,5 +15,5 @@ for cc in range(21, 23):
     # df_gwas['se'] = scipy.stats.t.isf(df_gwas.pval / 2, 499)
     df_gwas = pd.merge(df_gwas, df_bim, on='variant_id', how='inner')
     res.append(df_gwas)
-res = pd.concat(res, axis=0)
+res = pd.concat(res, axis=0).reset_index(drop=True)
 res.to_parquet(out)

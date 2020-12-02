@@ -143,7 +143,7 @@ fi
 
 # step7: s-imagexcan
 conda deactivate
-conda activate pytorch-1.4.0-cpu_py37
+conda activate ukb_idp
 output_step7=$outdir/simagexcan.csv
 if[[ ! -f $output_step7 ]]
 then

@@ -51,24 +51,27 @@ def rearrage_df_by_target(df, target, df_value_cols):
         how='left'
     )
     flip_factor = check_flip(
-        a1=df_target.effect_allele_res, 
-        a2=df_target.non_effect_allele_res,
-        b1=df_target.effect_allele_df, 
-        b2=df_target.non_effect_allele_df
+        a1=df_res.effect_allele_res, 
+        a2=df_res.non_effect_allele_res,
+        b1=df_res.effect_allele_df, 
+        b2=df_res.non_effect_allele_df
     )
-    with np.errstate(invalid='ignore'):
-        df_target[df_value_cols] = df_target[df_value_cols] * flip_factor[:, np.newaxis]
-    df_target.drop(
+    # need to remove the invalid variant before moving on
+    to_keep_ind = np.logical_not(np.isnan(flip_factor))
+    df_res = df_res[ to_keep_ind ].reset_index(drop=True)
+    flip_factor = flip_factor[ to_keep_ind ]
+    df_res[df_value_cols] = df_res[df_value_cols] * flip_factor[:, np.newaxis]
+    df_res.drop(
         columns=['effect_allele_df', 'non_effect_allele_df'], inplace=True
     )
-    df_target.rename(
+    df_res.rename(
         columns={
             'effect_allele_res': 'effect_allele',
             'non_effect_allele_res': 'non_effect_allele'
         }, 
         inplace=True
     )
-    return df_target
+    return df_res
 
 def harmonize_gwas_and_weight(gwas, weight):
     '''
@@ -87,15 +90,12 @@ def harmonize_gwas_and_weight(gwas, weight):
         b1=df_common.effect_allele_weight, 
         b2=df_common.non_effect_allele_weight
     )
-    to_keep_ind = np.logical_not(np.isnan(flip_factor))
-    breakpoint()
-    df_common = df_common[ to_keep_ind ].reset_index(drop=True)
-    flip_factor = flip_factor[ to_keep_ind ]
     df_gwas = pd.merge(
         df_common[['snpid', 'chr']], gwas, 
         on=['snpid', 'chr']
     )
-    df_gwas.effect_size = df_gwas.effect_size * flip_factor
+    with np.errstate(invalid='ignore'):
+        df_gwas.effect_size = df_gwas.effect_size * flip_factor
     df_weight = pd.merge(
         df_common[['snpid', 'chr']], weight, 
         on=['snpid', 'chr']

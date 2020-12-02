@@ -9,6 +9,7 @@ conda activate ukb_idp
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/pyutil
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/softwares/tensorqtl/tensorqtl:$PYTHONPATH
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge:$PYTHONPATH
+export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/imagexcan:$PYTHONPATH
 
 plink2_exec=/gpfs/data/im-lab/nas40t2/yanyul/softwares/plink2
 outdir=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run
@@ -108,11 +109,12 @@ then
     --output_prefix $outdir/gwas_phenotype.chr22. \
     --map_trans_params /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/map_trans.yaml 
   
-  for pheno in `cat $outdir/phenotype.csv|head -n 1 | tr ',' '\n' | tail -n +2`
+  for pheno in `cat $outdir/phenotype.csv | head -n 1 | tr ',' '\n' | tail -n +2`
   do
+    echo $pheno
     python postprocess_gwas.py \
-      $outdir/gwas_phenotype.$pheno.chr{chr_num}.parquet \
-      $outdir/geno_for_test.chr{chr_num}.bim
+      $outdir/gwas_phenotype.chr{chr_num}.$pheno.parquet \
+      $outdir/geno_for_test.chr{chr_num}.bim \
       $output_step5_prefix.$pheno.parquet
   done
 fi
@@ -140,13 +142,15 @@ then
 fi
 
 # step7: s-imagexcan
+conda deactivate
+conda activate pytorch-1.4.0-cpu_py37
 output_step7=$outdir/simagexcan.csv
 if[[ ! -f $output_step7 ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/run_simagexcan.py \
     --genotype_covariance $outdir/geno_covar.chr{chr_num}.naive.h5 \
-    --gwas gwas_phenotype.chr{chr_num}.19_IDP-25913.parquet  \
-    --idp_weight $output_step1 \
+    --gwas $outdir/gwas_phenotype.19_IDP-25913.parquet snpid:variant_id effect_allele:alternative non_effect_allele:reference effect_size:b effect_size_se:b_se chr:chr \
+    --idp_weight $output_step1 chr:chr a0:effect_allele a1:non_effect_allele \
     --output $output_step7
 fi
 

@@ -60,15 +60,11 @@ def harmonize_gwas_and_weight(gwas, weight):
     )
     return df_gwas, df_weight
 
-def _parse_gwas_args(args_list):
+def _parse_args(args_list, desired_cols):
     fn = args_list[0]
     if not pathlib.Path(fn).is_file():
         raise ValueError('Filename is wrong. Cannot find the file.')
     dict = {}
-    desired_cols = [
-        'snpid', 'non_effect_allele', 'effect_allele', 
-        'effect_size', 'effect_size_se', 'chr'
-    ]
     snpid_name = None
     for i in args_list[1:]:
         
@@ -84,8 +80,15 @@ def _parse_gwas_args(args_list):
         if dd not in dict:
             raise ValueError(f'Need to have col = {dd}.')
         rename_dict[dict[dd]] = dd
-        if dd == 'snpid':
-            snpid_name = dict[dd]
+    return fn, rename_dict
+    
+def _parse_gwas_args(args_list):
+    desired_cols = [
+        'snpid', 'non_effect_allele', 'effect_allele', 
+        'effect_size', 'effect_size_se', 'chr'
+    ]
+    fn, rename_dict = _parse_args(args_list, desired_cols)
+    snpid_name = rename_dict['snpid']
     return fn, rename_dict, snpid_name    
     
 def load_gwas(gwas_args_list):
@@ -95,12 +98,20 @@ def load_gwas(gwas_args_list):
     df.rename(columns=rename_dict, inplace=True)
     return df[rename_dict.values()]
 
-def load_idp(fn):
+def _parse_idp_args(args_list):
+    desired_cols = [
+        'snpid', 'non_effect_allele', 'effect_allele', 'chr'
+    ]
+    fn, rename_dict = _parse_args(args_list, desired_cols)
+        
+def load_idp(args_list):
+    fn, rename_dict = _parse_idp_args(args_list)
     df = pd.read_parquet(fn)
-    if 'a0' in df.columns:
-        df.rename(columns={'a0': 'effect_allele'})
-    if 'a1' in df.columns:
-        df.rename(columns={'a1': 'non_effect_allele'})
+    df.rename(columns=rename_dict, inplace=True)
+    # if 'a0' in df.columns:
+    #     df.rename(columns={'a0': 'effect_allele'})
+    # if 'a1' in df.columns:
+    #     df.rename(columns={'a1': 'non_effect_allele'})
     return df
 
 if __name__ == '__main__':
@@ -118,13 +129,14 @@ if __name__ == '__main__':
         Need to have column names for: 
             snpid, non_effect_allele, effect_allele, 
             effect_size, effect_size_se, chr.
-        like: rsID:rsid_col, ..., chromosome:chr
+        like: snpid:rsid_col, ..., chr:chr
     ''')
-    parser.add_argument('--idp_weight', help='''
+    parser.add_argument('--idp_weight', nargs='+', help='''
         The IDP weight table is in parquet format.
         It contains columns:
             snpid, effect_allele, non_effect_allele, chr.
         Along with all other columns for the IDPs.
+        Specify the column names, e.g.: snpid:rsID, ..., chr:chr
     ''')
     parser.add_argument('--output', help='''
         The output CSV filename.

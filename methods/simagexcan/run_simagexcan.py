@@ -11,15 +11,15 @@ BASE_PAIR = {
     'C': 'G'
 }
 
-def check_flip(a1_list, a2_list, b1_list, b2_list):
+def check_flip(a1, a2, b1, b2):
     res = []
-    for a1, a2, b1, b2 in zip(a1_list, a2_list, b1_list, b2_list):
-        res.append(_check_flip(a1, a2, b1, b2))
+    for _a1, _a2, _b1, _b2 in zip(a1, a2, b1, b2):
+        res.append(_check_flip(_a1, _a2, _b1, _b2))
     return np.array(res)
 
-def _check_flip(a1, a2, b1, b2):
+def _check_flip(a0, a1, b0, b1):
     '''
-    check if (a1, a2) and (b1, b2) are of the same direction.
+    check if (a0, a1) and (b0, b1) are of the same direction.
     If they don't match at all or ambiguious return nan
     Else if they are in the same direction, return 1
     Else return -1
@@ -88,15 +88,16 @@ def harmonize_gwas_and_weight(gwas, weight):
         b2=df_common.non_effect_allele_weight
     )
     to_keep_ind = np.logical_not(np.isnan(flip_factor))
-    df_target = df_target[ to_keep_ind, : ]
+    breakpoint()
+    df_common = df_common[ to_keep_ind ].reset_index(drop=True)
     flip_factor = flip_factor[ to_keep_ind ]
     df_gwas = pd.merge(
-        df_common[['snpid', 'chr']], df_gwas, 
+        df_common[['snpid', 'chr']], gwas, 
         on=['snpid', 'chr']
     )
     df_gwas.effect_size = df_gwas.effect_size * flip_factor
     df_weight = pd.merge(
-        df_common[['snpid', 'chr']], df_weight, 
+        df_common[['snpid', 'chr']], weight, 
         on=['snpid', 'chr']
     )
     return df_gwas, df_weight
@@ -294,7 +295,7 @@ if __name__ == '__main__':
         
     logging.info('Step2: Computing marginal test.')
     S_D = np.sqrt(D.diagonal())
-    beta_imagexcan = numer_b / np.pow(S_D, 2)
+    beta_imagexcan = numer_b / np.power(S_D, 2)
     z_imagexcan = numer_z / S_D
     
     logging.info('Step3: Running susieR.')

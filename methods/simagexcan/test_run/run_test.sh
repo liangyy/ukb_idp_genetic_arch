@@ -47,7 +47,7 @@ then
 fi
 
 # step3: simulate phenotype
-input_step3=$outdir/predicted_idp.parquet
+input_step3=$outdir/pred_idp.parquet
 output_step3=$outdir/phenotype.csv
 output_step3_marginal=$outdir/phenotype_marginal.yaml
 output_step3_susie=$outdir/phenotype_susie.yaml

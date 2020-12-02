@@ -8,6 +8,7 @@ conda activate ukb_idp
 
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/pyutil
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/softwares/tensorqtl/tensorqtl:$PYTHONPATH
+export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge:$PYTHONPATH
 
 plink2_exec=/gpfs/data/im-lab/nas40t2/yanyul/softwares/plink2
 outdir=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/imagexcan_test_run
@@ -92,8 +93,8 @@ fi
 # step5: run gwas on phenotype
 conda deactivate 
 conda activate tensorqtl
-output_step5=$outdir/gwas_phenotype.tsv.gz
-if[[ ! -f $output_step5 ]]
+output_step5_prefix=$outdir/gwas_phenotype
+if[[ ! -f $output_step5_prefix.0_null.parquet ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/run_trans_qtl.py \
     --geno_bed_prefix $outdir/geno_for_test.chr21 \
@@ -106,29 +107,34 @@ then
     --phenotype_table $input_step4 indiv \
     --output_prefix $outdir/gwas_phenotype.chr22. \
     --map_trans_params /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/map_trans.yaml 
-    
-  python postprocess_gwas.py \
-    $outdir/gwas_phenotype.chr21.parquet \
-    $outdir/gwas_phenotype.chr22.parquet \
-    $output_step5
+  
+  for pheno in `cat $outdir/phenotype.csv|head -n 1 | tr ',' '\n' | tail -n +2`
+  do
+    python postprocess_gwas.py \
+      $outdir/gwas_phenotype.$pheno.chr{chr_num}.parquet \
+      $outdir/geno_for_test.chr{chr_num}.bim
+      $output_step5_prefix.$pheno.parquet
+  done
 fi
 
 # step6: compute genotype covariance
+conda deactivate 
+conda activate ukb_idp
 output_step6_1=$outdir/geno_covar.chr21.naive.h5
 output_step6_2=$outdir/geno_covar.chr22.naive.h5
 if[[ ! -f $output_step6_1 ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/build_genotype_covariance.py \
-    --genotype_bed /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr21.bed \
-    --mode naive \
+    --genotype_bed $outdir/geno_for_test.chr21.bed \
+    --mode naive f32 \
     --nbatch 50 \
     --output_prefix $outdir/geno_covar.chr21
 fi
 if[[ ! -f $output_step6_2 ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/build_genotype_covariance.py \
-    --genotype_bed /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr22.bed \
-    --mode naive \
+    --genotype_bed $outdir/geno_for_test.chr22.bed \
+    --mode naive f32 \
     --nbatch 50 \
     --output_prefix $outdir/geno_covar.chr22
 fi
@@ -139,7 +145,7 @@ if[[ ! -f $output_step7 ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/run_simagexcan.py \
     --genotype_covariance $outdir/geno_covar.chr{chr_num}.naive.h5 \
-    --gwas \
+    --gwas gwas_phenotype.chr{chr_num}.19_IDP-25913.parquet  \
     --idp_weight $output_step1 \
     --output $output_step7
 fi

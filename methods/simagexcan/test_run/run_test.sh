@@ -150,7 +150,7 @@ then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/run_simagexcan.py \
     --genotype_covariance $outdir/geno_covar.chr{chr_num}.naive.h5 \
     --gwas $outdir/gwas_phenotype.19_IDP-25913.parquet snpid:variant_id effect_allele:alternative non_effect_allele:reference effect_size:b effect_size_se:b_se chr:chr \
-    --idp_weight $output_step1 chr:chr a0:effect_allele a1:non_effect_allele \
+    --idp_weight $output_step1 snpid:snpid chr:chr effect_allele:a0 non_effect_allele:a1 \
     --output $output_step7
 fi
 

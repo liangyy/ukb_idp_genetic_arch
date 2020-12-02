@@ -4,8 +4,45 @@ import pathlib
 from collections import OrderedDict 
 from pyutil import read_table
 
+BASE_PAIR = {
+    'A': 'T',
+    'T': 'A',
+    'G': 'C',
+    'C': 'G'
+}
 
-def rearrage_gwas_by_weight(df, target, df_value_cols):
+def check_flip(a1_list, a2_list, b1_list, b2_list):
+    res = []
+    for a1, a2, b1, b2 in zip(a1_list, a2_list, b1_list, b2_list):
+        res.append(_check_flip(a1, a2, b1, b2))
+    return np.array(res)
+
+def _check_flip(a1, a2, b1, b2):
+    '''
+    check if (a1, a2) and (b1, b2) are of the same direction.
+    If they don't match at all or ambiguious return nan
+    Else if they are in the same direction, return 1
+    Else return -1
+    '''
+    # remove ambiguious first.
+    if a0 == BASE_PAIR[a1] or b0 == BASE_PAIR[b1]:
+        return np.nan
+    # exact match
+    if a0 == b0 and a1 == b1:
+        return 1
+    # flip
+    if a0 == b1 and a1 == b0:
+        return -1    
+    # compliment match
+    if a0 == BASE_PAIR[b0] and a1 == BASE_PAIR[b1]:
+        return 1
+    # compliment flip
+    if a0 == BASE_PAIR[b1] and a1 == BASE_PAIR[b0]:
+        return -1  
+    # if all above does not return, it has to be invalid.
+    return np.nan
+
+def rearrage_df_by_target(df, target, df_value_cols):
     df_res = target[['snpid', 'chr', 'effect_allele', 'non_effect_allele']]
     df_res = pd.merge(
         df_res, df, 
@@ -19,7 +56,8 @@ def rearrage_gwas_by_weight(df, target, df_value_cols):
         b1=df_target.effect_allele_df, 
         b2=df_target.non_effect_allele_df
     )
-    df_target[df_value_cols] = df_target[df_value_cols] * flip_factor[:, np.newaxis]
+    with np.errstate(invalid='ignore'):
+        df_target[df_value_cols] = df_target[df_value_cols] * flip_factor[:, np.newaxis]
     df_target.drop(
         columns=['effect_allele_df', 'non_effect_allele_df'], inplace=True
     )
@@ -49,6 +87,9 @@ def harmonize_gwas_and_weight(gwas, weight):
         b1=df_common.effect_allele_weight, 
         b2=df_common.non_effect_allele_weight
     )
+    to_keep_ind = np.logical_not(np.isnan(flip_factor))
+    df_target = df_target[ to_keep_ind, : ]
+    flip_factor = flip_factor[ to_keep_ind ]
     df_gwas = pd.merge(
         df_common[['snpid', 'chr']], df_gwas, 
         on=['snpid', 'chr']

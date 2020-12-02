@@ -35,7 +35,7 @@ if __name__ == '__main__':
     else:
         chrs = args.chromosomes
     
-    logging.info('On chromosome 1.')
+    logging.info('On chromosome {}.'.format(chrs[0]))
     df = pd.read_parquet(args.input_pattern.format(chr_num=chrs[0]))
     cols = df.columns
     for i in chrs[1:]:

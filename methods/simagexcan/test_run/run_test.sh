@@ -130,12 +130,19 @@ conda deactivate
 conda activate ukb_idp
 output_step6_1=$outdir/geno_covar.chr21.naive.h5
 output_step6_2=$outdir/geno_covar.chr22.naive.h5
+output_step6_3=$outdir/geno_covar.chr21.banded.npz
+output_step6_4=$outdir/geno_covar.chr22.banded.npz
 if [[ ! -f $output_step6_1 ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/build_genotype_covariance.py \
     --genotype_bed $outdir/geno_for_test.chr21.bed \
     --mode naive f32 \
-    --nbatch 2 \
+    --nbatch 50 \
+    --output_prefix $outdir/geno_covar.chr21
+  python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/build_genotype_covariance.py \
+    --genotype_bed $outdir/geno_for_test.chr21.bed \
+    --mode banded 200 \
+    --nbatch 50 \
     --output_prefix $outdir/geno_covar.chr21
 fi
 if [[ ! -f $output_step6_2 ]]
@@ -143,21 +150,35 @@ then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/build_genotype_covariance.py \
     --genotype_bed $outdir/geno_for_test.chr22.bed \
     --mode naive f32 \
-    --nbatch 2 \
+    --nbatch 50 \
+    --output_prefix $outdir/geno_covar.chr22
+  python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/build_genotype_covariance.py \
+    --genotype_bed $outdir/geno_for_test.chr22.bed \
+    --mode banded 200 \
+    --nbatch 50 \
     --output_prefix $outdir/geno_covar.chr22
 fi
 
 # step7: s-imagexcan
 conda deactivate
 conda activate ukb_idp
-output_step7=$outdir/simagexcan.0_IDP-25853.csv
-# if [[ ! -f $output_step7 ]]
-# then
-  echo python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/run_simagexcan.py \
-    --genotype_covariance $outdir/geno_covar.chr{chr_num}.naive.h5 \
-    --gwas $outdir/gwas_phenotype.0_IDP-25853.parquet snpid:variant_id effect_allele:alternative non_effect_allele:reference effect_size:b effect_size_se:b_se chr:chr \
-    --idp_weight $output_step1 snpid:snpid chr:chr effect_allele:a0 non_effect_allele:a1 \
-    --output $output_step7
-# fi
+output_step7_prefix=$outdir/simagexcan
+if [[ ! -f $output_step7_prefix.naive.0_null.csv ]]
+then
+  for pheno in `cat $outdir/phenotype.csv | head -n 1 | tr ',' '\n' | tail -n +2`
+  do
+    echo $pheno
+    python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/run_simagexcan.py \
+      --genotype_covariance $outdir/geno_covar.chr{chr_num}.naive.h5 \
+      --gwas $outdir/gwas_phenotype.$pheno.parquet snpid:variant_id effect_allele:alternative non_effect_allele:reference effect_size:b effect_size_se:b_se chr:chr \
+      --idp_weight $output_step1 snpid:snpid chr:chr effect_allele:a0 non_effect_allele:a1 \
+      --output $output_step7_prefix.naive.$pheno.csv
+    python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/run_simagexcan.py \
+      --genotype_covariance $outdir/geno_covar.chr{chr_num}.banded.npz \
+      --gwas $outdir/gwas_phenotype.$pheno.parquet snpid:variant_id effect_allele:alternative non_effect_allele:reference effect_size:b effect_size_se:b_se chr:chr \
+      --idp_weight $output_step1 snpid:snpid chr:chr effect_allele:a0 non_effect_allele:a1 \
+      --output $output_step7_prefix.banded.$pheno.csv
+  done
+fi
 
 

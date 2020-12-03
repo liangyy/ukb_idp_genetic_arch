@@ -38,7 +38,9 @@ if __name__ == '__main__':
         Need to set the dtype (so that we could control the disk usage of the 
         resulting matrix). For instance: f64 for np.float64.
         For cap, need to set the threshold to push to zero and the result will 
-        be saved as 
+        be saved as sparse npz.
+        For banded, need to set the band size and the result will be saved 
+        as sparse npz.
     ''')
     parser.add_argument('--nbatch', type=int, help='''
         Number of batch to process SNPs.

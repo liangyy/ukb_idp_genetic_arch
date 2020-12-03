@@ -202,7 +202,7 @@ if __name__ == '__main__':
         The output CSV filename.
         Will return both marginal test result and also the susieR result.
     ''')
-    parser.add_argument('--z_ld_weight', type=float, default=0.01, help='''
+    parser.add_argument('--z_ld_weight', type=float, default=1e-4, help='''
         LD = (1 - z_ld_weight) * LD + z_ld_weight * (Z @ Z.T)
         to avoid mis-specified LD.
     ''')

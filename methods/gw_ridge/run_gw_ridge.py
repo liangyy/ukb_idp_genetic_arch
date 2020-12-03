@@ -7,7 +7,7 @@ from pandas_plink import read_plink1_bin
 import pdb
 
 def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, chromosome=None, load_first_n_samples=None, 
-    missing_rate_cutoff=0.5, return_snp=False):
+    missing_rate_cutoff=0.5, return_snp=False, standardize=True):
     G = read_plink1_bin(bedfile, verbose=False)
     
     if chromosome is not None:
@@ -80,7 +80,8 @@ def load_genotype_from_bedfile(bedfile, indiv_list, snplist_to_exclude, chromoso
         
     maf = maf[to_keep]
     var_geno = var_geno[to_keep]
-    geno = (geno - 2 * maf) / np.sqrt(var_geno)
+    if standardize is True:
+        geno = (geno - 2 * maf) / np.sqrt(var_geno)
     
     if return_snp is True:
         return geno, indiv_list, np.sqrt(var_geno), (snpid.tolist(), a0.tolist(), a1.tolist(), chrom.tolist())

@@ -16,7 +16,7 @@ class CovConstructor:
         batch_size = ncol // self.nbatch
         if batch_size * self.nbatch < ncol:
             batch_size += 1
-        if batch_size < 10:
+        if batch_size < 10 and self.nbatch > 5:
             raise ValueError('Too many batches. Exit.')
         self.batch_anchors = []
         for i in range(self.nbatch):

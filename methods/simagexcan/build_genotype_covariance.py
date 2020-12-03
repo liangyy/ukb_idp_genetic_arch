@@ -66,9 +66,10 @@ if __name__ == '__main__':
         args.genotype_bed,
         indiv_list=None,
         snplist_to_exclude=set([]),
-        return_snp=True
+        return_snp=True,
+        standardize=False
     )
-    
+ 
     logging.info('Computing genotype covariance.')
     constructor = CovConstructor(
         data=geno_mat,

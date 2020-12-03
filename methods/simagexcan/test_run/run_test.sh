@@ -1,9 +1,12 @@
 # Run on CRI
 # See more details in README.md
 # For simplicity, we work on chr21 and chr22
+# ARGS1: re-generate genotype
 
+regen=$1
 module load gcc/6.2.0; module load bgen
-
+source ~/.bash_profile
+source ~/.bashrc
 conda activate ukb_idp
 
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/pyutil
@@ -19,6 +22,8 @@ mkdir -p $outdir
 # select the first 500 individuals in IDP cohort
 # make a copy of plink BED genotypes.
 # make a copy of BGEN genotypes.
+if [[ ! -z $regen ]]
+then
 input_geno_prefix=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr
 indiv_list=$outdir/tmp_indiv_list.txt
 output_geno_prefix=$outdir/geno_for_test.chr
@@ -30,6 +35,7 @@ do
   $plink2_exec --bfile $output_geno_prefix$chr --export bgen-1.2 'ref-first' --out $output_geno_prefix$chr
   bgenix -g $output_geno_prefix$chr.bgen -index -clobber
 done 
+fi
 
 # step1: simulate IDP model weights
 # instead of simulating, we use the t1 weights directly.
@@ -45,8 +51,8 @@ fi
 # step2: predict IDP values
 # this part needs qsub since it takes long.
 input_step2=$outdir/idp_weights.parquet
-output_step2=$outdir/predicted_idp.parquet
-if[[ ! -f $output_step2 ]]
+output_step2=$outdir/pred_idp.parquet
+if [[ ! -f $output_step2 ]]
 then
   bash pred_idp.qsub 
 fi
@@ -56,12 +62,12 @@ input_step3=$outdir/pred_idp.parquet
 output_step3=$outdir/phenotype.csv
 output_step3_marginal=$outdir/phenotype_marginal.yaml
 output_step3_susie=$outdir/phenotype_susie.yaml
-if[[ ! -f $input_step3 ]]
+if [[ ! -f $input_step3 ]]
 then
   echo "We have not run through step 2. So, cannot proceed."
   exit 1
 fi
-if[[ ! -f $output_step3 ]]
+if [[ ! -f $output_step3 ]]
 then
   python simulate_phenotype.py \
     $input_step3 \
@@ -77,7 +83,7 @@ conda activate pytorch-1.4.0-cpu_py37
 input_step4=$outdir/phenotype.csv
 output_step4_marginal=$outdir/imagexcan_marginal.csv
 output_step4_susie=$outdir/imagexcan_susie.csv
-if[[ ! -f $output_step4 ]]
+if [[ ! -f $output_step4_susie ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/imagexcan/run_imagexcan.py \
     --phenotype_table $input_step4 indiv \
@@ -95,7 +101,7 @@ fi
 conda deactivate 
 conda activate tensorqtl
 output_step5_prefix=$outdir/gwas_phenotype
-if[[ ! -f $output_step5_prefix.0_null.parquet ]]
+if [[ ! -f $output_step5_prefix.0_null.parquet ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/run_trans_qtl.py \
     --geno_bed_prefix $outdir/geno_for_test.chr21 \
@@ -124,34 +130,34 @@ conda deactivate
 conda activate ukb_idp
 output_step6_1=$outdir/geno_covar.chr21.naive.h5
 output_step6_2=$outdir/geno_covar.chr22.naive.h5
-if[[ ! -f $output_step6_1 ]]
+if [[ ! -f $output_step6_1 ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/build_genotype_covariance.py \
     --genotype_bed $outdir/geno_for_test.chr21.bed \
     --mode naive f32 \
-    --nbatch 50 \
+    --nbatch 2 \
     --output_prefix $outdir/geno_covar.chr21
 fi
-if[[ ! -f $output_step6_2 ]]
+if [[ ! -f $output_step6_2 ]]
 then
   python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/build_genotype_covariance.py \
     --genotype_bed $outdir/geno_for_test.chr22.bed \
     --mode naive f32 \
-    --nbatch 50 \
+    --nbatch 2 \
     --output_prefix $outdir/geno_covar.chr22
 fi
 
 # step7: s-imagexcan
 conda deactivate
 conda activate ukb_idp
-output_step7=$outdir/simagexcan.csv
-if[[ ! -f $output_step7 ]]
-then
-  python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/run_simagexcan.py \
+output_step7=$outdir/simagexcan.0_IDP-25853.csv
+# if [[ ! -f $output_step7 ]]
+# then
+  echo python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/run_simagexcan.py \
     --genotype_covariance $outdir/geno_covar.chr{chr_num}.naive.h5 \
-    --gwas $outdir/gwas_phenotype.19_IDP-25913.parquet snpid:variant_id effect_allele:alternative non_effect_allele:reference effect_size:b effect_size_se:b_se chr:chr \
+    --gwas $outdir/gwas_phenotype.0_IDP-25853.parquet snpid:variant_id effect_allele:alternative non_effect_allele:reference effect_size:b effect_size_se:b_se chr:chr \
     --idp_weight $output_step1 snpid:snpid chr:chr effect_allele:a0 non_effect_allele:a1 \
     --output $output_step7
-fi
+# fi
 
 

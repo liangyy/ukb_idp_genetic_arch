@@ -1,0 +1,35 @@
+if 'outdir' not in config:
+    config['outdir'] = 'output'
+
+if 'gwas_list' in config:
+    gwas_list = get_gwas_list(config['gwas_list'])
+elif 'gwas_name' in config:
+    pass
+else:
+    raise ValueError('Need gwas_name or gwas_list in config.')
+if 'gwas_list' in config:    
+    rule all:
+        input:
+            [ '{outdir}/{name_tag}.{gwas_name}.simagexcan.csv'.format(gwas_name=i, **config) for i in gwas_list ]
+else:
+    rule all:
+        input:
+            '{outdir}/{name_tag}.{gwas_name}.simagexcan.csv'.format(**config)
+rule run:
+    input:
+        gwas = config['gwas']['filename'],
+        idp = config['idp_weight']['filename'],
+        cov = [ config['genotype_covariance'].format(chr_num=i) for i in range(1, 23) ]
+    params:
+        gwas_cols = get_cols(config['gwas']['cols']),
+        idp_cols = get_cols(config['idp_weight']['cols'])
+    output:
+        '{outdir}/{name_tag}.{gwas_name}.simagexcan.csv'
+    log:
+        '{outdir}/{name_tag}.{gwas_name}.simagexcan.log'
+    shell:
+        'python run_simagexcan.py \
+           --genotype_covariance {config[genotype_covariance]} \
+           --gwas {input.gwas} {params.gwas_cols} \
+           --idp_weight {input.idp} {params.idp_cols} \
+           --output {output[0]} > {log} 2>&1'

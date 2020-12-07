@@ -136,16 +136,27 @@ def _parse_args(args_list, desired_cols):
     return fn, rename_dict
     
 def _parse_gwas_args(args_list):
-    desired_cols = [
-        'snpid', 'non_effect_allele', 'effect_allele', 
-        'effect_size', 'effect_size_se', 'chr'
-    ]
+    if 'zscore' not in args_list:
+        desired_cols = [
+            'snpid', 'non_effect_allele', 'effect_allele', 
+            'effect_size', 'effect_size_se', 'chr'
+        ]
+    else:
+        desired_cols = [
+            'snpid', 'non_effect_allele', 'effect_allele', 
+            'zscore', 'allele_frequency', 'sample_size', 'chr'
+        ]
     fn, rename_dict = _parse_args(args_list, desired_cols)
     for k, v in rename_dict.items():
         if v == 'snpid':
             snpid_name = k
             break
-    return fn, rename_dict, snpid_name    
+    return fn, rename_dict, snpid_name
+
+def impute_b_from_z(zscore, af, n):
+    se = 1 / np.sqrt(2 * n * af * (1 - af))
+    bhat = zscore * se
+    return bhat, se
     
 def load_gwas(gwas_args_list):
     fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list)
@@ -153,7 +164,13 @@ def load_gwas(gwas_args_list):
     df.rename(columns={'indiv': snpid_col}, inplace=True)
     df.rename(columns=rename_dict, inplace=True)
     df.chr = df.chr.astype(str)
-    return df[rename_dict.values()]
+    if 'effect_size' not in rename_dict.values():
+        df['effect_size'], df['effect_size_se'] = impute_b_from_z(df.zscore, df.allele_frequency, df.sample_size)
+    desired_cols = [
+        'snpid', 'non_effect_allele', 'effect_allele', 
+        'effect_size', 'effect_size_se', 'chr'
+    ]
+    return df[desired_cols]
 
 def _parse_idp_args(args_list):
     desired_cols = [
@@ -189,7 +206,10 @@ if __name__ == '__main__':
         Need to have column names for: 
             snpid, non_effect_allele, effect_allele, 
             effect_size, effect_size_se, chr.
-        like: snpid:rsid_col, ..., chr:chr
+        If there is no effect_size avaliable, it could 
+        impute effect_size from zscore, allele_frequency, 
+        sample_size.
+        The format is: snpid:rsid_col, ..., chr:chr
     ''')
     parser.add_argument('--idp_weight', nargs='+', help='''
         The IDP weight table is in parquet format.

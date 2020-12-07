@@ -183,6 +183,7 @@ if __name__ == '__main__':
     
     logging.info('Loading PRS scores.')
     df_var = pd.read_parquet(args.prs_parquet)
+    df_var.chr = df_var.chr.astype(str)
     trait_list = df_var.columns[4:].tolist()
     df_var = pd.concat([df_var.iloc[:, :4], df_var.iloc[:, 4:].astype(np.float32)], axis=1)
     

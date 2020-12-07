@@ -1,11 +1,12 @@
 #PBS -S /bin/bash
 #PBS -l walltime=24:00:00
-#PBS -l nodes=1:ppn=12
+#PBS -l nodes=1:ppn=2
 #PBS -l mem=64gb
 #PBS -e logs/run_simgx_${NAME}.err
 #PBS -o logs/run_simgx_${NAME}.out
 
-
+# t1: ppn=12
+# dmri: ppn=2
 
 source ~/.bash_profile
 source ~/.bashrc
@@ -22,5 +23,5 @@ export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/m
 
 cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan
 
-$SNMK -s run.snmk --configfile ${PBS_O_WORKDIR}/config.$NAME.yaml --cores 12 > ${PBS_O_WORKDIR}/logs/run_simgx_${NAME}.log 2>&1
+$SNMK -s run.snmk --configfile ${PBS_O_WORKDIR}/config.$NAME.yaml --cores 2 > ${PBS_O_WORKDIR}/logs/run_simgx_${NAME}.log 2>&1
 

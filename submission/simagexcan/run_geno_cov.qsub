@@ -20,7 +20,7 @@ export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/softwares/tensorqtl/tensorqtl
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge:$PYTHONPATH
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/imagexcan:$PYTHONPATH
 
-if [[ -z $NBATCH ]]
+if [[ ! -z $NBATCH ]]
 then
   batch_arg="nbatch=$NBATCH"
 else

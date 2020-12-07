@@ -1,0 +1,46 @@
+if 'outdir' not in config:
+    config['outdir'] = 'output'
+
+def get_mode_info(config_mode):
+    if 'type' not in config_mode:
+        raise ValueError('Need to have mode -> type in config.')
+    if 'param' not in config_mode:
+        raise ValueError('Need to have mode -> param in config.')
+    type_ = config_mode['type']
+    if type_ == 'naive':
+        ext = '.naive.h5'
+    elif type_ == 'banded':
+        ext = '.banded.npz'
+    elif type_ == 'cap':
+        ext = '.cap.npz'
+    else:
+        raise ValueError(f'Wrong mode type = {type_}')
+    mode_str = '{} {}'.format(config_mode['type'], config['param'])
+    return mode_str, ext
+    
+mode_str, mode_ext = get_mode_info(config['mode'])
+
+if 'chromosome' in config:
+    rule all:
+        input:
+            '{outdir}/{name_tag}.geno_cov.chr{chr_num}'.format(chr_num=config['chromosome'], **config) + mode_ext
+else:
+    rule all:
+        input:
+            [ '{outdir}/{name_tag}.geno_cov.chr{chr_num}'.format(chr_num=i, **config) + mode_ext for i in range(1, 23) ]
+
+rule cov:
+    input:
+        genotype = config['genotype']
+    params:
+        mode_str = 
+        out_prefix = '{outdir}/{name_tag}.geno_cov.chr{chr_num}'
+    output:
+        '{outdir}/{name_tag}.geno_cov.chr{chr_num}' + mode_ext
+    shell:
+        'python build_genotype_covariance.py \
+           --genotype_bed {input.genotype} \
+           --mode {params.mode_str} \
+           --nbatch {config[nbatch]} \
+           --output_prefix {params.out_prefix}'
+    

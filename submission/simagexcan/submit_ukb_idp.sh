@@ -8,7 +8,7 @@ do
   filename=logs/run_geno_cov_${1}_$i.log
   if [[ -f $filename ]]
   then
-    ff=`cat logs/run_geno_cov_${1}_$i.log |tail -n 1|grep shadow`
+    ff=`cat logs/run_geno_cov_${1}_$i.log |tail -n 1|grep 'shadow\|unlock'`
     if [[ ! -z $ff ]]
     then
       echo qsub -v NBATCH=$nbatch,CHR=$i,NAME=$1 run_geno_cov.qsub

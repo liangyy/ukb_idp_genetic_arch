@@ -1,6 +1,19 @@
 if 'outdir' not in config:
     config['outdir'] = 'output'
 
+def get_cols(dict_):
+    res = []
+    for k, v in dict_.items():
+        res.append(f'{k}:{v}')
+    return ' '.join(res)
+
+def get_gwas_list(fn):
+    res = []
+    with open(fn, 'r') as f:
+        for i in f:
+            res.append(i)
+    return res
+
 if 'gwas_list' in config:
     gwas_list = get_gwas_list(config['gwas_list'])
 elif 'gwas_name' in config:

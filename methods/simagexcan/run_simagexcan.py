@@ -1,3 +1,4 @@
+import re
 import pandas as pd
 import numpy as np
 import pathlib
@@ -120,7 +121,6 @@ def _parse_args(args_list, desired_cols):
     dict = {}
     snpid_name = None
     for i in args_list[1:]:
-        
         tmp = i.split(':')
         if len(tmp) != 2:
             raise ValueError('Wrong gwas args list. Need [col]:[name] pairs.')
@@ -136,7 +136,11 @@ def _parse_args(args_list, desired_cols):
     return fn, rename_dict
     
 def _parse_gwas_args(args_list):
-    if 'zscore' not in args_list:
+    have_effect_size = False
+    for kk in args_list:
+        if 'effect_size:' in kk:
+            have_effect_size = True
+    if have_effect_size is True:
         desired_cols = [
             'snpid', 'non_effect_allele', 'effect_allele', 
             'effect_size', 'effect_size_se', 'chr'
@@ -157,13 +161,19 @@ def impute_b_from_z(zscore, af, n):
     se = 1 / np.sqrt(2 * n * af * (1 - af))
     bhat = zscore * se
     return bhat, se
+
+def clean_up_chr(ll):
+    for i in range(len(ll)):
+        ll[i] = re.sub('chr', '', ll[i])
+    return ll
     
 def load_gwas(gwas_args_list):
     fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list)
     df = read_table(fn, indiv_col=snpid_col)
     df.rename(columns={'indiv': snpid_col}, inplace=True)
     df.rename(columns=rename_dict, inplace=True)
-    df.chr = df.chr.astype(str)
+    df.drop_duplicates('snpid', inplace=True)
+    df.chr = clean_up_chr(list(df.chr.astype(str)))
     if 'effect_size' not in rename_dict.values():
         df['effect_size'], df['effect_size_se'] = impute_b_from_z(df.zscore, df.allele_frequency, df.sample_size)
     desired_cols = [

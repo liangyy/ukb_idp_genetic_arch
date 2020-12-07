@@ -15,7 +15,7 @@ def get_mode_info(config_mode):
         ext = '.cap.npz'
     else:
         raise ValueError(f'Wrong mode type = {type_}')
-    mode_str = '{} {}'.format(config_mode['type'], config['param'])
+    mode_str = '{} {}'.format(config_mode['type'], config_mode['param'])
     return mode_str, ext
     
 mode_str, mode_ext = get_mode_info(config['mode'])
@@ -33,7 +33,7 @@ rule cov:
     input:
         genotype = config['genotype']
     params:
-        mode_str = 
+        mode_str = mode_str,  
         out_prefix = '{outdir}/{name_tag}.geno_cov.chr{chr_num}'
     output:
         '{outdir}/{name_tag}.geno_cov.chr{chr_num}' + mode_ext

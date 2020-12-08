@@ -176,6 +176,12 @@ def load_gwas(gwas_args_list):
     df.chr = clean_up_chr(list(df.chr.astype(str)))
     if 'effect_size' not in rename_dict.values():
         df['effect_size'], df['effect_size_se'] = impute_b_from_z(df.zscore, df.allele_frequency, df.sample_size)
+    # some qc on gwas
+    # remove se with 0 or inf
+    # remove effect size with na
+    df.effect_size_se.replace([0, np.inf, -np.inf], np.nan, inplace=True)
+    df = df[ (~ df.effect_size.isna()) & (~ df.effect_size_se.isna()) ].reset_index(drop=True)
+    
     desired_cols = [
         'snpid', 'non_effect_allele', 'effect_allele', 
         'effect_size', 'effect_size_se', 'chr'

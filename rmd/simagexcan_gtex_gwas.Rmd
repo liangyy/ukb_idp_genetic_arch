@@ -1,0 +1,79 @@
+---
+title: "Summary ImageXcan GTEx-GWAS run"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+source('https://raw.githubusercontent.com/liangyy/misc-tools/master/plot_tool/plot_tools.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+source('rlib.R')
+```
+
+# About
+
+Here I ran S-ImageXcan on 114 GTEx-GWAS phenotypes.
+
+# Load results
+
+```{r}
+pheno_list = read.table('../submission/simagexcan/gtex_gwas_list.txt', header = F)$V1
+df = list()
+for(p in pheno_list) {
+  fn = paste0('~/Desktop/tmp/ukb_idp/simagexcan/results/t1_gtex_gwas_x_', p, '_x_simagexcan.csv')
+  if(file.exists(fn)) {
+    tmp = read.csv(fn)
+    df[[length(df) + 1]] = tmp %>% mutate(phenotype = p)
+  }
+}
+df = do.call(rbind, df)
+```
+
+# QQ-plot
+
+```{r}
+qqplot_by_group(df$pval[df$phenotype == 'UKB_50_Standing_height'], group = 'all') + th
+```
+
+# PIP
+
+```{r, fig.width=8, fig.height=4}
+df %>% ggplot() + geom_jitter(aes(x = phenotype, y = pip, color = factor(cs95)), width = 0.3, height = 0, alpha = 0.2) + theme(axis.text.x = element_blank()) + th
+```
+
+# Bonferroni significant
+
+```{r}
+df = df %>% mutate(p_adj = pval * n())
+bonferroni_cutoff = 0.01
+message('There are ', df %>% filter(p_adj < bonferroni_cutoff) %>% nrow, ' IDP-phenotype pairs passed Bonferroni significance cutoff at ', bonferroni_cutoff)
+```
+
+# 95% Credible set
+
+```{r}
+message('There are ', df %>% filter(cs95 > 0) %>% nrow, ' IDP-phenotype pairs within 95% credible set')
+```
+
+# Add open GWAS phenotype
+
+Here we focus on the phenotypes with at least one hit within 95% credible set.
+
+```{r}
+df_cs = df %>% filter(cs95 > 0)
+sig_phenos = df_cs %>% pull(phenotype) %>% unique
+# sig_phenos
+df_ogwas = data.frame(phenotype = sig_phenos, gwas_code = c('ebi-a-GCST004606', 'ebi-a-GCST004614', 'ukb-d-30300_irnt', 'ebi-a-GCST004627', 'ukb-d-30130_irnt', 'ebi-a-GCST004626', 'ebi-a-GCST004629', 'ukb-d-30080_irnt', 'ebi-a-GCST004601', 'ukb-d-30250_irnt', 'ebi-a-GCST004620', 'ebi-a-GCST004621', 'ebi-a-GCST004613', 'ieu-b-30', 'ieu-a-29', 'ukb-b-13378', NA, 'ukb-b-19953', 'ieu-a-89', NA, 'ukb-a-552', 'ukb-b-11874', 'ieu-a-1000', 'ukb-b-6134', 'ukb-b-4424', 'ukb-b-4956', 'ukb-b-11303', 'ukb-b-12493', 'ukb-b-20208', 'ukb-b-20289', 'ukb-b-17796', 'ukb-b-10537', 'ukb-b-10912', 'ukb-b-5238', 'ukb-b-13378', 'ukb-b-4630', 'ukb-b-19953', 'ukb-b-8909', 'ukb-a-303', 'ukb-b-12687', 'ukb-b-10787', 'ukb-b-11590', 'ukb-b-20208', 'ukb-b-17241', 'ieu-a-22'))
+df_signif = inner_join(df_ogwas, df_cs, by = c('phenotype' = 'phenotype'))
+df_signif = df_signif %>% select(phenotype, gwas_code, IDP) %>% distinct_all
+colnames(df_signif) = c('pheno', 'pheno_code', 'idp')
+write.table(df_signif, '../misc_data/simagexcan_gtex_gwas.t1.signif.tsv', quo = F, col = T, row = F, sep = '\t')
+```

@@ -73,6 +73,7 @@ sig_phenos = df_cs %>% pull(phenotype) %>% unique
 # sig_phenos
 df_ogwas = data.frame(phenotype = sig_phenos, gwas_code = c('ebi-a-GCST004606', 'ebi-a-GCST004614', 'ukb-d-30300_irnt', 'ebi-a-GCST004627', 'ukb-d-30130_irnt', 'ebi-a-GCST004626', 'ebi-a-GCST004629', 'ukb-d-30080_irnt', 'ebi-a-GCST004601', 'ukb-d-30250_irnt', 'ebi-a-GCST004620', 'ebi-a-GCST004621', 'ebi-a-GCST004613', 'ieu-b-30', 'ieu-a-29', 'ukb-b-13378', NA, 'ukb-b-19953', 'ieu-a-89', NA, 'ukb-a-552', 'ukb-b-11874', 'ieu-a-1000', 'ukb-b-6134', 'ukb-b-4424', 'ukb-b-4956', 'ukb-b-11303', 'ukb-b-12493', 'ukb-b-20208', 'ukb-b-20289', 'ukb-b-17796', 'ukb-b-10537', 'ukb-b-10912', 'ukb-b-5238', 'ukb-b-13378', 'ukb-b-4630', 'ukb-b-19953', 'ukb-b-8909', 'ukb-a-303', 'ukb-b-12687', 'ukb-b-10787', 'ukb-b-11590', 'ukb-b-20208', 'ukb-b-17241', 'ieu-a-22'))
 df_signif = inner_join(df_ogwas, df_cs, by = c('phenotype' = 'phenotype'))
+df_signif = df_signif[ !is.na(df_signif$gwas_code), ]
 df_signif = df_signif %>% select(phenotype, gwas_code, IDP) %>% distinct_all
 colnames(df_signif) = c('pheno', 'pheno_code', 'idp')
 write.table(df_signif, '../misc_data/simagexcan_gtex_gwas.t1.signif.tsv', quo = F, col = T, row = F, sep = '\t')

@@ -17,6 +17,9 @@ library(data.table)
 options(datatable.fread.datatable = F)
 source('rlib.R')
 library(ggpubr)
+library(pander)
+panderOptions("table.split.table", Inf)
+
 ```
 
 # About
@@ -85,11 +88,6 @@ message('There are ', df %>% filter(cs95 > 0) %>% nrow, ' IDP-phenotype pairs wi
 
 Here we focus on the phenotypes with at least one hit within 95% credible set.
 
-```{r}
-dd = read.table('../misc_data/simagexcan_gtex_gwas.t1.signif.tsv', header = T)
-dd %>% select(pheno, pheno_code) %>% distinct()
-paste0(unique(dd$pheno), collapse = "', '")
-```
 
 ```{r}
 df_cs = df %>% filter(cs95 > 0)
@@ -112,38 +110,38 @@ write.table(df_signif_dmri, '../misc_data/simagexcan_gtex_gwas.dmri.signif.tsv',
 collector_mr = list()
 collector_data = list()
 for(i in 1 : nrow(df_signif)) {
-  tmp = readRDS(paste0('~/Desktop/tmp/ukb_idp/mr/MR.gtex_gwas_t1.', df_signif$idp[i], '_x_', df_signif$pheno[i], '.rds'))
+  tmp = readRDS(paste0('~/Desktop/tmp/ukb_idp/mr_gtex_gwas/MR.gtex_gwas_', df_signif$idp_type[i], '.', df_signif$IDP[i], '_x_', df_signif$pheno[i], '.rds'))
   if(sum(is.na(tmp$idp2pheno$mr)) == 1 | sum(is.na(tmp$pheno2idp$mr)) == 1) {
     next
   }
   if(sum(tmp$idp2pheno$mr$pval < 0.05) > 2 | sum(tmp$pheno2idp$mr$pval < 0.05) > 2) {
     collector_mr[[length(collector_mr) + 1]] = rbind(
-      tmp$idp2pheno$mr %>% mutate(direction = 'idp2pheno', pheno = df_signif$pheno[i], idp = df_signif$idp[i]),
-      tmp$pheno2idp$mr %>% mutate(direction = 'pheno2idp', pheno = df_signif$pheno[i], idp = df_signif$idp[i])
+      tmp$idp2pheno$mr %>% mutate(direction = 'idp2pheno', pheno = df_signif$pheno[i], IDP = df_signif$IDP[i]),
+      tmp$pheno2idp$mr %>% mutate(direction = 'pheno2idp', pheno = df_signif$pheno[i], IDP = df_signif$IDP[i])
     )
     collector_data[[length(collector_data) + 1]] = rbind(
-      tmp$idp2pheno$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'idp2pheno', pheno = df_signif$pheno[i], idp = df_signif$idp[i]),
-      tmp$pheno2idp$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'pheno2idp', pheno = df_signif$pheno[i], idp = df_signif$idp[i])
+      tmp$idp2pheno$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'idp2pheno', pheno = df_signif$pheno[i], IDP = df_signif$IDP[i]),
+      tmp$pheno2idp$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'pheno2idp', pheno = df_signif$pheno[i], IDP = df_signif$IDP[i])
     )
   }
 }
-df_data = do.call(rbind, collector_data) %>% inner_join(df_annot, by = c('idp' = 'IDP'))
-df_mr = do.call(rbind, collector_mr) %>% inner_join(df_annot, by = c('idp' = 'IDP'))
+df_data = do.call(rbind, collector_data) %>% inner_join(df_annot, by = 'IDP')
+df_mr = do.call(rbind, collector_mr) %>% inner_join(df_annot, by = 'IDP')
 ```
 
 The selected MR pairs.
 
 ```{r}
-df_mr %>% select(pheno, idp) %>% distinct() %>% pander::pander()
-df_tmp = df_mr %>% select(pheno, idp) %>% distinct()
+# df_mr %>% select(pheno, IDP) %>% distinct() %>% pander::pander()
+df_tmp = df_mr %>% select(pheno, IDP) %>% distinct()
 ```
 
 Show the plot.
 
 ```{r, fig.width=15, fig.height=5}
 for(i in 1 : nrow(df_tmp)) {
-  mydat = df_data %>% filter(pheno == df_tmp$pheno[i], idp == df_tmp$idp[i])
-  mymr = df_mr %>% filter(pheno == df_tmp$pheno[i], idp == df_tmp$idp[i])
+  mydat = df_data %>% filter(pheno == df_tmp$pheno[i], IDP == df_tmp$IDP[i])
+  mymr = df_mr %>% filter(pheno == df_tmp$pheno[i], IDP == df_tmp$IDP[i])
   idp_name = mydat$Field[1]
   gwas_name = mydat$pheno[1]
   plist = list()
@@ -156,4 +154,56 @@ for(i in 1 : nrow(df_tmp)) {
   print(qq)
 }
 
+```
+
+
+# List the pairs with at least 3 MR tests p-value < 0.05
+
+```{r}
+df_mr %>% filter(pval < 0.05) %>% group_by(direction, pheno, Field) %>% summarize(n_sig_pval = n()) %>% filter(n_sig_pval >= 3) %>% pander()
+```
+
+# Side-by-side with ImageXcan on blood cell counts
+
+```{r}
+p2z = function(p, b) {
+  sign(b) * qnorm(p / 2)
+}
+
+df_bcc = data.frame(
+  id = c('wbc', 'rbc', 'platelet', 'lymphocyte', 'monocyte', 'neutrophil', 'eosinophil'),
+  gwas = c('Astle_et_al_2016_White_blood_cell_count', 'Astle_et_al_2016_Red_blood_cell_count', 'Astle_et_al_2016_Platelet_count', 'Astle_et_al_2016_Lymphocyte_counts', 'Astle_et_al_2016_Monocyte_count', 'Astle_et_al_2016_Neutrophil_count', 'Astle_et_al_2016_Eosinophil_counts')
+)
+df_t1_indiv = inner_join(
+  read.csv('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear.t1.csv'),
+  read.csv('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.susie.t1.csv'),
+  by = c('phenotype', 'IDP')
+) %>% mutate(idp_type = 't1') %>% filter(phenotype %in% df_bcc$id)
+df_dmri_indiv = inner_join(
+  read.csv('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear.dmri.csv'),
+  read.csv('~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.susie.dmri.csv'),
+  by = c('phenotype', 'IDP')
+) %>% mutate(idp_type = 'dmri') %>% filter(phenotype %in% df_bcc$id)
+df_indiv = rbind(
+  df_t1_indiv, df_dmri_indiv
+)
+df_ss = df %>% filter(phenotype %in% df_bcc$gwas) %>% inner_join(df_bcc, by = c('phenotype' = 'gwas'))
+tmp = inner_join(df_indiv, df_ss, by = c('phenotype' = 'id', 'IDP', 'idp_type'), suffix = c('.indiv', '.ss'))
+tmp %>% 
+  # filter(pval.indiv < 0.05, pval.ss < 0.05) %>% 
+  group_by(phenotype) %>% 
+  filter(abs(bhat.ss) < quantile(abs(bhat.ss), probs = 0.95), abs(bhat.indiv) < quantile(abs(bhat.indiv), probs = 0.975)) %>% 
+  ggplot() + geom_point(aes(x = bhat.indiv, y = bhat.ss), alpha = 0.2) + facet_wrap(~phenotype, scales = 'free') + th2
+tmp %>% 
+  # filter(pval.indiv < 0.05, pval.ss < 0.05) %>% 
+  group_by(phenotype) %>% 
+  # filter(abs(bhat.ss) < quantile(abs(bhat.ss), probs = 0.95), abs(bhat.indiv) < quantile(abs(bhat.indiv), probs = 0.975)) %>% 
+  mutate(z.indiv = p2z(pval.indiv, bhat.indiv), z.ss = p2z(pval.ss, bhat.ss)) %>% 
+  ggplot() + geom_point(aes(x = z.indiv, y = z.ss), alpha = 0.2) + facet_wrap(~phenotype) + th2 + coord_equal() + geom_abline(slope = -1, intercept = 0, color = 'red')
+tmp %>% 
+  # filter(pval.indiv < 0.05, pval.ss < 0.05) %>% 
+  group_by(phenotype) %>% 
+  # filter(abs(bhat.ss) < quantile(abs(bhat.ss), probs = 0.95), abs(bhat.indiv) < quantile(abs(bhat.indiv), probs = 0.975)) %>% 
+  # mutate(z.indiv = p2z(pval.indiv, bhat.indiv), z.ss = p2z(pval.ss, bhat.ss)) %>% 
+  ggplot() + geom_point(aes(x = pip.indiv, y = pip.ss), alpha = 0.2) + facet_wrap(~phenotype) + th2 + coord_equal() 
 ```

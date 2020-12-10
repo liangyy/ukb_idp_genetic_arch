@@ -5,6 +5,10 @@ rule all:
     input:
         '{outdir}/{name_tag}.gw_lasso.performance.tsv'.format(**config)
 
+rule all_train:
+    input:
+        '{outdir}/{name_tag}.gw_lasso.weights.tsv.gz'.format(**config)
+
 rule prep_pheno:
     input:
         config['phenotype']['path'],
@@ -43,3 +47,29 @@ rule run_gw_lasso:
             --mem {config[plink_mem_in_mb]} \
             --alpha {config[glmnet_alpha]} > {log} 2>&1'
     
+rule run_gw_lasso_train:
+    input:
+        geno_prefix = [ config['genotype_prefix'] + '.{}'.format(i) for i in ['pgen', 'pvar.zst', 'psam'] ],
+        phenotype = '{outdir}/{name_tag}.phe.tsv',
+        pheno_list = config['phenotype']['list'],
+        snpnet_config = config['snpnet_config']
+    params:
+        outprefix = '{outdir}/{name_tag}.gw_lasso'
+    log:
+        '{outdir}/{name_tag}.gw_lasso.log'
+    output:
+        '{outdir}/{name_tag}.gw_lasso.weights.tsv.gz',
+        '{outdir}/{name_tag}.gw_lasso.y_insample.rds'
+    shell:
+        'Rscript run_gw_lasso.R \
+            --genotype {config[genotype_prefix]} \
+            --phenotype_table {input.phenotype} \
+            --inner_nfold {config[inner_nfold]} \
+            --indiv_col {config[phenotype][indiv_col]} \
+            --pheno_list {input.pheno_list} \
+            --snpnet_config {input.snpnet_config} \
+            --output_prefix {params.outprefix} \
+            --mem {config[plink_mem_in_mb]} \
+            --mode model_training \
+            --alpha {config[glmnet_alpha]} > {log} 2>&1'
+            

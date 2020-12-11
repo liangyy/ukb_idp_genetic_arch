@@ -66,11 +66,17 @@ if(!is.null(idp_exp_dat)) {
   	snps = idp_exp_dat$SNP,
   	outcomes = gwas_code
   )
+  
+  if(is.null(outcome_dat)) {
+    res_forward = NA
+    dat_forward = NA
+  } else {
+    logging::loginfo('** IDP -> Phenotype: Running MR.')
+    dat_forward = harmonise_data(idp_exp_dat, outcome_dat)
+    res_forward = mr(dat_forward)
+    res_forward %>% pander::pander(caption = 'IDP -> Phenotype')
+  }
 
-  logging::loginfo('** IDP -> Phenotype: Running MR.')
-  dat_forward = harmonise_data(idp_exp_dat, outcome_dat)
-  res_forward = mr(dat_forward)
-  res_forward %>% pander::pander(caption = 'IDP -> Phenotype')
 } else {
   res_forward = NA
   dat_forward = NA

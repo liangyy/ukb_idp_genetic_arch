@@ -1,5 +1,5 @@
 phenolist=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/regress_out_idp_pcs/dmri_list.txt
-batchsize=2
+batchsize=4
 
 mkdir -p logs_en
 mkdir -p batch_list_en

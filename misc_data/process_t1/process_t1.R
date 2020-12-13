@@ -71,7 +71,7 @@ df_corr = corr %>% reshape2::melt() %>%
   inner_join(df_annot %>% mutate(idp = paste0('IDP-', FieldID)) %>% 
   select(idp, normalized_by_head_size, position, matter_type, lr), by = c('Var2' = 'idp'), suffix = c('.1', '.2'))
 p0 = myplot_magic(df_corr)
-ggsave('t1_residual_corr.png', p1)
+ggsave('t1_residual_corr.png', p0)
 
 
 mat_res = as.data.frame(mat_res)

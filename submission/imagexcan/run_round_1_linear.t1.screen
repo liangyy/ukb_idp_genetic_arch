@@ -2,6 +2,8 @@
 source /vol/bmd/yanyul/miniconda3/etc/profile.d/conda.sh
 conda activate ukb_idp
 
+export PYTHONPATH=/vol/bmd/yanyul/GitHub/misc-tools/pyutil
+
 scriptpath=/vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/imagexcan/run_imagexcan.py
 
 # input files

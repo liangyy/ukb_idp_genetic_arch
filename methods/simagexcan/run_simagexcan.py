@@ -334,7 +334,7 @@ if __name__ == '__main__':
         z_gwas = b_gwas / se_gwas
         
         cov_mat = CovMatrix(args.genotype_covariance.format(chr_num=i))
-        cov_x_weight, diag_cov = cov_mat.eval_matmul_on_left(weight)
+        cov_x_weight, diag_cov = cov_mat.eval_matmul_on_left(weight, param=100)  # param is used in case of naive geno cov in h5 format
         D_chr = weight.T @ cov_x_weight
         del cov_x_weight
         var_R_chr = diag_cov

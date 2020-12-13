@@ -166,7 +166,7 @@ class CovMatrix:
         diag_cov = np.zeros((nrow))
         for i in range(nbatch):
             res[s : e, :] = f['cov'][s : e, :] @ mat
-            res[s : e, :] += f['cov'][s : e, :].T @ mat
+            res[s : e, :] += f['cov'][:, s : e].T @ mat
             diag_cov[s : e] = f['cov'][s : e, s : e].diagonal()
         res -= diag_cov[:, np.newaxis] * mat
         f.close()

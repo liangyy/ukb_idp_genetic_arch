@@ -25,6 +25,8 @@ def load_model_as_wide(fn):
     return df_snp
 
 def left_join_with_main(df_main, df_new):
+    if df_main is None:
+        return df_new
     tmp = pd.merge(df_main, df_new, how='outer', on=['snpid', 'REF', 'ALT', 'CHR'])
     tmp.fillna(0, inplace=True)
     return tmp
@@ -72,9 +74,10 @@ if __name__ == '__main__':
     logging.info('There are {} model files to load.'.format(len(model_files)))
     for model_path in tqdm(model_files):
         model = load_model_as_wide(model_path)
-        common_cols = intersection(model.columns[4:], out.columns[4:])
-        if len(common_cols) > 0:
-            raise ValueError('Duplicated columns: {}'.format(', '.join(common_cols)))
+        if out is not None:
+            common_cols = intersection(model.columns[4:], out.columns[4:])
+            if len(common_cols) > 0:
+                raise ValueError('Duplicated columns: {}'.format(', '.join(common_cols)))
         out = left_join_with_main(out, model)
     
     # clean rename dict so that it only contains keys occurring in out
@@ -85,7 +88,8 @@ if __name__ == '__main__':
     rename_dict = rename_dict_new
     
     out.rename(columns=rename_dict, inplace=True)
-    
+    out.rename(columns={'REF': 'a0', 'ALT': 'a1', 'CHR': 'chr'}, inplace=True)
+ 
     out.to_parquet(args.output)
     
     

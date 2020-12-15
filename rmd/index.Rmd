@@ -15,4 +15,5 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 * S-ImageXcan results:
     - [GTEx-GWAS phenotypes](simagexcan_gtex_gwas.html)
-  
+
+* Summary of current runs on GTEx-GWAS phenotypes (S-ImageXcan) and a selected set of phenotypes (ImageXcan): [link](summary_121520.html)

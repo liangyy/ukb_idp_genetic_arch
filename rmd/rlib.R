@@ -22,3 +22,8 @@ acat = function(pvec)
   TT = sum( tan( (0.5 - pvec) *pi ) )
   .5 - atan(TT / length(pvec)) / pi
 }
+
+
+p2z = function(p, b) {
+  sign(b) * qnorm(p / 2)
+}

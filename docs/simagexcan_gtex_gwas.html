@@ -381,7 +381,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Summary ImageXcan GTEx-GWAS run</h1>
-<h4 class="date">08 December, 2020</h4>
+<h4 class="date">15 December, 2020</h4>
 
 </div>
 
@@ -402,7 +402,7 @@ library(pander)
 panderOptions(&quot;table.split.table&quot;, Inf)</code></pre>
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>Here I ran S-ImageXcan on 114 GTEx-GWAS phenotypes.</p>
+<p>Here I ran S-ImageXcan on 114 GTEx-GWAS phenotypes (based on gw-ridege predictor).</p>
 </div>
 <div id="load-results" class="section level1">
 <h1><span class="header-section-number">2</span> Load results</h1>
@@ -433,12 +433,12 @@ df_annot = rbind(
 <div id="qq-plot" class="section level1">
 <h1><span class="header-section-number">3</span> QQ-plot</h1>
 <pre class="r"><code>qqplot_by_group(df$pval, group = df$idp_type) + th</code></pre>
-<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-187-1.png" width="672" /></p>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 </div>
 <div id="pip" class="section level1">
 <h1><span class="header-section-number">4</span> PIP</h1>
 <pre class="r"><code>df %&gt;% ggplot() + geom_jitter(aes(x = phenotype, y = pip, color = factor(cs95)), width = 0.3, height = 0, alpha = 0.2) + theme(axis.text.x = element_blank()) + th2 + facet_wrap(~idp_type, ncol = 1)</code></pre>
-<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-188-1.png" width="768" /></p>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-4-1.png" width="768" /></p>
 </div>
 <div id="bonferroni-significant" class="section level1">
 <h1><span class="header-section-number">5</span> Bonferroni significant</h1>
@@ -456,8 +456,8 @@ message(&#39;There are &#39;, df %&gt;% filter(p_adj &lt; bonferroni_cutoff) %&g
 <h1><span class="header-section-number">7</span> Add open GWAS phenotype</h1>
 <p>Here we focus on the phenotypes with at least one hit within 95% credible set.</p>
 <pre class="r"><code>df_cs = df %&gt;% filter(cs95 &gt; 0)
-phenos = c(&#39;Astle_et_al_2016_Eosinophil_counts&#39;, &#39;Astle_et_al_2016_Granulocyte_count&#39;, &#39;Astle_et_al_2016_High_light_scatter_reticulocyte_count&#39;, &#39;Astle_et_al_2016_Lymphocyte_counts&#39;, &#39;Astle_et_al_2016_Monocyte_count&#39;, &#39;Astle_et_al_2016_Myeloid_white_cell_count&#39;, &#39;Astle_et_al_2016_Neutrophil_count&#39;, &#39;Astle_et_al_2016_Platelet_count&#39;, &#39;Astle_et_al_2016_Red_blood_cell_count&#39;, &#39;Astle_et_al_2016_Reticulocyte_count&#39;, &#39;Astle_et_al_2016_Sum_basophil_neutrophil_counts&#39;, &#39;Astle_et_al_2016_Sum_eosinophil_basophil_counts&#39;, &#39;Astle_et_al_2016_Sum_neutrophil_eosinophil_counts&#39;, &#39;Astle_et_al_2016_White_blood_cell_count&#39;, &#39;EGG_BL&#39;, &#39;EGG_BW3_EUR&#39;, &#39;GIANT_2015_BMI_EUR&#39;, &#39;GIANT_HEIGHT&#39;, &#39;IBD.EUR.Crohns_Disease&#39;, &#39;RA_OKADA_TRANS_ETHNIC&#39;, &#39;SSGAC_Depressive_Symptoms&#39;, &#39;SSGAC_Education_Years_Pooled&#39;, &#39;UKB_1160_Sleep_duration&#39;, &#39;UKB_1180_Morning_or_evening_person_chronotype&#39;, &#39;UKB_1807_Fathers_age_at_death&#39;, &#39;UKB_20002_1065_self_reported_hypertension&#39;, &#39;UKB_20002_1111_self_reported_asthma&#39;, &#39;UKB_20002_1225_self_reported_hyperthyroidism_or_thyrotoxicosis&#39;, &#39;UKB_20002_1309_self_reported_osteoporosis&#39;, &#39;UKB_20002_1453_self_reported_psoriasis&#39;, &#39;UKB_20002_1473_self_reported_high_cholesterol&#39;, &#39;UKB_20016_Fluid_intelligence_score&#39;, &#39;UKB_20022_Birth_weight&#39;, &#39;UKB_20127_Neuroticism_score&#39;, &#39;UKB_21001_Body_mass_index_BMI&#39;, &#39;UKB_23099_Body_fat_percentage&#39;, &#39;UKB_2395_4_Hair_or_balding_pattern_Pattern_4&#39;, &#39;UKB_3526_Mothers_age_at_death&#39;, &#39;UKB_50_Standing_height&#39;, &#39;UKB_6150_1_Vascular_or_heart_problems_diagnosed_by_doctor_Heart_attack&#39;, &#39;UKB_6152_8_diagnosed_by_doctor_Asthma&#39;, &#39;UKB_6152_9_diagnosed_by_doctor_Hayfever_allergic_rhinitis_or_eczema&#39;, &#39;pgc.scz2&#39;, &#39;BCAC_Overall_BreastCancer_EUR&#39;, &#39;GIANT_2017_BMI_Active_EUR&#39;, &#39;GIANT_HIP_Combined_EUR&#39;, &#39;GIANT_WC_Combined_EUR&#39;, &#39;IMMUNOBASE_Multiple_sclerosis_hg19&#39;, &#39;UKB_1200_Sleeplessness_or_insomnia&#39;, &#39;UKB_20002_1154_self_reported_irritable_bowel_syndrome&#39;, &#39;UKB_20002_1226_self_reported_hypothyroidism_or_myxoedema&#39;, &#39;UKB_20002_1261_self_reported_multiple_sclerosis&#39;, &#39;UKB_20002_1463_self_reported_ulcerative_colitis&#39;, &#39;UKB_2395_2_Hair_or_balding_pattern_Pattern_2&#39;, &#39;ENIGMA_Intracraneal_Volume&#39;, &#39;GLGC_Mc_TG&#39;)
-gwas_code = c(&#39;ebi-a-GCST004606&#39;, &#39;ebi-a-GCST004614&#39;, &#39;ukb-d-30300_irnt&#39;, &#39;ebi-a-GCST004627&#39;, &#39;ukb-d-30130_irnt&#39;, &#39;ebi-a-GCST004626&#39;, &#39;ebi-a-GCST004629&#39;, &#39;ukb-d-30080_irnt&#39;, &#39;ebi-a-GCST004601&#39;, &#39;ukb-d-30250_irnt&#39;, &#39;ebi-a-GCST004620&#39;, &#39;ebi-a-GCST004621&#39;, &#39;ebi-a-GCST004613&#39;, &#39;ieu-b-30&#39;, &#39;ieu-a-29&#39;, &#39;ukb-b-13378&#39;, &#39;ukb-b-19953&#39;, &#39;ieu-a-89&#39;, &#39;ukb-a-552&#39;, &#39;ukb-b-11874&#39;, &#39;ieu-a-1000&#39;, &#39;ukb-b-6134&#39;, &#39;ukb-b-4424&#39;, &#39;ukb-b-4956&#39;, &#39;ukb-b-11303&#39;, &#39;ukb-b-12493&#39;, &#39;ukb-b-20208&#39;, &#39;ukb-b-20289&#39;, &#39;ukb-b-17796&#39;, &#39;ukb-b-10537&#39;, &#39;ukb-b-10912&#39;, &#39;ukb-b-5238&#39;, &#39;ukb-b-13378&#39;, &#39;ukb-b-4630&#39;, &#39;ukb-b-19953&#39;, &#39;ukb-b-8909&#39;, &#39;ukb-a-303&#39;, &#39;ukb-b-12687&#39;, &#39;ukb-b-10787&#39;, &#39;ukb-b-11590&#39;, &#39;ukb-b-20208&#39;, &#39;ukb-b-17241&#39;, &#39;ieu-a-22&#39;, &#39;ieu-a-1126&#39;, &#39;ukb-b-19953&#39;, &#39;ukb-b-15590&#39;, &#39;ukb-b-9405&#39;, &#39;ieu-b-18&#39;, &#39;ukb-b-3957&#39;, &#39;ukb-b-2592&#39;, &#39;ukb-b-19732&#39;, &#39;ieu-b-18&#39;, &#39;ukb-b-7584&#39;, &#39;ukb-a-301&#39;, &#39;ieu-a-1041&#39;, &#39;ieu-a-302&#39;)
+phenos = c(&#39;Astle_et_al_2016_Eosinophil_counts&#39;, &#39;Astle_et_al_2016_Granulocyte_count&#39;, &#39;Astle_et_al_2016_High_light_scatter_reticulocyte_count&#39;, &#39;Astle_et_al_2016_Lymphocyte_counts&#39;, &#39;Astle_et_al_2016_Monocyte_count&#39;, &#39;Astle_et_al_2016_Myeloid_white_cell_count&#39;, &#39;Astle_et_al_2016_Neutrophil_count&#39;, &#39;Astle_et_al_2016_Platelet_count&#39;, &#39;Astle_et_al_2016_Red_blood_cell_count&#39;, &#39;Astle_et_al_2016_Reticulocyte_count&#39;, &#39;Astle_et_al_2016_Sum_basophil_neutrophil_counts&#39;, &#39;Astle_et_al_2016_Sum_eosinophil_basophil_counts&#39;, &#39;Astle_et_al_2016_Sum_neutrophil_eosinophil_counts&#39;, &#39;Astle_et_al_2016_White_blood_cell_count&#39;, &#39;EGG_BL&#39;, &#39;EGG_BW3_EUR&#39;, &#39;GIANT_2015_BMI_EUR&#39;, &#39;GIANT_HEIGHT&#39;, &#39;IBD.EUR.Crohns_Disease&#39;, &#39;RA_OKADA_TRANS_ETHNIC&#39;, &#39;SSGAC_Depressive_Symptoms&#39;, &#39;SSGAC_Education_Years_Pooled&#39;, &#39;UKB_1160_Sleep_duration&#39;, &#39;UKB_1180_Morning_or_evening_person_chronotype&#39;, &#39;UKB_1807_Fathers_age_at_death&#39;, &#39;UKB_20002_1065_self_reported_hypertension&#39;, &#39;UKB_20002_1111_self_reported_asthma&#39;, &#39;UKB_20002_1225_self_reported_hyperthyroidism_or_thyrotoxicosis&#39;, &#39;UKB_20002_1309_self_reported_osteoporosis&#39;, &#39;UKB_20002_1453_self_reported_psoriasis&#39;, &#39;UKB_20002_1473_self_reported_high_cholesterol&#39;, &#39;UKB_20016_Fluid_intelligence_score&#39;, &#39;UKB_20022_Birth_weight&#39;, &#39;UKB_20127_Neuroticism_score&#39;, &#39;UKB_21001_Body_mass_index_BMI&#39;, &#39;UKB_23099_Body_fat_percentage&#39;, &#39;UKB_2395_4_Hair_or_balding_pattern_Pattern_4&#39;, &#39;UKB_3526_Mothers_age_at_death&#39;, &#39;UKB_50_Standing_height&#39;, &#39;UKB_6150_1_Vascular_or_heart_problems_diagnosed_by_doctor_Heart_attack&#39;, &#39;UKB_6152_8_diagnosed_by_doctor_Asthma&#39;, &#39;UKB_6152_9_diagnosed_by_doctor_Hayfever_allergic_rhinitis_or_eczema&#39;, &#39;pgc.scz2&#39;, &#39;BCAC_Overall_BreastCancer_EUR&#39;, &#39;GIANT_2017_BMI_Active_EUR&#39;, &#39;GIANT_HIP_Combined_EUR&#39;, &#39;GIANT_WC_Combined_EUR&#39;, &#39;IMMUNOBASE_Multiple_sclerosis_hg19&#39;, &#39;UKB_1200_Sleeplessness_or_insomnia&#39;, &#39;UKB_20002_1154_self_reported_irritable_bowel_syndrome&#39;, &#39;UKB_20002_1226_self_reported_hypothyroidism_or_myxoedema&#39;, &#39;UKB_20002_1261_self_reported_multiple_sclerosis&#39;, &#39;UKB_20002_1463_self_reported_ulcerative_colitis&#39;, &#39;UKB_2395_2_Hair_or_balding_pattern_Pattern_2&#39;, &#39;ENIGMA_Intracraneal_Volume&#39;, &#39;GLGC_Mc_TG&#39;, &#39;GEFOS_Forearm&#39;, &#39;GLGC_Mc_HDL&#39;, &#39;UKB_2395_3_Hair_or_balding_pattern_Pattern_3&#39;)
+gwas_code = c(&#39;ebi-a-GCST004606&#39;, &#39;ebi-a-GCST004614&#39;, &#39;ukb-d-30300_irnt&#39;, &#39;ebi-a-GCST004627&#39;, &#39;ukb-d-30130_irnt&#39;, &#39;ebi-a-GCST004626&#39;, &#39;ebi-a-GCST004629&#39;, &#39;ukb-d-30080_irnt&#39;, &#39;ebi-a-GCST004601&#39;, &#39;ukb-d-30250_irnt&#39;, &#39;ebi-a-GCST004620&#39;, &#39;ebi-a-GCST004621&#39;, &#39;ebi-a-GCST004613&#39;, &#39;ieu-b-30&#39;, &#39;ieu-a-29&#39;, &#39;ukb-b-13378&#39;, &#39;ukb-b-19953&#39;, &#39;ieu-a-89&#39;, &#39;ukb-a-552&#39;, &#39;ukb-b-11874&#39;, &#39;ieu-a-1000&#39;, &#39;ukb-b-6134&#39;, &#39;ukb-b-4424&#39;, &#39;ukb-b-4956&#39;, &#39;ukb-b-11303&#39;, &#39;ukb-b-12493&#39;, &#39;ukb-b-20208&#39;, &#39;ukb-b-20289&#39;, &#39;ukb-b-17796&#39;, &#39;ukb-b-10537&#39;, &#39;ukb-b-10912&#39;, &#39;ukb-b-5238&#39;, &#39;ukb-b-13378&#39;, &#39;ukb-b-4630&#39;, &#39;ukb-b-19953&#39;, &#39;ukb-b-8909&#39;, &#39;ukb-a-303&#39;, &#39;ukb-b-12687&#39;, &#39;ukb-b-10787&#39;, &#39;ukb-b-11590&#39;, &#39;ukb-b-20208&#39;, &#39;ukb-b-17241&#39;, &#39;ieu-a-22&#39;, &#39;ieu-a-1126&#39;, &#39;ukb-b-19953&#39;, &#39;ukb-b-15590&#39;, &#39;ukb-b-9405&#39;, &#39;ieu-b-18&#39;, &#39;ukb-b-3957&#39;, &#39;ukb-b-2592&#39;, &#39;ukb-b-19732&#39;, &#39;ieu-b-18&#39;, &#39;ukb-b-7584&#39;, &#39;ukb-a-301&#39;, &#39;ieu-a-1041&#39;, &#39;ieu-a-302&#39;, &#39;ieu-a-977&#39;, &#39;ieu-a-299&#39;, &#39;ukb-a-302&#39;)
 df_ogwas = data.frame(phenotype = phenos, gwas_code = gwas_code)
 df_signif = inner_join(df_ogwas, df_cs, by = c(&#39;phenotype&#39; = &#39;phenotype&#39;))
 df_signif = df_signif[ !is.na(df_signif$gwas_code), ]
@@ -508,7 +508,7 @@ df_tmp = df_mr %&gt;% select(pheno, IDP) %&gt;% distinct()</code></pre>
   qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr %&gt;% select(method, nsnp, b, pval, direction), digits = 3)), ncol = 3)
   print(qq)
 }</code></pre>
-<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-1.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-2.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-3.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-4.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-5.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-6.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-7.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-8.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-9.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-10.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-11.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-12.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-13.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-14.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-15.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-16.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-17.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-18.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-19.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-20.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-21.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-22.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-23.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-24.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-25.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-194-26.png" width="1440" /></p>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-1.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-2.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-3.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-4.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-5.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-6.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-7.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-8.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-9.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-10.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-11.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-12.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-13.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-14.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-15.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-16.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-17.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-18.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-19.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-20.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-21.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-22.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-23.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-24.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-25.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-10-26.png" width="1440" /></p>
 </div>
 <div id="list-the-pairs-with-at-least-3-mr-tests-p-value-0.05" class="section level1">
 <h1><span class="header-section-number">9</span> List the pairs with at least 3 MR tests p-value &lt; 0.05</h1>
@@ -725,21 +725,132 @@ tmp %&gt;%
   group_by(phenotype) %&gt;% 
   filter(abs(bhat.ss) &lt; quantile(abs(bhat.ss), probs = 0.95), abs(bhat.indiv) &lt; quantile(abs(bhat.indiv), probs = 0.975)) %&gt;% 
   ggplot() + geom_point(aes(x = bhat.indiv, y = bhat.ss), alpha = 0.2) + facet_wrap(~phenotype, scales = &#39;free&#39;) + th2</code></pre>
-<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-196-1.png" width="672" /></p>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <pre class="r"><code>tmp %&gt;% 
   # filter(pval.indiv &lt; 0.05, pval.ss &lt; 0.05) %&gt;% 
   group_by(phenotype) %&gt;% 
   # filter(abs(bhat.ss) &lt; quantile(abs(bhat.ss), probs = 0.95), abs(bhat.indiv) &lt; quantile(abs(bhat.indiv), probs = 0.975)) %&gt;% 
   mutate(z.indiv = p2z(pval.indiv, bhat.indiv), z.ss = p2z(pval.ss, bhat.ss)) %&gt;% 
   ggplot() + geom_point(aes(x = z.indiv, y = z.ss), alpha = 0.2) + facet_wrap(~phenotype) + th2 + coord_equal() + geom_abline(slope = -1, intercept = 0, color = &#39;red&#39;)</code></pre>
-<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-196-2.png" width="672" /></p>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-12-2.png" width="672" /></p>
 <pre class="r"><code>tmp %&gt;% 
   # filter(pval.indiv &lt; 0.05, pval.ss &lt; 0.05) %&gt;% 
   group_by(phenotype) %&gt;% 
   # filter(abs(bhat.ss) &lt; quantile(abs(bhat.ss), probs = 0.95), abs(bhat.indiv) &lt; quantile(abs(bhat.indiv), probs = 0.975)) %&gt;% 
   # mutate(z.indiv = p2z(pval.indiv, bhat.indiv), z.ss = p2z(pval.ss, bhat.ss)) %&gt;% 
   ggplot() + geom_point(aes(x = pip.indiv, y = pip.ss), alpha = 0.2) + facet_wrap(~phenotype) + th2 + coord_equal() </code></pre>
-<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-196-3.png" width="672" /></p>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-12-3.png" width="672" /></p>
+</div>
+<div id="comparing-to-the-elastic-net-predictor" class="section level1">
+<h1><span class="header-section-number">11</span> Comparing to the elastic net predictor</h1>
+<p>Load ridge and EN based results for T1.</p>
+<pre class="r"><code>pheno_list = read.table(&#39;../submission/simagexcan/gtex_gwas_list.txt&#39;, header = F)$V1
+tags = list(ridge = &#39;results&#39;, en = &#39;results_en&#39;)
+df = list()
+for(model in names(tags)) {
+  for(p in pheno_list) {
+    fn = paste0(&#39;~/Desktop/tmp/ukb_idp/simagexcan/&#39;, tags[[model]], &#39;/t1_gtex_gwas_x_&#39;, p, &#39;_x_simagexcan.csv&#39;)
+    if(file.exists(fn)) {
+      tmp = read.csv(fn)
+      df[[length(df) + 1]] = tmp %&gt;% mutate(phenotype = p, model = model)
+    }
+  }
+}
+
+df = do.call(rbind, df)
+
+qqplot_by_group(df$pval, group = df$model) + th + ggtitle(&#39;All&#39;)</code></pre>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>qqplot_by_group(df$pval[df$phenotype == &#39;GIANT_HEIGHT&#39;], group = df$model[df$phenotype == &#39;GIANT_HEIGHT&#39;]) + th + ggtitle(&#39;GIANT_HEIGHT&#39;)</code></pre>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-13-2.png" width="672" /></p>
+<pre class="r"><code>df %&gt;% reshape2::dcast(IDP + phenotype ~ model, value.var = &#39;bhat&#39;) %&gt;% filter(!is.na(en)) %&gt;% ggplot() + 
+  geom_point(aes(x = ridge, y = en), alpha = 0.2) +
+  geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;) + 
+  th +
+  ggtitle(&#39;beta hat&#39;)</code></pre>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>df %&gt;% mutate(zscore = p2z(pval, bhat)) %&gt;% reshape2::dcast(IDP + phenotype ~ model, value.var = &#39;zscore&#39;) %&gt;% 
+  filter(!is.na(en))  %&gt;% ggplot() + 
+  geom_point(aes(x = ridge, y = en), alpha = 0.2) +
+  geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;) + 
+  th +
+  ggtitle(&#39;zscore&#39;)</code></pre>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-14-2.png" width="672" /></p>
+<pre class="r"><code>df %&gt;% reshape2::dcast(IDP + phenotype ~ model, value.var = &#39;pip&#39;) %&gt;% filter(!is.na(en)) %&gt;% ggplot() + 
+  geom_point(aes(x = ridge, y = en), alpha = 0.2) +
+  geom_abline(slope = 1, intercept = 0, color = &#39;red&#39;) + 
+  th +
+  ggtitle(&#39;pip&#39;)</code></pre>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-14-3.png" width="672" /></p>
+</div>
+<div id="now-we-focus-on-en-based-results" class="section level1">
+<h1><span class="header-section-number">12</span> Now we focus on EN based results</h1>
+<div id="bonferroni-significant-1" class="section level2">
+<h2><span class="header-section-number">12.1</span> Bonferroni significant</h2>
+<pre class="r"><code>df = df %&gt;% filter(model == &#39;en&#39;)
+df = df %&gt;% mutate(p_adj = pval * n())
+bonferroni_cutoff = 0.01
+message(&#39;There are &#39;, df %&gt;% filter(p_adj &lt; bonferroni_cutoff) %&gt;% nrow, &#39; IDP-phenotype pairs passed Bonferroni significance cutoff at &#39;, bonferroni_cutoff)</code></pre>
+<pre><code>## There are 101 IDP-phenotype pairs passed Bonferroni significance cutoff at 0.01</code></pre>
+</div>
+<div id="credible-set-1" class="section level2">
+<h2><span class="header-section-number">12.2</span> 95% Credible set</h2>
+<pre class="r"><code>message(&#39;There are &#39;, df %&gt;% filter(cs95 &gt; 0) %&gt;% nrow, &#39; IDP-phenotype pairs within 95% credible set&#39;)</code></pre>
+<pre><code>## There are 89 IDP-phenotype pairs within 95% credible set</code></pre>
+</div>
+<div id="add-open-gwas-phenotype-1" class="section level2">
+<h2><span class="header-section-number">12.3</span> Add open GWAS phenotype</h2>
+<p>Here we focus on the phenotypes with at least one hit within 95% credible set.</p>
+<pre class="r"><code>df_cs = df %&gt;% filter(cs95 &gt; 0)
+
+df_signif = inner_join(df_ogwas, df_cs, by = c(&#39;phenotype&#39; = &#39;phenotype&#39;))
+df_signif = df_signif[ !is.na(df_signif$gwas_code), ]
+df_signif_t1 = df_signif %&gt;% filter(idp_type == &#39;t1&#39;) %&gt;% select(phenotype, gwas_code, IDP) %&gt;% distinct_all
+colnames(df_signif_t1) = c(&#39;pheno&#39;, &#39;pheno_code&#39;, &#39;idp&#39;)
+write.table(df_signif_t1, &#39;../misc_data/simagexcan_gtex_gwas_en.t1.signif.tsv&#39;, quo = F, col = T, row = F, sep = &#39;\t&#39;)</code></pre>
+</div>
+<div id="mr-results-1" class="section level2">
+<h2><span class="header-section-number">12.4</span> MR results</h2>
+<pre class="r"><code>collector_mr = list()
+collector_data = list()
+for(i in 1 : nrow(df_signif)) {
+  tmp = readRDS(paste0(&#39;~/Desktop/tmp/ukb_idp/mr_gtex_gwas/MR.gtex_gwas_en_t1&#39;, df_signif$idp_type[i], &#39;.&#39;, df_signif$IDP[i], &#39;_x_&#39;, df_signif$pheno[i], &#39;.rds&#39;))
+  if(sum(is.na(tmp$idp2pheno$mr)) == 1 | sum(is.na(tmp$pheno2idp$mr)) == 1) {
+    next
+  }
+  if(sum(tmp$idp2pheno$mr$pval &lt; 0.05) &gt; 2 | sum(tmp$pheno2idp$mr$pval &lt; 0.05) &gt; 2) {
+    collector_mr[[length(collector_mr) + 1]] = rbind(
+      tmp$idp2pheno$mr %&gt;% mutate(direction = &#39;idp2pheno&#39;, pheno = df_signif$pheno[i], IDP = df_signif$IDP[i]),
+      tmp$pheno2idp$mr %&gt;% mutate(direction = &#39;pheno2idp&#39;, pheno = df_signif$pheno[i], IDP = df_signif$IDP[i])
+    )
+    collector_data[[length(collector_data) + 1]] = rbind(
+      tmp$idp2pheno$data %&gt;% select(beta.exposure, beta.outcome, pval.exposure) %&gt;% mutate(direction = &#39;idp2pheno&#39;, pheno = df_signif$pheno[i], IDP = df_signif$IDP[i]),
+      tmp$pheno2idp$data %&gt;% select(beta.exposure, beta.outcome, pval.exposure) %&gt;% mutate(direction = &#39;pheno2idp&#39;, pheno = df_signif$pheno[i], IDP = df_signif$IDP[i])
+    )
+  }
+}
+df_data = do.call(rbind, collector_data) %&gt;% inner_join(df_annot, by = &#39;IDP&#39;)
+df_mr = do.call(rbind, collector_mr) %&gt;% inner_join(df_annot, by = &#39;IDP&#39;)</code></pre>
+<p>The selected MR pairs.</p>
+<pre class="r"><code># df_mr %&gt;% select(pheno, IDP) %&gt;% distinct() %&gt;% pander::pander()
+df_tmp = df_mr %&gt;% select(pheno, IDP) %&gt;% distinct()</code></pre>
+<p>Show the plot.</p>
+<pre class="r"><code>for(i in 1 : nrow(df_tmp)) {
+  mydat = df_data %&gt;% filter(pheno == df_tmp$pheno[i], IDP == df_tmp$IDP[i])
+  mymr = df_mr %&gt;% filter(pheno == df_tmp$pheno[i], IDP == df_tmp$IDP[i])
+  idp_name = mydat$Field[1]
+  gwas_name = mydat$pheno[1]
+  plist = list()
+  plist[[length(plist) + 1]] = mydat %&gt;% filter(direction == &#39;idp2pheno&#39;) %&gt;% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = &#39;lightgray&#39;) + geom_hline(yintercept = 0, color = &#39;lightgray&#39;) + th + ggtitle(paste0(idp_name, &#39; -&gt; \n &#39;, gwas_name)) +
+    theme(legend.position = &#39;none&#39;)
+  plist[[length(plist) + 1]] = mydat %&gt;% filter(direction == &#39;pheno2idp&#39;) %&gt;% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = &#39;lightgray&#39;) + geom_hline(yintercept = 0, color = &#39;lightgray&#39;) + th + ggtitle(paste0(gwas_name, &#39; -&gt; \n &#39;, idp_name)) +
+    theme(legend.position = &#39;none&#39;)
+  # plist[[length(plist) + 1]] = gridExtra::tableGrob(df_mr %&gt;% select(method, nsnp, b, pval, direction))
+  qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr %&gt;% select(method, nsnp, b, pval, direction), digits = 3)), ncol = 3)
+  print(qq)
+}</code></pre>
+<p><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-1.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-2.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-3.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-4.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-5.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-6.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-7.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-8.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-9.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-10.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-11.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-12.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-13.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-14.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-15.png" width="1440" /><img src="simagexcan_gtex_gwas_files/figure-html/unnamed-chunk-20-16.png" width="1440" /></p>
+</div>
 </div>
 
 

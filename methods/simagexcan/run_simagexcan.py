@@ -343,6 +343,15 @@ if __name__ == '__main__':
         D += D_chr
         numer_b += numer_b_chr
         numer_z += numer_z_chr
+    
+    # add a checker to handle traits with D == 0
+    n_bad_pheno = np.sum(D.diagonal() == 0)
+    if n_bad_pheno > 0:
+        good_pheno = D.diagonal() != 0
+        D = D[:, good_pheno][good_pheno, :]
+        numer_b = numer_b[good_pheno]
+        numer_z = numer_z[good_pheno]
+        idp_names = list(np.array(idp_names)[good_pheno])
         
     logging.info('Step2: Computing marginal test.')
     S_D = np.sqrt(D.diagonal())

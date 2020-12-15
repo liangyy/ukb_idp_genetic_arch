@@ -281,3 +281,55 @@ df_signif_t1 = df_signif %>% filter(idp_type == 't1') %>% select(phenotype, gwas
 colnames(df_signif_t1) = c('pheno', 'pheno_code', 'idp')
 write.table(df_signif_t1, '../misc_data/simagexcan_gtex_gwas_en.t1.signif.tsv', quo = F, col = T, row = F, sep = '\t')
 ```
+
+## MR results
+
+```{r}
+collector_mr = list()
+collector_data = list()
+for(i in 1 : nrow(df_signif)) {
+  tmp = readRDS(paste0('~/Desktop/tmp/ukb_idp/mr_gtex_gwas/MR.gtex_gwas_en_t1', df_signif$idp_type[i], '.', df_signif$IDP[i], '_x_', df_signif$pheno[i], '.rds'))
+  if(sum(is.na(tmp$idp2pheno$mr)) == 1 | sum(is.na(tmp$pheno2idp$mr)) == 1) {
+    next
+  }
+  if(sum(tmp$idp2pheno$mr$pval < 0.05) > 2 | sum(tmp$pheno2idp$mr$pval < 0.05) > 2) {
+    collector_mr[[length(collector_mr) + 1]] = rbind(
+      tmp$idp2pheno$mr %>% mutate(direction = 'idp2pheno', pheno = df_signif$pheno[i], IDP = df_signif$IDP[i]),
+      tmp$pheno2idp$mr %>% mutate(direction = 'pheno2idp', pheno = df_signif$pheno[i], IDP = df_signif$IDP[i])
+    )
+    collector_data[[length(collector_data) + 1]] = rbind(
+      tmp$idp2pheno$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'idp2pheno', pheno = df_signif$pheno[i], IDP = df_signif$IDP[i]),
+      tmp$pheno2idp$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'pheno2idp', pheno = df_signif$pheno[i], IDP = df_signif$IDP[i])
+    )
+  }
+}
+df_data = do.call(rbind, collector_data) %>% inner_join(df_annot, by = 'IDP')
+df_mr = do.call(rbind, collector_mr) %>% inner_join(df_annot, by = 'IDP')
+```
+
+The selected MR pairs.
+
+```{r}
+# df_mr %>% select(pheno, IDP) %>% distinct() %>% pander::pander()
+df_tmp = df_mr %>% select(pheno, IDP) %>% distinct()
+```
+
+Show the plot.
+
+```{r, fig.width=15, fig.height=5}
+for(i in 1 : nrow(df_tmp)) {
+  mydat = df_data %>% filter(pheno == df_tmp$pheno[i], IDP == df_tmp$IDP[i])
+  mymr = df_mr %>% filter(pheno == df_tmp$pheno[i], IDP == df_tmp$IDP[i])
+  idp_name = mydat$Field[1]
+  gwas_name = mydat$pheno[1]
+  plist = list()
+  plist[[length(plist) + 1]] = mydat %>% filter(direction == 'idp2pheno') %>% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = 'lightgray') + geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(idp_name, ' -> \n ', gwas_name)) +
+    theme(legend.position = 'none')
+  plist[[length(plist) + 1]] = mydat %>% filter(direction == 'pheno2idp') %>% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = 'lightgray') + geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(gwas_name, ' -> \n ', idp_name)) +
+    theme(legend.position = 'none')
+  # plist[[length(plist) + 1]] = gridExtra::tableGrob(df_mr %>% select(method, nsnp, b, pval, direction))
+  qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr %>% select(method, nsnp, b, pval, direction), digits = 3)), ncol = 3)
+  print(qq)
+}
+
+```

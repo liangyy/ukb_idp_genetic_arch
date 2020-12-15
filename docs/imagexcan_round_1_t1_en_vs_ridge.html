@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Individual-level ImageXcan (round 1) T1: EN vs ridge</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Individual-level ImageXcan (round 1) T1: EN vs ridge</h1>
+<h4 class="date">12 December, 2020</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+source(&#39;https://raw.githubusercontent.com/liangyy/misc-tools/master/plot_tool/plot_tools.R&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+pheno_interest = c(&#39;weekly_alcohol&#39;, &#39;recurrent_depressive_disorder&#39;, &#39;parent_depression&#39;, &#39;parent_AD&#39;, &#39;handedness&#39;, &#39;daily_coffee&#39;, &#39;daily_cigarettes&#39;)
+pheno_bcc = c(&#39;wbc&#39;, &#39;rbc&#39;, &#39;platelet&#39;, &#39;lymphocyte&#39;, &#39;monocyte&#39;, &#39;neutrophil&#39;, &#39;eosinophil&#39;, &#39;basophil&#39;)
+pheno_ht = c(&#39;dbp&#39;, &#39;sbp&#39;) # , &#39;ht&#39;, &#39;hb&#39;, &#39;mcv&#39;, &#39;mch&#39;, &#39;mchc&#39;)
+pheno_rand = paste0(&#39;random_pheno_&#39;, 0 : 9)
+pheno_sig_dmri = paste0(&#39;single_sig_dmri_&#39;, 0 : 9)
+pheno_sig_orig = paste0(&#39;single_sig_orig_&#39;, 0 : 9)
+source(&#39;rlib.R&#39;)
+p2z = function(p, b) {
+  sign(b) * qnorm(p / 2)
+}
+library(ggpubr)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>Here we make a very specific comparison of the ImageXcan results between elastic net and ridge based predictors using IDP T1.</p>
+</div>
+<div id="load-data" class="section level1">
+<h1><span class="header-section-number">2</span> Load data</h1>
+<pre class="r"><code>df_ridge = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear.t1.csv&#39;)
+df_en = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.linear.en_t1.csv&#39;)
+# extract the non simulation results
+df = rbind(df_ridge %&gt;% mutate(model = &#39;ridge&#39;), df_en %&gt;% mutate(model = &#39;en&#39;)) %&gt;% filter(phenotype %in% c(pheno_bcc, pheno_ht, pheno_interest))
+
+df_ridge2 = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.susie.t1.csv&#39;)
+df_en2 = read.csv(&#39;~/Desktop/tmp/ukb_idp/data/imagexcan_round_1.susie.en_t1.csv&#39;)
+# extract the non simulation results
+df2 = rbind(df_ridge2 %&gt;% mutate(model = &#39;ridge&#39;), df_en2 %&gt;% mutate(model = &#39;en&#39;)) %&gt;% filter(phenotype %in% c(pheno_bcc, pheno_ht, pheno_interest))</code></pre>
+<p>Load dMRI and T1 IDP annotations.</p>
+<pre class="r"><code>t1 = readRDS(&#39;../misc_data/process_t1/t1_meta.rds&#39;)
+t1 = t1 %&gt;% mutate(IDP = paste0(&#39;IDP-&#39;, FieldID))
+df_annot = t1</code></pre>
+</div>
+<div id="qq-plot" class="section level1">
+<h1><span class="header-section-number">3</span> QQ-plot</h1>
+<pre class="r"><code>qqplot_by_group(df$pval, group = df$model) + th</code></pre>
+<p><img src="imagexcan_round_1_t1_en_vs_ridge_files/figure-html/unnamed-chunk-68-1.png" width="672" /></p>
+</div>
+<div id="compare-bhat" class="section level1">
+<h1><span class="header-section-number">4</span> Compare bhat</h1>
+<pre class="r"><code>df %&gt;% filter(pval &lt; 1e-3) %&gt;% reshape2::dcast(IDP + phenotype ~ model, value.var = &#39;bhat&#39;) %&gt;% 
+  ggplot() +
+  geom_point(aes(x = ridge, y = en), alpha = 0.2) +
+  coord_cartesian(xlim = c(-50, 50), ylim = c(-50, 50)) + geom_abline(slope = 1, intercept = 0) + 
+  th + ggtitle(&#39;beta hat&#39;)</code></pre>
+<pre><code>## Warning: Removed 291 rows containing missing values (geom_point).</code></pre>
+<p><img src="imagexcan_round_1_t1_en_vs_ridge_files/figure-html/unnamed-chunk-69-1.png" width="672" /></p>
+<pre class="r"><code>df %&gt;% mutate(zscore = p2z(pval, bhat)) %&gt;% reshape2::dcast(IDP + phenotype ~ model, value.var = &#39;zscore&#39;) %&gt;% 
+  ggplot() +
+  geom_point(aes(x = ridge, y = en), alpha = 0.2) +
+  # coord_cartesian(xlim = c(-50, 50), ylim = c(-50, 50)) + 
+  geom_abline(slope = 1, intercept = 0) +
+  th + ggtitle(&#39;zscore&#39;)</code></pre>
+<pre><code>## Warning: Removed 272 rows containing missing values (geom_point).</code></pre>
+<p><img src="imagexcan_round_1_t1_en_vs_ridge_files/figure-html/unnamed-chunk-69-2.png" width="672" /></p>
+</div>
+<div id="compare-pip" class="section level1">
+<h1><span class="header-section-number">5</span> Compare PIP</h1>
+<pre class="r"><code>df2 %&gt;% 
+  # filter(pval &lt; 1e-3) %&gt;% 
+  reshape2::dcast(IDP + phenotype ~ model, value.var = &#39;pip&#39;) %&gt;% 
+  ggplot() +
+  geom_point(aes(x = ridge, y = en), alpha = 0.2) +
+  # coord_cartesian(xlim = c(-50, 50), ylim = c(-50, 50)) + 
+  geom_abline(slope = 1, intercept = 0) + 
+  th + ggtitle(&#39;PIP&#39;)</code></pre>
+<pre><code>## Warning: Removed 272 rows containing missing values (geom_point).</code></pre>
+<p><img src="imagexcan_round_1_t1_en_vs_ridge_files/figure-html/unnamed-chunk-70-1.png" width="672" /></p>
+</div>
+<div id="by-trait-overall-qq-plot" class="section level1">
+<h1><span class="header-section-number">6</span> By trait: overall QQ-plot</h1>
+<pre class="r"><code>p1 = df %&gt;% filter(phenotype %in% pheno_interest) %&gt;% group_by(phenotype, model) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = model)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+p2 = df %&gt;% filter(phenotype %in% pheno_bcc) %&gt;% group_by(phenotype, model) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = model)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+p3 = df %&gt;% filter(phenotype %in% pheno_ht) %&gt;% group_by(phenotype, model) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = -log10(pexp), y = -log10(pval), color = model)) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+# p4 = df %&gt;% filter(phenotype %in% pheno_rand) %&gt;% group_by(phenotype, model) %&gt;% mutate(pexp = rank(pval) / (n() + 1)) %&gt;% 
+  # ggplot() + 
+  # geom_point(aes(x = -log10(pexp), y = -log10(pval), color = model)) + 
+  # facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0)
+
+p1 / p2 / p3 </code></pre>
+<p><img src="imagexcan_round_1_t1_en_vs_ridge_files/figure-html/unnamed-chunk-71-1.png" width="768" /></p>
+</div>
+<div id="by-trait-pip-plot" class="section level1">
+<h1><span class="header-section-number">7</span> By trait: PIP plot</h1>
+<pre class="r"><code>p1 = df_ridge2 %&gt;% filter(phenotype %in% pheno_interest) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank())
+p2 = df_ridge2 %&gt;% filter(phenotype %in% pheno_bcc) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank())
+p3 = df_ridge2 %&gt;% filter(phenotype %in% pheno_ht) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank()) + 
+  ggtitle(&#39;Ridge&#39;)
+
+p11 = df_en2 %&gt;% filter(phenotype %in% pheno_interest) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank())
+p21 = df_en2 %&gt;% filter(phenotype %in% pheno_bcc) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank())
+p31 = df_en2 %&gt;% filter(phenotype %in% pheno_ht) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = IDP, y = pip, color = factor(cs))) + 
+  facet_wrap(~phenotype, scales = &#39;free_y&#39;) + th2 + geom_abline(slope = 1, intercept = 0) +
+  theme(axis.text.x = element_blank()) + 
+  ggtitle(&#39;EN&#39;)
+
+(p1 + p11) / (p2 + p21) / (p3 + p31)</code></pre>
+<p><img src="imagexcan_round_1_t1_en_vs_ridge_files/figure-html/unnamed-chunk-72-1.png" width="1536" /></p>
+</div>
+<div id="credible-set" class="section level1">
+<h1><span class="header-section-number">8</span> 95% credible set</h1>
+<pre class="r"><code>df2 %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(cs &gt; 0) %&gt;% pander::pander(caption = &#39;IDP in 95% credible set among all focal phenotypes&#39;)</code></pre>
+<table style="width:74%;">
+<caption>IDP in 95% credible set among all focal phenotypes</caption>
+<colgroup>
+<col width="16%" />
+<col width="26%" />
+<col width="12%" />
+<col width="6%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">pip</th>
+<th align="center">cs</th>
+<th align="center">model</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25882</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.8862</td>
+<td align="center">1</td>
+<td align="center">ridge</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25883</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.1364</td>
+<td align="center">1</td>
+<td align="center">ridge</td>
+</tr>
+<tr class="odd">
+<td align="center">PC-5</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">ridge</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25853</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.9682</td>
+<td align="center">2</td>
+<td align="center">en</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25850</td>
+<td align="center">handedness</td>
+<td align="center">0.9572</td>
+<td align="center">1</td>
+<td align="center">en</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25884</td>
+<td align="center">daily_coffee</td>
+<td align="center">0.9993</td>
+<td align="center">1</td>
+<td align="center">en</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="pip-0.25" class="section level1">
+<h1><span class="header-section-number">9</span> PIP &gt; 0.25</h1>
+<pre class="r"><code>df2 %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(pip &gt; 0.5) %&gt;% pander::pander(caption = &#39;IDP in 95% credible set among all focal phenotypes&#39;)</code></pre>
+<table style="width:75%;">
+<caption>IDP in 95% credible set among all focal phenotypes</caption>
+<colgroup>
+<col width="16%" />
+<col width="27%" />
+<col width="12%" />
+<col width="6%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">IDP</th>
+<th align="center">phenotype</th>
+<th align="center">pip</th>
+<th align="center">cs</th>
+<th align="center">model</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">IDP-25852</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.658</td>
+<td align="center">-1</td>
+<td align="center">ridge</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25882</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.8862</td>
+<td align="center">1</td>
+<td align="center">ridge</td>
+</tr>
+<tr class="odd">
+<td align="center">PC-5</td>
+<td align="center">daily_cigarettes</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">ridge</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25853</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.9682</td>
+<td align="center">2</td>
+<td align="center">en</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25883</td>
+<td align="center">weekly_alcohol</td>
+<td align="center">0.5768</td>
+<td align="center">-1</td>
+<td align="center">en</td>
+</tr>
+<tr class="even">
+<td align="center">PC-3</td>
+<td align="center">parent_depression</td>
+<td align="center">0.7424</td>
+<td align="center">-1</td>
+<td align="center">en</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25878</td>
+<td align="center">parent_AD</td>
+<td align="center">0.8627</td>
+<td align="center">-1</td>
+<td align="center">en</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25850</td>
+<td align="center">handedness</td>
+<td align="center">0.9572</td>
+<td align="center">1</td>
+<td align="center">en</td>
+</tr>
+<tr class="odd">
+<td align="center">IDP-25884</td>
+<td align="center">daily_coffee</td>
+<td align="center">0.9993</td>
+<td align="center">1</td>
+<td align="center">en</td>
+</tr>
+<tr class="even">
+<td align="center">IDP-25905</td>
+<td align="center">daily_coffee</td>
+<td align="center">0.9043</td>
+<td align="center">-1</td>
+<td align="center">en</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="prepare-en-signals-to-run-mr" class="section level1">
+<h1><span class="header-section-number">10</span> Prepare EN signals to run MR</h1>
+<p>95% credible set or PIP &gt; 0.5.</p>
+<pre class="r"><code>df_meta = read.csv(&#39;../misc_data/pheno_of_interest.meta_table.csv&#39;)
+tmp = rbind(
+  df2 %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(cs &gt; 0),
+  df2 %&gt;% filter(phenotype %in% pheno_interest) %&gt;% filter(pip &gt; 0.5)
+) %&gt;% select(phenotype, IDP) %&gt;% distinct()
+tmp = inner_join(tmp, df_meta, by = &#39;phenotype&#39;)
+tmp = tmp %&gt;% select(id, IDP, gwas_code)
+colnames(tmp) = c(&#39;pheno&#39;, &#39;idp&#39;, &#39;pheno_code&#39;)
+write.table(tmp, &#39;../misc_data/imagexcan_round_1.en_t1.signif.tsv&#39;, quo = F, sep = &#39;\t&#39;, row = F, col = T)</code></pre>
+</div>
+<div id="en-mr-results" class="section level1">
+<h1><span class="header-section-number">11</span> EN MR results</h1>
+<pre class="r"><code>collector_mr = list()
+collector_data = list()
+df_signif = tmp %&gt;% rename(IDP = idp)
+for(i in 1 : nrow(df_signif)) {
+  tmp = readRDS(paste0(&#39;~/Desktop/tmp/ukb_idp/mr/MR.en_t1.&#39;, df_signif$IDP[i], &#39;_x_&#39;, df_signif$pheno[i], &#39;.rds&#39;))
+  if(sum(is.na(tmp$idp2pheno$mr)) == 1 | sum(is.na(tmp$pheno2idp$mr)) == 1) {
+    next
+  }
+  if(sum(tmp$idp2pheno$mr$pval &lt; 0.05) &gt; 1 | sum(tmp$pheno2idp$mr$pval &lt; 0.05) &gt; 1) {
+    collector_mr[[length(collector_mr) + 1]] = rbind(
+      tmp$idp2pheno$mr %&gt;% mutate(direction = &#39;idp2pheno&#39;, pheno = df_signif$pheno[i], IDP = df_signif$IDP[i]),
+      tmp$pheno2idp$mr %&gt;% mutate(direction = &#39;pheno2idp&#39;, pheno = df_signif$pheno[i], IDP = df_signif$IDP[i])
+    )
+    collector_data[[length(collector_data) + 1]] = rbind(
+      tmp$idp2pheno$data %&gt;% select(beta.exposure, beta.outcome, pval.exposure) %&gt;% mutate(direction = &#39;idp2pheno&#39;, pheno = df_signif$pheno[i], IDP = df_signif$IDP[i]),
+      tmp$pheno2idp$data %&gt;% select(beta.exposure, beta.outcome, pval.exposure) %&gt;% mutate(direction = &#39;pheno2idp&#39;, pheno = df_signif$pheno[i], IDP = df_signif$IDP[i])
+    )
+  }
+}
+df_data = do.call(rbind, collector_data) %&gt;% inner_join(df_annot, by = &#39;IDP&#39;)
+df_mr = do.call(rbind, collector_mr) %&gt;% inner_join(df_annot, by = &#39;IDP&#39;)</code></pre>
+<p>The selected MR pairs.</p>
+<pre class="r"><code># df_mr %&gt;% select(pheno, IDP) %&gt;% distinct() %&gt;% pander::pander()
+df_tmp = df_mr %&gt;% select(pheno, IDP) %&gt;% distinct()</code></pre>
+<p>Show the plot.</p>
+<pre class="r"><code>for(i in 1 : nrow(df_tmp)) {
+  mydat = df_data %&gt;% filter(pheno == df_tmp$pheno[i], IDP == df_tmp$IDP[i])
+  mymr = df_mr %&gt;% filter(pheno == df_tmp$pheno[i], IDP == df_tmp$IDP[i])
+  idp_name = mydat$Field[1]
+  gwas_name = mydat$pheno[1]
+  plist = list()
+  plist[[length(plist) + 1]] = mydat %&gt;% filter(direction == &#39;idp2pheno&#39;) %&gt;% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = &#39;lightgray&#39;) + geom_hline(yintercept = 0, color = &#39;lightgray&#39;) + th + ggtitle(paste0(idp_name, &#39; -&gt; \n &#39;, gwas_name)) +
+    theme(legend.position = &#39;none&#39;)
+  plist[[length(plist) + 1]] = mydat %&gt;% filter(direction == &#39;pheno2idp&#39;) %&gt;% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = &#39;lightgray&#39;) + geom_hline(yintercept = 0, color = &#39;lightgray&#39;) + th + ggtitle(paste0(gwas_name, &#39; -&gt; \n &#39;, idp_name)) +
+    theme(legend.position = &#39;none&#39;)
+  # plist[[length(plist) + 1]] = gridExtra::tableGrob(df_mr %&gt;% select(method, nsnp, b, pval, direction))
+  qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr %&gt;% select(method, nsnp, b, pval, direction), digits = 3)), ncol = 3)
+  print(qq)
+}</code></pre>
+<p><img src="imagexcan_round_1_t1_en_vs_ridge_files/figure-html/unnamed-chunk-78-1.png" width="1440" /><img src="imagexcan_round_1_t1_en_vs_ridge_files/figure-html/unnamed-chunk-78-2.png" width="1440" /><img src="imagexcan_round_1_t1_en_vs_ridge_files/figure-html/unnamed-chunk-78-3.png" width="1440" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

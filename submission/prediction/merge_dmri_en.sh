@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
 #PBS -l walltime=6:00:00
 #PBS -l nodes=1:ppn=1
-#PBS -l mem=4gb
+#PBS -l mem=8gb
 #PBS -e logs/merge_dmri_en.err
 #PBS -o logs/merge_dmri_en.out
 

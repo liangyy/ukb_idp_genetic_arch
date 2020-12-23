@@ -1,0 +1,34 @@
+# args1: phenotype_parquet
+# args2: output
+# args3: log name
+
+# environment setup
+source /vol/bmd/yanyul/miniconda3/etc/profile.d/conda.sh
+conda activate ukb_idp
+
+# script path
+gw_ridge_script=/vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge/run_gw_ridge.py
+
+# script parameters
+outerfold=5
+innerfold=5
+
+# input
+genotype_bed_pattern=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed
+phenotype_parquet=$1  # /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/regress_out_idp_pcs/2020-05-18_final-phenotypes.cleaned_up_T1.parquet
+grm_cache=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge/gw_ridge_default_theta_g_fold_5_5.tsv.gz.grm_cache.pkl.gz
+# dupsnps=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/subset_genotypes/IDP_HM3_finalPheno.merged_all-merge.missnp
+# output
+output=$2  # /vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge/gw_ridge.t1.default_theta_g_fold_5_5.tsv.gz
+log_name=$3
+
+
+python $gw_ridge_script \
+  --geno_bed_pattern $genotype_bed_pattern \
+  --phenotype_parquet $phenotype_parquet \
+  --nfold $outerfold $innerfold \
+  --output $output \
+  --grm_cache $grm_cache \
+  > $log_name.log 2>&1
+
+# --snplist_to_exclude $dupsnps  

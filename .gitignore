@@ -33,3 +33,4 @@ logs_*
 *.grm.gz
 *.ipynb
 *_output/
+*.zip

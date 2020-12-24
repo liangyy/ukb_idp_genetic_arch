@@ -17,3 +17,6 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
     - [GTEx-GWAS phenotypes](simagexcan_gtex_gwas.html)
 
 * Summary of current runs on GTEx-GWAS phenotypes (S-ImageXcan) and a selected set of phenotypes (ImageXcan): [link](summary_121520.html)
+
+* The 2nd round of analysis
+    - Heritability [link](round_2_h2.html)

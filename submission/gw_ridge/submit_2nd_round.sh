@@ -1,5 +1,5 @@
 datadir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/second_round_idp_preprocessing
-outdir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/heritability_2nd_round
+outdir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge_2nd
 
 # t1
 idptype=t1
@@ -14,7 +14,7 @@ do
     do
       nametag=$idptype.$mode1.$mode2.$mode3
       echo $nametag
-      echo screen -dmS $nametag bash -c "bash run_generic.sh $datadir/$nametag.parquet $outdir/$nametag.log run_$nametag"
+      echo screen -dmS $nametag bash run_generic.screen $datadir/$nametag.parquet $outdir/$nametag.perf.tsv.gz run_$nametag
     done
   done
 done
@@ -32,7 +32,7 @@ do
     do
       nametag=$idptype.$mode1.$mode2.$mode3
       echo $nametag
-      echo screen -dmS $nametag bash -c "bash run_generic.sh $datadir/$nametag.parquet $outdir/$nametag.log run_$nametag"
+      screen -dmS $nametag bash run_generic.screen $datadir/$nametag.parquet $outdir/$nametag.perf.tsv.gz run_$nametag
     done
   done
 done

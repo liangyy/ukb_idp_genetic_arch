@@ -14,7 +14,7 @@ do
     do
       nametag=$idptype.$mode1.$mode2.$mode3
       echo $nametag
-      echo bash run_generic.sh $datadir/$nametag.parquet $outdir $nametag
+      bash run_generic.sh $datadir/$nametag.parquet $outdir $nametag
     done
   done
 done
@@ -32,7 +32,7 @@ do
     do
       nametag=$idptype.$mode1.$mode2.$mode3
       echo $nametag
-      echo bash run_generic.sh $datadir/$nametag.parquet $outdir $nametag
+      bash run_generic.sh $datadir/$nametag.parquet $outdir $nametag
     done
   done
 done

@@ -48,25 +48,29 @@ list2str = function(ll) {
   paste0(str, collapse = ', ')
 }
 
-perf_mr = function(exp_dat, out_dat, ld_clump_param, ld_clump_mode) {
-  clumped_exp_dat = ld_clump_local(idp_exp_dat, ld_clump_param, mode = ld_clump_mode)
+perf_mr = function(exposure, outcome, ld_clump_param, ld_clump_mode) {
+  clumped_exp_dat = ld_clump_local(exposure, ld_clump_param, mode = ld_clump_mode)
   if(nrow(clumped_exp_dat) == 0) {
     return(list(data = NA, mr = NA))
   }
   extracted_out_dat = format_data(
-    out_dat, type = 'outcome', snps = clumped_exp_dat$SNP
+    outcome, type = 'outcome', snps = clumped_exp_dat$SNP
   )
   if(nrow(extracted_out_dat) == 0) {
     return(list(data = NA, mr = NA))
   }
-  dat = harmonise_data(idp_exp_dat, gwas_dat)
+  dat = harmonise_data(clumped_exp_dat, extracted_out_dat)
   res = mr(dat)
   list(data = dat, mr = res)
 }
 
+impute_b_from_z = function(zscore, af, sample_size) {
+  bhat = zscore / sqrt(2 * sample_size * af * (1 - af))
+}
+
 load_pheno_gwas = function(filename, yaml_path) {
   col_yaml = yaml::read_yaml(yaml_path)
-  df_gwas = data.table::fread(paste0('zcat ', filename), sep = '\t', data.table = F)
+  df_gwas = data.table::fread(cmd = paste0('zcat ', filename), sep = '\t', data.table = F)
   df_gwas = df_gwas[, names(col_yaml)]
   colnames(df_gwas) = unlist(col_yaml)
   if(! 'effect_size' %in% colnames(df_gwas)) {

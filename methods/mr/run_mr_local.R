@@ -58,34 +58,32 @@ idp_gwas = idp_gwas[ idp_gwas$variant_id %in% common_snps, ]
 logging::loginfo(paste0(nrow(idp_gwas), ' SNPs are kept.'))
 
 logging::loginfo('Preparing IDP and phenotype data.frames.')
-idp_dat = format_data(
-  data.frame(
-    SNP = idp_gwas$variant_id, 
-    beta = idp_gwas$b, 
-    se = idp_gwas$b_se, 
-    effect_allele = idp_gwas$alt, 
-    other_allele = idp_gwas$ref
-  )
+idp_df = data.frame(
+  SNP = idp_gwas$variant_id,
+  beta = idp_gwas$b,
+  se = idp_gwas$b_se,
+  effect_allele = idp_gwas$alt,
+  other_allele = idp_gwas$ref
 )
-pheno_dat = format_data(
-  data.frame(
-    SNP = df_gwas$variant_id, 
-    beta = df_gwas$effect_size, 
-    se = df_gwas$se, 
-    effect_allele = df_gwas$effect_allele, 
-    other_allele = df_gwas$non_effect_allele
-  )
+idp_dat = format_data(idp_df)
+pheno_df = data.frame(
+  SNP = df_gwas$variant_id,
+  beta = df_gwas$effect_size,
+  se = df_gwas$se,
+  effect_allele = df_gwas$effect_allele,
+  other_allele = df_gwas$non_effect_allele
 )
+pheno_dat = format_data(pheno_df)
 
 logging::loginfo('Working on IDP -> Phenotype.')
 idp2pheno = perf_mr(
-  exposure = idp_dat, outcome = pheno_dat, 
+  exposure = idp_dat, outcome = pheno_df, 
   ld_clump_param = ld_clump_param, ld_clump_mode = 'idp2pheno'
 )
 
 logging::loginfo('Working on Phenotype -> IDP.')
 pheno2idp = perf_mr(
-  exposure = pheno_dat, outcome = idp_dat, 
+  exposure = pheno_dat, outcome = idp_df, 
   ld_clump_param = ld_clump_param, ld_clump_mode = 'pheno2idp'
 )
 

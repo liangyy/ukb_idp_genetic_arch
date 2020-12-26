@@ -1,7 +1,7 @@
 name_tag: 'test'
 idp_id: 'IDP-25882'
-pheno: 'alcohol_intake_freq'
-pheno_code: 'ukb-b-5779'
+pheno: 'GIANT_HEIGHT'  # 'alcohol_intake_freq'
+pheno_code: 'GIANT_HEIGHT'  # 'ukb-b-5779'
 idp_type: 'T1'
 
 ld_clump_yaml: 'test.ld_clump.yaml'

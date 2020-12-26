@@ -1,7 +1,7 @@
 # args1: nametag
 nametag=$1
 phenopre=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/gw_lasso/dmri_2nd_round/list_misc/$nametag/pheno_list
-batchsize=3
+batchsize=4
 filein=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/second_round_idp_preprocessing/$nametag.parquet
 
 mkdir -p logs_en

@@ -8,6 +8,8 @@ outfile=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/hapmap3_eur_snplist/hapmap3_eur
 export PYTHONPATH=/vol/bmd/yanyul/GitHub/misc-tools/liftover_snp:/vol/bmd/yanyul/GitHub/misc-tools/pyutil:$PYTHONPATH
 python /vol/bmd/yanyul/GitHub/misc-tools/hapmap3_snps/gen_lookup_table.py \
   --input $infile \
-  --input_map /vol/bmd/yanyul/data/hapmap3/hapmap3_r2_b36_fwd.consensus.qc.poly.map \
+  --input_bim /vol/bmd/yanyul/data/hapmap3/hapmap3_r2_b36_fwd.consensus.qc.poly.bim \
+  --input_frq /vol/bmd/yanyul/data/hapmap3/hapmap3_eur_pop_CEU.frq \
+  --target_build b37 \
   --liftover_chain /vol/bmd/yanyul/data/chain_files/hg18ToHg19.over.chain.gz \
   --output $outfile

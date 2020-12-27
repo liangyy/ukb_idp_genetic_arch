@@ -34,3 +34,5 @@ logs_*
 *.ipynb
 *_output/
 *.zip
+configs/
+list_misc/

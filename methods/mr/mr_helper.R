@@ -47,3 +47,43 @@ list2str = function(ll) {
   }
   paste0(str, collapse = ', ')
 }
+
+perf_mr = function(exposure, outcome, ld_clump_param, ld_clump_mode) {
+  clumped_exp_dat = ld_clump_local(exposure, ld_clump_param, mode = ld_clump_mode)
+  if(nrow(clumped_exp_dat) == 0) {
+    return(list(data = NA, mr = NA))
+  }
+  extracted_out_dat = format_data(
+    outcome, type = 'outcome', snps = clumped_exp_dat$SNP
+  )
+  if(nrow(extracted_out_dat) == 0) {
+    return(list(data = NA, mr = NA))
+  }
+  dat = harmonise_data(clumped_exp_dat, extracted_out_dat)
+  res = mr(dat)
+  list(data = dat, mr = res)
+}
+
+impute_b_from_z = function(zscore, af, sample_size) {
+  bhat = zscore / sqrt(2 * sample_size * af * (1 - af))
+}
+
+load_pheno_gwas = function(filename, yaml_path) {
+  col_yaml = yaml::read_yaml(yaml_path)
+  df_gwas = data.table::fread(cmd = paste0('zcat ', filename), sep = '\t', data.table = F)
+  df_gwas = df_gwas[, names(col_yaml)]
+  colnames(df_gwas) = unlist(col_yaml)
+  if(! 'effect_size' %in% colnames(df_gwas)) {
+    if(sum(c('af', 'sample_size') %in% colnames(df_gwas)) < 2) {
+      message('The effect_size column is missing. And cannot impute effect since zscore, af, and sample_size are also missing.')
+      quit()
+    }
+    df_gwas$effect_size = impute_b_from_z(df_gwas$zscore, df_gwas$af, df_gwas$sample_size)
+    df_gwas$se = df_gwas$effect_size / df_gwas$zscore
+  }
+  cols = c('variant_id', 'effect_allele', 'non_effect_allele', 'effect_size', 'se')
+  df_gwas = df_gwas[, cols]
+  df_gwas = df_gwas[ !is.na(df_gwas$variant_id), ]
+  df_gwas = df_gwas[ !duplicated(df_gwas$variant_id), ]
+  df_gwas
+}

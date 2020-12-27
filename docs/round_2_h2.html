@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Round 2: heritability</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Round 2: heritability</h1>
+<h4 class="date">23 December, 2020</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(ggrepel)
+library(data.table)
+options(datatable.fread.datatable = F)
+pheno_interest = c(&#39;weekly_alcohol&#39;, &#39;recurrent_depressive_disorder&#39;, &#39;parent_depression&#39;, &#39;parent_AD&#39;, &#39;handedness&#39;, &#39;daily_coffee&#39;, &#39;daily_cigarettes&#39;)
+pheno_bcc = c(&#39;wbc&#39;, &#39;rbc&#39;, &#39;platelet&#39;, &#39;lymphocyte&#39;, &#39;monocyte&#39;, &#39;neutrophil&#39;, &#39;eosinophil&#39;, &#39;basophil&#39;)
+pheno_ht = c(&#39;dbp&#39;, &#39;sbp&#39;) # , &#39;ht&#39;, &#39;hb&#39;, &#39;mcv&#39;, &#39;mch&#39;, &#39;mchc&#39;)
+pheno_rand = paste0(&#39;random_pheno_&#39;, 0 : 9)
+pheno_sig_dmri = paste0(&#39;single_sig_dmri_&#39;, 0 : 9)
+pheno_sig_orig = paste0(&#39;single_sig_orig_&#39;, 0 : 9)
+source(&#39;rlib.R&#39;)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>This is the heritabiltiy preliminary results of the 2nd round of the BrainXcan. In particular, we run and compare various ways to do phenotype pre-processing.</p>
+<ul>
+<li><code>orignal_t1_all_covar_no_pc</code></li>
+<li><code>orignal_t1_non_idp_covar_no_pc</code></li>
+<li><code>orignal_t1_all_covar_w_pc</code></li>
+<li><code>orignal_t1_non_idp_covar_w_pc</code></li>
+<li><code>scaled_t1_all_covar_no_pc</code></li>
+<li><code>scaled_t1_non_idp_covar_no_pc</code></li>
+<li><code>scaled_t1_all_covar_w_pc</code></li>
+<li><code>scaled_t1_non_idp_covar_w_pc</code></li>
+<li><code>regress_t1_all_covar_no_pc</code></li>
+<li><code>regress_t1_non_idp_covar_no_pc</code></li>
+<li><code>regress_t1_all_covar_w_pc</code></li>
+<li><code>regress_t1_non_idp_covar_w_pc</code></li>
+<li><code>orignal_dmri_all_covar_no_pc</code></li>
+<li><code>orignal_dmri_non_idp_covar_no_pc</code></li>
+<li><code>orignal_dmri_all_covar_w_pc</code></li>
+<li><code>orignal_dmri_non_idp_covar_w_pc</code></li>
+<li><code>regress_dmri_all_covar_no_pc</code></li>
+<li><code>regress_dmri_non_idp_covar_no_pc</code></li>
+<li><code>regress_dmri_all_covar_w_pc</code></li>
+<li><code>regress_dmri_non_idp_covar_w_pc</code></li>
+</ul>
+</div>
+<div id="load-data" class="section level1">
+<h1><span class="header-section-number">2</span> Load data</h1>
+<pre class="r"><code>types = c(&#39;scaled&#39;, &#39;regress&#39;, &#39;original&#39;)
+idps = c(&#39;dmri&#39;, &#39;t1&#39;)
+covars = c(&#39;all_covar&#39;, &#39;non_idp_covar&#39;)
+pcs = c(&#39;no_pc&#39;, &#39;w_pc&#39;)
+df = list()
+for(tt in types) {
+  for(ii in idps) {
+    for(cc in covars) {
+      for(pp in pcs) {
+        if(ii == &#39;dmri&#39; &amp; tt == &#39;scaled&#39;) {
+          next
+        }
+        tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/heritability_2nd_round/&#39;, ii, &#39;.&#39;, tt, &#39;.&#39;, cc, &#39;.&#39;, pp, &#39;.tsv.gz&#39;)
+        df[[length(df) + 1]] = read.table(tmp, sep = &#39;\t&#39;, header = T) %&gt;% mutate(scale_type = tt, idp_type = ii, pc_type = pp, covar_type = cc)
+      }
+    }
+  }
+}
+df = do.call(rbind, df)
+
+df_old = list()
+for(ii in idps) {
+  tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/heritability/pyemma.idp_&#39;, ii, &#39;.tsv.gz&#39;)
+  df_old[[length(df_old) + 1]] = read.table(tmp, sep = &#39;\t&#39;, header = T) %&gt;% mutate(idp_type = ii)
+}
+df_old[[length(df_old) + 1]] = read.table(&#39;~/Desktop/tmp/ukb_idp/heritability/pyemma.idp_original.tsv.gz&#39;, sep = &#39;\t&#39;, header = T) %&gt;% mutate(idp_type = &#39;original&#39;)
+df_old = do.call(rbind, df_old)</code></pre>
+<!-- ```{r, fig.width=3, fig.height=3} -->
+<!-- df_old %>% ggplot() + geom_histogram(aes(x = h2)) + facet_wrap( ~ idp_type, ncol = 1, scales = 'free_y') + ggtitle('Previous results') -->
+<!-- ``` -->
+</div>
+<div id="t1" class="section level1">
+<h1><span class="header-section-number">3</span> T1</h1>
+<pre class="r"><code>p1 = df %&gt;% filter(idp_type == &#39;t1&#39;, pc_type == &#39;no_pc&#39;) %&gt;% ggplot() + geom_histogram(aes(x = h2)) + facet_grid(scale_type ~ covar_type) + ggtitle(&#39;T1: no PC adjustment&#39;) + th2
+p2 = df %&gt;% filter(idp_type == &#39;t1&#39;, pc_type == &#39;w_pc&#39;) %&gt;% ggplot() + geom_histogram(aes(x = h2)) + facet_grid(scale_type ~ covar_type) + ggtitle(&#39;T1: with PC adjustment&#39;) + th2
+p1 + p2</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-103-1.png" width="1152" /></p>
+<div id="old-vs-new" class="section level2">
+<h2><span class="header-section-number">3.1</span> Old vs new</h2>
+<p>The <code>regress.all_covar.w_pc</code> matches best to the previous result. They differ by whether to inverse normalize the residual of PCs or not.</p>
+<pre class="r"><code>tmp = inner_join(df_old %&gt;% filter(idp_type == &#39;t1&#39;), df %&gt;% filter(idp_type == &#39;t1&#39;, covar_type == &#39;all_covar&#39;, scale_type == &#39;regress&#39;, pc_type == &#39;w_pc&#39;), by = &#39;phenotype&#39;, suffix = c(&#39;.old&#39;, &#39;.new&#39;))
+tmp %&gt;% ggplot() + geom_point(aes(x = h2.old, y = h2.new), alpha = 0.5) + geom_text_repel(data = tmp %&gt;% filter(abs(h2.new - h2.old) &gt; 0.05), aes(x = h2.old, y = h2.new, label = phenotype), size = 3) + th + coord_equal() + geom_abline(slope = 1, intercept = 0)</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-104-1.png" width="384" /></p>
+</div>
+<div id="original-vs-regress" class="section level2">
+<h2><span class="header-section-number">3.2</span> Original vs regress</h2>
+<p>We can see the bimodal shape when the in regress/scaled. To look into the source, we compare regress and original for no PC adjustment.</p>
+<pre class="r"><code>tmp = df %&gt;% filter(idp_type == &#39;t1&#39;, covar_type == &#39;all_covar&#39;, pc_type == &#39;no_pc&#39;) %&gt;% reshape2::dcast(phenotype ~ scale_type, value.var = &#39;h2&#39;)
+tmp %&gt;% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) + geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + th + coord_equal() + geom_abline(slope = 1, intercept = 0)</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-105-1.png" width="384" /></p>
+<p>The observation is that some IDPs have reduced h2 when adjusting for covariates but others do not. The same observation appears when comparing the <code>orignal.all_covar.no_pc</code> with the previous h2 calculated on the Owen’s original data (no PC adjustment).</p>
+<pre class="r"><code>tmp = inner_join(df_old %&gt;% filter(idp_type == &#39;original&#39;), df %&gt;% filter(idp_type == &#39;t1&#39;, covar_type == &#39;all_covar&#39;, scale_type == &#39;original&#39;, pc_type == &#39;no_pc&#39;), by = &#39;phenotype&#39;, suffix = c(&#39;.old&#39;, &#39;.new&#39;))
+tmp %&gt;% ggplot() + geom_point(aes(x = h2.new, y = h2.old), alpha = 0.5) + 
+  geom_text_repel(data = tmp %&gt;% filter(abs(h2.new - h2.old) &lt; 0.001), aes(x = h2.old, y = h2.new, label = phenotype), size = 3) +
+  th + coord_equal() + geom_abline(slope = 1, intercept = 0)</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-106-1.png" width="384" /></p>
+</div>
+<div id="scaled-vs-regress" class="section level2">
+<h2><span class="header-section-number">3.3</span> scaled vs regress</h2>
+<pre class="r"><code>tmp = df %&gt;% filter(idp_type == &#39;t1&#39;, covar_type == &#39;all_covar&#39;, pc_type == &#39;no_pc&#39;) %&gt;% reshape2::dcast(phenotype ~ scale_type, value.var = &#39;h2&#39;)
+p1 = tmp %&gt;% ggplot() + geom_point(aes(x = regress, y = scaled), alpha = 0.5) + 
+  # geom_text_repel(data = tmp %&gt;% filter(abs(scaled - regress) &lt; 0.001), aes(x = regress, y = scaled, label = phenotype), size = 3) + 
+  th + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;no PC&#39;)
+tmp = df %&gt;% filter(idp_type == &#39;t1&#39;, covar_type == &#39;all_covar&#39;, pc_type == &#39;w_pc&#39;) %&gt;% reshape2::dcast(phenotype ~ scale_type, value.var = &#39;h2&#39;)
+p2 = tmp %&gt;% ggplot() + geom_point(aes(x = regress, y = scaled), alpha = 0.5) + 
+  # geom_text_repel(data = tmp %&gt;% filter(abs(scaled - regress) &lt; 0.001), aes(x = regress, y = scaled, label = phenotype), size = 3) + 
+  th + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;with PC&#39;)
+p1 + p2</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-107-1.png" width="576" /></p>
+<p>Overall they agree and scaled ones tend to have slightly higher h2.</p>
+</div>
+</div>
+<div id="withwithout-pc" class="section level1">
+<h1><span class="header-section-number">4</span> With/without PC</h1>
+<p>For T1, we may or may not want to use PC adjustment but we do want to use “scaled” scale.</p>
+<pre class="r"><code>tmp = df %&gt;% filter(idp_type == &#39;t1&#39;, covar_type == &#39;all_covar&#39;, scale_type == &#39;scaled&#39;) %&gt;% reshape2::dcast(phenotype ~ pc_type, value.var = &#39;h2&#39;)
+p1 = tmp %&gt;% ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.5) + 
+  # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
+  th + coord_equal() + geom_abline(slope = 1, intercept = 0) 
+p1</code></pre>
+<pre><code>## Warning: Removed 5 rows containing missing values (geom_point).</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-108-1.png" width="288" /></p>
+</div>
+<div id="dmri" class="section level1">
+<h1><span class="header-section-number">5</span> dMRI</h1>
+<pre class="r"><code>p1 = df %&gt;% filter(idp_type == &#39;dmri&#39;, pc_type == &#39;no_pc&#39;) %&gt;% ggplot() + geom_histogram(aes(x = h2)) + facet_grid(scale_type ~ covar_type) + ggtitle(&#39;dMRI: no PC adjustment&#39;) + th2
+p2 = df %&gt;% filter(idp_type == &#39;dmri&#39;, pc_type == &#39;w_pc&#39;) %&gt;% ggplot() + geom_histogram(aes(x = h2)) + facet_grid(scale_type ~ covar_type) + ggtitle(&#39;dMRI: with PC adjustment&#39;) + th2
+p1 + p2</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-109-1.png" width="1152" /></p>
+<p>Overall, they agree well.</p>
+<div id="old-vs-new-1" class="section level2">
+<h2><span class="header-section-number">5.1</span> Old vs new</h2>
+<p>The <code>regress.all_covar.w_pc</code> matches best to the previous result. They differ by whether to inverse normalize the residual of PCs or not.</p>
+<pre class="r"><code>tmp = inner_join(df_old %&gt;% filter(idp_type == &#39;dmri&#39;), df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, scale_type == &#39;regress&#39;, pc_type == &#39;w_pc&#39;), by = &#39;phenotype&#39;, suffix = c(&#39;.old&#39;, &#39;.new&#39;))
+tmp %&gt;% ggplot() + geom_point(aes(x = h2.old, y = h2.new), alpha = 0.5) + 
+  # geom_text_repel(data = tmp %&gt;% filter(abs(h2.new - h2.old) &gt; 0.05), aes(x = h2.old, y = h2.new, label = phenotype), size = 3) + 
+  th + coord_equal() + geom_abline(slope = 1, intercept = 0)</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-110-1.png" width="384" /></p>
+</div>
+<div id="original-vs-regress-1" class="section level2">
+<h2><span class="header-section-number">5.2</span> Original vs regress</h2>
+<p>Since we think dMRI should be used in the original scale, we compare original and regress scaling.</p>
+<pre class="r"><code>tmp = df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, pc_type == &#39;no_pc&#39;) %&gt;% reshape2::dcast(phenotype ~ scale_type, value.var = &#39;h2&#39;)
+p1 = tmp %&gt;% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) + 
+  # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
+  th + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;no PC&#39;)
+tmp = df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, pc_type == &#39;w_pc&#39;) %&gt;% reshape2::dcast(phenotype ~ scale_type, value.var = &#39;h2&#39;)
+p2 = tmp %&gt;% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) + 
+  # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
+  th + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;with PC&#39;)
+p1 + p2</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-111-1.png" width="576" /></p>
+<p>They have very similar h2.</p>
+</div>
+</div>
+<div id="withwithout-pc-1" class="section level1">
+<h1><span class="header-section-number">6</span> With/without PC</h1>
+<p>For dMRI, we may want to use PC adjustment in original scale.</p>
+<pre class="r"><code>tmp = df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, scale_type == &#39;original&#39;) %&gt;% reshape2::dcast(phenotype ~ pc_type, value.var = &#39;h2&#39;)
+p1 = tmp %&gt;% ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.5) + 
+  # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
+  th + coord_equal() + geom_abline(slope = 1, intercept = 0) 
+p1</code></pre>
+<pre><code>## Warning: Removed 9 rows containing missing values (geom_point).</code></pre>
+<p><img src="round_2_h2_files/figure-html/unnamed-chunk-112-1.png" width="288" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

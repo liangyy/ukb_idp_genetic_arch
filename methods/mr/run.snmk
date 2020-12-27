@@ -16,6 +16,10 @@ else:
 rule all:
     input:
         [ '{outdir}/MR.{name_tag}.{idp_x_gwas_code}.rds'.format(idp_x_gwas_code=n, **config) for n in idp_pheno.keys() ]
+        
+rule all_local:
+    input:
+        [ '{outdir}/MR_local.{name_tag}.{idp_x_gwas_code}.rds'.format(idp_x_gwas_code=n, **config) for n in idp_pheno.keys() ]
 
 # idp_pattern = config['idp_gwas_pattern'].format(chr_num='{chr_num}', **config)
 rule mr:
@@ -37,4 +41,25 @@ rule mr:
           --open_gwas_id {params.gwas_code} \
           --output {output[0]}'
         
-        
+rule mr_local:
+    input:
+        ld = config['ld_clump_yaml'],
+        idp_gwas = lambda wildcards: [ config['idp_gwas_pattern'].format(chr_num=i, idp=wildcards.idp, **config) for i in range(1, 23) ],
+        snp_bim = [ config['snp_bim'].format(chr_num=i) for i in range(1, 23) ],
+        gwas_file = config['gwas_file_pattern'],
+        gwas_yaml = config['gwas_yaml']
+    params:
+        idp_pattern = lambda wildcards: config['idp_gwas_pattern'].format(chr_num='[chr_num]', idp=wildcards.idp, **config),
+        bim_pattern = config['snp_bim'].format(chr_num='[chr_num]')
+    output:
+        '{outdir}/MR_local.{name_tag}.{idp}_x_{gwas_name}.rds'
+    shell:
+        'Rscript run_mr_local.R \
+          --idp_gwas_pattern {params.idp_pattern} \
+          --snp_meta {params.bim_pattern} \
+          --ld_clump_yaml {input.ld} \
+          --gwas_file {input.gwas_file} \
+          --gwas_yaml {input.gwas_yaml} \
+          --output {output[0]}'
+
+    

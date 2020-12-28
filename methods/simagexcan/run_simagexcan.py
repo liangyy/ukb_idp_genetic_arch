@@ -135,11 +135,16 @@ def _parse_args(args_list, desired_cols):
         rename_dict[dict[dd]] = dd
     return fn, rename_dict
     
-def _parse_gwas_args(args_list):
-    have_effect_size = False
-    for kk in args_list:
-        if 'effect_size:' in kk:
-            have_effect_size = True
+def _parse_gwas_args(args_list, mode='effect_size'):
+    if mode == 'effect_size':
+        have_effect_size = True
+    elif mode == 'zscore':
+        have_effect_size = False
+    else:
+        raise ValueError(f'Wrong loading mode for GWAS file: mode = {mode}')
+    # for kk in args_list:
+    #     if 'effect_size:' in kk:
+    #         have_effect_size = True
     if have_effect_size is True:
         desired_cols = [
             'snpid', 'non_effect_allele', 'effect_allele', 
@@ -157,6 +162,12 @@ def _parse_gwas_args(args_list):
             break
     return fn, rename_dict, snpid_name
 
+def get_snpid_col(gwas_args_list):
+    for i in gwas_args_list:
+        if 'snpid:' in i:
+            _, tmp = i.split(':')
+            return tmp
+
 def impute_b_from_z(zscore, af, n):
     se = 1 / np.sqrt(2 * n * af * (1 - af))
     bhat = zscore * se
@@ -168,8 +179,15 @@ def clean_up_chr(ll):
     return ll
     
 def load_gwas(gwas_args_list):
-    fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list)
+    snpid_col = get_snpid_col(gwas_args_list)
+    # fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list)
     df = read_table(fn, indiv_col=snpid_col)
+    if 'effect_size' in df.columns:
+        fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='effect_size')
+    elif 'zscore' in df.columns:
+        fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='zscore')
+    else:
+        raise ValueError('We need either effect_size or zscore in GWAS file.')
     df.rename(columns={'indiv': snpid_col}, inplace=True)
     df.rename(columns=rename_dict, inplace=True)
     df.drop_duplicates('snpid', inplace=True)

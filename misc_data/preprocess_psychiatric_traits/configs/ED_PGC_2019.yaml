@@ -11,3 +11,8 @@ pvalue: 'PVAL'
 sample_size_half: 'NEFFDIV2'
 
 file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/pgcAN2.2019-07.vcf.tsv.gz'
+
+
+extra_command:
+  - '-meta_extra_col rsid:6'
+  - '-skip_until_header CHROM'

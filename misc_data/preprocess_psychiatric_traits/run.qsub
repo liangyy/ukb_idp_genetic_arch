@@ -13,14 +13,15 @@ SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snake
 
 mkdir -p ${PBS_O_WORKDIR}/configs_full
 
-cat ${PBS_O_WORKDIR}/configs/$CONFIG.yaml > ${PBS_O_WORKDIR}/configs_full/$CONFIG.yaml
-cat ${PBS_O_WORKDIR}/config.yaml >> ${PBS_O_WORKDIR}/configs_full/$CONFIG.yaml
+cat ${PBS_O_WORKDIR}/config.yaml > ${PBS_O_WORKDIR}/configs_full/$CONFIG.yaml
+echo "" >> ${PBS_O_WORKDIR}/configs_full/$CONFIG.yaml
+cat ${PBS_O_WORKDIR}/configs/$CONFIG.yaml >> ${PBS_O_WORKDIR}/configs_full/$CONFIG.yaml
 
 cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/harmonize_gwas
 
 $SNMK -s run.snmk \
   --configfile ${PBS_O_WORKDIR}/configs_full/$CONFIG.yaml \
-  -p > \
+  -p --config nametag=$CONFIG > \
   ${PBS_O_WORKDIR}/logs/harmonize_$CONFIG.log 2>&1
 
 

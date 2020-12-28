@@ -10,3 +10,7 @@ pvalue: 'P'
 sample_size: 'Weight'
 
 file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/pgc_alcdep.eur_discovery.aug2018_release.txt.gz'
+
+extra_command:
+  - '-meta_extra_col rsid:6'
+  - "separator ' '"

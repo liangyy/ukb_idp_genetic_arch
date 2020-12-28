@@ -12,4 +12,4 @@ pvalue: 'P'
 zscore: 'Zscore'
 sample_size: 'N_analyzed'
 
-file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/SavageJansen_2018_intelligence_metaanalysis.txt'
+file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/cleaned_SavageJansen_2018_intelligence_metaanalysis.tsv.gz'

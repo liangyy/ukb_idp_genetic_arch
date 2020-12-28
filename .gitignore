@@ -36,3 +36,4 @@ logs_*
 *.zip
 configs/
 list_misc/
+configs_full/

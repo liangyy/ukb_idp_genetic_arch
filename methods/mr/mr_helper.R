@@ -71,8 +71,14 @@ impute_b_from_z = function(zscore, af, sample_size) {
 load_pheno_gwas = function(filename, yaml_path) {
   col_yaml = yaml::read_yaml(yaml_path)
   df_gwas = data.table::fread(cmd = paste0('zcat ', filename), sep = '\t', data.table = F)
-  df_gwas = df_gwas[, names(col_yaml)]
-  colnames(df_gwas) = unlist(col_yaml)
+  col_yaml_cleaned = list()
+  for(col in names(col_yaml)) {
+    if(col %in% colnames(df_gwas)) {
+      col_yaml_cleaned[[col]] = col_yaml[[col]]
+    }
+  }
+  df_gwas = df_gwas[, names(col_yaml_cleaned)]
+  colnames(df_gwas) = unlist(col_yaml_cleaned)
   if(! 'effect_size' %in% colnames(df_gwas)) {
     if(sum(c('af', 'sample_size') %in% colnames(df_gwas)) < 2) {
       message('The effect_size column is missing. And cannot impute effect since zscore, af, and sample_size are also missing.')

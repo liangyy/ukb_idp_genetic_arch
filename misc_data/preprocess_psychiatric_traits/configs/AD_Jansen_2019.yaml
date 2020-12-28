@@ -1,0 +1,15 @@
+genome_build: 'hg19'
+
+variant_id: 'SNP'
+chromosome: 'CHR'
+position: 'BP'
+effect_allele: 'A1'
+non_effect_allele: 'A2'
+frequency: 'EAF'
+effect_size: 'BETA'
+effect_se: 'SE'
+zscore: 'Z'
+pvalue: 'P'
+sample_size: 'Neff'
+
+file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/AD_sumstats_Jansenetal_2019sept.txt.gz'

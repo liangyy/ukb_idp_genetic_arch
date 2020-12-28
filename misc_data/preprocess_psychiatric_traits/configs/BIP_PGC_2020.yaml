@@ -1,0 +1,13 @@
+genome_build: 'hg19'
+
+variant_id: 'SNP'
+chromosome: 'CHR'
+position: 'BP'
+effect_allele: 'A1'
+non_effect_allele: 'A2'
+OR: 'OR'
+effect_se: 'SE'
+pvalue: 'P'
+sample_size: 'Neff'
+
+file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/daner_PGC_BIP32b_mds7a_0416a.gz'

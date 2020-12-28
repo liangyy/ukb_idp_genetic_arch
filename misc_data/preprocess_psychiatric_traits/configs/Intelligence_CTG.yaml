@@ -1,0 +1,15 @@
+genome_build: 'hg19'
+
+variant_id: 'SNP'
+chromosome: 'CHR'
+position: 'POS'
+effect_allele: 'A1'
+non_effect_allele: 'A2'
+frequency: 'EAF_HRC'
+effect_size: 'stdBeta'
+effect_se: 'SE'
+pvalue: 'P'
+zscore: 'Zscore'
+sample_size: 'N_analyzed'
+
+file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/SavageJansen_2018_intelligence_metaanalysis.txt'

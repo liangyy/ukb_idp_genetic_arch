@@ -1,0 +1,12 @@
+genome_build: 'hg19'
+
+variant_id: 'SNP'
+chromosome: 'CHR'
+position: 'BP'
+effect_allele: 'A1'
+non_effect_allele: 'A2'
+OR: 'OR'
+effect_se: 'SE'
+pvalue: 'P'
+
+file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/iPSYCH-PGC_ASD_Nov2017.gz'

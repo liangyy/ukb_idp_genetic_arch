@@ -1,0 +1,26 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=16gb
+#PBS -e logs/harmonize_$CONFIG.err
+#PBS -o logs/harmonize_$CONFIG.out
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate imlabtools
+SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snakemake
+
+mkdir -p ${PBS_O_WORKDIR}/configs_full
+
+cat ${PBS_O_WORKDIR}/configs/$CONFIG.yaml > ${PBS_O_WORKDIR}/configs_full/$CONFIG.yaml
+cat ${PBS_O_WORKDIR}/config.yaml >> ${PBS_O_WORKDIR}/configs_full/$CONFIG.yaml
+
+cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/harmonize_gwas
+
+$SNMK -s run.snmk \
+  --configfile ${PBS_O_WORKDIR}/configs_full/$CONFIG.yaml \
+  -p > \
+  ${PBS_O_WORKDIR}/logs/harmonize_$CONFIG.log 2>&1
+
+

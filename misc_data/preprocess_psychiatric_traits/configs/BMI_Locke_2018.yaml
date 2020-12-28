@@ -1,12 +1,13 @@
 genome_build: 'hg19'
 
-variant_id: 'RSID'
+variant_id: 'SNP'
 chromosome: 'CHR'
 position: 'POS'
 effect_allele: 'Tested_Allele'
 non_effect_allele: 'Other_Allele'
-frequency: 'EAF_UKB'
-zscore: 'Z'
+frequency: 'Freq_Tested_Allele_in_HRS'
+effect_size: 'BETA'
+effect_se: 'SE'
 pvalue: 'P'
 sample_size: 'N'
 

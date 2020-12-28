@@ -8,9 +8,9 @@ do
     e=`cat $fn|tail -n 1 | grep 'unlock\|shadow'`
     if [[ ! -z $e ]]
     then
-      qsub -v CONFIG=$i run.qsub 
+      echo qsub -v CONFIG=$i -N $i run.qsub 
     fi
   else
-    qsub -v CONFIG=$i run.qsub
+    echo qsub -v CONFIG=$i -N $i run.qsub
   fi
 done

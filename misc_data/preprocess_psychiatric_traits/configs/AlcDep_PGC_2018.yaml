@@ -13,7 +13,7 @@ file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/pgc_al
 
 extra_command:
   - '-meta_extra_col rsid:6'
-  - "separator ' '"
+  - "-separator ' '"
   - '--chromosome_format'
 
   

@@ -13,6 +13,6 @@ sample_size: 'N'
 file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/sumstats_neuroticism_ctg_format.txt.gz'
 
 extra_command:
-  - '-meta_extra_col rsid:6'
+  - '-meta_extra_col rsid:6 reference_frequency:5'
   - '--chromosome_format'
 

@@ -14,5 +14,5 @@ file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/daner_
 
 
 extra_command:
-  - '-meta_extra_col rsid:6'
+  - '-meta_extra_col rsid:6 reference_frequency:5'
   - '--chromosome_format'

@@ -13,7 +13,7 @@ file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/iPSYCH
 
 
 extra_command:
-  - '-meta_extra_col rsid:6'
+  - '-meta_extra_col rsid:6 reference_frequency:5'
   - "--insert_value n_cases 18382"
   - "--insert_value n_controls 27969"
   - '--chromosome_format'

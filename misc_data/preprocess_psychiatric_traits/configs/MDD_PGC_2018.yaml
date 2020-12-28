@@ -11,3 +11,8 @@ pvalue: 'P'
 sample_size_half: 'Neff_half'
 
 file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/daner_pgc_mdd_meta_w2_no23andMe_rmUKBB.gz'
+
+
+extra_command:
+  - '-meta_extra_col rsid:6'
+  - '--chromosome_format'

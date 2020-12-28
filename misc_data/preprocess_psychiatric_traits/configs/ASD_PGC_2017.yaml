@@ -16,4 +16,5 @@ extra_command:
   - '-meta_extra_col rsid:6'
   - "--insert_value n_cases 18382"
   - "--insert_value n_controls 27969"
-
+  - '--chromosome_format'
+  

@@ -16,3 +16,4 @@ file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/GWAS_E
 extra_command:
   - '-meta_extra_col rsid:6'
   - '--insert_value sample_size 766345'
+  - '--chromosome_format'

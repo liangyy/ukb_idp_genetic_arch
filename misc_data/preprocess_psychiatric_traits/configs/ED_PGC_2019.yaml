@@ -16,3 +16,4 @@ file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/pgcAN2
 extra_command:
   - '-meta_extra_col rsid:6'
   - '-skip_until_header CHROM'
+  - '--chromosome_format'

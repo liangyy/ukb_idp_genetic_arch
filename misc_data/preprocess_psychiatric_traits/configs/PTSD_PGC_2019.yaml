@@ -11,3 +11,8 @@ pvalue: 'P'
 sample_size: 'Neff'
 
 file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/pts_eur_freeze2_overall.results.gz'
+
+extra_command:
+  - '-meta_extra_col rsid:6'
+  - '--chromosome_format'
+

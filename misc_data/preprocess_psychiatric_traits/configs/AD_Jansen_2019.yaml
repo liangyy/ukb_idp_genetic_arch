@@ -13,3 +13,8 @@ pvalue: 'P'
 sample_size: 'Neff'
 
 file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/AD_sumstats_Jansenetal_2019sept.txt.gz'
+
+
+extra_command:
+  - '-meta_extra_col rsid:6'
+  - '--chromosome_format'

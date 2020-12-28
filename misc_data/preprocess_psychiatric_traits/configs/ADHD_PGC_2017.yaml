@@ -10,3 +10,9 @@ effect_se: 'SE'
 pvalue: 'P'
 
 file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/adhd_eur_jun2017.gz'
+
+
+extra_command:
+  - '-meta_extra_col rsid:6'
+  - '--chromosome_format'
+  

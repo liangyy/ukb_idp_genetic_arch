@@ -20,3 +20,5 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 * The 2nd round of analysis
     - Heritability [link](round_2_h2.html)
+
+* Psychiatric traits [link](simagexcan_psychiatric.html)

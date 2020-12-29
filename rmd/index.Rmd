@@ -20,3 +20,6 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 * The 2nd round of analysis
     - Heritability [link](round_2_h2.html)
+    - Cross-validated performance (Spearman's correlation) [link](round_2_cv_perf.html)
+
+* Psychiatric traits [link](simagexcan_psychiatric.html)

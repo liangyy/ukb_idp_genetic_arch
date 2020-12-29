@@ -1,0 +1,24 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=4
+#PBS -l mem=16gb
+#PBS -e logs/mr_local_$CONFIG.err
+#PBS -o logs/mr_local_$CONFIG.out
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate two_sample_mr
+SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snakemake
+
+module load gcc
+module load plink/1.90
+
+cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/mr
+
+$SNMK -s run.snmk \
+  --configfile ${PBS_O_WORKDIR}/config.$CONFIG.yaml \
+  -p --cores 4 all_local > \
+  ${PBS_O_WORKDIR}/logs/mr_local_$CONFIG.log 2>&1
+
+

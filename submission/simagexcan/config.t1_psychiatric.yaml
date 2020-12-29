@@ -19,5 +19,5 @@ idp_weight:
     effect_allele: 'a0'
     non_effect_allele: 'a1'
     chr: 'chr'
-genotype_covariance: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan/output/ukb_idp.geno_cov.chr{chr_num}.banded.npz'
+genotype_covariance: '/scratch/t.cri.yliang/ukb_idp/simagexcan_geno_cov/ukb_idp.geno_cov.chr{chr_num}.banded.npz'
 gwas_list: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/preprocess_psychiatric_traits/trait_list.txt'

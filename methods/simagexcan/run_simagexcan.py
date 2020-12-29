@@ -114,7 +114,7 @@ def harmonize_gwas_and_weight(gwas, weight):
     )
     return df_gwas, df_weight
 
-def _parse_args(args_list, desired_cols):
+def _parse_args(args_list, desired_cols, no_raise=False):
     fn = args_list[0]
     if not pathlib.Path(fn).is_file():
         raise ValueError('Filename is wrong. Cannot find the file.')
@@ -126,7 +126,10 @@ def _parse_args(args_list, desired_cols):
             raise ValueError('Wrong gwas args list. Need [col]:[name] pairs.')
         col, name = tmp
         if col not in desired_cols:
-            raise ValueError(f'Wrong col = {col}.')
+            if no_raise is True:
+                continue
+            else:
+                raise ValueError(f'Wrong col = {col}.')
         dict[col] = name
     rename_dict = OrderedDict()
     for dd in desired_cols:
@@ -155,7 +158,7 @@ def _parse_gwas_args(args_list, mode='effect_size'):
             'snpid', 'non_effect_allele', 'effect_allele', 
             'zscore', 'allele_frequency', 'sample_size', 'chr'
         ]
-    fn, rename_dict = _parse_args(args_list, desired_cols)
+    fn, rename_dict = _parse_args(args_list, desired_cols, no_raise=True)
     for k, v in rename_dict.items():
         if v == 'snpid':
             snpid_name = k
@@ -179,13 +182,14 @@ def clean_up_chr(ll):
     return ll
     
 def load_gwas(gwas_args_list):
-    snpid_col = get_snpid_col(gwas_args_list)
+    snpid_col = get_snpid_col(gwas_args_list[1:])
+    fn = gwas_args_list[0]
     # fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list)
     df = read_table(fn, indiv_col=snpid_col)
     if 'effect_size' in df.columns:
-        fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='effect_size')
+        _, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='effect_size')
     elif 'zscore' in df.columns:
-        fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='zscore')
+        _, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='zscore')
     else:
         raise ValueError('We need either effect_size or zscore in GWAS file.')
     df.rename(columns={'indiv': snpid_col}, inplace=True)

@@ -1,0 +1,20 @@
+genome_build: 'hg19'
+
+variant_id: 'SNP'
+chromosome: 'CHR'
+position: 'BP'
+effect_allele: 'A1'
+non_effect_allele: 'A2'
+OR: 'OR'
+effect_se: 'SE'
+pvalue: 'P'
+
+file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/adhd_eur_jun2017.gz'
+
+
+extra_command:
+  - '-meta_extra_col rsid:6 reference_frequency:5'
+  - '--chromosome_format'
+  - '--insert_value n_cases 19099'
+  - '--insert_value n_controls 34194'
+ 

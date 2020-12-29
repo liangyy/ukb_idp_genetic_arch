@@ -1,0 +1,18 @@
+genome_build: 'hg19'
+
+variant_id: 'SNP'
+chromosome: 'CHR'
+position: 'BP'
+effect_allele: 'A1'
+non_effect_allele: 'A2'
+OR: 'OR'
+effect_se: 'SE'
+pvalue: 'P'
+sample_size: 'Neff_half_x_2'
+
+file_path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/raw/cleaned_daner_pgc_mdd_meta_w2_no23andMe_rmUKBB.gz'
+
+
+extra_command:
+  - '-meta_extra_col rsid:6 reference_frequency:5'
+  - '--chromosome_format'

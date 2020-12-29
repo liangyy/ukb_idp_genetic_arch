@@ -1,0 +1,9 @@
+variant_id: 'variant_id'
+effect_allele: 'effect_allele'
+non_effect_allele: 'non_effect_allele'
+effect_size: 'effect_size'
+standard_error: 'se'
+zscore: 'zscore'
+frequency: 'af'
+sample_size: 'sample_size'
+

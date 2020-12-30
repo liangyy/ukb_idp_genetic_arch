@@ -29,7 +29,7 @@ nowdir=`pwd`
 
 for i in `ls batch_list_en/$nametag`
 do
-  if [[ -f logs_en/$nametag/run_train_$i.out ]]
+  if [[ -f logs_en/$nametag/run_train_$i.log ]]
   then
     tmp=`cat logs_en/$nametag/run_train_$i.log | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l`
     if [[ $tmp = 1 ]]
@@ -40,4 +40,5 @@ do
     # :
     qsub -v BATCH=$i,NAMETAG=$nametag -N train_gw_en_$i run_en_train.qsub
   fi
+  # echo qsub -v BATCH=$i,NAMETAG=$nametag -N train_gw_en_$i run_en_train.qsub
 done

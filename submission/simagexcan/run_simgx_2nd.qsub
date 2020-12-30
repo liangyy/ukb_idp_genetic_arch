@@ -1,6 +1,5 @@
 #PBS -S /bin/bash
 #PBS -l walltime=24:00:00
-#PBS -l nodes=1:ppn=${PPN}
 #PBS -l mem=64gb
 #PBS -e logs/run_simgx_2nd_${NAME}.err
 #PBS -o logs/run_simgx_2nd_${NAME}.out

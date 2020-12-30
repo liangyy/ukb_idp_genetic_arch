@@ -13,8 +13,11 @@ do
     for mode3 in $mode3s
     do
       nametag=$idptype.$mode1.$mode2.$mode3
-      echo $nametag
-      echo screen -dmS $nametag bash train_generic.screen $datadir/$nametag.parquet $outdir/$nametag.gw_ridge_beta.parquet train_$nametag
+      if [[ ! -f $outdir/$nametag.gw_ridge_beta.parquet ]]
+      then 
+        echo $nametag
+        screen -dmS $nametag bash train_generic.screen $datadir/$nametag.parquet $outdir/$nametag.gw_ridge_beta.parquet train_$nametag
+      fi
     done
   done
 done
@@ -31,8 +34,11 @@ do
     for mode3 in $mode3s
     do
       nametag=$idptype.$mode1.$mode2.$mode3
-      echo $nametag
-      screen -dmS $nametag bash train_generic.screen $datadir/$nametag.parquet $outdir/$nametag.gw_ridge_beta.parquet train_$nametag
+      if [[ ! -f $outdir/$nametag.gw_ridge_beta.parquet ]]
+      then 
+        echo $nametag
+        echo screen -dmS $nametag bash train_generic.screen $datadir/$nametag.parquet $outdir/$nametag.gw_ridge_beta.parquet train_$nametag
+      fi
     done
   done
 done

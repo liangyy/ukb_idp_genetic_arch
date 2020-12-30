@@ -134,7 +134,10 @@ def _parse_args(args_list, desired_cols, no_raise=False):
     rename_dict = OrderedDict()
     for dd in desired_cols:
         if dd not in dict:
-            raise ValueError(f'Need to have col = {dd}.')
+            if no_raise is True:
+                continue
+            else:
+                raise ValueError(f'Need to have col = {dd}.')
         rename_dict[dict[dd]] = dd
     return fn, rename_dict
     

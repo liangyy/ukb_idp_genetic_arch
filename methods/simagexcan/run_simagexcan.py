@@ -180,15 +180,21 @@ def clean_up_chr(ll):
     for i in range(len(ll)):
         ll[i] = re.sub('chr', '', ll[i])
     return ll
-    
+
+def get_key_by_val(val, dict_):
+    for i in dict_.keys():
+        if dict_[i] == val:
+            return i
+    return None
+
 def load_gwas(gwas_args_list):
-    snpid_col = get_snpid_col(gwas_args_list[1:])
-    fn = gwas_args_list[0]
-    # fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list)
+    # snpid_col = get_snpid_col(gwas_args_list[1:])
+    # fn = gwas_args_list[0]
+    fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list)
     df = read_table(fn, indiv_col=snpid_col)
-    if 'effect_size' in df.columns:
+    if get_key_by_val('effect_size', rename_dict) is not None and 'effect_size' in df.columns:
         _, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='effect_size')
-    elif 'zscore' in df.columns:
+    elif get_key_by_val('zscore', rename_dict) is not None and 'zscore' in df.columns:
         _, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='zscore')
     else:
         raise ValueError('We need either effect_size or zscore in GWAS file.')

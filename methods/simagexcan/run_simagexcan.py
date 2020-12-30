@@ -114,24 +114,28 @@ def harmonize_gwas_and_weight(gwas, weight):
     )
     return df_gwas, df_weight
 
-def _parse_args(args_list, desired_cols, no_raise=False):
+def _parse_args(args_list, desired_cols=None, no_raise=False):
     fn = args_list[0]
     if not pathlib.Path(fn).is_file():
         raise ValueError('Filename is wrong. Cannot find the file.')
     dict = {}
     snpid_name = None
+    desired_cols_tmp = []
     for i in args_list[1:]:
         tmp = i.split(':')
         if len(tmp) != 2:
             raise ValueError('Wrong gwas args list. Need [col]:[name] pairs.')
         col, name = tmp
-        if col not in desired_cols:
+        if desired_cols is None:
+            desired_cols_tmp.append(col) 
+        elif col not in desired_cols:
             if no_raise is True:
                 continue
             else:
                 raise ValueError(f'Wrong col = {col}.')
         dict[col] = name
     rename_dict = OrderedDict()
+    desired_cols = desired_cols_tmp
     for dd in desired_cols:
         if dd not in dict:
             if no_raise is True:

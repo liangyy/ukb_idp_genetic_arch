@@ -381,7 +381,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Round 2: Cross-validated performance</h1>
-<h4 class="date">29 December, 2020</h4>
+<h4 class="date">30 December, 2020</h4>
 
 </div>
 
@@ -488,7 +488,7 @@ p2 = df %&gt;% filter(idp_type == &#39;t1&#39;, pc_type == &#39;w_pc&#39;) %&gt;
 p1 + p2</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-70-1.png" width="1152" /></p>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-10-1.png" width="1152" /></p>
 <div id="original-vs-regress" class="section level2">
 <h2><span class="header-section-number">3.1</span> Original vs regress</h2>
 <p>We can see the bimodal shape when the in regress/scaled. To look into the source, we compare regress and original for no PC adjustment.</p>
@@ -497,7 +497,7 @@ tmp %&gt;% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) +
   # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
   th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) +
   facet_wrap(~model)</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-71-1.png" width="576" /></p>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-11-1.png" width="576" /></p>
 <p>The observation is that some IDPs have reduced CV performance when adjusting for covariates but others do not.</p>
 <!-- ```{r, fig.width=4, fig.height=4} -->
 <!-- tmp = inner_join(df_old %>% filter(idp_type == 'original'), df %>% filter(idp_type == 't1', covar_type == 'all_covar', scale_type == 'original', pc_type == 'no_pc'), by = 'phenotype', suffix = c('.old', '.new')) -->
@@ -519,10 +519,10 @@ p2 = tmp %&gt;% ggplot() + geom_point(aes(x = regress, y = scaled), alpha = 0.5)
   th2 + coord_equal() + geom_abline(slope = 1, intercept = 0, color = &#39;gray&#39;) + ggtitle(&#39;with PC&#39;) +
   facet_wrap(~model)
 p1</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-72-1.png" width="576" /></p>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-12-1.png" width="576" /></p>
 <pre class="r"><code>p2</code></pre>
 <pre><code>## Warning: Removed 2 rows containing missing values (geom_point).</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-72-2.png" width="576" /></p>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-12-2.png" width="576" /></p>
 <p>Overall they agree.</p>
 </div>
 <div id="withwithout-pc" class="section level2">
@@ -534,7 +534,7 @@ p1 = tmp %&gt;% ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.5) +
   th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + facet_wrap(~ model)
 p1</code></pre>
 <pre><code>## Warning: Removed 10 rows containing missing values (geom_point).</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-73-1.png" width="576" /></p>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-13-1.png" width="576" /></p>
 </div>
 <div id="en-vs-ridge" class="section level2">
 <h2><span class="header-section-number">3.4</span> EN vs ridge</h2>
@@ -543,7 +543,7 @@ p1 = tmp %&gt;% ggplot() + geom_point(aes(x = ridge, y = en), alpha = 0.5) +
   # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
   th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + facet_wrap(~ pc_type)
 p1</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 </div>
 <div id="dmri" class="section level1">
@@ -553,7 +553,7 @@ p2 = df %&gt;% filter(idp_type == &#39;dmri&#39;, pc_type == &#39;w_pc&#39;) %&g
 p1 + p2</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-75-1.png" width="1152" /></p>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-15-1.png" width="1152" /></p>
 <p>Overall, they agree well.</p>
 <!-- ## Old vs new  -->
 <!-- The `regress.all_covar.w_pc` matches best to the previous result. -->
@@ -567,30 +567,30 @@ p1 + p2</code></pre>
 <div id="original-vs-regress-1" class="section level2">
 <h2><span class="header-section-number">4.1</span> Original vs regress</h2>
 <p>Since we think dMRI should be used in the original scale, we compare original and regress scaling.</p>
-<pre class="r"><code>tmp = df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, pc_type == &#39;no_pc&#39;) %&gt;% reshape2::dcast(phenotype ~ scale_type, value.var = &#39;Spearman&#39;)</code></pre>
-<pre><code>## Aggregation function missing: defaulting to length</code></pre>
-<pre class="r"><code>p1 = tmp %&gt;% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) + 
+<pre class="r"><code>tmp = df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, pc_type == &#39;no_pc&#39;) %&gt;% reshape2::dcast(phenotype + model ~ scale_type, value.var = &#39;Spearman&#39;)
+p1 = tmp %&gt;% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) + 
   # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
-  th + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;no PC&#39;)
-tmp = df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, pc_type == &#39;w_pc&#39;) %&gt;% reshape2::dcast(phenotype ~ scale_type, value.var = &#39;Spearman&#39;)</code></pre>
-<pre><code>## Aggregation function missing: defaulting to length</code></pre>
-<pre class="r"><code>p2 = tmp %&gt;% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) + 
+  th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;no PC&#39;) + facet_wrap(~model)
+tmp = df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, pc_type == &#39;w_pc&#39;) %&gt;% reshape2::dcast(phenotype + model ~ scale_type, value.var = &#39;Spearman&#39;)
+p2 = tmp %&gt;% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) + 
   # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
-  th + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;with PC&#39;)
-p1 + p2</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-76-1.png" width="576" /></p>
+  th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle(&#39;with PC&#39;) + facet_wrap(~model)
+p1</code></pre>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-16-1.png" width="576" /></p>
+<pre class="r"><code>p2</code></pre>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-16-2.png" width="576" /></p>
 <p>They have very similar CV performance.</p>
 </div>
 <div id="withwithout-pc-1" class="section level2">
 <h2><span class="header-section-number">4.2</span> With/without PC</h2>
 <p>For dMRI, we may want to use PC adjustment in original scale.</p>
-<pre class="r"><code>tmp = df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, scale_type == &#39;original&#39;) %&gt;% reshape2::dcast(phenotype ~ pc_type, value.var = &#39;Spearman&#39;)</code></pre>
-<pre><code>## Aggregation function missing: defaulting to length</code></pre>
-<pre class="r"><code>p1 = tmp %&gt;% ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.5) + 
+<pre class="r"><code>tmp = df %&gt;% filter(idp_type == &#39;dmri&#39;, covar_type == &#39;all_covar&#39;, scale_type == &#39;original&#39;) %&gt;% reshape2::dcast(phenotype + model ~ pc_type, value.var = &#39;Spearman&#39;)
+p1 = tmp %&gt;% ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.5) + 
   # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
-  th + coord_equal() + geom_abline(slope = 1, intercept = 0) 
+  th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + facet_wrap(~model)
 p1</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-77-1.png" width="288" /></p>
+<pre><code>## Warning: Removed 18 rows containing missing values (geom_point).</code></pre>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-17-1.png" width="288" /></p>
 </div>
 <div id="en-vs-ridge-1" class="section level2">
 <h2><span class="header-section-number">4.3</span> EN vs ridge</h2>
@@ -599,8 +599,7 @@ p1 = tmp %&gt;% ggplot() + geom_point(aes(x = ridge, y = en), alpha = 0.5) +
   # geom_text_repel(data = tmp %&gt;% filter(abs(original - regress) &lt; 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
   th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + facet_wrap(~ pc_type)
 p1</code></pre>
-<pre><code>## Warning: Removed 8 rows containing missing values (geom_point).</code></pre>
-<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-78-1.png" width="672" /></p>
+<p><img src="round_2_cv_perf_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
 </div>
 

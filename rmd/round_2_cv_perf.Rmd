@@ -208,15 +208,16 @@ Overall, they agree well.
 Since we think dMRI should be used in the original scale, we compare original and regress scaling. 
 
 ```{r, fig.width=6, fig.height=3}
-tmp = df %>% filter(idp_type == 'dmri', covar_type == 'all_covar', pc_type == 'no_pc') %>% reshape2::dcast(phenotype ~ scale_type, value.var = 'Spearman')
+tmp = df %>% filter(idp_type == 'dmri', covar_type == 'all_covar', pc_type == 'no_pc') %>% reshape2::dcast(phenotype + model ~ scale_type, value.var = 'Spearman')
 p1 = tmp %>% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) + 
   # geom_text_repel(data = tmp %>% filter(abs(original - regress) < 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
-  th + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle('no PC')
-tmp = df %>% filter(idp_type == 'dmri', covar_type == 'all_covar', pc_type == 'w_pc') %>% reshape2::dcast(phenotype ~ scale_type, value.var = 'Spearman')
+  th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle('no PC') + facet_wrap(~model)
+tmp = df %>% filter(idp_type == 'dmri', covar_type == 'all_covar', pc_type == 'w_pc') %>% reshape2::dcast(phenotype + model ~ scale_type, value.var = 'Spearman')
 p2 = tmp %>% ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.5) + 
   # geom_text_repel(data = tmp %>% filter(abs(original - regress) < 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
-  th + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle('with PC')
-p1 + p2
+  th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + ggtitle('with PC') + facet_wrap(~model)
+p1
+p2
 ```
 
 They have very similar CV performance.
@@ -226,10 +227,10 @@ They have very similar CV performance.
 For dMRI, we may want to use PC adjustment in original scale.
 
 ```{r, fig.width=3, fig.height=3}
-tmp = df %>% filter(idp_type == 'dmri', covar_type == 'all_covar', scale_type == 'original') %>% reshape2::dcast(phenotype ~ pc_type, value.var = 'Spearman')
+tmp = df %>% filter(idp_type == 'dmri', covar_type == 'all_covar', scale_type == 'original') %>% reshape2::dcast(phenotype + model ~ pc_type, value.var = 'Spearman')
 p1 = tmp %>% ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.5) + 
   # geom_text_repel(data = tmp %>% filter(abs(original - regress) < 0.001), aes(x = original, y = regress, label = phenotype), size = 3) + 
-  th + coord_equal() + geom_abline(slope = 1, intercept = 0) 
+  th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + facet_wrap(~model)
 p1
 ```
 

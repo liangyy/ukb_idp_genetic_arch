@@ -1,0 +1,234 @@
+---
+title: "Round 2: S-BrainXcan results of GTEx-GWAS phenotypes"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(ggrepel)
+library(data.table)
+options(datatable.fread.datatable = F)
+source('rlib.R')
+library(VennDiagram)
+```
+
+# About
+
+This is the GTEx-GWAS S-BrainXcan preliminary results of the 2nd round of the BrainXcan. 
+In particular, we run and compare various ways to do phenotype pre-processing.
+For simplicity, we leave `non_idp_covar` for the future.
+
+* `orignal_t1_all_covar_no_pc`
+* `orignal_t1_all_covar_w_pc`
+* `scaled_t1_all_covar_no_pc`
+* `scaled_t1_all_covar_w_pc`
+* `regress_t1_all_covar_no_pc`
+* `regress_t1_all_covar_w_pc`
+* `orignal_dmri_all_covar_no_pc`
+* `orignal_dmri_all_covar_w_pc`
+* `regress_dmri_all_covar_no_pc`
+* `regress_dmri_all_covar_w_pc`
+
+# Load data
+
+```{r}
+traits = read.table('../submission/simagexcan/gtex_gwas_list.txt')$V1
+# ridge
+types = c('scaled', 'regress', 'original')
+models = c('ridge', 'elastic_net')
+idps = c('dmri', 't1')
+covars = c('all_covar')
+pcs = c('no_pc', 'w_pc')
+df = list()
+for(tt in types) {
+  for(ii in idps) {
+    if(ii == 'dmri' & tt == 'scaled') {
+      next
+    }
+    for(cc in covars) {
+      for(pp in pcs) {
+        for(mm in models) {
+          for(rr in traits) {
+            tmp = paste0('~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_2nd/', ii, '.', tt, '.', cc, '.', pp, '.gw_', mm, '_beta_x_', rr, '_x_simagexcan.csv')
+            if(!file.exists(tmp)) {
+              next
+            }
+            df[[length(df) + 1]] = read.csv(tmp) %>% 
+              mutate(scale_type = tt, idp_type = ii, pc_type = pp, covar_type = cc, model = mm, phenotype = rr)
+          }
+        }
+      }
+    }
+  }
+}
+df = do.call(rbind, df)
+df = df %>% mutate(zscore = p2z(pval, bhat))
+df = df %>% filter(is.na(stringr::str_match(IDP, 'PC')[, 1]))
+```
+
+
+# T1
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 't1', pc_type == 'no_pc', abs(bhat) < 1) %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'bhat') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('T1: no PC adjustment (bhat)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 't1', pc_type == 'w_pc', abs(bhat) < 1) %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'bhat') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('T1: with PC adjustment (bhat)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 't1', pc_type == 'no_pc') %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'zscore') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('T1: no PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 't1', pc_type == 'w_pc') %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'zscore') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('T1: with PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 't1', pc_type == 'no_pc') %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'pip') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('T1: no PC adjustment (pip)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 't1', pc_type == 'w_pc') %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'pip') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('T1: with PC adjustment (pip)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 't1', model == 'ridge') %>% group_by(scale_type, pc_type) %>% mutate(pexp = rank(pval) / (n() + 1), pval_cap = pmax(pval, 1e-50)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval_cap), color = scale_type, shape = pc_type)) + th + geom_abline(slope = 1, intercept = 0, color = 'gray') + ggtitle('T1 ridge')
+p2 = df %>% filter(idp_type == 't1', model == 'elastic_net') %>% group_by(scale_type, pc_type) %>% mutate(pexp = rank(pval) / (n() + 1), pval_cap = pmax(pval, 1e-50)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval_cap), color = scale_type, shape = pc_type)) + th + geom_abline(slope = 1, intercept = 0, color = 'gray') + ggtitle('T1 EN')
+p1 + p2
+```
+
+## regress vs scaled
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 't1', pc_type == 'no_pc') %>% reshape2::dcast(phenotype + model + IDP ~ scale_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>% 
+  ggplot() + geom_point(aes(x = regress, y = scaled), alpha = 0.3) + facet_grid(model ~ is_height, labeller = label_both) + ggtitle('T1: no PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 't1', pc_type == 'w_pc') %>% reshape2::dcast(phenotype + model + IDP ~ scale_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>%
+  ggplot() + geom_point(aes(x = regress, y = scaled), alpha = 0.3) + facet_grid(model ~ is_height, labeller = label_both) + ggtitle('T1: with PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+## original vs scaled
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 't1', pc_type == 'no_pc') %>% reshape2::dcast(phenotype + model + IDP ~ scale_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>% 
+  ggplot() + geom_point(aes(x = original, y = scaled), alpha = 0.3) + facet_grid(model ~ is_height, labeller = label_both) + ggtitle('T1: no PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 't1', pc_type == 'w_pc') %>% reshape2::dcast(phenotype + model + IDP ~ scale_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>%
+  ggplot() + geom_point(aes(x = original, y = scaled), alpha = 0.3) + facet_grid(model ~ is_height, labeller = label_both) + ggtitle('T1: with PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+
+## original vs regress
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 't1', pc_type == 'no_pc') %>% reshape2::dcast(phenotype + model + IDP ~ scale_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>% 
+  ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.3) + facet_grid(model ~ is_height, labeller = label_both) + ggtitle('T1: no PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 't1', pc_type == 'w_pc') %>% reshape2::dcast(phenotype + model + IDP ~ scale_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>%
+  ggplot() + geom_point(aes(x = original, y = regress), alpha = 0.3) + facet_grid(model ~ is_height, labeller = label_both) + ggtitle('T1: with PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+## with PC vs without PC
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 't1', model == 'ridge') %>% reshape2::dcast(phenotype + scale_type + IDP ~ pc_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>% 
+  ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.3) + facet_grid(scale_type ~ is_height, labeller = label_both) + ggtitle('T1: model = ridge (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 't1', model == 'elastic_net') %>% reshape2::dcast(phenotype + scale_type + IDP ~ pc_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>% 
+  ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.3) + facet_grid(scale_type ~ is_height, labeller = label_both) + ggtitle('T1: model = EN (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+# dMRI
+
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 'dmri', pc_type == 'no_pc', abs(bhat) < 1) %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'bhat') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('dMRI: no PC adjustment (bhat)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 't1', pc_type == 'w_pc', abs(bhat) < 1) %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'bhat') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('dMRI: with PC adjustment (bhat)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 'dmri', pc_type == 'no_pc') %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'zscore') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('dMRI: no PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 't1', pc_type == 'w_pc') %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'zscore') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('dMRI: with PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 'dmri', pc_type == 'no_pc') %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'pip') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('dMRI: no PC adjustment (pip)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 'dmri', pc_type == 'w_pc') %>% reshape2::dcast(phenotype + scale_type + IDP ~ model, value.var = 'pip') %>% ggplot() + geom_point(aes(x = ridge, y = elastic_net), alpha = 0.3) + facet_grid(scale_type ~ .) + ggtitle('dMRI: with PC adjustment (pip)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 'dmri', model == 'ridge') %>% group_by(scale_type, pc_type) %>% mutate(pexp = rank(pval) / (n() + 1), pval_cap = pmax(pval, 1e-50)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval_cap), color = scale_type, shape = pc_type)) + th + geom_abline(slope = 1, intercept = 0, color = 'gray') + ggtitle('dMRI ridge')
+p2 = df %>% filter(idp_type == 'dmri', model == 'elastic_net') %>% group_by(scale_type, pc_type) %>% mutate(pexp = rank(pval) / (n() + 1), pval_cap = pmax(pval, 1e-50)) %>% ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval_cap), color = scale_type, shape = pc_type)) + th + geom_abline(slope = 1, intercept = 0, color = 'gray') + ggtitle('dMRI EN')
+p1 + p2
+```
+
+## regress vs original
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 'dmri', pc_type == 'no_pc') %>% reshape2::dcast(phenotype + model + IDP ~ scale_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>% 
+  ggplot() + geom_point(aes(x = regress, y = original), alpha = 0.3) + facet_grid(model ~ is_height, labeller = label_both) + ggtitle('T1: no PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 'dmri', pc_type == 'w_pc') %>% reshape2::dcast(phenotype + model + IDP ~ scale_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>%
+  ggplot() + geom_point(aes(x = regress, y = original), alpha = 0.3) + facet_grid(model ~ is_height, labeller = label_both) + ggtitle('T1: with PC adjustment (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+
+## with PC vs without PC
+
+```{r, fig.width=12, fig.height=6}
+p1 = df %>% filter(idp_type == 'dmri', model == 'ridge') %>% reshape2::dcast(phenotype + scale_type + IDP ~ pc_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>% 
+  ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.3) + facet_grid(scale_type ~ is_height, labeller = label_both) + ggtitle('dMRI: model = ridge (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p2 = df %>% filter(idp_type == 'dmri', model == 'elastic_net') %>% reshape2::dcast(phenotype + scale_type + IDP ~ pc_type, value.var = 'zscore') %>% mutate(is_height = phenotype %in% c('GIANT_HEIGHT', 'UKB_50_Standing_height')) %>% 
+  ggplot() + geom_point(aes(x = no_pc, y = w_pc), alpha = 0.3) + facet_grid(scale_type ~ is_height, labeller = label_both) + ggtitle('dMRI: model = EN (zscore)') + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray')
+p1 + p2
+```
+
+# Look into Schizophrenia
+
+```{r}
+df_scz = df %>% filter(phenotype == 'pgc.scz2')
+df_scz = df_scz %>% group_by(model, scale_type, idp_type, pc_type) %>% 
+  mutate(p_adj = pval * n()) %>% ungroup() 
+df_scz_signif = df_scz %>% 
+  filter(p_adj < 0.05 | cs95 > 0)
+# df_scz_signif %>% group_by(model, scale_type, idp_type, pc_type) %>% summarize(n())
+```
+
+```{r}
+sig_list = list()
+for(i in idps) {
+  sig_list[[i]] = list()
+  for(m in models) {
+    for(s in types) {
+      for(p in pcs) {
+        sig_list[[i]][[paste0(m, '_x_', p)]] = df_scz_signif %>% filter(idp_type == i, pc_type == p, scale_type == s, model == m) %>% pull(IDP)
+      }
+    }
+  }
+}
+for(i in idps) {
+  o = venn.diagram(
+    x = sig_list[[i]],
+    filename = paste0('../figures/venn_pgc.scz2.', i, '.png'),
+    main = paste0('venn_pgc.scz2.', i)
+  )
+}
+```
+
+![](figures/venn_pgc.scz2.dmri.png)
+![](figures/venn_pgc.scz2.t1.png)
+
+Focus on IDP-25361: Mean ICVF in anterior limb of internal capsule on FA skeleton (left)
+
+```{r}
+alic_idp = 'IDP-25361'
+df_scz %>% filter(IDP == alic_idp) %>% select(-phenotype, -covar_type, -idp_type, -IDP, -p_adj)
+```

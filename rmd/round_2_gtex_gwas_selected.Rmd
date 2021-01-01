@@ -1,0 +1,110 @@
+---
+title: "Round 2: S-BrainXcan results of GTEx-GWAS phenotypes (select scaled T1 and original dMRI)"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+source('https://raw.githubusercontent.com/liangyy/misc-tools/master/plot_tool/plot_tools.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(ggrepel)
+library(data.table)
+options(datatable.fread.datatable = F)
+source('rlib.R')
+library(VennDiagram)
+```
+
+# About
+
+This is the GTEx-GWAS S-BrainXcan preliminary results of the 2nd round of the BrainXcan. 
+In particular, we focus on 
+
+* `scaled_t1_all_covar_w_pc`
+* `orignal_dmri_all_covar_w_pc`
+
+# Load data
+
+```{r}
+traits = read.table('../submission/simagexcan/gtex_gwas_list.txt')$V1
+models = c('ridge', 'elastic_net')
+tags = list(dmri = 'dmri.original.all_covar.w_pc', t1 = 't1.scaled.all_covar.w_pc')
+df = list()
+for(rr in traits) {
+  for(nn in names(tags)) {
+    for(mm in models) {
+      tmp = paste0('~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_2nd/', tags[[nn]], '.gw_', mm, '_beta_x_', rr, '_x_simagexcan.csv')
+      df[[length(df) + 1]] = read.csv(tmp) %>% 
+              mutate(idp_type = nn, phenotype = rr, model = mm)
+    }
+  }
+}
+
+df = do.call(rbind, df)
+df = df %>% mutate(zscore = p2z(pval, bhat))
+# df = df %>% filter(is.na(stringr::str_match(IDP, 'PC')[, 1]))
+```
+
+
+Load IDP annotations. 
+
+```{r}
+t1 = readRDS('../misc_data/process_t1/t1_meta.rds')
+t1 = t1 %>% mutate(IDP = paste0('IDP-', FieldID))
+dmri = readRDS('../misc_data/download_some_matching_files/annot_dmri_idps.rds')
+dmri = dmri %>% mutate(IDP = paste0('IDP-', FieldID))
+idps = c('t1', 'dmri')
+df_annot = rbind(
+  t1 %>% select(IDP, Field),
+  dmri %>% select(IDP, Field)
+)
+```
+
+# Overview of the results
+
+```{r, fig.height=4, fig.width=5}
+p1 = qqplot_by_group(df$pval, paste(df$model, df$idp_type)) + th + ggtitle('QQ-plot: GTEx-GWAS phenotypes') 
+p1
+```
+
+
+```{r, fig.height=4, fig.width=8}
+p1 = df %>% reshape2::dcast(IDP + phenotype + idp_type ~ model, value.var = 'pip') %>% ggplot() +
+  geom_point(aes(x = ridge, y = elastic_net), alpha = 0.05) +
+  th2 + ggtitle('PIP: GTEx-GWAS phenotypes') + facet_wrap(~idp_type)
+p1 
+```
+
+
+
+# Selecting putative signals
+
+Meet both criteria:
+
+* Bonferroni significant at $\alpha = 0.001$ (we used stringent cutoff since there is some sort of inflation).
+* Within 95% credible set.
+
+```{r}
+df_signif = df %>% group_by(idp_type, model) %>% mutate(p_adj = pval * n()) %>% ungroup() %>%
+  filter(cs95 > 0 & p_adj < 0.01)
+
+df_signif %>% group_by(idp_type, model) %>% summarize(nsig = n()) %>% pander::pander(caption = 'The number of putative signals extracted from GTEx-GWAS phenotypes')
+```
+
+Save putative signals to TSV.
+
+```{r}
+for(dd in c('dmri', 't1')) {
+  sub = df_signif %>% filter(idp_type == dd) %>% select(IDP, phenotype) %>% distinct()
+  sub$pheno2 = sub$phenotype
+  colnames(sub) = c('idp', 'pheno', 'pheno_code')
+  sub = sub[, c('pheno', 'pheno_code', 'idp')]
+  write.table(sub, paste0('../misc_data/round_2_selected.gtex_gwas.', dd, '.signif.tsv'), quo = F, col = T, row = F, sep = '\t')
+}
+```
+

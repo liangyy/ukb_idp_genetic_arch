@@ -1,6 +1,6 @@
-name_tag: 'gtex_gwas_2nd_t1'
-idp_pheno_table: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/round_2_selected.gtex_gwas.t1.signif.tsv'
-idp_type: 't1.scaled.all_covar.w_pc'
+name_tag: 'gtex_gwas_2nd_dmri'
+idp_pheno_table: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/round_2_selected.gtex_gwas.dmri.signif.tsv'
+idp_type: 'dmri.orignal.all_covar.w_pc'
 
 ld_clump_yaml: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mr/ld_clump2.yaml'
 idp_gwas_pattern: '/scratch/t.cri.yliang/ukb_idp/idp_gwas_2nd/trans_qtl.{idp_type}.chr{chr_num}/{idp}.parquet'

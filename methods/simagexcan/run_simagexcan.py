@@ -135,7 +135,8 @@ def _parse_args(args_list, desired_cols=None, no_raise=False):
                 raise ValueError(f'Wrong col = {col}.')
         dict[col] = name
     rename_dict = OrderedDict()
-    desired_cols = desired_cols_tmp
+    if desired_cols is None:
+        desired_cols = desired_cols_tmp
     for dd in desired_cols:
         if dd not in dict:
             if no_raise is True:
@@ -195,9 +196,9 @@ def get_key_by_val(val, dict_):
     return None
 
 def load_gwas(gwas_args_list):
-    # snpid_col = get_snpid_col(gwas_args_list[1:])
+    snpid_col = get_snpid_col(gwas_args_list[1:])
     # fn = gwas_args_list[0]
-    fn, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list)
+    fn, rename_dict = _parse_args(gwas_args_list, desired_cols=None)
     df = read_table(fn, indiv_col=snpid_col)
     if get_key_by_val('effect_size', rename_dict) is not None and 'effect_size' in df.columns:
         _, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='effect_size')

@@ -26,5 +26,5 @@ export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/m
 
 cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan
 
-$SNMK -s run.snmk --configfile ${PBS_O_WORKDIR}/configs/config.$NAME.yaml --cores 2 > ${PBS_O_WORKDIR}/logs/run_simgx_2nd_${NAME}.log 2>&1
+$SNMK -s run.snmk --configfile ${PBS_O_WORKDIR}/configs/config.$NAME.yaml --cores $PPN > ${PBS_O_WORKDIR}/logs/run_simgx_2nd_${NAME}.log 2>&1
 

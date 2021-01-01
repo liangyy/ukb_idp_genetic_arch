@@ -9,4 +9,4 @@ mkdir -p configs
 
 cat config.$pheno_list.yaml | sed "s#PLACEHOLDER#$nametag#g" > configs/config.${pheno_list}_$nametag.yaml
 
-qsub -v NAME=${pheno_list}_$nametag -l nodes=1:ppn=$ppn -N ${pheno_list}_$nametag run_simgx_2nd.qsub
+qsub -v NAME=${pheno_list}_$nametag,PPN=$ppn -l nodes=1:ppn=$ppn -N ${pheno_list}_$nametag run_simgx_2nd.qsub

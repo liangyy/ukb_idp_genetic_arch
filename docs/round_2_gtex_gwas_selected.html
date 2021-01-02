@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Round 2: S-BrainXcan results of GTEx-GWAS phenotypes (select scaled T1 and original dMRI)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Round 2: S-BrainXcan results of GTEx-GWAS phenotypes (select scaled T1 and original dMRI)</h1>
+<h4 class="date">02 January, 2021</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+source(&#39;https://raw.githubusercontent.com/liangyy/misc-tools/master/plot_tool/plot_tools.R&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(ggrepel)
+library(data.table)
+options(datatable.fread.datatable = F)
+source(&#39;rlib.R&#39;)
+library(VennDiagram)
+library(ggpubr)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>This is the GTEx-GWAS S-BrainXcan preliminary results of the 2nd round of the BrainXcan. In particular, we focus on</p>
+<ul>
+<li><code>scaled_t1_all_covar_w_pc</code></li>
+<li><code>orignal_dmri_all_covar_w_pc</code></li>
+</ul>
+</div>
+<div id="load-data" class="section level1">
+<h1><span class="header-section-number">2</span> Load data</h1>
+<pre class="r"><code>traits = read.table(&#39;../submission/simagexcan/gtex_gwas_list.txt&#39;)$V1
+models = c(&#39;ridge&#39;, &#39;elastic_net&#39;)
+tags = list(dmri = &#39;dmri.original.all_covar.w_pc&#39;, t1 = &#39;t1.scaled.all_covar.w_pc&#39;)
+df = list()
+for(rr in traits) {
+  for(nn in names(tags)) {
+    for(mm in models) {
+      tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_2nd/&#39;, tags[[nn]], &#39;.gw_&#39;, mm, &#39;_beta_x_&#39;, rr, &#39;_x_simagexcan.csv&#39;)
+      df[[length(df) + 1]] = read.csv(tmp) %&gt;% 
+              mutate(idp_type = nn, phenotype = rr, model = mm)
+    }
+  }
+}
+
+df = do.call(rbind, df)
+df = df %&gt;% mutate(zscore = p2z(pval, bhat))
+# df = df %&gt;% filter(is.na(stringr::str_match(IDP, &#39;PC&#39;)[, 1]))</code></pre>
+<p>Load IDP annotations.</p>
+<pre class="r"><code>t1 = readRDS(&#39;../misc_data/process_t1/t1_meta.rds&#39;)
+t1 = t1 %&gt;% mutate(IDP = paste0(&#39;IDP-&#39;, FieldID))
+dmri = readRDS(&#39;../misc_data/download_some_matching_files/annot_dmri_idps.rds&#39;)
+dmri = dmri %&gt;% mutate(IDP = paste0(&#39;IDP-&#39;, FieldID))
+idps = c(&#39;t1&#39;, &#39;dmri&#39;)
+df_annot = rbind(
+  t1 %&gt;% select(IDP, Field),
+  dmri %&gt;% select(IDP, Field)
+)</code></pre>
+</div>
+<div id="overview-of-the-results" class="section level1">
+<h1><span class="header-section-number">3</span> Overview of the results</h1>
+<pre class="r"><code>p1 = qqplot_by_group(df$pval, paste(df$model, df$idp_type)) + th + ggtitle(&#39;QQ-plot: GTEx-GWAS phenotypes&#39;) 
+p1</code></pre>
+<p><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-79-1.png" width="480" /></p>
+<pre class="r"><code>p1 = df %&gt;% reshape2::dcast(IDP + phenotype + idp_type ~ model, value.var = &#39;pip&#39;) %&gt;% ggplot() +
+  geom_point(aes(x = ridge, y = elastic_net), alpha = 0.05) +
+  th2 + ggtitle(&#39;PIP: GTEx-GWAS phenotypes&#39;) + facet_wrap(~idp_type)
+p1 </code></pre>
+<pre><code>## Warning: Removed 8053 rows containing missing values (geom_point).</code></pre>
+<p><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-80-1.png" width="768" /></p>
+</div>
+<div id="selecting-putative-signals" class="section level1">
+<h1><span class="header-section-number">4</span> Selecting putative signals</h1>
+<p>Meet both criteria:</p>
+<ul>
+<li>Bonferroni significant at <span class="math inline">\(\alpha = 0.001\)</span> (we used stringent cutoff since there is some sort of inflation).</li>
+<li>Within 95% credible set.</li>
+</ul>
+<pre class="r"><code>df_signif = df %&gt;% group_by(idp_type, model) %&gt;% mutate(p_adj = pval * n()) %&gt;% ungroup() %&gt;%
+  filter(cs95 &gt; 0 &amp; p_adj &lt; 0.01)
+
+df_signif %&gt;% group_by(idp_type, model) %&gt;% summarize(nsig = n()) %&gt;% pander::pander(caption = &#39;The number of putative signals extracted from GTEx-GWAS phenotypes&#39;)</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;idp_type&#39; (override with `.groups` argument)</code></pre>
+<table style="width:44%;">
+<caption>The number of putative signals extracted from GTEx-GWAS phenotypes</caption>
+<colgroup>
+<col width="15%" />
+<col width="19%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">idp_type</th>
+<th align="center">model</th>
+<th align="center">nsig</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">dmri</td>
+<td align="center">elastic_net</td>
+<td align="center">150</td>
+</tr>
+<tr class="even">
+<td align="center">dmri</td>
+<td align="center">ridge</td>
+<td align="center">199</td>
+</tr>
+<tr class="odd">
+<td align="center">t1</td>
+<td align="center">elastic_net</td>
+<td align="center">80</td>
+</tr>
+<tr class="even">
+<td align="center">t1</td>
+<td align="center">ridge</td>
+<td align="center">158</td>
+</tr>
+</tbody>
+</table>
+<p>Save putative signals to TSV.</p>
+<pre class="r"><code>for(dd in c(&#39;dmri&#39;, &#39;t1&#39;)) {
+  sub = df_signif %&gt;% filter(idp_type == dd) %&gt;% select(IDP, phenotype) %&gt;% distinct()
+  sub$pheno2 = sub$phenotype
+  colnames(sub) = c(&#39;idp&#39;, &#39;pheno&#39;, &#39;pheno_code&#39;)
+  sub = sub[, c(&#39;pheno&#39;, &#39;pheno_code&#39;, &#39;idp&#39;)]
+  write.table(sub, paste0(&#39;../misc_data/round_2_selected.gtex_gwas.&#39;, dd, &#39;.signif.tsv&#39;), quo = F, col = T, row = F, sep = &#39;\t&#39;)
+}</code></pre>
+</div>
+<div id="mendelian-randomization-results" class="section level1">
+<h1><span class="header-section-number">5</span> Mendelian randomization results</h1>
+<pre class="r"><code>collector_mr = list()
+collector_data = list()
+idps = c(&#39;t1&#39;, &#39;dmri&#39;) 
+df_signif_out = df_signif %&gt;% select(idp_type, IDP, phenotype) %&gt;% distinct()
+for(dd in idps) {
+  sub = df_signif_out %&gt;% filter(idp_type == dd) %&gt;% select(-idp_type)
+  for(i in 1 : nrow(sub)) {
+    tmp = readRDS(paste0(&#39;~/Desktop/tmp/ukb_idp/mr_gtex_gwas_2nd/MR_local.gtex_gwas_2nd_&#39;, dd, &#39;.&#39;, sub$IDP[i], &#39;_x_&#39;, sub$phenotype[i], &#39;.rds&#39;))
+    if(sum(is.na(tmp$idp2pheno$mr)) == 1 | sum(is.na(tmp$pheno2idp$mr)) == 1) {
+      next
+    }
+    n_idp2pheno = sum(tmp$idp2pheno$mr$pval &lt; 0.05) 
+    n_pheno2idp = sum(tmp$pheno2idp$mr$pval &lt; 0.05) 
+    if(n_idp2pheno &gt; 2 | n_pheno2idp &gt; 2) {
+      collector_mr[[length(collector_mr) + 1]] = rbind(
+        tmp$idp2pheno$mr %&gt;% mutate(direction = &#39;idp2pheno&#39;, pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno &gt; 3, is_pass = n_idp2pheno &gt; 3 | n_pheno2idp &gt; 3),
+        tmp$pheno2idp$mr %&gt;% mutate(direction = &#39;pheno2idp&#39;, pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno &gt; 3, is_pass = n_idp2pheno &gt; 3 | n_pheno2idp &gt; 3)
+      )
+      collector_data[[length(collector_data) + 1]] = rbind(
+        tmp$idp2pheno$data %&gt;% select(beta.exposure, beta.outcome, pval.exposure) %&gt;% mutate(direction = &#39;idp2pheno&#39;, pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno &gt; 3, is_pass = n_idp2pheno &gt; 3 | n_pheno2idp &gt; 3),
+        tmp$pheno2idp$data %&gt;% select(beta.exposure, beta.outcome, pval.exposure) %&gt;% mutate(direction = &#39;pheno2idp&#39;, pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno &gt; 3, is_pass = n_idp2pheno &gt; 3 | n_pheno2idp &gt; 3)
+      )
+    } 
+  }
+}
+
+df_data = do.call(rbind, collector_data) %&gt;% inner_join(df_annot, by = &#39;IDP&#39;)
+df_mr = do.call(rbind, collector_mr) %&gt;% inner_join(df_annot, by = &#39;IDP&#39;)</code></pre>
+<pre class="r"><code>df_all_signif = df
+plot_pair = function(pheno_, idp_) {
+  mydat = df_data %&gt;% filter(pheno == pheno_, IDP == idp_)
+  mymr = df_mr %&gt;% filter(pheno == pheno_, IDP == idp_)
+  idp_name = mydat$Field[1]
+  gwas_name = mydat$pheno[1]
+  idp_id = mydat$IDP[1]
+  this_result = df_all_signif %&gt;% filter(IDP == idp_id, phenotype == gwas_name)
+  plist = list()
+  plist[[length(plist) + 1]] = mydat %&gt;% filter(direction == &#39;idp2pheno&#39;) %&gt;% ggplot() + 
+    geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + 
+    geom_vline(xintercept = 0, color = &#39;lightgray&#39;) + 
+    geom_hline(yintercept = 0, color = &#39;lightgray&#39;) + th + ggtitle(paste0(idp_name, &#39; -&gt; \n &#39;, gwas_name)) +
+    theme(legend.position = &#39;none&#39;) # +
+  # geom_abline(data = this_result, aes(slope = bhat, intercept = 0, color = model))
+  plist[[length(plist) + 1]] = mydat %&gt;% filter(direction == &#39;pheno2idp&#39;) %&gt;% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = &#39;lightgray&#39;) + geom_hline(yintercept = 0, color = &#39;lightgray&#39;) + th + ggtitle(paste0(gwas_name, &#39; -&gt; \n &#39;, idp_name)) +
+    theme(legend.position = &#39;none&#39;) # +
+  # geom_abline(data = this_result, aes(slope = 1 / bhat, intercept = 0, color = model))
+  # plist[[length(plist) + 1]] = gridExtra::tableGrob(df_mr %&gt;% select(method, nsnp, b, pval, direction))
+  this_result2 = this_result %&gt;% mutate(method = paste0(&#39;imgx_&#39;, model), nsnp = paste0(&#39;pip = &#39;, signif(pip, digits = 2), &#39;\n cs = &#39;, cs95), b = bhat, direction = NA) 
+  mymr = rbind(mymr %&gt;% select(method, nsnp, b, pval, direction), this_result2 %&gt;% select(method, nsnp, b, pval, direction))
+  qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr, digits = 3)), ncol = 3)
+  qq
+}</code></pre>
+<pre class="r"><code>df_tmp = df_mr %&gt;% filter(is_pass == T) %&gt;% select(pheno, IDP) %&gt;% distinct()
+for(i in 1 : nrow(df_tmp)) {
+  qq = plot_pair(df_tmp$pheno[i], df_tmp$IDP[i])
+  print(qq)
+}</code></pre>
+<p><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-1.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-2.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-3.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-4.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-5.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-6.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-7.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-8.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-9.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-10.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-11.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-12.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-13.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-14.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-15.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-16.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-17.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-18.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-19.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-20.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-21.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-22.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-23.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-24.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-25.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-26.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-27.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-28.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-29.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-30.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-31.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-32.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-33.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-34.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-35.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-36.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-37.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-38.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-39.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-40.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-85-41.png" width="1440" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

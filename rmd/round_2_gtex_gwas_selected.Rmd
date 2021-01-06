@@ -18,6 +18,7 @@ library(data.table)
 options(datatable.fread.datatable = F)
 source('rlib.R')
 library(VennDiagram)
+library(ggpubr)
 ```
 
 # About
@@ -106,5 +107,76 @@ for(dd in c('dmri', 't1')) {
   sub = sub[, c('pheno', 'pheno_code', 'idp')]
   write.table(sub, paste0('../misc_data/round_2_selected.gtex_gwas.', dd, '.signif.tsv'), quo = F, col = T, row = F, sep = '\t')
 }
+```
+
+# Mendelian randomization results
+
+```{r}
+collector_mr = list()
+collector_data = list()
+idps = c('t1', 'dmri') 
+df_signif_out = df_signif %>% select(idp_type, IDP, phenotype) %>% distinct()
+for(dd in idps) {
+  sub = df_signif_out %>% filter(idp_type == dd) %>% select(-idp_type)
+  for(i in 1 : nrow(sub)) {
+    tmp = readRDS(paste0('~/Desktop/tmp/ukb_idp/mr_gtex_gwas_2nd/MR_local.gtex_gwas_2nd_', dd, '.', sub$IDP[i], '_x_', sub$phenotype[i], '.rds'))
+    if(sum(is.na(tmp$idp2pheno$mr)) == 1 | sum(is.na(tmp$pheno2idp$mr)) == 1) {
+      next
+    }
+    n_idp2pheno = sum(tmp$idp2pheno$mr$pval < 0.05) 
+    n_pheno2idp = sum(tmp$pheno2idp$mr$pval < 0.05) 
+    if(n_idp2pheno > 2 | n_pheno2idp > 2) {
+      collector_mr[[length(collector_mr) + 1]] = rbind(
+        tmp$idp2pheno$mr %>% mutate(direction = 'idp2pheno', pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno > 3, is_pass = n_idp2pheno > 3 | n_pheno2idp > 3),
+        tmp$pheno2idp$mr %>% mutate(direction = 'pheno2idp', pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno > 3, is_pass = n_idp2pheno > 3 | n_pheno2idp > 3)
+      )
+      collector_data[[length(collector_data) + 1]] = rbind(
+        tmp$idp2pheno$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'idp2pheno', pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno > 3, is_pass = n_idp2pheno > 3 | n_pheno2idp > 3),
+        tmp$pheno2idp$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'pheno2idp', pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno > 3, is_pass = n_idp2pheno > 3 | n_pheno2idp > 3)
+      )
+    } 
+  }
+}
+
+df_data = do.call(rbind, collector_data) %>% inner_join(df_annot, by = 'IDP')
+df_mr = do.call(rbind, collector_mr) %>% inner_join(df_annot, by = 'IDP')
+```
+
+
+```{r, fig.width=15, fig.height=5}
+df_all_signif = df
+plot_pair = function(pheno_, idp_) {
+  mydat = df_data %>% filter(pheno == pheno_, IDP == idp_)
+  mymr = df_mr %>% filter(pheno == pheno_, IDP == idp_)
+  idp_name = mydat$Field[1]
+  gwas_name = mydat$pheno[1]
+  idp_id = mydat$IDP[1]
+  this_result = df_all_signif %>% filter(IDP == idp_id, phenotype == gwas_name)
+  plist = list()
+  plist[[length(plist) + 1]] = mydat %>% filter(direction == 'idp2pheno') %>% ggplot() + 
+    geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + 
+    geom_vline(xintercept = 0, color = 'lightgray') + 
+    geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(idp_name, ' -> \n ', gwas_name)) +
+    theme(legend.position = 'none') # +
+  # geom_abline(data = this_result, aes(slope = bhat, intercept = 0, color = model))
+  plist[[length(plist) + 1]] = mydat %>% filter(direction == 'pheno2idp') %>% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = 'lightgray') + geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(gwas_name, ' -> \n ', idp_name)) +
+    theme(legend.position = 'none') # +
+  # geom_abline(data = this_result, aes(slope = 1 / bhat, intercept = 0, color = model))
+  # plist[[length(plist) + 1]] = gridExtra::tableGrob(df_mr %>% select(method, nsnp, b, pval, direction))
+  this_result2 = this_result %>% mutate(method = paste0('imgx_', model), nsnp = paste0('pip = ', signif(pip, digits = 2), '\n cs = ', cs95), b = bhat, direction = NA) 
+  mymr = rbind(mymr %>% select(method, nsnp, b, pval, direction), this_result2 %>% select(method, nsnp, b, pval, direction))
+  qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr, digits = 3)), ncol = 3)
+  qq
+}
+```
+
+
+```{r, fig.width=15, fig.height=5}
+df_tmp = df_mr %>% filter(is_pass == T) %>% select(pheno, IDP) %>% distinct()
+for(i in 1 : nrow(df_tmp)) {
+  qq = plot_pair(df_tmp$pheno[i], df_tmp$IDP[i])
+  print(qq)
+}
+
 ```
 

@@ -11,7 +11,7 @@
 
 
 
-<title>Round 2: S-BrainXcan results of GTEx-GWAS phenotypes (select scaled T1 and original dMRI)</title>
+<title>Round 2: S-BrainXcan results of psychiatric phenotypes (select scaled T1 and original dMRI)</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -380,7 +380,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Round 2: S-BrainXcan results of GTEx-GWAS phenotypes (select scaled T1 and original dMRI)</h1>
+<h1 class="title toc-ignore">Round 2: S-BrainXcan results of psychiatric phenotypes (select scaled T1 and original dMRI)</h1>
 <h4 class="date">06 January, 2021</h4>
 
 </div>
@@ -402,7 +402,7 @@ library(VennDiagram)
 library(ggpubr)</code></pre>
 <div id="about" class="section level1">
 <h1><span class="header-section-number">1</span> About</h1>
-<p>This is the GTEx-GWAS S-BrainXcan preliminary results of the 2nd round of the BrainXcan. In particular, we focus on</p>
+<p>This is the selected psychiatric phenotypes S-BrainXcan preliminary results of the 2nd round of the BrainXcan. In particular, we focus on</p>
 <ul>
 <li><code>scaled_t1_all_covar_w_pc</code></li>
 <li><code>orignal_dmri_all_covar_w_pc</code></li>
@@ -410,14 +410,14 @@ library(ggpubr)</code></pre>
 </div>
 <div id="load-data" class="section level1">
 <h1><span class="header-section-number">2</span> Load data</h1>
-<pre class="r"><code>traits = read.table(&#39;../submission/simagexcan/gtex_gwas_list.txt&#39;)$V1
+<pre class="r"><code>traits = read.table(&#39;../misc_data/preprocess_psychiatric_traits/trait_list.txt&#39;)$V1
 models = c(&#39;ridge&#39;, &#39;elastic_net&#39;)
 tags = list(dmri = &#39;dmri.original.all_covar.w_pc&#39;, t1 = &#39;t1.scaled.all_covar.w_pc&#39;)
 df = list()
 for(rr in traits) {
   for(nn in names(tags)) {
     for(mm in models) {
-      tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_2nd/&#39;, tags[[nn]], &#39;.gw_&#39;, mm, &#39;_beta_x_&#39;, rr, &#39;_x_simagexcan.csv&#39;)
+      tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/simagexcan/results_psychiatric_2nd/&#39;, tags[[nn]], &#39;.gw_&#39;, mm, &#39;_beta_x_&#39;, rr, &#39;_x_simagexcan.csv&#39;)
       df[[length(df) + 1]] = read.csv(tmp) %&gt;% 
               mutate(idp_type = nn, phenotype = rr, model = mm)
     }
@@ -440,30 +440,30 @@ df_annot = rbind(
 </div>
 <div id="overview-of-the-results" class="section level1">
 <h1><span class="header-section-number">3</span> Overview of the results</h1>
-<pre class="r"><code>p1 = qqplot_by_group(df$pval, paste(df$model, df$idp_type)) + th + ggtitle(&#39;QQ-plot: GTEx-GWAS phenotypes&#39;) 
+<pre class="r"><code>p1 = qqplot_by_group(df$pval, paste(df$model, df$idp_type)) + th + ggtitle(&#39;QQ-plot: Psychiatric phenotypes&#39;) 
 p1</code></pre>
-<p><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-3-1.png" width="480" /></p>
+<p><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-3-1.png" width="480" /></p>
 <pre class="r"><code>p1 = df %&gt;% reshape2::dcast(IDP + phenotype + idp_type ~ model, value.var = &#39;pip&#39;) %&gt;% ggplot() +
   geom_point(aes(x = ridge, y = elastic_net), alpha = 0.05) +
-  th2 + ggtitle(&#39;PIP: GTEx-GWAS phenotypes&#39;) + facet_wrap(~idp_type)
+  th2 + ggtitle(&#39;PIP: Psychiatric phenotypes&#39;) + facet_wrap(~idp_type)
 p1 </code></pre>
-<pre><code>## Warning: Removed 8053 rows containing missing values (geom_point).</code></pre>
-<p><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-4-1.png" width="768" /></p>
+<pre><code>## Warning: Removed 973 rows containing missing values (geom_point).</code></pre>
+<p><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-4-1.png" width="768" /></p>
 </div>
 <div id="selecting-putative-signals" class="section level1">
 <h1><span class="header-section-number">4</span> Selecting putative signals</h1>
 <p>Meet both criteria:</p>
 <ul>
-<li>Bonferroni significant at <span class="math inline">\(\alpha = 0.001\)</span> (we used stringent cutoff since there is some sort of inflation).</li>
+<li>Bonferroni significant at <span class="math inline">\(\alpha = 0.01\)</span> (we used stringent cutoff since there is some sort of inflation).</li>
 <li>Within 95% credible set.</li>
 </ul>
 <pre class="r"><code>df_signif = df %&gt;% group_by(idp_type, model) %&gt;% mutate(p_adj = pval * n()) %&gt;% ungroup() %&gt;%
   filter(cs95 &gt; 0 &amp; p_adj &lt; 0.01)
 
-df_signif %&gt;% group_by(idp_type, model) %&gt;% summarize(nsig = n()) %&gt;% pander::pander(caption = &#39;The number of putative signals extracted from GTEx-GWAS phenotypes&#39;)</code></pre>
+df_signif %&gt;% group_by(idp_type, model) %&gt;% summarize(nsig = n()) %&gt;% pander::pander(caption = &#39;The number of putative signals extracted from Psychiatric phenotypes&#39;)</code></pre>
 <pre><code>## `summarise()` regrouping output by &#39;idp_type&#39; (override with `.groups` argument)</code></pre>
 <table style="width:44%;">
-<caption>The number of putative signals extracted from GTEx-GWAS phenotypes</caption>
+<caption>The number of putative signals extracted from Psychiatric phenotypes</caption>
 <colgroup>
 <col width="15%" />
 <col width="19%" />
@@ -480,22 +480,22 @@ df_signif %&gt;% group_by(idp_type, model) %&gt;% summarize(nsig = n()) %&gt;% p
 <tr class="odd">
 <td align="center">dmri</td>
 <td align="center">elastic_net</td>
-<td align="center">150</td>
+<td align="center">37</td>
 </tr>
 <tr class="even">
 <td align="center">dmri</td>
 <td align="center">ridge</td>
-<td align="center">199</td>
+<td align="center">52</td>
 </tr>
 <tr class="odd">
 <td align="center">t1</td>
 <td align="center">elastic_net</td>
-<td align="center">80</td>
+<td align="center">34</td>
 </tr>
 <tr class="even">
 <td align="center">t1</td>
 <td align="center">ridge</td>
-<td align="center">158</td>
+<td align="center">44</td>
 </tr>
 </tbody>
 </table>
@@ -505,7 +505,7 @@ df_signif %&gt;% group_by(idp_type, model) %&gt;% summarize(nsig = n()) %&gt;% p
   sub$pheno2 = sub$phenotype
   colnames(sub) = c(&#39;idp&#39;, &#39;pheno&#39;, &#39;pheno_code&#39;)
   sub = sub[, c(&#39;pheno&#39;, &#39;pheno_code&#39;, &#39;idp&#39;)]
-  write.table(sub, paste0(&#39;../misc_data/round_2_selected.gtex_gwas.&#39;, dd, &#39;.signif.tsv&#39;), quo = F, col = T, row = F, sep = &#39;\t&#39;)
+  write.table(sub, paste0(&#39;../misc_data/round_2_selected.psychiatric.&#39;, dd, &#39;.signif.tsv&#39;), quo = F, col = T, row = F, sep = &#39;\t&#39;)
 }</code></pre>
 </div>
 <div id="mendelian-randomization-results" class="section level1">
@@ -517,7 +517,7 @@ df_signif_out = df_signif %&gt;% select(idp_type, IDP, phenotype) %&gt;% distinc
 for(dd in idps) {
   sub = df_signif_out %&gt;% filter(idp_type == dd) %&gt;% select(-idp_type)
   for(i in 1 : nrow(sub)) {
-    tmp = readRDS(paste0(&#39;~/Desktop/tmp/ukb_idp/mr_gtex_gwas_2nd/MR_local.gtex_gwas_2nd_&#39;, dd, &#39;.&#39;, sub$IDP[i], &#39;_x_&#39;, sub$phenotype[i], &#39;.rds&#39;))
+    tmp = readRDS(paste0(&#39;~/Desktop/tmp/ukb_idp/mr_psychiatric_2nd/MR_local.psychiatric_2nd_&#39;, dd, &#39;.&#39;, sub$IDP[i], &#39;_x_&#39;, sub$phenotype[i], &#39;.rds&#39;))
     if(sum(is.na(tmp$idp2pheno$mr)) == 1 | sum(is.na(tmp$pheno2idp$mr)) == 1) {
       next
     }
@@ -564,12 +564,12 @@ plot_pair = function(pheno_, idp_, type_) {
   qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr, digits = 3)), ncol = 3)
   qq
 }</code></pre>
-<pre class="r"><code>df_tmp = df_mr %&gt;% filter(is_pass == T) %&gt;% select(pheno, IDP, idp_type) %&gt;% distinct()
+<pre class="r"><code>df_tmp = df_mr %&gt;% select(pheno, IDP, idp_type) %&gt;% distinct()  # %&gt;% filter(is_pass == T) 
 for(i in 1 : nrow(df_tmp)) {
   qq = plot_pair(df_tmp$pheno[i], df_tmp$IDP[i], df_tmp$idp_type[i])
   print(qq)
 }</code></pre>
-<p><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-1.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-2.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-3.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-4.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-5.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-6.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-7.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-8.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-9.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-10.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-11.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-12.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-13.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-14.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-15.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-16.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-17.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-18.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-19.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-20.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-21.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-22.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-23.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-24.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-25.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-26.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-27.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-28.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-29.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-30.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-31.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-32.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-33.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-34.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-35.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-36.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-37.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-38.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-39.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-40.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-41.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-42.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-43.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-44.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-45.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-46.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-47.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-48.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-49.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-50.png" width="1440" /><img src="round_2_gtex_gwas_selected_files/figure-html/unnamed-chunk-9-51.png" width="1440" /></p>
+<p><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-1.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-2.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-3.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-4.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-5.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-6.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-7.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-8.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-9.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-10.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-11.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-12.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-13.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-14.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-15.png" width="1440" /><img src="round_2_psychiatric_selected_files/figure-html/unnamed-chunk-9-16.png" width="1440" /></p>
 </div>
 
 

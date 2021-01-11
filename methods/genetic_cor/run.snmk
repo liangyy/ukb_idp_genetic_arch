@@ -3,7 +3,7 @@ if 'outdir' not in config:
 
 rule all:
     input:
-        '{outdir}/{idp_tag}_x_{gwas_tag}.ldsc_rg.log'.format(**config)
+        '{outdir}/{idp_tag}_x_{gwas_tag}_x_{gwas_name}.ldsc_rg.log'.format(**config)
 
 rule all_gwas:
     input:
@@ -20,7 +20,7 @@ rule format_focal:
         sign_stat = config['gwas_file_params']['signed_sumstats'],
         pval = config['gwas_file_params']['pvalue'],
         snp = config['gwas_file_params']['snp_col'],
-        out_prefix = '{outdir}/{name_tag}.formatted_gwas.{gwas_name}'
+        out_prefix = '{outdir}/{gwas_tag}.formatted_gwas.{gwas_name}'
     output:
         '{outdir}/{gwas_tag}.formatted_gwas.{gwas_name}.sumstats.gz'
     shell:
@@ -28,8 +28,8 @@ rule format_focal:
            --sumstats {input.gwas} \
            --a1 {params.a1} \
            --a2 {params.a2} \
-           --p {params.pvalue} \
-           --snp {params.snp_col} \
+           --p {params.pval} \
+           --snp {params.snp} \
            --N-col {params.n} \
            --out {params.out_prefix}'
 
@@ -41,11 +41,11 @@ rule gen_cor:
         snpmeta = config['idp_snp_meta']
     params:
         idp_sample_size = config['idp_sample_size'],
-        out = config['idp_snp_meta']
+        out_prefix = '{outdir}/{idp_tag}_x_{gwas_tag}_x_{gwas_name}.ldsc_rg'
     output:
-        '{outdir}/{idp_tag}_x_{gwas_tag}.ldsc_rg.log'
+        '{outdir}/{idp_tag}_x_{gwas_tag}_x_{gwas_name}.ldsc_rg.log'
     shell:
-        'python {config[ldsc_repo]} \
+        'python {config[ldsc_repo]}/ldsc.py \
            --rg {input.gwas},{input.idplist} \
            --rg-target-list \
            --ref-ld-chr {input.ldscore}/ \

@@ -1,5 +1,3 @@
-
-
 gwas_tag: 'gtex_gwas'
 gwas_file_pattern: '/gpfs/data/im-lab/nas40t2/Data/SummaryResults/imputed_gwas_hg38_1.1/imputed_{gwas_name}.txt.gz'
 gwas_name: 'pgc.scz2'

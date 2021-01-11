@@ -1,4 +1,4 @@
-variant_id: 'variant_id'
+rsid: 'variant_id'
 effect_allele: 'effect_allele'
 non_effect_allele: 'non_effect_allele'
 effect_size: 'effect_size'

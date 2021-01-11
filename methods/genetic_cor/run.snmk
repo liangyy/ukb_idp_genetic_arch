@@ -1,0 +1,57 @@
+if 'outdir' not in config:
+    config['outdir'] = 'output'
+
+rule all:
+    input:
+        '{outdir}/{idp_tag}_x_{gwas_tag}.ldsc_rg.log'.format(**config)
+
+rule all_gwas:
+    input:
+        '{outdir}/{gwas_tag}.formatted_gwas.{gwas_name}.sumstats.gz'.format(**config)
+
+rule format_focal:
+    input:
+        gwas = config['gwas_file_pattern'],
+        snplist = config['ldscore']['snplist']
+    params:
+        n = config['gwas_file_params']['sample_size'],
+        a1 = config['gwas_file_params']['effect_allele'],
+        a2 = config['gwas_file_params']['non_effect_allele'],
+        sign_stat = config['gwas_file_params']['signed_sumstats'],
+        pval = config['gwas_file_params']['pvalue'],
+        snp = config['gwas_file_params']['snp_col'],
+        out_prefix = '{outdir}/{name_tag}.formatted_gwas.{gwas_name}'
+    output:
+        '{outdir}/{gwas_tag}.formatted_gwas.{gwas_name}.sumstats.gz'
+    shell:
+        'python {config[ldsc_repo]}/munge_sumstats.py \
+           --sumstats {input.gwas} \
+           --a1 {params.a1} \
+           --a2 {params.a2} \
+           --p {params.pvalue} \
+           --snp {params.snp_col} \
+           --N-col {params.n} \
+           --out {params.out_prefix}'
+
+rule gen_cor:
+    input:
+        gwas = '{outdir}/{gwas_tag}.formatted_gwas.{gwas_name}.sumstats.gz',
+        ldscore = config['ldscore']['dir'],
+        idplist = config['idp_list'],
+        snpmeta = config['idp_snp_meta']
+    params:
+        idp_sample_size = config['idp_sample_size'],
+        out = config['idp_snp_meta']
+    output:
+        '{outdir}/{idp_tag}_x_{gwas_tag}.ldsc_rg.log'
+    shell:
+        'python {config[ldsc_repo]} \
+           --rg {input.gwas},{input.idplist} \
+           --rg-target-list \
+           --ref-ld-chr {input.ldscore}/ \
+           --w-ld-chr {input.ldscore}/ \
+           --load-parquet \
+           --snp-meta {input.snpmeta} \
+           --sample-size {params.idp_sample_size} \
+           --out {params.out_prefix}'
+

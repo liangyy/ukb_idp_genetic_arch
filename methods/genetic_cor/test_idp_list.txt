@@ -1,0 +1,3 @@
+/scratch/t.cri.yliang/ukb_idp/idp_gwas_2nd/trans_qtl.dmri.original.all_covar.w_pc.chr{chr_num}/IDP-25203.parquet
+/scratch/t.cri.yliang/ukb_idp/idp_gwas_2nd/trans_qtl.dmri.original.all_covar.w_pc.chr{chr_num}/IDP-25361.parquet
+/scratch/t.cri.yliang/ukb_idp/idp_gwas_2nd/trans_qtl.dmri.original.all_covar.w_pc.chr{chr_num}/IDP-25100.parquet

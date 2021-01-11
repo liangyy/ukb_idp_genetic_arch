@@ -3,5 +3,15 @@
 
 for pheno in `cat $1`
 do
-  qsub -v NAME=$2,GWASNAME=$pheno -N ${2}_$pheno format_gwas.qsub
+  ff=logs/format_gwas_${2}_$pheno.log
+  if [[ -f $ff ]]
+  then
+    e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l` 
+    if [[ $e = 1 ]]
+    then
+      qsub -v NAME=$2,GWASNAME=$pheno -N ${2}_$pheno format_gwas.qsub
+    fi
+  else
+    qsub -v NAME=$2,GWASNAME=$pheno -N ${2}_$pheno format_gwas.qsub
+  fi
 done

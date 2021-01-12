@@ -1,0 +1,25 @@
+gwas_tag: 'psychiatric'
+gwas_file_pattern: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/formatted/harmonized_gwas.{gwas_name}.tsv.gz'
+gwas_name: ''
+
+gwas_file_params:
+  sample_size: 'sample_size'
+  effect_allele: 'effect_allele'
+  non_effect_allele: 'non_effect_allele'
+  signed_sumstats: 'effect_size,0'
+  pvalue: 'pvalue'
+  snp_col: 'rsid'
+
+ldsc_repo: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ldsc'
+
+ldscore: 
+  dir: '/gpfs/data/im-lab/nas40t2/yanyul/data/eur_w_ld_chr'
+  snplist: '/gpfs/data/im-lab/nas40t2/yanyul/data/eur_w_ld_chr/w_hm3.snplist'
+
+idp_tag: ''
+idp_list: ''
+idp_snp_meta: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.merged_all.bim'
+idp_sample_size: 24409
+
+outdir: '/scratch/t.cri.yliang/ukb_idp/genetic_cor_2nd'
+

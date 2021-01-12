@@ -14,5 +14,5 @@ SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snake
 
 cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/genetic_cor
 
-$SNMK -s run.snmk --configfile ${PBS_O_WORKDIR}/config.$NAME.yaml -p all_gwas --config gwas_name=$GWASNAME idp_name=$IDP idp_list=$IDPLIST > ${PBS_O_WORKDIR}/logs/run_${NAME}_${GWASNAME}_${IDP}.log 2>&1
+$SNMK -s run.snmk --configfile ${PBS_O_WORKDIR}/config.$NAME.yaml -p all --config gwas_name=$GWASNAME idp_tag=$IDP idp_list=$IDPLIST > ${PBS_O_WORKDIR}/logs/run_${NAME}_${GWASNAME}_${IDP}.log 2>&1
 

@@ -44,6 +44,8 @@ rule gen_cor:
         out_prefix = '{outdir}/{idp_tag}_x_{gwas_tag}_x_{gwas_name}.ldsc_rg'
     output:
         '{outdir}/{idp_tag}_x_{gwas_tag}_x_{gwas_name}.ldsc_rg.log'
+    log:
+        '{outdir}/{idp_tag}_x_{gwas_tag}_x_{gwas_name}.msg.log'
     shell:
         'python {config[ldsc_repo]}/ldsc.py \
            --rg {input.gwas},{input.idplist} \
@@ -53,5 +55,5 @@ rule gen_cor:
            --load-parquet \
            --snp-meta {input.snpmeta} \
            --sample-size {params.idp_sample_size} \
-           --out {params.out_prefix}'
+           --out {params.out_prefix} > {log} 2>&1'
 

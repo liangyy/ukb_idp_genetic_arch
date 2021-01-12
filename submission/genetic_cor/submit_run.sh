@@ -11,9 +11,9 @@ do
     e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l` 
     if [[ $e = 1 ]]
     then
-      qsub -v NAME=$2,GWASNAME=$pheno,IDP=$3,IDPLIST=$4 -N ${2}_$pheno_${3} run.qsub
+      qsub -v NAME=$2,GWASNAME=$pheno,IDP=$3,IDPLIST=$4 -N ${3}_${pheno} run.qsub
     fi
   else
-    qsub -v NAME=$2,GWASNAME=$pheno,IDP=$3,IDPLIST=$4 -N ${2}_$pheno_${3} run.qsub
+    qsub -v NAME=$2,GWASNAME=$pheno,IDP=$3,IDPLIST=$4 -N ${3}_${pheno} run.qsub
   fi
 done

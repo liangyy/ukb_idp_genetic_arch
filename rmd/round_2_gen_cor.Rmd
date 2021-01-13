@@ -135,6 +135,24 @@ df_cor = rbind(
 )
 ```
 
+## QQ-plot
+
+```{r, fig.width=6, fig.height=3}
+df_cor %>% group_by(data, idp_type) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% ungroup() %>%
+  ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + facet_wrap(~data) + th2 + 
+  geom_abline(slope = 1, intercept = 0, color = 'gray') +
+  ggtitle('QQ-plot of LDSC RG')
+```
+
+
+```{r, fig.width=6, fig.height=6}
+df_sb %>% group_by(data, idp_type, model) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% ungroup() %>%
+  mutate(pval = pmax(pval, 1e-30)) %>%
+  ggplot() + geom_point(aes(x = -log10(pexp), y = -log10(pval), color = idp_type)) + facet_grid(model~data) + th2 + 
+  geom_abline(slope = 1, intercept = 0, color = 'gray') +
+  ggtitle('QQ-plot of S-BrainXcan')
+```
+
 # S-BrainXcan vs genetic correlation
 
 ```{r, fig.width=6, fig.height=6}

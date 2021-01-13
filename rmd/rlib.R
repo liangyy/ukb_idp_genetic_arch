@@ -25,5 +25,5 @@ acat = function(pvec)
 
 
 p2z = function(p, b) {
-  sign(b) * qnorm(p / 2)
+  sign(b) * abs(qnorm(p / 2, lower.tail = T))
 }

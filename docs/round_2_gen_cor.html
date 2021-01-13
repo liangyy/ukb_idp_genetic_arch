@@ -11,7 +11,7 @@
 
 
 
-<title>Analysis</title>
+<title>Round 2: S-BrainXcan vs genetic correlation</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -380,40 +380,149 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Analysis</h1>
+<h1 class="title toc-ignore">Round 2: S-BrainXcan vs genetic correlation</h1>
 <h4 class="date">12 January, 2021</h4>
 
 </div>
 
 
-<ul>
-<li>Genome-wode ridge regression (with comparison to Owen’s result) <a href="gw_ridge.html">link</a></li>
-<li>Compare <code>snpnet</code> lasso (old code and updated code) <a href="gw_lasso_update.html">link</a></li>
-<li>ImageXcan round 1:
-<ul>
-<li><a href="imagexcan_round_1_dmri.html">dMRI</a></li>
-<li><a href="imagexcan_round_1_t1.html">T1</a></li>
-<li><a href="imagexcan_round_1_t1_en_vs_ridge.html">T1 EN vs ridge</a></li>
-</ul></li>
-<li>Downstream Mendelian randomization:
-<ul>
-<li>An example run with cigarette intake and IDP-25882 <a href="example_mr.html">link</a></li>
-</ul></li>
-<li>S-ImageXcan results:
-<ul>
-<li><a href="simagexcan_gtex_gwas.html">GTEx-GWAS phenotypes</a></li>
-</ul></li>
-<li><p>Summary of current runs on GTEx-GWAS phenotypes (S-ImageXcan) and a selected set of phenotypes (ImageXcan): <a href="summary_121520.html">link</a></p></li>
-<li>The 2nd round of analysis
-<ul>
-<li>Heritability <a href="round_2_h2.html">link</a></li>
-<li>Cross-validated performance (Spearman’s correlation) <a href="round_2_cv_perf.html">link</a></li>
-<li>Overview of all the results for GTEx-GWAS phenotypes <a href="round_2_gtex_gwas.html">link</a></li>
-<li>Selected <code>scaled.T1</code> and <code>original.dMRI</code> results for GTEx-GWAS phenotypes <a href="round_2_gtex_gwas_selected.html">link</a></li>
-<li>Comparing S-BrainXcan to the LDSC-based genetic correlation <a href="round_2_gen_cor.html">link</a></li>
-</ul></li>
-<li><p>Psychiatric traits <a href="simagexcan_psychiatric.html">link</a></p></li>
-</ul>
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+source(&#39;https://raw.githubusercontent.com/liangyy/misc-tools/master/plot_tool/plot_tools.R&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(ggrepel)
+library(data.table)
+options(datatable.fread.datatable = F)
+source(&#39;rlib.R&#39;)
+library(VennDiagram)
+library(ggpubr)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>Here we present the first set of genetic correltaion results between IDPs and phenotypes of interest. We compare the genetic correlation results to the S-BrainXcan. We considered GTEx-GWAS phenotypes and the psychiatric phenotypes</p>
+</div>
+<div id="load-data" class="section level1">
+<h1><span class="header-section-number">2</span> Load data</h1>
+<div id="load-gtex-gwas-results." class="section level2">
+<h2><span class="header-section-number">2.1</span> Load GTEx-GWAS results.</h2>
+<p>Load S-BrainXcan.</p>
+<pre class="r"><code>traits = read.table(&#39;../submission/simagexcan/gtex_gwas_list.txt&#39;)$V1
+models = c(&#39;ridge&#39;, &#39;elastic_net&#39;)
+tags = list(dmri = &#39;dmri.original.all_covar.w_pc&#39;, t1 = &#39;t1.scaled.all_covar.w_pc&#39;)
+df = list()
+for(rr in traits) {
+  for(nn in names(tags)) {
+    for(mm in models) {
+      tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_2nd/&#39;, tags[[nn]], &#39;.gw_&#39;, mm, &#39;_beta_x_&#39;, rr, &#39;_x_simagexcan.csv&#39;)
+      df[[length(df) + 1]] = read.csv(tmp) %&gt;% 
+              mutate(idp_type = nn, phenotype = rr, model = mm)
+    }
+  }
+}
+
+df = do.call(rbind, df)
+df_sb1 = df %&gt;% mutate(zscore = p2z(pval, bhat))
+# df = df %&gt;% filter(is.na(stringr::str_match(IDP, &#39;PC&#39;)[, 1]))</code></pre>
+<p>Load genetic correlation results.</p>
+<pre class="r"><code>df = list()
+for(rr in traits) {
+  for(nn in names(tags)) {
+    tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/genetic_cor_2nd/&#39;, nn, &#39;_2nd_x_gtex-gwas_x_&#39;, rr, &#39;.ldsc_rg.log&#39;)
+    tmp = load_ldsc_rg(tmp)
+    tmp = tmp %&gt;% select(p2, rg, p, z, h2_obs, h2_obs_se) %&gt;% rename(IDP = p2, pval = p, zscore = z)
+    df[[length(df) + 1]] = tmp %&gt;% 
+      mutate(idp_type = nn, phenotype = rr)
+  }
+}
+df_cor1 = do.call(rbind, df)</code></pre>
+</div>
+<div id="load-the-psychiatric-phenotypes" class="section level2">
+<h2><span class="header-section-number">2.2</span> Load the psychiatric phenotypes</h2>
+<p>Load S-BrainXcan.</p>
+<pre class="r"><code>traits = read.table(&#39;../misc_data/preprocess_psychiatric_traits/trait_list.txt&#39;)$V1
+models = c(&#39;ridge&#39;, &#39;elastic_net&#39;)
+tags = list(dmri = &#39;dmri.original.all_covar.w_pc&#39;, t1 = &#39;t1.scaled.all_covar.w_pc&#39;)
+df = list()
+for(rr in traits) {
+  for(nn in names(tags)) {
+    for(mm in models) {
+      tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/simagexcan/results_psychiatric_2nd/&#39;, tags[[nn]], &#39;.gw_&#39;, mm, &#39;_beta_x_&#39;, rr, &#39;_x_simagexcan.csv&#39;)
+      df[[length(df) + 1]] = read.csv(tmp) %&gt;% 
+              mutate(idp_type = nn, phenotype = rr, model = mm)
+    }
+  }
+}
+
+df = do.call(rbind, df)
+df_sb2 = df %&gt;% mutate(zscore = p2z(pval, bhat))
+# df = df %&gt;% filter(is.na(stringr::str_match(IDP, &#39;PC&#39;)[, 1]))</code></pre>
+<p>Load genetic correlation results.</p>
+<pre class="r"><code>df = list()
+for(rr in traits) {
+  for(nn in names(tags)) {
+    tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/genetic_cor_2nd/&#39;, nn, &#39;_2nd_x_psychiatric_x_&#39;, rr, &#39;.ldsc_rg.log&#39;)
+    tmp = load_ldsc_rg(tmp)
+    tmp = tmp %&gt;% select(p2, rg, p, z, h2_obs, h2_obs_se) %&gt;% rename(IDP = p2, pval = p, zscore = z)
+    df[[length(df) + 1]] = tmp %&gt;% 
+      mutate(idp_type = nn, phenotype = rr)
+  }
+}
+df_cor2 = do.call(rbind, df)</code></pre>
+</div>
+<div id="load-h2" class="section level2">
+<h2><span class="header-section-number">2.3</span> Load h2</h2>
+<pre class="r"><code>df = list()
+for(rr in traits) {
+  for(nn in names(tags)) {
+    tmp = paste0(&#39;~/Desktop/tmp/ukb_idp/heritability_2nd_round/&#39;, tags[[nn]], &#39;.tsv.gz&#39;)
+    df[[length(df) + 1]] = read.table(tmp, sep = &#39;\t&#39;, header = T) %&gt;% mutate(idp_type = nn) %&gt;% rename(IDP = phenotype)
+  }
+}
+df_h2 = do.call(rbind, df)</code></pre>
+</div>
+<div id="combine" class="section level2">
+<h2><span class="header-section-number">2.4</span> Combine</h2>
+<pre class="r"><code>df_sb = rbind(
+  df_sb1 %&gt;% mutate(data = &#39;gtex-gwas&#39;), 
+  df_sb2 %&gt;% mutate(data = &#39;psychiatric&#39;)
+)
+df_cor = rbind(
+  df_cor1 %&gt;% mutate(data = &#39;gtex-gwas&#39;), 
+  df_cor2 %&gt;% mutate(data = &#39;psychiatric&#39;)
+)</code></pre>
+</div>
+</div>
+<div id="s-brainxcan-vs-genetic-correlation" class="section level1">
+<h1><span class="header-section-number">3</span> S-BrainXcan vs genetic correlation</h1>
+<pre class="r"><code>tmp = inner_join(df_sb, df_cor, by = c(&#39;phenotype&#39;, &#39;idp_type&#39;, &#39;IDP&#39;, &#39;data&#39;), suffix = c(&#39;.SB&#39;, &#39;.RG&#39;))
+tmp %&gt;% ggplot() + geom_point(aes(x = zscore.RG, y = zscore.SB), alpha = 0.2) + facet_grid(model~data) + th2 + geom_hline(yintercept = 0, color = &#39;gray&#39;) + geom_vline(xintercept = 0, color = &#39;gray&#39;)</code></pre>
+<pre><code>## Warning: Removed 4878 rows containing missing values (geom_point).</code></pre>
+<p><img src="round_2_gen_cor_files/figure-html/unnamed-chunk-98-1.png" width="576" /></p>
+<pre class="r"><code># tmp = inner_join(df_sb, df_cor, by = c(&#39;phenotype&#39;, &#39;idp_type&#39;, &#39;IDP&#39;, &#39;data&#39;), suffix = c(&#39;.SB&#39;, &#39;.RG&#39;))
+tmp %&gt;% filter(pval.SB &lt; 1e-2) %&gt;% ggplot() + geom_point(aes(x = rg, y = bhat), alpha = 0.2) + facet_grid(model~data) + th2 + 
+  scale_y_continuous(lim = c(-1, 1)) +
+  geom_hline(yintercept = 0, color = &#39;gray&#39;) + geom_vline(xintercept = 0, color = &#39;gray&#39;)</code></pre>
+<pre><code>## Warning: Removed 837 rows containing missing values (geom_point).</code></pre>
+<p><img src="round_2_gen_cor_files/figure-html/unnamed-chunk-99-1.png" width="576" /></p>
+</div>
+<div id="gcta-h2-vs-ldsc-h2" class="section level1">
+<h1><span class="header-section-number">4</span> GCTA h2 vs LDSC h2</h1>
+<pre class="r"><code>tmp = inner_join(df_h2, df_cor, by = c(&#39;idp_type&#39;, &#39;IDP&#39;), suffix = c(&#39;.GCTA&#39;, &#39;.LDSC&#39;))
+tmp = tmp %&gt;% group_by(IDP, idp_type) %&gt;% 
+  summarize(
+    h2.LDSC = mean(h2_obs), h2_se.LDSC = max(h2_obs_se), 
+    h2.GCTA = h2[1], h2_se.GCTA = h2_SE[1]
+  ) %&gt;% ungroup()</code></pre>
+<pre><code>## `summarise()` regrouping output by &#39;IDP&#39; (override with `.groups` argument)</code></pre>
+<pre class="r"><code>tmp %&gt;% ggplot() + geom_point(aes(x = h2.GCTA, y = h2.LDSC)) + 
+  geom_errorbar(aes(x = h2.GCTA, ymin = h2.LDSC - 1.96 * h2_se.LDSC, ymax = h2.LDSC + 1.96 * h2_se.LDSC), alpha = 0.2) + 
+  geom_errorbarh(aes(y = h2.LDSC, xmin = h2.GCTA - 1.96 * h2_se.GCTA, xmax = h2.GCTA + 1.96 * h2_se.GCTA), alpha = 0.2) +
+  facet_wrap(~idp_type) + th2 + geom_abline(slope = 1, intercept = 0, color = &#39;gray&#39;)</code></pre>
+<p><img src="round_2_gen_cor_files/figure-html/unnamed-chunk-100-1.png" width="672" /></p>
+</div>
 
 
 

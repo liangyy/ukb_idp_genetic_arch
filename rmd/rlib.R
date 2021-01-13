@@ -27,3 +27,17 @@ acat = function(pvec)
 p2z = function(p, b) {
   sign(b) * abs(qnorm(p / 2, lower.tail = T))
 }
+
+load_ldsc_rg = function(fn) {
+  tmp = read.table(pipe(paste0('cat ', fn, ' |awk \'{if($1=="" && a==1){a=0};if($1=="p1" || a==1 ){a=1;print $0}}\'')), header = T, stringsAsFactors = F)
+  p1 = unlist(lapply(strsplit(basename(tmp$p1), '\\.'), function(x) { 
+    ind = (1 : length(x)) 
+    ind = ind[ ! ind %in% c(1, 2, length(x) - 1, length(x))]
+    x = x[ind]
+    paste0(x, collapse = '.')
+  }))
+  p2 = stringr::str_remove(basename(tmp$p2), '.parquet')
+  tmp$p1 = p1
+  tmp$p2 = p2
+  tmp
+}

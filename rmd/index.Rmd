@@ -23,6 +23,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
     - Cross-validated performance (Spearman's correlation) [link](round_2_cv_perf.html)
     - Overview of all the results for GTEx-GWAS phenotypes [link](round_2_gtex_gwas.html)
     - Selected `scaled.T1` and `original.dMRI` results for GTEx-GWAS phenotypes [link](round_2_gtex_gwas_selected.html)
+    - Comparing S-BrainXcan to the LDSC-based genetic correlation [link](round_2_gen_cor.html)
 
 * Psychiatric traits [link](simagexcan_psychiatric.html)
 

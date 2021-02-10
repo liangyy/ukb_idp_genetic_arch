@@ -1,0 +1,25 @@
+# environment setup
+source /vol/bmd/yanyul/miniconda3/etc/profile.d/conda.sh
+conda activate ukb_idp
+
+bgen=/vol/bmd/data/ukbiobank/genotypes/v3/ukb_imp_chr{chr_num}_v3.bgen
+bgi=/vol/bmd/yanyul/UKB/ukb_imp_bgi/ukb_imp_chr{chr_num}_v3.bgen.bgi
+sample=/vol/bmd/data/ukbiobank/genotypes/v3/ukb19526_imp_chr1_v3_s487395.sample
+
+prs_parquet=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge/gw_ridge_beta_default_theta_g_fold_5_5.parquet
+
+
+nthread=12
+ukb_imp_reader_path=/vol/bmd/yanyul/GitHub/misc-tools/bgen_io
+
+output_prefix=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.gw_ridge
+
+
+python /vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/prediction/run_prs.py \
+  --ukb_bgen_pattern $bgen \
+  --ukb_bgi_pattern $bgi \
+  --ukb_sample_file $sample \
+  --prs_parquet $prs_parquet \
+  --nthread $nthread \
+  --output $output_prefix.parquet \
+  --ukb_imp_reader_path $ukb_imp_reader_path > pred_ridge.log 2>&1

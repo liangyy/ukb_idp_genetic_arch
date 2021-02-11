@@ -17,26 +17,27 @@ covar_yaml=covariate_round_1.yaml
 pheno_linear_yaml=phenotype_linear.yaml
 pheno_susie_yaml=phenotype_susie.yaml
 
-tmp_indiv=run_round_2_linear.${idp}.txt
+idptag=$1
+tmp_indiv=run_round_2.${idptag}.txt
 cat $eur_indiv | tail -n +2 | cut -f 1 -d ' '  > $tmp_indiv
 
 
-logfile=run_round_2_linear.${idp}.log
+logfile=run_round_2.${idptag}.log
 if [[ -f $logfile ]]
-do
+then
   rm $logfile
-done
+fi
 
 models='en ridge'
-idp=$1
+
 for model in $models
 do
-  idp=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.${idp}_${model}_2nd.parquet
+  idp=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.${idptag}_${model}_2nd.parquet
   # output file
-  outfile_linear=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_round_2.linear.${idp}_${model}.csv
-  outfile_susie=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_round_2.susie.${idp}_${model}.csv
+  outfile_linear=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_round_2.linear.${idptag}_${model}.csv
+  outfile_susie=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_round_2.susie.${idptag}_${model}.csv
   
-  echo $model $idp >> $logfile
+  echo $model $idptag >> $logfile
   # run
   python $scriptpath \
     --phenotype_table $pheno eid \
@@ -46,7 +47,7 @@ do
     --individual_list_exclude $idp_indiv \
     --covariate_yaml $covar_yaml \
     --idp_table $idp indiv \
-    --output $outfile \
+    --output $outfile_linear \
     >> $logfile 2>&1
 
   # --first_30_idp \
@@ -59,7 +60,7 @@ do
     --individual_list_exclude $idp_indiv \
     --covariate_yaml $covar_yaml \
     --idp_table $idp indiv \
-    --output $outfile \
+    --output $outfile_susie \
     >> $logfile 2>&1
 
 done

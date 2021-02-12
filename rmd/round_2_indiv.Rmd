@@ -1,0 +1,222 @@
+---
+title: "Round 2: BrainXcan results of UKB phenotypes"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+source('https://raw.githubusercontent.com/liangyy/misc-tools/master/plot_tool/plot_tools.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(ggrepel)
+library(data.table)
+library(ggpubr)
+options(datatable.fread.datatable = F)
+source('rlib.R')
+pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes')
+pheno_bcc = c('wbc', 'rbc', 'platelet', 'lymphocyte', 'monocyte', 'neutrophil', 'eosinophil', 'basophil')
+pheno_ht = c('dbp', 'sbp', 'ht', 'hb', 'mcv', 'mch', 'mchc')
+pheno = c(pheno_interest, pheno_bcc, pheno_ht)
+```
+
+# About
+
+We run individual-level BrainXcan on some UKB phenotypes.
+The IDPs being used are listed below:
+
+* `scaled_t1_all_covar_w_pc`
+* `orignal_dmri_all_covar_w_pc`
+
+# Load data
+
+```{r}
+models = c('ridge', 'en')
+idps = c('dmri','t1') #  
+# types = c('linear', 'susie')
+df = list()
+for(m in models) {
+  for(t in idps) {
+    fn1 = paste0('~/Desktop/tmp/ukb_idp/data/imagexcan_round_2.linear.', t, '_', m, '.csv')
+    tmp1 = read.csv(fn1)
+    fn2 = paste0('~/Desktop/tmp/ukb_idp/data/imagexcan_round_2.susie.', t, '_', m, '.csv')
+    tmp2 = read.csv(fn2)
+    tmp = inner_join(tmp1, tmp2, by = c('IDP', 'phenotype'))
+    df[[length(df) + 1]] = tmp %>% mutate(model = m, idp_type = t)
+  }
+}
+df = do.call(rbind, df)
+df$bhat = - df$bhat
+df_all = df
+df = df_all %>% filter(phenotype %in% pheno_interest)
+```
+
+Load IDP annotations. 
+
+```{r}
+t1 = readRDS('../misc_data/process_t1/t1_meta.rds')
+t1 = t1 %>% mutate(IDP = paste0('IDP-', FieldID))
+dmri = readRDS('../misc_data/download_some_matching_files/annot_dmri_idps.rds')
+dmri = dmri %>% mutate(IDP = paste0('IDP-', FieldID))
+idps = c('t1', 'dmri')
+df_annot = rbind(
+  t1 %>% select(IDP, Field) %>% mutate(idp_type = 't1'),
+  dmri %>% select(IDP, Field) %>% mutate(idp_type = 'dmri')
+)
+```
+
+# Overview of the results
+
+```{r, fig.height=4, fig.width=5}
+p1 = qqplot_by_group(df$pval, paste(df$model, df$idp_type)) + th + ggtitle('QQ-plot: UKB phenotypes of interest') 
+p1
+```
+
+
+```{r, fig.height=4, fig.width=8}
+p1 = df %>% reshape2::dcast(IDP + phenotype + idp_type ~ model, value.var = 'pip') %>% ggplot() +
+  geom_point(aes(x = ridge, y = en), alpha = 0.05) +
+  th2 + ggtitle('QQ-plot: UKB phenotypes of interest') + facet_wrap(~idp_type)
+p1 
+```
+
+
+
+# Selecting putative signals
+
+Meet both criteria:
+
+* Bonferroni significant at $\alpha = 0.01$ (we used stringent cutoff since there is some sort of inflation).
+* Within 95% credible set.
+
+```{r}
+df_signif = df %>% group_by(idp_type, model) %>% mutate(p_adj = pval * n()) %>% ungroup() %>%
+  filter(cs > 0 & p_adj < 0.01)
+
+df_signif %>% group_by(idp_type, model) %>% summarize(nsig = n()) %>% pander::pander(caption = 'The number of putative signals extracted from UKB phenotypes of interest')
+```
+
+Save putative signals to TSV.
+
+```{r}
+df_gwas = read.csv('../misc_data/pheno_of_interest.meta_table.csv')
+for(dd in c('dmri', 't1')) {
+  sub = df_signif %>% filter(idp_type == dd) %>% select(IDP, phenotype) %>% distinct()
+  sub = left_join(sub, df_gwas, by = 'phenotype')
+  sub = sub %>% select(id, IDP, gwas_code) %>% rename(pheno = id, idp = IDP, pheno_code = gwas_code)
+  write.table(sub, paste0('../misc_data/round_2_selected.ukb_pheno.', dd, '.signif.tsv'), quo = F, col = T, row = F, sep = '\t')
+}
+```
+
+# Mendelian randomization results
+
+```{r}
+collector_mr = list()
+collector_data = list()
+idps = c('t1', 'dmri') 
+df_signif_out = left_join(df_signif, df_gwas, by = 'phenotype') %>% select(idp_type, IDP, phenotype, id) %>% distinct()
+for(dd in idps) {
+  sub = df_signif_out %>% filter(idp_type == dd) %>% select(-idp_type)
+  for(i in 1 : nrow(sub)) {
+    tmp = readRDS(paste0('~/Desktop/tmp/ukb_idp/mr_ukb_pheno_2nd/MR.ukb_pheno_2nd_', dd, '.', sub$IDP[i], '_x_', sub$id[i], '.rds'))
+    if(sum(is.na(tmp$idp2pheno$mr)) == 1 | sum(is.na(tmp$pheno2idp$mr)) == 1) {
+      next
+    }
+    n_idp2pheno = sum(tmp$idp2pheno$mr$pval < 0.05) 
+    n_pheno2idp = sum(tmp$pheno2idp$mr$pval < 0.05) 
+    if(n_idp2pheno >= 2 | n_pheno2idp >= 2) {
+      collector_mr[[length(collector_mr) + 1]] = rbind(
+        tmp$idp2pheno$mr %>% mutate(direction = 'idp2pheno', pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno > 3, is_pass = n_idp2pheno > 3 | n_pheno2idp > 3, idp_type = dd, id = sub$id[i]),
+        tmp$pheno2idp$mr %>% mutate(direction = 'pheno2idp', pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno > 3, is_pass = n_idp2pheno > 3 | n_pheno2idp > 3, idp_type = dd, id = sub$id[i])
+      )
+      collector_data[[length(collector_data) + 1]] = rbind(
+        tmp$idp2pheno$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'idp2pheno', pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno > 3, is_pass = n_idp2pheno > 3 | n_pheno2idp > 3, idp_type = dd, id = sub$id[i]),
+        tmp$pheno2idp$data %>% select(beta.exposure, beta.outcome, pval.exposure) %>% mutate(direction = 'pheno2idp', pheno = sub$phenotype[i], IDP = sub$IDP[i], is_forward = n_idp2pheno > 3, is_pass = n_idp2pheno > 3 | n_pheno2idp > 3, idp_type = dd, id = sub$id[i])
+      )
+    } 
+  }
+}
+
+df_data = do.call(rbind, collector_data) %>% left_join(df_annot, by = c('IDP', 'idp_type'))
+df_mr = do.call(rbind, collector_mr) %>% left_join(df_annot, by = c('IDP', 'idp_type'))
+df_mr$Field[ is.na(df_mr$Field) ] = paste(df_mr$idp_type[ is.na(df_mr$Field) ], df_mr$IDP[ is.na(df_mr$Field) ])
+df_data$Field[ is.na(df_data$Field) ] = paste(df_data$idp_type[ is.na(df_data$Field) ], df_data$IDP[ is.na(df_data$Field) ])
+```
+
+
+```{r, fig.width=15, fig.height=5}
+df_all_signif = df
+df_all_signif = df_all_signif %>% rename(cs95 = cs)
+plot_pair = function(pheno_, idp_, type_) {
+  mydat = df_data %>% filter(id == pheno_, IDP == idp_, idp_type == type_)
+  mymr = df_mr %>% filter(id == pheno_, IDP == idp_, idp_type == type_)
+  idp_name = mydat$Field[1]
+  gwas_name = mydat$pheno[1]
+  idp_id = mydat$IDP[1]
+  this_result = df_all_signif %>% filter(IDP == idp_id, phenotype == gwas_name, idp_type == type_)
+  plist = list()
+  plist[[length(plist) + 1]] = mydat %>% filter(direction == 'idp2pheno') %>% ggplot() + 
+    geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + 
+    geom_vline(xintercept = 0, color = 'lightgray') + 
+    geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(idp_name, ' -> \n ', gwas_name)) +
+    theme(legend.position = 'none') # +
+  # geom_abline(data = this_result, aes(slope = bhat, intercept = 0, color = model))
+  plist[[length(plist) + 1]] = mydat %>% filter(direction == 'pheno2idp') %>% ggplot() + geom_point(aes(x = beta.exposure, y = beta.outcome, size = -log10(pval.exposure))) + geom_vline(xintercept = 0, color = 'lightgray') + geom_hline(yintercept = 0, color = 'lightgray') + th + ggtitle(paste0(gwas_name, ' -> \n ', idp_name)) +
+    theme(legend.position = 'none') # +
+  # geom_abline(data = this_result, aes(slope = 1 / bhat, intercept = 0, color = model))
+  # plist[[length(plist) + 1]] = gridExtra::tableGrob(df_mr %>% select(method, nsnp, b, pval, direction))
+  this_result2 = this_result %>% mutate(method = paste0('imgx_', model), nsnp = paste0('pip = ', signif(pip, digits = 2), '\n cs = ', cs95), b = bhat, direction = NA) 
+  mymr = rbind(mymr %>% select(method, nsnp, b, pval, direction), this_result2 %>% select(method, nsnp, b, pval, direction))
+  qq = ggarrange(plist[[1]], plist[[2]], ggtexttable(format(mymr, digits = 3)), ncol = 3)
+  qq
+}
+```
+
+
+```{r, fig.width=15, fig.height=5}
+df_tmp = df_mr %>% select(id, IDP, idp_type) %>% distinct()  # %>% filter(is_pass == T) 
+for(i in 1 : nrow(df_tmp)) {
+  qq = plot_pair(df_tmp$id[i], df_tmp$IDP[i], df_tmp$idp_type[i])
+  print(qq)
+}
+
+```
+
+
+# Compare to S-BrainXcan
+
+```{r, fig.height=4, fig.width=15}
+# get the mapping between the two phenotype sets
+df_map = data.frame(
+  id = c('wbc', 'rbc', 'platelet', 'lymphocyte', 'monocyte', 'neutrophil', 'eosinophil', 'height', 'bmi'),
+  gwas = c('Astle_et_al_2016_White_blood_cell_count', 'Astle_et_al_2016_Red_blood_cell_count', 'Astle_et_al_2016_Platelet_count', 'Astle_et_al_2016_Lymphocyte_counts', 'Astle_et_al_2016_Monocyte_count', 'Astle_et_al_2016_Neutrophil_count', 'Astle_et_al_2016_Eosinophil_counts', 'UKB_50_Standing_height', 'UKB_21001_Body_mass_index_BMI')
+)
+
+df_gg = list()
+models = c(ridge = 'ridge', en = 'elastic_net')
+idps = c(t1 = 't1.scaled', dmri = 'dmri.original')
+for(i in df_map$gwas) {
+  for(m in names(models)) {
+    for(ii in names(idps)) {
+      df_gg[[length(df_gg) + 1]] = read.csv(paste0('~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_2nd/', idps[[ii]], '.all_covar.w_pc.gw_', models[[m]], '_beta_x_', i, '_x_simagexcan.csv')) %>% mutate(model = m, idp_type = ii, phenotype = i)
+    }
+  }
+}
+df_gg = do.call(rbind, df_gg)
+df_gg = df_gg %>% rename(bhat.sbxcan = bhat, pval.sbxcan = pval, pip.sbxcan = pip, cs.sbxcan = cs95)
+
+df2 = df_map %>% inner_join(
+  df_all %>% rename(bhat.bxcan = bhat, pval.bxcan = pval, pip.bxcan = pip, cs.bxcan = cs), 
+  by = c('id' = 'phenotype')
+)
+df2 = df2 %>% inner_join(df_gg, by = c('gwas' = 'phenotype', 'IDP', 'idp_type', 'model'))
+df2 = df2 %>% mutate(zscore.bxcan = p2z(pval.bxcan, bhat.bxcan), zscore.sbxcan = p2z(pval.sbxcan, bhat.sbxcan))
+
+df2 %>% ggplot() + geom_point(aes(x = zscore.bxcan, y = zscore.sbxcan, color = idp_type)) + facet_grid(model~id) + th2 + coord_equal() + geom_abline(slope = 1, intercept = 0)
+
+df2 %>% ggplot() + geom_point(aes(x = pip.bxcan, y = pip.sbxcan, color = idp_type), alpha = 0.5) + facet_grid(model~id) + th2 + coord_equal() + geom_abline(slope = 1, intercept = 0) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```

@@ -31,6 +31,7 @@ rule format_focal:
            --p {params.pval} \
            --snp {params.snp} \
            --N-col {params.n} \
+           --signed-sumstats {params.sign_stat} \
            --out {params.out_prefix}'
 
 rule gen_cor:

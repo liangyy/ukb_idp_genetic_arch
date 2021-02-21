@@ -71,6 +71,7 @@ plot_t1 = function(mytmp, annot_sub, myorder) {
 
 library(dplyr)
 library(ggplot2)
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
 
 # meta data
 annot = read.delim2('supp_table_1.tsv', sep = '\t')
@@ -165,8 +166,17 @@ if(skip_dmri_sep == F) {
   p1 = plot_dmri(df_cor0, annot_sub, df_order)
   p2 = plot_dmri(df_cor1, annot_sub, df_order)
   
+  tmp_cor = data.frame(before = cor0[upper.tri(cor0)], after = cor1[upper.tri(cor1)])
+  p3 = tmp_cor %>% ggplot() + 
+    geom_histogram(aes(x = before, fill = 'before PC adjustment'), alpha = 0.5, binwidth = 0.01) + 
+    geom_histogram(aes(x = after, fill = 'after PC adjustment'), alpha = 0.5, binwidth = 0.01) + theme_bw(base_size = 15) + th +
+    theme(legend.title = element_blank(), legend.position = c(0.8, 0.7)) +
+    xlab('Correlation between IDP residuals') + 
+    scale_fill_manual(values = c(`before PC adjustment` = 'blue', `after PC adjustment` = 'yellow'))
+  
   ggsave('idp_corr/dmri_before_adj.png', p1, width = 6, height = 5)
   ggsave('idp_corr/dmri_after_adj.png', p2, width = 6, height = 5)
+  ggsave('idp_corr/dmri_hist.png', p3, width = 5.5, height = 3)
   
 }
 
@@ -196,7 +206,17 @@ if(skip_dmri_sep == F) {
   p1 = plot_t1(df_cor0, annot_sub, df_order)
   p2 = plot_t1(df_cor1, annot_sub, df_order)
   
+  tmp_cor = data.frame(before = cor0[upper.tri(cor0)], after = cor1[upper.tri(cor1)])
+  p3 = tmp_cor %>% ggplot() + 
+    geom_histogram(aes(x = before, fill = 'before PC adjustment'), alpha = 0.5, binwidth = 0.01) + 
+    geom_histogram(aes(x = after, fill = 'after PC adjustment'), alpha = 0.5, binwidth = 0.01) + theme_bw(base_size = 15) + th +
+    theme(legend.title = element_blank(), legend.position = c(0.8, 0.7)) +
+    xlab('Correlation between IDP residuals') + 
+    scale_fill_manual(values = c(`before PC adjustment` = 'blue', `after PC adjustment` = 'yellow'))
+  
+  
   ggsave('idp_corr/t1_before_adj.png', p1, width = 5.5, height = 4)
   ggsave('idp_corr/t1_after_adj.png', p2, width = 5.5, height = 4)
+  ggsave('idp_corr/t1_hist.png', p3, width = 5.5, height = 3)
   
 }

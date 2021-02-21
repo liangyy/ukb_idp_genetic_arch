@@ -7,7 +7,9 @@ df_list = data.table::fread('cat list.txt | awk \'{print $1,$2,$3,$4}\'', data.t
 df_list$V1[19] = 19
 df_info = readLines('list_last_col.txt')
 df_info = stringr::str_remove(df_info, ' $')
+df_idcol = readLines('list_id_col.txt')
 df_list$info = df_info
+df_list$n2018_id = df_idcol
 df_list = df_list[ df_list$info != '', ]
 df_ukb = read.delim2('~/Downloads/Data_Dictionary_Showcase.tsv')
 

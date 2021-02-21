@@ -7,3 +7,6 @@ do
 done
 
 cat list.txt | cut -d\" -f2 | sed 's#^ ##g' | sed "s#\\\t#,#g"  | awk -F "float" '{print $2}' | sed 's#^,##g' | sed 's#^ ##g' | sed 's#rigt#right#g' > list_last_col.txt
+
+cat ../download_some_matching_files/list.txt | cut -d\" -f2 | sed 's#^ ##g' | sed "s#\\\t#,#g"  | awk -F "float" '{print $1}' | cut -f 1 -d, |sed 's# AU ##g' > list_id_col.txt
+

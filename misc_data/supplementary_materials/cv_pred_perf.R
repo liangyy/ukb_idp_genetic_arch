@@ -140,8 +140,8 @@ p1 = dd %>% filter(model == 'ridge') %>% select(-model, -is_pc, -pc) %>% reshape
 p2 = dd %>% filter(model == 'EN') %>% select(-model, -is_pc, -pc) %>% reshape2::melt(id.var = c('phenotype', 'idp_type')) %>% ggplot() + geom_histogram(aes(x = value), bins = 100) + facet_wrap(~variable, scales = 'free', ncol = 1) + geom_vline(xintercept = 0) + th2 + xlab('Prediction performance') +
   theme(plot.margin = unit(c(.1,1,.1,1), "cm"))
 
-ggsave(paste0(foldern, 'cv_pred_perf_hist_ridge.png'), p1, width = 6, height = 5)
-ggsave(paste0(foldern, 'cv_pred_perf_hist_en.png'), p2, width = 6, height = 5)
+ggsave(paste0(foldern, 'cv_pred_perf_hist_ridge.png'), p1, width = 6, height = 4.5)
+ggsave(paste0(foldern, 'cv_pred_perf_hist_en.png'), p2, width = 6, height = 4.5)
 
 dd %>% group_by(model) %>% summarize(mean(Spearman > 0), mean(Pearson > 0), mean(R2 > 0))
 dd$model_name = rep('ridge', nrow(dd))

@@ -1,0 +1,19 @@
+phenotype	ukb_field	target_value	aggregate_method	missing_values
+weekly_alcohol	1568	asis	sum	0
+weekly_alcohol	1578	asis	sum	0
+weekly_alcohol	1588	asis	sum	0
+weekly_alcohol	1598	asis	sum	0
+weekly_alcohol	1608	asis	sum	0
+recurrent_depressive_disorder	20002	1286	or	0
+recurrent_depressive_disorder	20124	1	or	0
+recurrent_depressive_disorder	41202	F330 ~ F334 and F338 F339	or	0
+recurrent_depressive_disorder	41204	F330 ~ F334 and F338 F339	or	0
+parent_depression	20107	12	or	remove
+parent_depression	20110	12	or	remove
+parent_AD	20107	10	or	remove
+parent_AD	20110	10	or	remove
+handedness	1707	2	none	remove
+daily_coffee	1498	asis	none	0
+daily_cigarettes	3456	asis	none	0
+bmi	21001	asis	none	remove
+height	50	asis	none	remove

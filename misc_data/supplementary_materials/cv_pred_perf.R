@@ -148,4 +148,26 @@ dd$model_name = rep('ridge', nrow(dd))
 dd$model_name[dd$model == 'EN'] = 'elastic net'
 dd %>% select(-is_pc, -pc, -model) %>% select(idp_type, phenotype, model_name, Spearman, Pearson, R2) %>% 
   rename(IDP = phenotype, IDP_type = idp_type) %>% 
+  mutate(is_kept = Spearman > 0.1) %>% 
   write.table('supp_table_2.tsv', quote = F, sep = '\t', row.names = F, col.names = T)
+
+idp_sig = read.table('supp_table_2.tsv', header = T, sep = '\t')
+idp_sig %>% filter(is_kept) %>% group_by(IDP_type, model_name) %>% summarize(count = n())
+
+library(UpSetR)
+tmp = mat = idp_sig %>% reshape2::dcast(IDP + IDP_type ~ model_name, value.var = 'is_kept') %>% mutate(total = T)
+mat = as.matrix(mat[ , c(-1, -2)])
+mat_ = mat
+mat_[mat] = 1
+mat_[!mat] = 0
+tmp[, 3:5] = mat_
+t1_col = 'orange'  # rgb()
+dmri_col = 'blue'  # rgb()
+
+png(paste0(foldern, '/', 'kept_models_t1.png'), width = 7, height = 5, units = 'in', res = 300)
+upset(tmp %>% filter(IDP_type == 'T1'), main.bar.color = t1_col, point.size = 5, line.size = 0.5, text.scale = 2)
+dev.off()
+
+png(paste0(foldern, '/', 'kept_models_dmri.png'), width = 7, height = 5, units = 'in', res = 300)
+upset(tmp %>% filter(IDP_type == 'dMRI'), main.bar.color = dmri_col, point.size = 5, line.size = 0.5, text.scale = 2)
+dev.off()

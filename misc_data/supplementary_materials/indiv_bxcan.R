@@ -1,5 +1,48 @@
 # setwd('misc_data/supplementary_materials/')
 
+load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_indiv_bxcan/MR.indiv_bxcan_') {
+  df_mr = list()
+  for(i in 1 : nrow(dd)) {
+    tmp = readRDS(paste0(prefix, dd$idp_type[i], '.', dd$idp[i], '_x_', dd$pheno[i], '.rds'))
+    df_mr0 = rbind(
+      tmp$idp2pheno$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'IDP -> Phenotype'),
+      tmp$pheno2idp$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'Phenotype -> IDP') 
+    ) %>% select(direction, method, nsnp, b, pval)
+    kk = df_mr0 %>% group_by(direction) %>% summarize(nsig = sum(pval < 0.05), sign = max(sum(b > 0), sum(b <= 0))) %>% ungroup()
+    if(max(kk$nsig) < 2 | sum(kk$sign[kk$nsig >= 2] == 3) == 0) {
+      next
+    }
+    tmp2 = inner_join(
+      data.frame(model = c('ridge', 'elastic net'), method = c('BrainXcan ridge', 'BrainXcan EN')), 
+      df %>% filter(phenotype == dd$pheno[i], IDP == dd$idp[i], tolower(idp_type) == dd$idp_type[i]),
+      by = 'model'
+    )
+    df_mr0 = rbind(
+      df_mr0 %>% mutate(pip = NA), data.frame(direction = NA, method = tmp2$method, nsnp = NA, b = tmp2$bhat, pval = tmp2$pval, pip = tmp2$pip)
+    )
+    df_mr[[length(df_mr) + 1]] = df_mr0 %>% mutate(phenotype = dd$pheno[i], IDP = dd$idp[i], idp_type = dd$idp_type[i])
+  }
+  df_mr = do.call(rbind, df_mr)
+  df_mr
+}
+
+plot_mr = function(model, idp, pheno, prefix = '~/Desktop/tmp/ukb_idp/mr_indiv_bxcan/MR.indiv_bxcan_') {
+  mr_res = readRDS(paste0(prefix, model, '.', idp, '_x_', pheno, '.rds'))
+  p1 = mr_res$idp2pheno$data %>% ggplot() + geom_hline(yintercept = 0, color = 'gray') + 
+    geom_vline(xintercept = 0, color = 'gray') + 
+    geom_point(aes(x = beta.exposure, y = beta.outcome), alpha = 0.5) + 
+    geom_errorbar(aes(x = beta.exposure, ymin = beta.outcome - 1.96 * se.outcome, ymax = beta.outcome + 1.96 * se.outcome), alpha = 0.5) +
+    geom_errorbarh(aes(y = beta.outcome, xmin = beta.exposure - 1.96 * se.exposure, xmax = beta.exposure + 1.96 * se.exposure), alpha = 0.5) +
+    th + xlab('SNP estimated effect in IDP') + ylab('SNP estimated effect in phenotype') + ggtitle('MR: IDP -> Phenotype')
+  p2 = mr_res$pheno2idp$data %>% ggplot() + geom_hline(yintercept = 0, color = 'gray') + 
+    geom_vline(xintercept = 0, color = 'gray') + 
+    geom_point(aes(x = beta.exposure, y = beta.outcome), alpha = 0.5) + 
+    geom_errorbar(aes(x = beta.exposure, ymin = beta.outcome - 1.96 * se.outcome, ymax = beta.outcome + 1.96 * se.outcome), alpha = 0.5) +
+    geom_errorbarh(aes(y = beta.outcome, xmin = beta.exposure - 1.96 * se.exposure, xmax = beta.exposure + 1.96 * se.exposure), alpha = 0.5) +
+    th + xlab('SNP estimated effect in phenotype') + ylab('SNP estimated effect in IDP') + ggtitle('MR: Phenotype -> IDP')
+  list(p1 = p1, p2 = p2)
+}
+
 library(dplyr)
 library(ggplot2)
 theme_set(theme_bw(base_size = 12))
@@ -18,10 +61,11 @@ factor_idp = function(cc) {
 }
 
 
-do_sbxcan_compare = F
+do_sbxcan_compare = T
 plot_i_bxcan = F
-do_mr_prep = T
+do_mr_prep = F
 plot_qq = F
+check_mr_result = F
 
 pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes', 'bmi', 'height')
 models = list(ridge = 'ridge', EN = 'en')
@@ -192,11 +236,10 @@ if(!file.exists(supp3)) {
   write.table(pheno_table, supp3, sep = '\t', quote = F, col = T, row = F)
 }
 
-
 if(isTRUE(plot_i_bxcan)) {
   df_sig0 = df %>% filter(p_adj < alpha)
   df_sig1 = df %>% filter(p_adj < alpha, pip > 0.5)
-  tmp0 = df %>% mutate(Total = T, Bonferroni = p_adj < alpha, Bonferroni_and_PIP = p_adj < alpha & pip > 0.5) %>% select(IDP, phenotype, model, idp_type, Bonferroni, Bonferroni_and_PIP)
+  tmp0 = df %>% mutate(Total = T, Bonferroni = p_adj < alpha, Bonferroni_and_PIP = p_adj < alpha & pip > 0.5) %>% select(IDP, phenotype, model, idp_type, Bonferroni, Bonferroni_and_PIP) %>% mutate(idp_id = paste(IDP, phenotype))
   # tmp = inner_join(
   #   tmp0 %>% filter(model == 'ridge') %>% select(-model),
   #   tmp0 %>% filter(model == 'elastic net') %>% select(-model),
@@ -212,7 +255,7 @@ if(isTRUE(plot_i_bxcan)) {
   # tmp = as.data.frame(tmp)
   # upset(tmp %>% filter(idp_type == 'T1'), main.bar.color = t1_col, point.size = 5, line.size = 0.5, text.scale = 2)
   # upset(tmp %>% filter(idp_type == 'dMRI'), main.bar.color = dmri_col, point.size = 5, line.size = 0.5, text.scale = 2)
-  tmp0 %>% group_by(idp_type) %>% summarize(length(unique(IDP[Bonferroni])), length(unique(IDP[Bonferroni_and_PIP])))
+  tmp0 %>% group_by(idp_type) %>% summarize(length(unique(idp_id[Bonferroni])), length(unique(idp_id[Bonferroni_and_PIP])))
   tmp = inner_join(
     df %>% filter(model == 'ridge') %>% select(IDP, phenotype, model, idp_type, zscore, pip),
     df %>% filter(model == 'elastic net') %>% select(IDP, phenotype, model, idp_type, zscore, pip),
@@ -232,8 +275,6 @@ if(isTRUE(plot_i_bxcan)) {
   ggsave(paste0(foldern, '/indiv_bxcan_ridge_vs_en_pip.png'), p2, width = 5.5, height = 3)
 }
 
-
-
 if(isTRUE(plot_qq)) {
   tmp = df %>% group_by(model) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% arrange(pval) 
   p = tmp %>% 
@@ -248,7 +289,6 @@ if(isTRUE(plot_qq)) {
     theme(legend.position = c(0.875, 0.4), legend.title = element_blank())
   ggsave(paste0(foldern, '/indiv_bxcan_qqplot.png'), p, width = 5.5, height = 3)
 }
-
 
 # compare to S-BrainXcan
 if(isTRUE(do_sbxcan_compare)) {
@@ -266,16 +306,17 @@ if(isTRUE(do_sbxcan_compare)) {
     df1 = do.call(rbind, df1)
     df1
   }
-  phenos = c('UKB_50_Standing_height')
+  phenos = c('UKB_50_Standing_height', 'UKB_21001_Body_mass_index_BMI')
   df_sb = load_sbxcan('~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_2nd/', phenos)
   df_sb = df_sb %>% mutate(zscore = p2z(pval, bhat))
   df_sb$model[ df_sb$model == 'EN' ] = 'elastic net'
-  df_in = df %>% filter(phenotype == 'height')
+  df_sb = inner_join(df_sb, data.frame(pheno = c('height', 'bmi'), phenotype = c('UKB_50_Standing_height', 'UKB_21001_Body_mass_index_BMI')), by = c('phenotype'))
+  df_in = df %>% filter(phenotype %in% c('height', 'bmi'))
   df_in = df_in %>% mutate(zscore = p2z(pval, bhat))
   df_both = inner_join(
-    df_sb %>% select(IDP, bhat, zscore, pip, cs95, model, idp_type), 
-    df_in %>% select(IDP, bhat, zscore, pip, cs, model, idp_type) %>% rename(cs95 = cs), 
-    by = c('IDP', 'idp_type', 'model'),
+    df_sb %>% select(IDP, bhat, zscore, pip, cs95, model, idp_type, pheno), 
+    df_in %>% select(IDP, bhat, zscore, pip, cs, model, idp_type, phenotype) %>% rename(cs95 = cs), 
+    by = c('IDP', 'idp_type', 'model', 'pheno' = 'phenotype'),
     suffix = c('.sb', '.in'))
   
   p = df_both %>% ggplot() + geom_point(aes(x = zscore.in, y = zscore.sb, color = idp_type), alpha = 0.5) + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray') + coord_equal() + facet_wrap(~model) + 
@@ -283,7 +324,7 @@ if(isTRUE(do_sbxcan_compare)) {
     ylab('S-BrainXcan z-score') +
     scale_color_manual(values = color_code2) +
     theme(legend.position = c(0.65, 0.8), legend.title = element_blank())
-  ggsave(paste0(foldern, '/ukb_height_comparison.png'), p, width = 5, height = 3)
+  ggsave(paste0(foldern, '/ukb_height_bmi_comparison.png'), p, width = 5, height = 3)
   
   tmp2 = df_both %>% mutate(indiv_BrainXcan = pip.in > 0.5, S_BrainXcan = pip.sb > 0.5) %>%
     filter(indiv_BrainXcan | S_BrainXcan) 
@@ -294,11 +335,11 @@ if(isTRUE(do_sbxcan_compare)) {
   tmp2_[, 4:5] = tmp2__
   tmp2_ = as.data.frame(tmp2_)
   
-  png(paste0(foldern, '/', 'ukb_height_pip_en.png'), width = 7, height = 5, units = 'in', res = 300)
+  png(paste0(foldern, '/', 'ukb_height_bmi_pip_en.png'), width = 7, height = 5, units = 'in', res = 300)
   upset(tmp2_ %>% filter(model == 'elastic net'), main.bar.color = color_code['elastic net'], point.size = 5, line.size = 0.5, text.scale = 2.75)
   dev.off()
   
-  png(paste0(foldern, '/', 'ukb_height_pip_ridge.png'), width = 7, height = 5, units = 'in', res = 300)
+  png(paste0(foldern, '/', 'ukb_height_bmi_pip_ridge.png'), width = 7, height = 5, units = 'in', res = 300)
   upset(tmp2_ %>% filter(model == 'ridge'), main.bar.color = color_code['ridge'], point.size = 5, line.size = 0.5, text.scale = 2.75)
   dev.off()
   
@@ -309,8 +350,23 @@ if(isTRUE(do_mr_prep)) {
   df_gwas = readRDS('../selected_pheno_to_open_gwas.rds')
   df_sig = left_join(df_sig, df_gwas %>% select(phenotype, gwas_code), by = 'phenotype')
   for(i in c('T1', 'dMRI')) {
-    tmp = df_sig %>% filter(idp_type == i) %>% select(phenotype, IDP, gwas_code) %>% rename(pheno = phenotype, idp = IDP, pheno_code = gwas_code)
+    tmp = df_sig %>% filter(idp_type == i) %>% select(phenotype, IDP, gwas_code) %>% rename(pheno = phenotype, idp = IDP, pheno_code = gwas_code) %>% distinct()
     write.table(tmp, paste0(foldern, '/indiv_bxcan_mr.', i, '.signif.tsv'), quo = F, col = T, row = F, sep = '\t')
   }
   
+}
+
+if(isTRUE(check_mr_result)) {
+  idp_meta = read.delim2('supp_table_1.tsv') %>% mutate(IDP = paste0('IDP-', ukb_field))
+  mr_methods = c('Inverse variance weighted', 'Weighted median', 'MR Egger')
+  dd = rbind(
+    read.table(paste0(foldern, '/indiv_bxcan_mr.T1.signif.tsv'), header = T) %>% mutate(idp_type = 't1'),
+    read.table(paste0(foldern, '/indiv_bxcan_mr.dMRI.signif.tsv'), header = T) %>% mutate(idp_type = 'dmri')
+  )
+  df_mr = load_mr(dd, df)
+  df_mr_entries = df_mr %>% select(phenotype, IDP, idp_type) %>% distinct()
+  df_mr_entries = left_join(df_mr_entries, idp_meta %>% select(IDP, notes), by = 'IDP')
+  idx = 15
+  plot_mr(df_mr_entries$idp_type[idx], df_mr_entries$IDP[idx], df_mr_entries$phenotype[idx])
+  df_mr_entries[idx, ] %>% inner_join(df_mr, by = c('idp_type', 'IDP', 'phenotype'))
 }

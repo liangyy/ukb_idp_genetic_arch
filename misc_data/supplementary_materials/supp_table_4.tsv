@@ -10,6 +10,7 @@ Non-cancer illness code, self-reported: schizophrenia	UKB_20002_1289_self_report
 Non-cancer illness code, self-reported: insomnia	UKB_20002_1616_self_reported_insomnia	337119	http://www.nealelab.is/uk-biobank	20002_1616.assoc.tsv.gz
 Fluid intelligence score	UKB_20016_Fluid_intelligence_score	337119	http://www.nealelab.is/uk-biobank	20016.assoc.tsv.gz
 Neuroticism score	UKB_20127_Neuroticism_score	337119	http://www.nealelab.is/uk-biobank	20127.assoc.tsv.gz
+Body mass index (BMI)	UKB_21001_Body_mass_index_BMI	337119	http://www.nealelab.is/uk-biobank	21001.assoc.tsv.gz
 Standing height	UKB_50_Standing_height	337119	http://www.nealelab.is/uk-biobank	50.assoc.tsv.gz
 Diagnoses - main ICD10: G40 Epilepsy	UKB_G40_Diagnoses_main_ICD10_G40_Epilepsy	337119	http://www.nealelab.is/uk-biobank	G40.assoc.tsv.gz
 Diagnoses - main ICD10: G43 Migraine	UKB_G43_Diagnoses_main_ICD10_G43_Migraine	337119	http://www.nealelab.is/uk-biobank	G43.assoc.tsv.gz

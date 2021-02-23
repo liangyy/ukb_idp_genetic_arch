@@ -6,7 +6,7 @@ library(dplyr)
 
 # gtex-gwas
 df = read.csv('~/Downloads/gtex-gwas-full - Sheet1.csv')
-other_pheno = c('BMI_EUR', 'BMI_Active_Inds', 'Height', 'Standing_Height_UKB')
+other_pheno = c('BMI_EUR', 'BMI_Active_Inds', 'Height', 'Standing_Height_UKB', 'BMI_UKB')
 df_selected = df %>% filter(Category == 'Psychiatric-neurologic' | new_Phenotype %in% other_pheno)
 
 

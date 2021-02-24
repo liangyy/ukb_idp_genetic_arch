@@ -97,6 +97,8 @@ prep_s_mr = F
 check_s_mr = F
 common_pheno_s = F
 gen_cor_s = T
+gen_cor_qq_s = F
+gen_cor_mr_s = T
 
 color_code = c('ridge' = 'blue', 'elastic net' = 'orange', 'rg' = 'pink')
 color_code2 = c('T1' = 'orange', 'dMRI' = 'blue')
@@ -287,26 +289,38 @@ if(isTRUE(gen_cor_s)) {
   df_cor = do.call(rbind, df_cor)
   df_cor = df_cor %>% mutate(id = paste(phenotype, IDP, idp_type)) %>% 
     filter(id %in% (df %>% mutate(id = paste(phenotype, IDP, idp_type)) %>% pull(id)))
-  df_cor_all = df_cor 
-  df_cor = left_join(df %>% select(IDP, idp_type, phenotype), df_cor, by = c('IDP', 'phenotype', 'idp_type'))
+  df_cor_all = df_cor %>% left_join(df_gwas %>% select(phenotype_id, folder), by = c('phenotype' = 'phenotype_id'))
+  # df_cor = left_join(df %>% select(IDP, idp_type, phenotype), df_cor, by = c('IDP', 'phenotype', 'idp_type'))
   
-  tmp = rbind(
-    df %>% select(IDP, pval, idp_type, phenotype, model),
-    df_cor_all %>% select(IDP, pval, idp_type, phenotype) %>% mutate(model = 'rg')
-  )
-  tmp = tmp %>% group_by(model, idp_type) %>% mutate(pval_cap = pmax(min_pval, pval)) %>% mutate(p_adj = pval * n()) %>% ungroup()
-  tmp = tmp %>% group_by(model, idp_type) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% arrange(pval) 
-  p = tmp %>% mutate(model = factor_methods(model)) %>% 
-    ggplot() + 
-    geom_path(aes(x = -log10(pexp), y = -log10(pval_cap), color = model)) + 
-    geom_point(data = tmp %>% filter(p_adj < 0.05), aes(x = -log10(pexp), y = -log10(pval_cap), color = model)) +
-    facet_wrap(~idp_type) + 
-    geom_abline(slope = 1, intercept = 0) + th2 +
-    scale_color_manual(values = color_code) + 
-    xlab(expression(paste(-log[10], p[expected]))) + 
-    ylab(expression(paste(-log[10], p[observed]))) +
-    theme(legend.position = c(0.89, 0.68), legend.title = element_blank())
-  ggsave(paste0(foldern, '/s_bxcan_qqplot_w_gencor.png'), p, width = 6, height = 3)
+  if(isTRUE(gen_cor_qq_s)) {
+    tmp = rbind(
+      df %>% select(IDP, pval, idp_type, phenotype, model),
+      df_cor_all %>% select(IDP, pval, idp_type, phenotype) %>% mutate(model = 'rg')
+    )
+    tmp = tmp %>% group_by(model, idp_type) %>% mutate(pval_cap = pmax(min_pval, pval)) %>% mutate(p_adj = pval * n()) %>% ungroup()
+    tmp = tmp %>% group_by(model, idp_type) %>% mutate(pexp = rank(pval, ties.method = 'random') / (n() + 1)) %>% arrange(pval) 
+    p = tmp %>% mutate(model = factor_methods(model)) %>% 
+      ggplot() + 
+      geom_path(aes(x = -log10(pexp), y = -log10(pval_cap), color = model)) + 
+      geom_point(data = tmp %>% filter(p_adj < 0.05), aes(x = -log10(pexp), y = -log10(pval_cap), color = model)) +
+      facet_wrap(~idp_type) + 
+      geom_abline(slope = 1, intercept = 0) + th2 +
+      scale_color_manual(values = color_code) + 
+      xlab(expression(paste(-log[10], p[expected]))) + 
+      ylab(expression(paste(-log[10], p[observed]))) +
+      theme(legend.position = c(0.89, 0.68), legend.title = element_blank())
+    ggsave(paste0(foldern, '/s_bxcan_qqplot_w_gencor.png'), p, width = 6, height = 3)
+  }
   
+  if(isTRUE(gen_cor_mr_s)) {
+    df_cor_all = df_cor_all %>% group_by(idp_type) %>% mutate(pval_cap = pmax(min_pval, pval)) %>% mutate(p_adj = pval * n()) %>% ungroup()
+    df_cor_sig = df_cor_all %>% filter(p_adj < alpha)
+    for(ss in unique(df_cor_sig$folder)) {
+      for(i in c('T1', 'dMRI')) {
+        tmp = df_cor_sig %>% filter(idp_type == i, folder == ss) %>% mutate(pp = phenotype) %>% select(phenotype, IDP, pp) %>% rename(pheno = phenotype, idp = IDP, pheno_code = pp) %>% distinct()
+        write.table(tmp, paste0(foldern, '/gencor_mr.', ss, '.', i, '.signif.tsv'), quo = F, col = T, row = F, sep = '\t')
+      }
+    }
+  }
 }
 

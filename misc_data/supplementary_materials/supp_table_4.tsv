@@ -1,45 +1,36 @@
-phenotype	phenotype_id	sample_size	portal	filename
-Sleep duration	UKB_1160_Sleep_duration	337119	http://www.nealelab.is/uk-biobank	1160.assoc.tsv.gz
-Morning/evening person (chronotype)	UKB_1180_Morning_or_evening_person_chronotype	337119	http://www.nealelab.is/uk-biobank	1180.assoc.tsv.gz
-Sleeplessness / insomnia	UKB_1200_Sleeplessness_or_insomnia	337119	http://www.nealelab.is/uk-biobank	1200.assoc.tsv.gz
-Non-cancer illness code, self-reported: psychological/psychiatric problem	UKB_20002_1243_self_reported_psychological_or_psychiatric_problem	337119	http://www.nealelab.is/uk-biobank	20002_1243.assoc.tsv.gz
-Non-cancer illness code, self-reported: multiple sclerosis	UKB_20002_1261_self_reported_multiple_sclerosis	337119	http://www.nealelab.is/uk-biobank	20002_1261.assoc.tsv.gz
-Non-cancer illness code, self-reported: parkinsons disease	UKB_20002_1262_self_reported_parkinsons_disease	337119	http://www.nealelab.is/uk-biobank	20002_1262.assoc.tsv.gz
-Non-cancer illness code, self-reported: migraine	UKB_20002_1265_self_reported_migraine	337119	http://www.nealelab.is/uk-biobank	20002_1265.assoc.tsv.gz
-Non-cancer illness code, self-reported: schizophrenia	UKB_20002_1289_self_reported_schizophrenia	337119	http://www.nealelab.is/uk-biobank	20002_1289.assoc.tsv.gz
-Non-cancer illness code, self-reported: insomnia	UKB_20002_1616_self_reported_insomnia	337119	http://www.nealelab.is/uk-biobank	20002_1616.assoc.tsv.gz
-Fluid intelligence score	UKB_20016_Fluid_intelligence_score	337119	http://www.nealelab.is/uk-biobank	20016.assoc.tsv.gz
-Neuroticism score	UKB_20127_Neuroticism_score	337119	http://www.nealelab.is/uk-biobank	20127.assoc.tsv.gz
-Body mass index (BMI)	UKB_21001_Body_mass_index_BMI	337119	http://www.nealelab.is/uk-biobank	21001.assoc.tsv.gz
-Standing height	UKB_50_Standing_height	337119	http://www.nealelab.is/uk-biobank	50.assoc.tsv.gz
-Diagnoses - main ICD10: G40 Epilepsy	UKB_G40_Diagnoses_main_ICD10_G40_Epilepsy	337119	http://www.nealelab.is/uk-biobank	G40.assoc.tsv.gz
-Diagnoses - main ICD10: G43 Migraine	UKB_G43_Diagnoses_main_ICD10_G43_Migraine	337119	http://www.nealelab.is/uk-biobank	G43.assoc.tsv.gz
-Insomnia in both sexes	CNCR_Insomnia_all	113006	https://ctg.cncr.nl/	Hammerschlag_NatGenet2017_insomnia_sumstats-full_090617.txt.gz
-BMI for individuals defined as active, only European cohorts	GIANT_2017_BMI_Active_EUR	180423	http://portals.broadinstitute.org/collaboration/giant	BMI.ACTIVE.ALL.European.txt.gz
-Body Mass Index	GIANT_2015_BMI_EUR	322154	http://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files	SNP_gwas_mc_merge_nogc.tbl.uniq.gz
-Height	GIANT_HEIGHT	253288	http://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files	GIANT_HEIGHT_Wood_et_al_2014_publicrelease_HapMapCeuFreq.txt.gz
-Five Factor Model Neuroticism	GPC-NEO-NEUROTICISM	17375	http://www.tweelingenregister.org/GPC/	GPC-1.NEO-NEUROTICISM.full.txt.gz
-Alzheimer	IGAP_Alzheimer	54162	http://web.pasteur-lille.fr/en/recherche/u744/igap/igap_download.php	IGAP_stage_1.txt.gz
-Genetic Generalised Epilepsy	ILAE_Genetic_generalised_epilepsy	28763	http://www.epigad.org/gwas_ilae2014/	ILAE_GGE_5.8.14.txt.gz
-Chronotype	Jones_et_al_2016_Chronotype	128266	http://www.t2diabetesgenes.org/data/	Chronotype_SIN_BOLT.output_plus.metrics_MAF0.001_HWE1E-5_qual0.4.txt.gz
-Sleep Duration	Jones_et_al_2016_SleepDuration	128266	http://www.t2diabetesgenes.org/data/	Sleep_Duration_SIN_BOLT.output_plus.metrics_MAF0.001_HWE1E-5_qual0.4.txt.gz
-Attention deficit hyperactivity disorder - EUR	PGC_ADHD_EUR_2017	53293	https://www.med.unc.edu/	adhd_eur_jun2017.gz
-Autism spectrum disorder - CEU	PGC_ASD_2017_CEU	15954	https://www.med.unc.edu/	daner_AUT_meta14_CEU_all.hg19.Mar2016_info_0.60_maf_0.05_release_Jun2017.tsv.gz
-Schizophrenia	pgc.scz2	150064	https://www.med.unc.edu/pgc/downloads	scz2.snp.results.txt.gz
-Depressive Symptoms	SSGAC_Depressive_Symptoms	180866	https://www.thessgac.org	DS_Full.txt.gz
-Education years (Discovery and replication cohorts, genders pooled)	SSGAC_Education_Years_Pooled	293723	https://www.thessgac.org	EduYears_Main.txt.gz
-Tobacco Ever Smoker vs Never Smoker	tag.evrsmk.tbl	74035	https://www.med.unc.edu/pgc/results-and-downloads	tag.evrsmk.tbl.gz
-ADHD	ADHD_PGC_2017	53293	https://www.med.unc.edu/pgc/results-and-downloads	adhd_eur_jun2017.gz
-Bipolar	BIP_PGC_2020	412144	https://www.med.unc.edu/pgc/results-and-downloads	daner_PGC_BIP32b_mds7a_0416a.gz
-Major Depression Disorders	MDD_PGC_2018	46351	https://www.med.unc.edu/pgc/results-and-downloads	daner_pgc_mdd_meta_w2_no23andMe_rmUKBB.gz
-ASD	ASD_PGC_2017	24409	https://www.med.unc.edu/pgc/results-and-downloads	iPSYCH-PGC_ASD_Nov2017.gz
-Alcohol Dependence	AlcDep_PGC_2018	23261	https://www.med.unc.edu/pgc/results-and-downloads	pgc_alcdep.eur_discovery.aug2018_release.txt.gz
-Schizophrenia	SCZ_PGC_2020	686648	https://www.med.unc.edu/pgc/results-and-downloads	PGC3_SCZ_wave3_public.v2.tsv.gz
-Eating Disorders	ED_PGC_2019	766345	https://www.med.unc.edu/pgc/results-and-downloads	pgcAN2.2019-07.vcf.tsv.gz
-PTSD	PTSD_PGC_2019	44960	https://www.med.unc.edu/pgc/results-and-downloads	pts_eur_freeze2_overall.results.gz
-Education Attainment	EA_Lee_2018	258327	https://www.thessgac.org/data	GWAS_EA_excl23andMe.txt
-Intelligence	Intelligence_CTG	106764	https://ctg.cncr.nl/software/summary_statistics	SavageJansen_2018_intelligence_metaanalysis.txt
-Neuroticism	Neuroticism_CTG	383873	https://ctg.cncr.nl/software/summary_statistics	sumstats_neuroticism_ctg_format.txt.gz
-Parkinson's Disease	PD_Nalls_2019	455284	https://drive.google.com/file/d/1FZ9UL99LAqyWnyNBxxlx6qOUlfAnublN/view	nallsEtAl2019_excluding23andMe_allVariants.tab.zip
-Alzheimer's Disease	AD_Jansen_2019	69826	https://ctg.cncr.nl/software/summary_statistics	AD_sumstats_Jansenetal_2019sept.txt.gz
-BMI	BMI_Locke_2018	71881	http://portals.broadinstitute.org/collaboration/giant/index.php/File:Meta-analysis_Locke_et_al%2BUKBiobank_2018_UPDATED.txt.gz	Meta-analysis_Locke_et_al+UKBiobank_2018_UPDATED.txt.gz
+phenotype	phenotype_id	short_name	sample_size	portal	filename
+Sleep duration	UKB_1160_Sleep_duration	SLEEP_UKB	337119	http://www.nealelab.is/uk-biobank	1160.assoc.tsv.gz
+Morning/evening person (chronotype)	UKB_1180_Morning_or_evening_person_chronotype	CHRONO_UKB	337119	http://www.nealelab.is/uk-biobank	1180.assoc.tsv.gz
+Sleeplessness / insomnia	UKB_1200_Sleeplessness_or_insomnia	INSOMN_UKB	337119	http://www.nealelab.is/uk-biobank	1200.assoc.tsv.gz
+Non-cancer illness code, self-reported: multiple sclerosis	UKB_20002_1261_self_reported_multiple_sclerosis	MS_UKBS	337119	http://www.nealelab.is/uk-biobank	20002_1261.assoc.tsv.gz
+Non-cancer illness code, self-reported: migraine	UKB_20002_1265_self_reported_migraine	MIGR_UKBS	337119	http://www.nealelab.is/uk-biobank	20002_1265.assoc.tsv.gz
+Fluid intelligence score	UKB_20016_Fluid_intelligence_score	FIS_UKB	337119	http://www.nealelab.is/uk-biobank	20016.assoc.tsv.gz
+Neuroticism score	UKB_20127_Neuroticism_score	NEUROT_UKB	337119	http://www.nealelab.is/uk-biobank	20127.assoc.tsv.gz
+Body mass index (BMI)	UKB_21001_Body_mass_index_BMI	BMI_UKB	337119	http://www.nealelab.is/uk-biobank	21001.assoc.tsv.gz
+Standing height	UKB_50_Standing_height	HEIGHT_UKB	337119	http://www.nealelab.is/uk-biobank	50.assoc.tsv.gz
+Insomnia in both sexes	CNCR_Insomnia_all	INSOMN	113006	https://ctg.cncr.nl/	Hammerschlag_NatGenet2017_insomnia_sumstats-full_090617.txt.gz
+BMI for individuals defined as active, only European cohorts	GIANT_2017_BMI_Active_EUR	BMIA	180423	http://portals.broadinstitute.org/collaboration/giant	BMI.ACTIVE.ALL.European.txt.gz
+Body Mass Index	GIANT_2015_BMI_EUR	BMI	322154	http://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files	SNP_gwas_mc_merge_nogc.tbl.uniq.gz
+Height	GIANT_HEIGHT	HEIGHT	253288	http://www.broadinstitute.org/collaboration/giant/index.php/GIANT_consortium_data_files	GIANT_HEIGHT_Wood_et_al_2014_publicrelease_HapMapCeuFreq.txt.gz
+Five Factor Model Neuroticism	GPC-NEO-NEUROTICISM	NEUROT	17375	http://www.tweelingenregister.org/GPC/	GPC-1.NEO-NEUROTICISM.full.txt.gz
+Alzheimer	IGAP_Alzheimer	AD	54162	http://web.pasteur-lille.fr/en/recherche/u744/igap/igap_download.php	IGAP_stage_1.txt.gz
+Genetic Generalised Epilepsy	ILAE_Genetic_generalised_epilepsy	EPI	28763	http://www.epigad.org/gwas_ilae2014/	ILAE_GGE_5.8.14.txt.gz
+Chronotype	Jones_et_al_2016_Chronotype	CHRONO	128266	http://www.t2diabetesgenes.org/data/	Chronotype_SIN_BOLT.output_plus.metrics_MAF0.001_HWE1E-5_qual0.4.txt.gz
+Sleep Duration	Jones_et_al_2016_SleepDuration	SLEEP	128266	http://www.t2diabetesgenes.org/data/	Sleep_Duration_SIN_BOLT.output_plus.metrics_MAF0.001_HWE1E-5_qual0.4.txt.gz
+Attention deficit hyperactivity disorder - EUR	PGC_ADHD_EUR_2017	ADHD	53293	https://www.med.unc.edu/	adhd_eur_jun2017.gz
+Autism spectrum disorder - CEU	PGC_ASD_2017_CEU	ASD	15954	https://www.med.unc.edu/	daner_AUT_meta14_CEU_all.hg19.Mar2016_info_0.60_maf_0.05_release_Jun2017.tsv.gz
+Schizophrenia	pgc.scz2	SCZ	150064	https://www.med.unc.edu/pgc/downloads	scz2.snp.results.txt.gz
+Depressive Symptoms	SSGAC_Depressive_Symptoms	DEPR	180866	https://www.thessgac.org	DS_Full.txt.gz
+Education years (Discovery and replication cohorts, genders pooled)	SSGAC_Education_Years_Pooled	EDU	293723	https://www.thessgac.org	EduYears_Main.txt.gz
+Tobacco Ever Smoker vs Never Smoker	tag.evrsmk.tbl	SMOKE	74035	https://www.med.unc.edu/pgc/results-and-downloads	tag.evrsmk.tbl.gz
+Bipolar	BIP_PGC_2020	BIP_PGC_2020	412144	https://www.med.unc.edu/pgc/results-and-downloads	daner_PGC_BIP32b_mds7a_0416a.gz
+Major Depression Disorders	MDD_PGC_2018	MDD_PGC_2018	46351	https://www.med.unc.edu/pgc/results-and-downloads	daner_pgc_mdd_meta_w2_no23andMe_rmUKBB.gz
+Alcohol Dependence	AlcDep_PGC_2018	AlcDep_PGC_2018	23261	https://www.med.unc.edu/pgc/results-and-downloads	pgc_alcdep.eur_discovery.aug2018_release.txt.gz
+Schizophrenia	SCZ_PGC_2020	SCZ_PGC_2020	686648	https://www.med.unc.edu/pgc/results-and-downloads	PGC3_SCZ_wave3_public.v2.tsv.gz
+Eating Disorders	ED_PGC_2019	ED_PGC_2019	766345	https://www.med.unc.edu/pgc/results-and-downloads	pgcAN2.2019-07.vcf.tsv.gz
+PTSD	PTSD_PGC_2019	PTSD_PGC_2019	44960	https://www.med.unc.edu/pgc/results-and-downloads	pts_eur_freeze2_overall.results.gz
+Education Attainment	EA_Lee_2018	EA_Lee_2018	258327	https://www.thessgac.org/data	GWAS_EA_excl23andMe.txt
+Intelligence	Intelligence_CTG	Intelligence_CTG	106764	https://ctg.cncr.nl/software/summary_statistics	SavageJansen_2018_intelligence_metaanalysis.txt
+Neuroticism	Neuroticism_CTG	Neuroticism_CTG	383873	https://ctg.cncr.nl/software/summary_statistics	sumstats_neuroticism_ctg_format.txt.gz
+Parkinson's Disease	PD_Nalls_2019	PD_Nalls_2019	455284	https://drive.google.com/file/d/1FZ9UL99LAqyWnyNBxxlx6qOUlfAnublN/view	nallsEtAl2019_excluding23andMe_allVariants.tab.zip
+Alzheimer's Disease	AD_Jansen_2019	AD_Jansen_2019	69826	https://ctg.cncr.nl/software/summary_statistics	AD_sumstats_Jansenetal_2019sept.txt.gz

@@ -61,11 +61,11 @@ factor_idp = function(cc) {
 }
 
 
-do_sbxcan_compare = T
+do_sbxcan_compare = F
 plot_i_bxcan = F
 do_mr_prep = F
 plot_qq = F
-check_mr_result = F
+check_mr_result = T
 
 pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes', 'bmi', 'height')
 models = list(ridge = 'ridge', EN = 'en')
@@ -276,7 +276,7 @@ if(isTRUE(plot_i_bxcan)) {
 }
 
 if(isTRUE(plot_qq)) {
-  tmp = df %>% group_by(model) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% arrange(pval) 
+  tmp = df %>% group_by(model, idp_type) %>% mutate(pexp = rank(pval) / (n() + 1)) %>% arrange(pval) 
   p = tmp %>% 
     ggplot() + 
     geom_path(aes(x = -log10(pexp), y = -log10(pval_cap), color = model)) + 
@@ -366,7 +366,8 @@ if(isTRUE(check_mr_result)) {
   df_mr = load_mr(dd, df)
   df_mr_entries = df_mr %>% select(phenotype, IDP, idp_type) %>% distinct()
   df_mr_entries = left_join(df_mr_entries, idp_meta %>% select(IDP, notes), by = 'IDP')
-  idx = 15
-  plot_mr(df_mr_entries$idp_type[idx], df_mr_entries$IDP[idx], df_mr_entries$phenotype[idx])
-  df_mr_entries[idx, ] %>% inner_join(df_mr, by = c('idp_type', 'IDP', 'phenotype'))
+  message('distinct pairs passing the criteria: ', nrow(df_mr_entries))
+  # idx = 15
+  # plot_mr(df_mr_entries$idp_type[idx], df_mr_entries$IDP[idx], df_mr_entries$phenotype[idx])
+  # df_mr_entries[idx, ] %>% inner_join(df_mr, by = c('idp_type', 'IDP', 'phenotype'))
 }

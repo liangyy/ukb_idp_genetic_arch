@@ -222,9 +222,9 @@ if(isTRUE(common_pheno_s)) {
     Height = c('UKB_50_Standing_height', 'GIANT_HEIGHT'),
     BMI = c('UKB_21001_Body_mass_index_BMI', 'GIANT_2015_BMI_EUR'),
     Neuroticism = c('UKB_20127_Neuroticism_score', 'Neuroticism_CTG'),
+    Intelligence = c('Intelligence_CTG', 'UKB_20016_Fluid_intelligence_score'),
     Depression = c('SSGAC_Depressive_Symptoms', 'MDD_PGC_2018'),
-    `Alzheimer's disease` = c('IGAP_Alzheimer', 'AD_Jansen_2019'),
-    `Parkinson's disease` = c('UKB_20002_1262_self_reported_parkinsons_disease', 'PD_Nalls_2019')
+    `Alzheimer's disease` = c('IGAP_Alzheimer', 'AD_Jansen_2019')
   )
   df_pairs = list()
   plist = list()
@@ -259,7 +259,7 @@ if(isTRUE(common_pheno_s)) {
   }
   df_pairs = do.call(rbind, df_pairs)
   ggsave(
-    paste0(foldern, '/', 's_bxca_compare_two_gwas.png'),
+    paste0(foldern, '/', 's_bxcan_compare_two_gwas.png'),
     (plist[[1]] + plist[[3]] + plist[[5]]) / (plist[[2]] + plist[[4]] + plist[[6]]),
     width = 8, height = 5.5
   )

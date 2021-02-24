@@ -1,5 +1,6 @@
 pheno	idp	pheno_code
 UKB_21001_Body_mass_index_BMI	IDP-25892	UKB_21001_Body_mass_index_BMI
+UKB_50_Standing_height	IDP-25002	UKB_50_Standing_height
 UKB_50_Standing_height	IDP-25004	UKB_50_Standing_height
 UKB_50_Standing_height	IDP-25006	UKB_50_Standing_height
 UKB_50_Standing_height	IDP-25890	UKB_50_Standing_height
@@ -15,4 +16,5 @@ GIANT_HEIGHT	IDP-25912	GIANT_HEIGHT
 GIANT_HEIGHT	IDP-25914	GIANT_HEIGHT
 GIANT_HEIGHT	PC-1	GIANT_HEIGHT
 GIANT_HEIGHT	PC-3	GIANT_HEIGHT
+PGC_ADHD_EUR_2017	PC-4	PGC_ADHD_EUR_2017
 SSGAC_Education_Years_Pooled	IDP-25891	SSGAC_Education_Years_Pooled

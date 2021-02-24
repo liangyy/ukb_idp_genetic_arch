@@ -91,15 +91,19 @@ source('../../rmd/rlib_calc.R')
 foldern = 's_bxcan'
 dir.create(foldern)
 
-plot_s_bxcan = F 
-plot_s_qq = F
-prep_s_mr = F
-check_s_mr = F
-common_pheno_s = F
+plot_s_bxcan = F#T
+plot_s_qq = F#T
+prep_s_mr = F#T
+check_s_mr = T
+common_pheno_s = F#T
 gen_cor_s = T
-gen_cor_qq_s = F
-gen_cor_mr_s = T
+gen_cor_qq_s = F#T
+gen_cor_mr_s = F#T
+gen_cor_compare = F#T
+gen_cor_check_mr = T
+plot_sig_mr = T
 
+not_psych = c('GIANT_2015_BMI_EUR', 'GIANT_2017_BMI_Active_EUR', 'GIANT_HEIGHT', 'UKB_50_Standing_height', 'UKB_21001_Body_mass_index_BMI')
 color_code = c('ridge' = 'blue', 'elastic net' = 'orange', 'rg' = 'pink')
 color_code2 = c('T1' = 'orange', 'dMRI' = 'blue')
 t1_col = 'orange'  
@@ -204,6 +208,7 @@ if(isTRUE(check_s_mr)) {
     read.table(paste0(foldern, '/s_bxcan_mr.gtex_gwas.T1.signif.tsv'), header = T) %>% mutate(idp_type = 't1'),
     read.table(paste0(foldern, '/s_bxcan_mr.gtex_gwas.dMRI.signif.tsv'), header = T) %>% mutate(idp_type = 'dmri')
   )
+  dd_sbxcan = rbind(dd_psych, dd_gg)
   psych_prefix = '~/Desktop/tmp/ukb_idp/mr_s_bxcan_psych/MR_local.s_bxcan_psych_'
   gg_prefix = '~/Desktop/tmp/ukb_idp/mr_s_bxcan_gtexgwas/MR_local.s_bxcan_gtexgwas_'
   df_mr = rbind(
@@ -214,6 +219,8 @@ if(isTRUE(check_s_mr)) {
   df_mr_entries = df_mr %>% select(phenotype, IDP, idp_type) %>% distinct()
   df_mr_entries = left_join(df_mr_entries, idp_meta %>% select(IDP, notes), by = 'IDP')
   message('distinct pairs passing the criteria: ', nrow(df_mr_entries))
+  message('distinct GWASs passing the criteria: ', length(unique(df_mr_entries$phenotype)))
+  message('distinct GWASs (psychiatric) passing the criteria: ', sum(!unique(df_mr_entries$phenotype) %in% not_psych))
   # idx = 67
   # plot_mr(df_mr_entries$idp_type[idx], df_mr_entries$IDP[idx], df_mr_entries$phenotype[idx], prefix = gg_prefix)
   # df_mr_entries[idx, ] %>% inner_join(df_mr, by = c('idp_type', 'IDP', 'phenotype'))
@@ -321,6 +328,66 @@ if(isTRUE(gen_cor_s)) {
         write.table(tmp, paste0(foldern, '/gencor_mr.', ss, '.', i, '.signif.tsv'), quo = F, col = T, row = F, sep = '\t')
       }
     }
+  }
+  
+  if(isTRUE(gen_cor_compare)) {
+    df_m = left_join(df, df_cor, by = c('phenotype', 'IDP', 'idp_type'), suffix = c('.bxcan', '.rg'))
+    p = df_m %>% ggplot() + geom_point(aes(x = zscore.rg, y = zscore.bxcan, color = idp_type), alpha = 0.3) + 
+      facet_wrap(~model) + 
+      geom_abline(slope = 1, intercept = 0, color = 'gray') + th2 + 
+      xlab('z-score of genetic correlation') + 
+      xlab('z-score of S-BrainXcan') +
+      scale_color_manual(values = color_code2) +
+      theme(legend.position = c(0.6, 0.8), legend.title = element_blank())
+    ggsave(paste0(foldern, '/s_bxcan_vs_gencor.png'), p, width = 5.5, height = 3)
+  }
+  
+  if(isTRUE(gen_cor_check_mr)) {
+    idp_meta = read.delim2('supp_table_1.tsv') %>% mutate(IDP = paste0('IDP-', ukb_field))
+    mr_methods = c('Inverse variance weighted', 'Weighted median', 'MR Egger')
+    dd_psych = rbind(
+      read.table(paste0(foldern, '/gencor_mr.psychiatric.T1.signif.tsv'), header = T) %>% mutate(idp_type = 't1'),
+      read.table(paste0(foldern, '/gencor_mr.psychiatric.dMRI.signif.tsv'), header = T) %>% mutate(idp_type = 'dmri')
+    )
+    dd_gg = rbind(
+      read.table(paste0(foldern, '/gencor_mr.gtex_gwas.T1.signif.tsv'), header = T) %>% mutate(idp_type = 't1'),
+      read.table(paste0(foldern, '/gencor_mr.gtex_gwas.dMRI.signif.tsv'), header = T) %>% mutate(idp_type = 'dmri')
+    )
+    dd_gencor = rbind(dd_psych, dd_gg)
+    psych_prefix = '~/Desktop/tmp/ukb_idp/mr_gencor_psych/MR_local.gencor_psych_'
+    gg_prefix = '~/Desktop/tmp/ukb_idp/mr_gencor_gtexgwas/MR_local.gencor_gtexgwas_'
+    df_mr = rbind(
+      load_mr(dd_psych, df, prefix = psych_prefix) %>% mutate(source = 'psychiatric'),
+      load_mr(dd_gg, df, prefix = gg_prefix) %>% mutate(source = 'gtex_gwas')
+    )
+    
+    df_mr_entries_gencor = df_mr %>% select(phenotype, IDP, idp_type) %>% distinct()
+    df_mr_entries_gencor = left_join(df_mr_entries_gencor, idp_meta %>% select(IDP, notes), by = 'IDP')
+    message('distinct pairs passing the criteria: ', nrow(df_mr_entries_gencor))
+    message('distinct GWASs passing the criteria: ', length(unique(df_mr_entries_gencor$phenotype)))
+    message('distinct GWASs (psychiatric) passing the criteria: ', sum(!unique(df_mr_entries_gencor$phenotype) %in% not_psych))
+  }
+  
+  if(isTRUE(gen_cor_check_mr) & isTRUE(check_s_mr) & isTRUE(plot_sig_mr)) {
+    mm = full_join(
+      df_mr_entries_gencor %>% select(-notes) %>% mutate(`Genetic Correlation` = T), 
+      df_mr_entries %>% select(-notes) %>% mutate(`S-BrainXcan` = T), 
+      by = c('phenotype', 'IDP', 'idp_type')
+    )
+    mmd = full_join(
+      dd_sbxcan %>% select(-pheno_code) %>% mutate(`S-BrainXcan` = T),
+      dd_gencor %>% select(-pheno_code) %>% mutate(`Genetic Correlation` = T), 
+      by = c('pheno', 'idp', 'idp_type')
+    )
+    mmd = left_join(mmd, mm, by = c('pheno' = 'phenotype', 'idp' = 'IDP', 'idp_type'), suffix = c('.signif', '.mr'))
+    mmd[is.na(mmd)] = F
+    mmd[, 4:7] = as.matrix(mmd[, 4:7]) * 1
+    png(paste0(foldern, '/', 's_bxcan_gencor_sig_mr_not_psych.png'), width = 7, height = 5, units = 'in', res = 300)
+    UpSetR::upset(mmd %>% filter(pheno %in% not_psych), point.size = 5, line.size = 0.5, text.scale = 2)
+    dev.off()
+    png(paste0(foldern, '/', 's_bxcan_gencor_sig_mr_psych.png'), width = 7, height = 5, units = 'in', res = 300)
+    UpSetR::upset(mmd %>% filter(!pheno %in% not_psych), point.size = 5, line.size = 0.5, text.scale = 2)
+    dev.off()
   }
 }
 

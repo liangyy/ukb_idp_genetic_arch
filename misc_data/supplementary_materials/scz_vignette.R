@@ -1,5 +1,70 @@
 # setwd('misc_data/supplementary_materials/')
 
+load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020/MR_local.scz2020_') {
+  df_mr = list()
+  for(i in 1 : nrow(dd)) {
+    tmp = readRDS(paste0(prefix, dd$idp_type[i], '.', dd$idp[i], '_x_', dd$pheno[i], '.rds'))
+    df_mr0 = rbind(
+      tmp$idp2pheno$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'IDP -> Phenotype'),
+      tmp$pheno2idp$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'Phenotype -> IDP') 
+    ) %>% select(direction, method, nsnp, b, pval)
+    kk = df_mr0 %>% group_by(direction) %>% summarize(nsig = sum(pval < 0.05), sign = max(sum(b > 0), sum(b <= 0))) %>% ungroup()
+    if(max(kk$nsig) < 2 | sum(kk$sign[kk$nsig >= 2] == 3) == 0) {
+      next
+    }
+    tmp2 = inner_join(
+      data.frame(model = c('ridge', 'elastic net', 'genetic correlation'), method = c('BrainXcan ridge', 'BrainXcan EN', 'Genetic Correlation')), 
+      df %>% filter(phenotype == dd$pheno[i], IDP == dd$idp[i], tolower(idp_type) == dd$idp_type[i]),
+      by = 'model'
+    )
+    df_mr0 = rbind(
+      df_mr0 %>% mutate(pip = NA), data.frame(direction = NA, method = tmp2$method, nsnp = NA, b = tmp2$bhat, pval = tmp2$pval, pip = tmp2$pip)
+    )
+    tmp = df_mr0$b[7:nrow(df_mr0)]
+    tmp = tmp[df_mr0$pval[7:nrow(df_mr0)] < 5e-2]
+    if(
+      (!check_sign(df_mr0$b[1:3], tmp)) &
+      (!check_sign(df_mr0$b[4:6], tmp))
+    ) {
+      next
+    }
+    df_mr[[length(df_mr) + 1]] = df_mr0 %>% mutate(phenotype = dd$pheno[i], IDP = dd$idp[i], idp_type = dd$idp_type[i])
+  }
+  df_mr = do.call(rbind, df_mr)
+  df_mr
+}
+
+plot_mr = function(model, idp, pheno, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020/MR_local.scz2020_') {
+  mr_res = readRDS(paste0(prefix, model, '.', idp, '_x_', pheno, '.rds'))
+  p1 = mr_res$idp2pheno$data %>% ggplot() + geom_hline(yintercept = 0, color = 'gray') + 
+    geom_vline(xintercept = 0, color = 'gray') + 
+    geom_point(aes(x = beta.exposure, y = beta.outcome), alpha = 0.5) + 
+    geom_errorbar(aes(x = beta.exposure, ymin = beta.outcome - 1.96 * se.outcome, ymax = beta.outcome + 1.96 * se.outcome), alpha = 0.5) +
+    geom_errorbarh(aes(y = beta.outcome, xmin = beta.exposure - 1.96 * se.exposure, xmax = beta.exposure + 1.96 * se.exposure), alpha = 0.5) +
+    th + xlab('SNP estimated effect in IDP') + ylab('SNP estimated effect in phenotype') + ggtitle('MR: IDP -> Phenotype')
+  p2 = mr_res$pheno2idp$data %>% ggplot() + geom_hline(yintercept = 0, color = 'gray') + 
+    geom_vline(xintercept = 0, color = 'gray') + 
+    geom_point(aes(x = beta.exposure, y = beta.outcome), alpha = 0.5) + 
+    geom_errorbar(aes(x = beta.exposure, ymin = beta.outcome - 1.96 * se.outcome, ymax = beta.outcome + 1.96 * se.outcome), alpha = 0.5) +
+    geom_errorbarh(aes(y = beta.outcome, xmin = beta.exposure - 1.96 * se.exposure, xmax = beta.exposure + 1.96 * se.exposure), alpha = 0.5) +
+    th + xlab('SNP estimated effect in phenotype') + ylab('SNP estimated effect in IDP') + ggtitle('MR: Phenotype -> IDP')
+  list(p1 = p1, p2 = p2)
+}
+
+save_mr_table = function(df_mr, filename) {
+  print(
+    xtable::xtable(
+      df_mr %>% select(IDP, model, direction, method, nsnp, b, pval, pip), 
+      display=c("s", "s", "s", "s", "s", "g", "g", 'g', 'g'), digits = 3
+    ), 
+    math.style.exponents = TRUE, 
+    include.rownames = FALSE, 
+    file = filename, 
+    sanitize.colnames.function=bold,
+    booktabs = TRUE
+  )
+}
+
 idp_type = list(dMRI = 'dmri.original.all_covar.w_pc', T1 = 't1.scaled.all_covar.w_pc')
 models = list(ridge = 'gw_ridge', EN = 'gw_elastic_net')
 load_sbxcan = function(folder, trait_list) {
@@ -73,8 +138,8 @@ min_pval = 1e-30
   df_cor$idp_type[df_cor$idp_type == 'dmri'] = 'dMRI'
   df_cor$idp_type[df_cor$idp_type == 't1'] = 'T1'
   df = rbind(
-    df %>% select(IDP, phenotype, idp_type, model, zscore, pval, pip), 
-    df_cor %>% mutate(model = 'genetic correlation', pip = NA) %>% select(IDP, phenotype, idp_type, model, zscore, pval, pip)
+    df %>% select(IDP, phenotype, idp_type, model, zscore, pval, pip, bhat), 
+    df_cor %>% mutate(model = 'genetic correlation', pip = NA) %>% select(IDP, phenotype, idp_type, model, zscore, pval, pip, rg) %>% rename(bhat = rg)
   )
   
   df = df %>% group_by(phenotype, model) %>% mutate(p_adj = pval * n()) %>% ungroup()
@@ -157,7 +222,82 @@ if(isTRUE(mr_prep)) {
   }
 }
 
+mr_check = F
+if(isTRUE(mr_check)) {
+  idp_meta = read.delim2('supp_table_1.tsv') %>% mutate(IDP = paste0('IDP-', ukb_field))
+  mr_methods = c('Inverse variance weighted', 'Weighted median', 'MR Egger')
+  dd = rbind(
+    read.table(paste0(foldern, '/scz2020.T1.signif.tsv'), header = T) %>% mutate(idp_type = 't1'),
+    read.table(paste0(foldern, '/scz2020.dMRI.signif.tsv'), header = T) %>% mutate(idp_type = 'dmri')
+  )
+  
+  df_mr = load_mr(dd, df)
+  
+  df_mr$idp_type[df_mr$idp_type == 'dmri'] = 'dMRI'
+  df_mr$idp_type[df_mr$idp_type == 't1'] = 'T1'
+  
+  df_mr = df_mr %>% left_join(
+    df_sig %>% select(IDP, phenotype, idp_type, model, anatomy, left_or_right, measurement_type, dmri_measure, t1_anatomy_group), 
+    by = c('IDP', 'phenotype', 'idp_type'))
+  
+  df_mr_entries = df_mr %>% select(phenotype, IDP, idp_type) %>% distinct()
+  df_mr_entries = left_join(df_mr_entries, idp_meta %>% select(IDP, notes), by = 'IDP')
+  message('distinct pairs passing the criteria: ', nrow(df_mr_entries))
+  message('distinct GWASs passing the criteria: ', length(unique(df_mr_entries$phenotype)))
+  message('distinct GWASs (psychiatric) passing the criteria: ', sum(!unique(df_mr_entries$phenotype) %in% not_psych))
+  df_sig %>% left_join(df_mr_entries %>% select(-notes) %>% mutate(pass_mr = T), by = c('IDP', 'phenotype', 'idp_type')) %>% group_by(model) %>% summarize(sum(pass_mr, na.rm = T))
+  # idx = 1
+  tt = list()
+  for(idx in 1 : nrow(df_mr_entries)) {
+    pp = plot_mr(df_mr_entries$idp_type[idx], df_mr_entries$IDP[idx], df_mr_entries$phenotype[idx])
+    tmp = df_mr_entries[idx, ] %>% inner_join(df_mr, by = c('idp_type', 'IDP', 'phenotype'))
+    tt[[length(tt) + 1]] = tmp
+    # save_mr_table(tmp, paste0(foldern, '/scz2020_x_', df_mr_entries$IDP[idx], '_', df_mr_entries$idp_type[idx], '.tex'))
+    ggsave(paste0(foldern, '/scz2020_x_', df_mr_entries$IDP[idx], '_', df_mr_entries$idp_type[idx], '.png'), pp[[1]] + pp[[2]], height = 4, width = 8)
+  }
+  tt = do.call(rbind, tt)
+  write.table(tt %>% select(IDP, model, direction, method, nsnp, b, pval, pip, notes), 'supp_table_5.tsv', quo = F, col = T, row = F, sep = '\t')
+  # save_mr_table(tt, paste0(foldern, '/scz2020_mr.tex'))
+}
 
+compare_scz2 = T
+if(isTRUE(compare_scz2)) {
+  # p = df %>% filter(phenotype == psychiatric[2]) %>% ggplot() + 
+  #   geom_point(
+  #     data = df %>% filter(phenotype == psychiatric[2], pip > 0.5),
+  #     aes(x = idp_f, y = -log10(pval)), size = 4, shape = 1
+  #   ) +
+  #   geom_point(aes(x = idp_f, y = -log10(pval), color = measurement_type)) +
+  #   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) + 
+  #   theme(legend.position = 'right', legend.title = element_blank()) +
+  #   th2 +
+  #   scale_color_manual(values = cbPalette) +
+  #   facet_wrap(~model, ncol = 1) +
+  #   geom_hline(
+  #     data = df %>% filter(phenotype == psychiatric[1]) %>% 
+  #       group_by(model) %>% summarize(cutoff = alpha / n()) %>% ungroup(),
+  #     aes(yintercept = -log10(cutoff)), linetype = 2
+  #   ) + 
+  #   xlab('Brain IDPs') + 
+  #   ylab(expression(paste(-log[10], p[S-BrainXcan]))) 
+  # ggsave(paste0(foldern, '/scz_overview_scz2.png'), p, width = 8, height = 5)
+  p1 = df %>% reshape2::dcast(IDP + idp_type + model ~ phenotype, value.var = 'zscore') %>%
+    ggplot() + geom_point(aes(x = pgc.scz2, y = SCZ_PGC_2020), alpha = 0.5) + facet_wrap(~model) + 
+    geom_abline(slope = 1, intercept = 0, color = 'gray') + th2 +
+    ylab('S-BrainXcan PIP from \n Ripke et al. (2020)') +
+    xlab('S-BrainXcan PIP from Ripke et al. (2014)')
+  p2 = df %>% mutate(pip = pmax(pip, 1e-3)) %>% reshape2::dcast(IDP + idp_type + model ~ phenotype, value.var = 'pip') %>%
+    filter(model != 'genetic correlation') %>% 
+    ggplot() + geom_point(aes(x = pgc.scz2, y = SCZ_PGC_2020), alpha = 0.5) + 
+    facet_wrap(~model) + 
+    geom_abline(slope = 1, intercept = 0, color = 'gray') + th2 + scale_x_log10() + scale_y_log10() +
+    ylab('S-BrainXcan PIP from \n Ripke et al. (2020)') +
+    xlab('S-BrainXcan PIP from Ripke et al. (2014)')
+  ggsave(paste0(foldern, '/scz2020_vs_scz2_pip.png'), p2, height = 3, width = 6)
+  ggsave(paste0(foldern, '/scz2020_vs_scz2_zscore.png'), p1, height = 3, width = 6)
+}
+
+# -------------- playgroud -------------------
 
 # try visualization
 no_run = T

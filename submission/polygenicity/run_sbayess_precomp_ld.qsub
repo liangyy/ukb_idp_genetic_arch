@@ -1,0 +1,22 @@
+#PBS -S /bin/bash
+#PBS -l walltime=48:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -e logs/run_sbayess_precomp_ld_$CHRNUM.err
+#PBS -o logs/run_sbayess_precomp_ld_$CHRNUM.out
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate ukb_idp
+
+SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snakemake
+
+
+cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/est_polygenicity
+
+$SNMK -s sbayess.snmk \
+  --configfile ${PBS_O_WORKDIR}/config.sbayess_precomp_ld.yaml \
+  all_ldm_chr \
+  --config chr_num=$CHRNUM > \
+  ${PBS_O_WORKDIR}/logs/run_sbayess_precomp_ld_$CHRNUM.log 2>&1
+

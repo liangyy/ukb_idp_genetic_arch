@@ -2,6 +2,8 @@
 #PBS -l nodes=1:ppn=1
 #PBS -e logs/run_sbayess_$IDP.err
 #PBS -o logs/run_sbayess_$IDP.out
+#PBS -l mem=16gb
+#PBS -l walltime=48:00:00
 
 source ~/.bash_profile
 source ~/.bashrc
@@ -14,6 +16,6 @@ SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snake
 cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/est_polygenicity
 
 $SNMK -s sbayess.snmk \
-  --configfile ${PBS_O_WORKDIR}/config.sbayess_run.yaml \
+  --configfile ${PBS_O_WORKDIR}/config.sbayess_run.yaml > \
   ${PBS_O_WORKDIR}/logs/run_sbayess_$IDP.log 2>&1
 

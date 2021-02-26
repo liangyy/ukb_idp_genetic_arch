@@ -1,0 +1,19 @@
+outdir: '/scratch/t.cri.yliang/ukb_idp/polygenicity/sbayess'
+
+geno_tag: 'idp_hm3'
+genotype:
+  bim: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bim'
+  bed: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bed'
+
+# gwas_tag: ''
+sample_size: 24409
+gwas_parquet: '/scratch/t.cri.yliang/ukb_idp/idp_gwas_2nd/trans_qtl.dmri.original.all_covar.w_pc.chr{chr_num}/{gwas_tag}.parquet'
+formated_gwas: '{outdir}/{gwas_tag}.formated_gwas.ma'
+
+ldm_prefix: '{outdir}/{geno_tag}.chr{chr_num}'
+ldm_mode: 'sparse'
+ldm_option:
+  - '--exclude-mhc'
+  - '--num-chains 4'
+
+gctb_exec: '/gpfs/data/im-lab/nas40t2/yanyul/softwares/gctb_2.02_Linux/gctb'

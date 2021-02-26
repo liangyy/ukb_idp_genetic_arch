@@ -1,4 +1,5 @@
 # args1: phenotype list
+# args2: config middle name
 
 pheno=$1
 
@@ -10,9 +11,9 @@ do
     e=`cat $logf|tail -n 1|grep 'Error\|shallow'`
     if [[ ! -z $e ]]
     then
-      qsub -v IDP=$i -N sbayess_$i run_sbayess.qsub 
+      qsub -v IDP=$i,CONFIG=$2 -N sbayess_${i}_$2 run_sbayess.qsub 
     fi
   else
-    qsub -v IDP=$i -N sbayess_$i run_sbayess.qsub 
+    qsub -v IDP=$i,CONFIG=$2 -N sbayess_${i}_$2 run_sbayess.qsub 
   fi
 done

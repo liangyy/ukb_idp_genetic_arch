@@ -21,6 +21,6 @@ done
 dmri=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/gw_lasso/dmri_2nd_round/list_misc/dmri.original.all_covar.w_pc/pheno_list.txt
 t1=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/gw_lasso/t1_2nd_round/list_misc/t1.scaled.all_covar.w_pc/pheno_list.txt
 
-bash submit_sbayess_run.sh $dmri
-bash submit_sbayess_run.sh $t1
+bash submit_sbayess_run.sh $dmri sbayess_dmri
+bash submit_sbayess_run.sh $t1 sbayess_t1
 ```

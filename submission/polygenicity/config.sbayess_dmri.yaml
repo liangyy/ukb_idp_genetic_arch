@@ -1,4 +1,4 @@
-outdir: '/scratch/t.cri.yliang/ukb_idp/polygenicity/sbayess_t1'
+outdir: '/scratch/t.cri.yliang/ukb_idp/polygenicity/sbayess_dmri'
 
 geno_tag: 'idp_hm3'
 genotype:

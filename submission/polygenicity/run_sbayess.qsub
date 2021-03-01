@@ -16,6 +16,8 @@ SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snake
 cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/est_polygenicity
 
 $SNMK -s sbayess.snmk \
-  --configfile ${PBS_O_WORKDIR}/config.$CONFIG.yaml > \
+  --configfile ${PBS_O_WORKDIR}/config.$CONFIG.yaml \
+  -p --nolock \
+  --config gwas_tag=$IDP > \
   ${PBS_O_WORKDIR}/logs/run_sbayess_${CONFIG}_${IDP}.log 2>&1
 

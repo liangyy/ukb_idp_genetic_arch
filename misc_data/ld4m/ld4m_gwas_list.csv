@@ -1,0 +1,48 @@
+TRAIT,FILE,N,Neff,UKBB Column Codes,Additional information on coding
+Eosinophil Count,blood_EOSINOPHIL_COUNT,439938,513860,30150-0.0,-
+High Light Scatter Reticulocyte Count,blood_HIGH_LIGHT_SCATTER_RETICULOCYTE_COUNT,437490,520011,30300-0.0,-
+Lymphocyte Count,blood_LYMPHOCYTE_COUNT,443940,509278,30120-0.0,-
+Mean Corpular Hemoglobin,blood_MEAN_CORPUSCULAR_HEMOGLOBIN,443686,572864,30050-0.0,-
+Mean Platelet Volume,blood_MEAN_PLATELET_VOL,445163,694867,30100-0.0,-
+Mean Sphered Cell Volume,blood_MEAN_SPHERED_CELL_VOL,437542,535538,30270-0.0,-
+Monocyte Count,blood_MONOCYTE_COUNT,442620,545193,30130-0.0,-
+Platelet Count,blood_PLATELET_COUNT,444382,600969,30080-0.0,-
+Platelet Distribution Width,blood_PLATELET_DISTRIB_WIDTH,444656,572202,30110-0.0,-
+Red Blood Cell Distribution Width,blood_RBC_DISTRIB_WIDTH,442700,514929,30070-0.0,-
+Red Blood Cell Count,blood_RED_COUNT,445174,526541,30010-0.0,-
+White Blood Cell Count,blood_WHITE_COUNT,444502,503190,30000-0.0,-
+Heel T Score,bmd_HEEL_TSCOREz,445921,583315,4106-0.0+4125-0.0,-
+Balding Type I,body_BALDING1,208336,247332,2395-0.0,balding pattern 1 vs. other
+Balding Type IV,body_BALDING4,208336,245798,2395-0.0,balding pattern 4 vs. other
+BMI,body_BMIz,457824,532396,21001-0.0,-
+Height,body_HEIGHTz,458303,673879,50-0.0,-
+Waist-hip Ratio,body_WHRadjBMIz,458417,502773,48-0.0/49-0.0,-
+Diastolic Blood Pressure,bp_DIASTOLICadjMEDz,422771,490470,4079-0.0~4079-0.1,-
+Systolic Blood Pressure,bp_SYSTOLICadjMEDz,422771,469767,4080-0.0~4080-0.1,-
+College Education,cov_EDU_COLLEGE,454813,470942,6138-0.0~6138-0.5,College or University degree
+Years of Education,cov_EDU_YEARS,454813,461458,6138-0.0~6138-0.5,"College or University degree = 20 years; A levels/AS levels or equivalent = 13 years; O levels/GCSEs or equivalent = 10 years; CSEs or equivalent = 10 years; NVQ or HND or HNC or equivalent = 19 years; Other professional qualifications eg: nursing, teaching = 15 years; None of the above = 7 years; Prefer not to answer = NA (Phenotype construction based on Okbay et al. 2016 Nature, Tables S1.2 and S1.14)"
+Smoking Status,cov_SMOKING_STATUS,457683,468171,20116-0.0,1=Previous; 2=Current
+Auto Immune Traits,disease_AID_ALL,459324,469185,20002-0.0~20002-0.28,1154 (ibs); 1222 (t1d); 1224 (thyroid problem); 1225 (hyperthyroidism/thyrotoxicosis); 1226 (hypothyroidism/myxoedema); 1256 (guillainBarre); 1260 (myasthenia); 1261 (ms); 1313 (as); 1372 (vasculitis); 1377 (polymyalgia); 1378 (wegeners); 1381 (sle); 1382 (sjogren); 1384 (sysSclerosis); 1437 (myasthenia); 1453 (psoriasis); 1456 (celiac); 1461 (ibd); 1462 (crohn); 1463 (uc); 1464 (ra); 1477 (psorArthritis); 1522 (grave); 1661 (vitiligo); 1667 (alopecia)
+Auto Immune Traits (Sure),disease_AID_SURE,459324,419607,20002-0.0~20002-0.28,1222 (t1d); 1256 (guillainBarre); 1260 (myasthenia); 1261 (ms); 1372 (vasculitis); 1378 (wegeners); 1381 (sle); 1382 (sjogren); 1384 (sysSclerosis); 1437 (myasthenia); 1456 (celiac); 1464 (ra); 1522 (grave); 1661 (vitiligo)
+Eczema,disease_ALLERGY_ECZEMA_DIAGNOSED,458699,461200,6152-0.0~6152-0.4,"Hayfever, allergic rhinitis or eczema diagnosed by doctor"
+Asthma,disease_ASTHMA_DIAGNOSED,458699,445866,6152-0.0~6152-0.4,Asthma diagnosed by doctor
+Cardiovascular Diseases,disease_CARDIOVASCULAR,459324,477807,20002-0.0~20002-0.28,1065 (hypertension); 1066 (heart/cardiac problem); 1067 (peripheral vascular disease); 1068 (venous thromboembolic disease); 1081 (stroke); 1082 (transient ischaemic attack (tia)); 1083 (subdural haemorrhage/haematoma); 1425 (cerebral aneurysm); 1473 (high cholesterol); 1493 (other venous/lymphatic disease)
+Dermatologic Diseases,disease_DERMATOLOGY,459324,459279,20002-0.0~20002-0.28,1452 (eczema/dermatitis); 1453 (psoriasis); 1454 (blistering/desquamating skin disorder); 1455 (chronic skin ulcers); 1548 (acne/acne vulgaris); 1549 (lichen planus); 1550 (lichen sclerosis); 1625 (cellulitis); 1660 (rosacea); 1661 (vitiligo); 1667 (alopecia / hair loss); 1680 (bowen's disease)
+High Cholesterol,disease_HI_CHOL_SELF_REP,459324,464736,20002-0.0~20002-0.28,1473
+Hypothyroidism,disease_HYPOTHYROIDISM_SELF_REP,459324,473703,20002-0.0~20002-0.28,1226
+Respiratory and Ear-nose-throat Diseases,disease_RESPIRATORY_ENT,459324,452193,20002-0.0~20002-0.28,1111 (asthma); 1112 (chronic obstructive airways disease/copd); 1113 (emphysema/chronic bronchitis); 1114 (bronchiectasis); 1115 (interstitial lung disease); 1117 (other respiratory problems); 1413 (nasal/sinus disorder); 1414 (throat or larynx disorder); 1415 (ear/vestibular disorder); 1594 (respiratory infection)
+Type 2 Diabetes,disease_T2D,459324,468298,2443.0.0 + 2976-0.0,Age of diagnosis > 30
+Basal Metabolic Rate,impedance_BASAL_METABOLIC_RATEz,451316,534046,23105-0.0,-
+FEV1-FVC Ratio,lung_FEV1FVCzSMOKE,371949,446812,3062/3063-0.0~3062/3063-0.2,-
+Forced Vital Capacity (FVC),lung_FVCzSMOKE,371949,422877,3062-0.0~3062-0.2,-
+Neuroticism,mental_NEUROTICISM,372066,393412,20127-0.0,neuroticism score
+Morning Person,other_MORNINGPERSON,410520,452897,1180-0.0,a more morning person vs. a more evening person
+Hair Color,pigment_HAIR,452720,713772,1747-0.0,1=black; 2=dark brown; 3=lightbrown; 4=blonde; 5=red
+Blonde Hair,pigment_HAIR_blonde,459324,534365,1747-0.0,-
+Dark Brown Hair,pigment_HAIR_darkbrown,459324,531771,1747-0.0,-
+Skin Color,pigment_SKIN,453609,548203,1717-0.0,very fair/fair vs. other
+Sunburn Occasion,pigment_SUNBURN,344229,350233,1737-0.0,any sunburn occasion or not
+Tanning,pigment_TANNING,449984,513537,1727-0.0,very/moderately tanned vs. mildly/occasionanlly/never tanned
+Age at Menarche,repro_MENARCHE_AGE,242278,279471,2714-0.0,-
+Age at Menopause,repro_MENOPAUSE_AGE,143025,156364,3581-0.0,-
+Number Children (Pooled),repro_NumberChildrenEverBorn_Pooled,456500,402204,2405-0.0 + 2734-0.0,More than 6 children coded as outliers

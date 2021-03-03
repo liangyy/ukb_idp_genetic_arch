@@ -1,0 +1,35 @@
+Trait,log10MeCommon,log10MeLF,Sample Size(NorNeff)
+Infinitesimal trait,4.69,4.98,
+Number of children,4.50 (0.13),3.95 (0.23),457k
+Schizophrenia,4.14 (0.04),3.10 (0.16),111k
+Smoking status,4.11 (0.02),NA,458k
+College,4.08 (0.05),2.86 (0.20),389k
+Morning person,4.02 (0.02),2.16 (0.25),411k
+Age at first birth F,3.99 (0.04),NA,169k
+Neuroticism,3.99 (0.23),NA,372k
+FVC,3.87 (0.16),NA,372k
+CVD including HT,3.81 (0.03),NA,400k
+BP systolic,3.81 (0.02),2.31 (0.42),423k
+BMI,3.78 (0.12),2.53 (0.21),458k
+IBD,3.60 (0.04),3.19 (0.10),86k
+Height,3.56 (0.02),2.91 (0.05),458k
+WHR,3.50 (0.04),2.54 (0.09),458k
+Age at menarche,3.47 (0.09),2.47 (0.26),242k
+FEV1/FVC,3.38 (0.05),3.01 (0.16),372k
+WBC count,3.30 (0.10),2.42 (0.18),445k
+Eczema,3.20 (0.05),NA,324k
+Asthma,3.12 (0.03),NA,187k
+Eosinophil count,3.05 (0.04),NA,440k
+RA,3.03 (0.10),NA,85k
+Platelet count,2.97 (0.04),2.51 (0.10),444k
+AID,2.93 (0.05),NA,197k
+BMD heel,2.90 (0.08),NA,446k
+Alzheimer's,2.90 (0.11),NA,47k
+Type II diabetes,2.85 (0.14),NA,74k
+RBC distribution width,2.70 (0.05),NA,443k
+RBC count,2.67 (0.18),NA,445k
+Platelet distribution width,2.64 (0.08),1.36 (0.54),445k
+Balding,2.59 (0.18),2.16 (0.20),180k
+Age at menopause,2.55 (0.06),NA,143k
+Sunburn,1.99 (0.08),NA,343k
+Red hair,1.02 (0.22),NA,81k

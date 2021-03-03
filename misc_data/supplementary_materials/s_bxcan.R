@@ -1,4 +1,4 @@
-# setwd('misc_data/supplementary_materials/')
+# setwd('~/Documents/repo/github/ukb_idp_genetic_arch/misc_data/supplementary_materials/')
 
 load_sbxcan = function(folder, trait_list) {
   idp_type = list(dMRI = 'dmri.original.all_covar.w_pc', T1 = 't1.scaled.all_covar.w_pc')
@@ -94,14 +94,14 @@ dir.create(foldern)
 plot_s_bxcan = F#T
 plot_s_qq = F#T
 prep_s_mr = F#T
-check_s_mr = T
-common_pheno_s = F#T
-gen_cor_s = T
+check_s_mr = F#T
+common_pheno_s = T#T
+gen_cor_s = F#T
 gen_cor_qq_s = F#T
 gen_cor_mr_s = F#T
 gen_cor_compare = F#T
-gen_cor_check_mr = T
-plot_sig_mr = T
+gen_cor_check_mr = F#T
+plot_sig_mr = F#T
 
 not_psych = c('GIANT_2015_BMI_EUR', 'GIANT_2017_BMI_Active_EUR', 'GIANT_HEIGHT', 'UKB_50_Standing_height', 'UKB_21001_Body_mass_index_BMI')
 color_code = c('ridge' = 'blue', 'elastic net' = 'orange', 'rg' = 'pink')
@@ -244,12 +244,16 @@ if(isTRUE(common_pheno_s)) {
     # tmp2 = df_sub %>% mutate(pip0 = pmax(1e-3, pip)) %>% reshape2::dcast(IDP + idp_type + model ~ phenotype, value.var = 'pip0')
     ss = df_gwas %>% filter(phenotype_id %in% common_pairs[[cc]])
     ss = ss[match(colnames(tmp)[4:5], ss$phenotype_id), ]
-    
+    print(ss)
     # bigger sample size is on y-axis
     if(ss$sample_size[1] > ss$sample_size[2]) {
+      namex = ss$short_name[ss$phenotype_id == colnames(tmp)[5]]
+      namey = ss$short_name[ss$phenotype_id == colnames(tmp)[4]]
       colnames(tmp)[4:5] = c('y', 'x')
       # colnames(tmp2)[4:5] = c('y', 'x')
     } else {
+      namex = ss$short_name[ss$phenotype_id == colnames(tmp)[4]]
+      namey = ss$short_name[ss$phenotype_id == colnames(tmp)[5]]
       colnames(tmp)[4:5] = c('x', 'y')
       # colnames(tmp2)[4:5] = c('x', 'y')
     }
@@ -258,8 +262,8 @@ if(isTRUE(common_pheno_s)) {
     ss = ss[ order(ss$sample_size, decreasing = T),  ]
     df_pairs[[length(df_pairs) + 1]] = tmp %>% mutate(phenotype = cc)
     plist[[length(plist) + 1]] = tmp %>% ggplot() + geom_point(aes(x = x, y = y), alpha = 0.5) + geom_abline(slope = 1, intercept = 0, color = 'gray') + 
-      xlab(ss$short_name[1]) + 
-      ylab(ss$short_name[2]) + th +
+      xlab(namex) + 
+      ylab(namey) + th +
       ggtitle(cc)
     # plist2[[length(plist2) + 1]] = tmp2 %>% ggplot() + geom_point(aes(x = x, y = y), alpha = 0.5) + geom_abline(slope = 1, intercept = 0, color = 'gray') + 
     #   xlab(ss$short_name[1]) + 

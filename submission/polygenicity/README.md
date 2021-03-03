@@ -50,6 +50,7 @@ sbatch --export=NAME_LIST=$NAME_LIST,MYJOB_NAME=$MYJOB_NAME run_sld4m.sbatch
 ```
 # mkdir -p idp_lists
 # cat ../../misc_data/supplementary_materials/supp_table_1.tsv |grep T1 | cut -f 1 | awk '{print "IDP-"$1}' > idp_lists/t1_list
+# for i in `seq 1 5`; do echo "PC-"$i >> idp_lists/t1_list; done
 # cd idp_lists
 # split -l 50 -d t1_list t1_
 # rm t1_list
@@ -67,6 +68,7 @@ done
 ```
 # mkdir -p idp_lists
 # cat ../../misc_data/supplementary_materials/supp_table_1.tsv |grep dMRI | cut -f 1 | awk '{print "IDP-"$1}' > idp_lists/dmri_list
+# for i in `seq 1 9`; do echo "PC-"$i >> idp_lists/dmri_list; done
 # cd idp_lists
 # split -l 50 -d dmri_list dmri_
 # rm dmri_list 

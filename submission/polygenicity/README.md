@@ -24,3 +24,57 @@ t1=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/gw_la
 bash submit_sbayess_run.sh $dmri sbayess_dmri
 bash submit_sbayess_run.sh $t1 sbayess_t1
 ```
+
+# Submit SLD4M jobs
+
+On midway2.
+
+## GWAS external
+
+```
+NAME_LIST=/project2/haky/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/ld4m/ld4m_external_traits.txt
+MYJOB_NAME=sld4m_external
+sbatch --export=NAME_LIST=$NAME_LIST,MYJOB_NAME=$MYJOB_NAME run_sld4m.sbatch
+```
+
+## GWAS independent
+
+```
+NAME_LIST=/project2/haky/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/ld4m/ld4m_indep_gwas.txt
+MYJOB_NAME=sld4m_indep
+sbatch --export=NAME_LIST=$NAME_LIST,MYJOB_NAME=$MYJOB_NAME run_sld4m.sbatch
+```
+
+## T1 IDPs
+
+```
+# mkdir -p idp_lists
+# cat ../../misc_data/supplementary_materials/supp_table_1.tsv |grep T1 | cut -f 1 | awk '{print "IDP-"$1}' > idp_lists/t1_list
+# cd idp_lists
+# split -l 50 -d t1_list t1_
+# rm t1_list
+# cd ../
+for i in `ls idp_lists/t1_*`
+do
+  NAME_LIST=`pwd -P`/$i
+  MYJOB_NAME=sld4m_t1
+  echo sbatch --export=NAME_LIST=$NAME_LIST,MYJOB_NAME=$MYJOB_NAME run_sld4m.sbatch
+done
+```
+
+## dMRI IDPs
+
+```
+# mkdir -p idp_lists
+# cat ../../misc_data/supplementary_materials/supp_table_1.tsv |grep dMRI | cut -f 1 | awk '{print "IDP-"$1}' > idp_lists/dmri_list
+# cd idp_lists
+# split -l 50 -d dmri_list dmri_
+# rm dmri_list 
+# cd ../
+for i in `ls idp_lists/dmri_*`
+do
+  NAME_LIST=`pwd -P`/$i
+  MYJOB_NAME=sld4m_dmri
+  echo sbatch --export=NAME_LIST=$NAME_LIST,MYJOB_NAME=$MYJOB_NAME run_sld4m.sbatch
+done
+```

@@ -1,0 +1,10 @@
+# gwas_tag: ''
+gwas_parquet: '/project2/haky/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/ld4m/{gwas_tag}.sumstats.gz'
+gwas_mode: '--as_text_gz variant_id:SNP b:Beta b_se:se'
+gwas_formatted: '{outdir}/{gwas_tag}.formated_gwas.mat'
+outdir: '/scratch/midway2/yanyul/ukb_idp/ld4m/external_gwas'
+
+SLD4M: 
+  path_to_scripts: '/project2/haky/yanyul/github_external/SLD4M'
+  l2l4: '/project2/haky/yanyul/data/SLD4M/baselineLD.1kg.l2l4.mat'
+path_to_run_script: '/project2/haky/yanyul/GitHub/misc-tools/est_polygenicity/scripts'

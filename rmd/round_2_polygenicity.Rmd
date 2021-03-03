@@ -1,0 +1,80 @@
+---
+title: "Estimating polygenicity for brain IDPs"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+source('https://raw.githubusercontent.com/liangyy/misc-tools/master/plot_tool/plot_tools.R')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+source('rlib.R')
+library(ggpubr)
+library(pander)
+panderOptions("table.split.table", Inf)
+
+```
+
+# About
+
+Here we ran S-BayesS to estimate polygenicity of brain IDPs.
+
+# Load results
+
+```{r}
+idps = read.delim2('../misc_data/supplementary_materials/supp_table_1.tsv', header = T) %>% mutate(IDP = paste0('IDP-', ukb_field), idp_type = t1_or_dmri) %>% select(IDP, idp_type)
+dd = list()
+for(i in 1 : nrow(idps)) {
+  fn = paste0('~/Desktop/tmp/ukb_idp/polygenicity/sbayess_', idps$idp_type[i], '/idp_hm3_', idps$IDP[i], '.parRes')
+  if(file.exists(fn)) {
+    tmp = read.table(fn, skip = 1)
+    if(!'R_GelmanRubin' %in% colnames(tmp)) {
+      tmp$R_GelmanRubin = NA
+    }
+    tmp$Par = rownames(tmp)
+    rownames(tmp) = NULL
+    dd[[length(dd) + 1]] = tmp %>% mutate(IDP = idps$IDP[i], idp_type = idps$idp_type[i])
+  }
+}
+dd = do.call(rbind, dd)
+```
+
+# Load h2
+
+```{r}
+df1 = read.table('~/Desktop/tmp/ukb_idp/heritability_2nd_round/dmri.original.all_covar.w_pc.tsv.gz', header = T)
+df2 = read.table('~/Desktop/tmp/ukb_idp/heritability_2nd_round/t1.scaled.all_covar.w_pc.tsv.gz', header = T)
+df = rbind(
+  df1 %>% mutate(idp_type = 'dMRI'),
+  df2 %>% mutate(idp_type = 'T1')
+)
+```
+
+# Some running statistics
+
+```{r}
+conv_cutoff = 1.2
+dd %>% filter(!is.na(R_GelmanRubin), Par == 'Pi') %>% group_by(idp_type) %>% 
+  summarize(
+    nidp_finished = n(),
+    nidp_converged = sum(R_GelmanRubin < conv_cutoff)
+  ) %>% pander::pander()
+```
+
+Focus on converged results.
+
+```{r}
+dd_conv = dd %>% filter(!is.na(R_GelmanRubin), Par == 'Pi') %>% filter(R_GelmanRubin < conv_cutoff) %>% rename(Pi = Mean)
+dd_conv = dd_conv %>% left_join(df, by = c('IDP' = 'phenotype', 'idp_type'))
+dd_conv = dd_conv %>% left_join(dd %>% filter(Par == 'hsq') %>% rename(h2_bayes = Mean), by = c('IDP', 'idp_type'))
+dd_conv %>% ggplot() + geom_point(aes(x = h2, y = h2_bayes)) + geom_abline(slope = 1, intercept = 0)
+dd_conv %>% ggplot() + geom_point(aes(x = h2, y = Pi)) 
+```
+

@@ -1,0 +1,17 @@
+PASS_Years_of_Education2PASS_AgeFirstBirth
+PASS_Anorexia	
+PASS_Autism	
+PASS_BMI1	
+PASS_Coronary_Artery_Disease	
+PASS_Crohns_Disease	
+PASS_DS	
+PASS_Ever_Smoked	
+PASS_HDL	
+PASS_Height1	
+PASS_LDL	
+PASS_NumberChildrenEverBorn	
+PASS_Rheumatoid_Arthritis	
+PASS_Schizophrenia	
+PASS_Type_2_Diabetes	
+PASS_Ulcerative_Colitis	
+PASS_Years_of_Education2

@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Estimating polygenicity for brain IDPs</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Estimating polygenicity for brain IDPs</h1>
+<h4 class="date">04 March, 2021</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+source(&#39;https://raw.githubusercontent.com/liangyy/misc-tools/master/plot_tool/plot_tools.R&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+source(&#39;rlib.R&#39;)
+library(ggpubr)
+library(pander)
+panderOptions(&quot;table.split.table&quot;, Inf)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>Here we ran S-BayesS and SLD4M to estimate polygenicity of brain IDPs.</p>
+</div>
+<div id="load-s-bayess" class="section level1">
+<h1><span class="header-section-number">2</span> Load S-BayesS</h1>
+<pre class="r"><code>idps = read.delim2(&#39;../misc_data/supplementary_materials/supp_table_1.tsv&#39;, header = T) %&gt;% mutate(IDP = paste0(&#39;IDP-&#39;, ukb_field), idp_type = t1_or_dmri) %&gt;% select(IDP, idp_type)
+dd = list()
+for(i in 1 : nrow(idps)) {
+  fn = paste0(&#39;~/Desktop/tmp/ukb_idp/polygenicity/sbayess_&#39;, idps$idp_type[i], &#39;/idp_hm3_&#39;, idps$IDP[i], &#39;.parRes&#39;)
+  if(file.exists(fn)) {
+    tmp = read.table(fn, skip = 1)
+    if(!&#39;R_GelmanRubin&#39; %in% colnames(tmp)) {
+      tmp$R_GelmanRubin = NA
+    }
+    tmp$Par = rownames(tmp)
+    rownames(tmp) = NULL
+    dd[[length(dd) + 1]] = tmp %&gt;% mutate(IDP = idps$IDP[i], idp_type = idps$idp_type[i])
+  }
+}
+dd = do.call(rbind, dd)</code></pre>
+</div>
+<div id="load-sld4m" class="section level1">
+<h1><span class="header-section-number">3</span> Load SLD4M</h1>
+<pre class="r"><code>type_list = list(dMRI = &#39;dmri.original.all_covar.w_pc&#39;, T1 = &#39;t1.scaled.all_covar.w_pc&#39;)
+dd2 = list()
+for(i in 1 : nrow(idps)) {
+  fn = paste0(&#39;~/Desktop/tmp/ukb_idp/ld4m/&#39;, type_list[[idps$idp_type[i]]], &#39;/&#39;, idps$IDP[i], &#39;.sld4m_all.csv&#39;)
+  if(file.exists(fn)) {
+    tmp = read.csv(fn)
+    dd2[[length(dd2) + 1]] = tmp %&gt;% mutate(IDP = idps$IDP[i], idp_type = idps$idp_type[i])
+  }
+}
+dd2 = do.call(rbind, dd2)
+dd2_sub = dd2 %&gt;% filter(Var1 == &#39;Manual_aggregated&#39;)</code></pre>
+<p>Load external/independent GWAS results.</p>
+<pre class="r"><code>ind = read.table(&#39;../misc_data/ld4m/ld4m_indep_gwas.txt&#39;)$V1
+dd3 = list()
+for(i in ind) {
+  fn = paste0(&#39;~/Desktop/tmp/ukb_idp/ld4m/indep_gwas/&#39;, i, &#39;.sld4m_all.csv&#39;)
+  if(!file.exists(fn)) {
+    next
+  }
+  tmp = read.csv(fn)
+  dd3[[length(dd3) + 1]] = tmp %&gt;% mutate(phenotype = i, type = &#39;independent&#39;)
+}
+ext = read.table(&#39;../misc_data/ld4m/ld4m_external_traits.txt&#39;)$V1
+for(i in ext) {
+  fn = paste0(&#39;~/Desktop/tmp/ukb_idp/ld4m/external_gwas/&#39;, i, &#39;.sld4m_all.csv&#39;)
+  if(!file.exists(fn)) {
+    next
+  }
+  tmp = read.csv(fn)
+  dd3[[length(dd3) + 1]] = tmp %&gt;% mutate(phenotype = i, type = &#39;external&#39;)
+}
+dd3 = do.call(rbind, dd3)
+
+ss = read.table(&#39;../misc_data/ld4m/sample_size.txt&#39;, header = T)
+dd3_sub = dd3 %&gt;% filter(Var1 == &#39;Manual_aggregated&#39;)
+
+dd3_sub = left_join(dd3_sub, ss, by = c(&#39;phenotype&#39; = &#39;trait&#39;))</code></pre>
+</div>
+<div id="load-h2" class="section level1">
+<h1><span class="header-section-number">4</span> Load h2</h1>
+<pre class="r"><code>df1 = read.table(&#39;~/Desktop/tmp/ukb_idp/heritability_2nd_round/dmri.original.all_covar.w_pc.tsv.gz&#39;, header = T)
+df2 = read.table(&#39;~/Desktop/tmp/ukb_idp/heritability_2nd_round/t1.scaled.all_covar.w_pc.tsv.gz&#39;, header = T)
+df = rbind(
+  df1 %&gt;% mutate(idp_type = &#39;dMRI&#39;),
+  df2 %&gt;% mutate(idp_type = &#39;T1&#39;)
+)</code></pre>
+</div>
+<div id="s-bayess-some-running-statistics" class="section level1">
+<h1><span class="header-section-number">5</span> S-BayesS: Some running statistics</h1>
+<pre class="r"><code>conv_cutoff = 1.2
+dd %&gt;% filter(!is.na(R_GelmanRubin), Par == &#39;Pi&#39;) %&gt;% group_by(idp_type) %&gt;% 
+  summarize(
+    nidp_finished = n(),
+    nidp_converged = sum(R_GelmanRubin &lt; conv_cutoff)
+  ) %&gt;% pander::pander()</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<table style="width:61%;">
+<colgroup>
+<col width="15%" />
+<col width="22%" />
+<col width="23%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">idp_type</th>
+<th align="center">nidp_finished</th>
+<th align="center">nidp_converged</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">dMRI</td>
+<td align="center">4</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">T1</td>
+<td align="center">47</td>
+<td align="center">23</td>
+</tr>
+</tbody>
+</table>
+<p>Focus on converged results.</p>
+<pre class="r"><code>dd_conv = dd %&gt;% filter(!is.na(R_GelmanRubin), Par == &#39;Pi&#39;) %&gt;% filter(R_GelmanRubin &lt; conv_cutoff) %&gt;% rename(Pi = Mean)
+dd_conv = dd_conv %&gt;% left_join(df, by = c(&#39;IDP&#39; = &#39;phenotype&#39;, &#39;idp_type&#39;))
+dd_conv = dd_conv %&gt;% left_join(dd %&gt;% filter(Par == &#39;hsq&#39;) %&gt;% rename(h2_bayes = Mean), by = c(&#39;IDP&#39;, &#39;idp_type&#39;))
+dd_conv %&gt;% ggplot() + geom_point(aes(x = h2, y = h2_bayes)) + geom_abline(slope = 1, intercept = 0)</code></pre>
+<p><img src="round_2_polygenicity_files/figure-html/unnamed-chunk-175-1.png" width="672" /></p>
+<pre class="r"><code>dd_conv %&gt;% ggplot() + geom_point(aes(x = h2, y = Pi)) </code></pre>
+<p><img src="round_2_polygenicity_files/figure-html/unnamed-chunk-175-2.png" width="672" /></p>
+</div>
+<div id="ld4m-results" class="section level1">
+<h1><span class="header-section-number">6</span> LD4M results</h1>
+<p>Define a stable estimate as Me &gt; 0 and Me &gt; Me_err.</p>
+<pre class="r"><code>dd2_sub = dd2_sub %&gt;% mutate(stable = !is.na(Ma_est) &amp; Ma_est &gt; Ma_err &amp; Ma_est &gt; 0) %&gt;% mutate(stable2 = !is.na(Ma_est) &amp; Ma_est &gt; 1.96 * Ma_err &amp; Ma_est &gt; 0)
+dd3_sub = dd3_sub %&gt;% mutate(stable = !is.na(Ma_est) &amp; Ma_est &gt; Ma_err &amp; Ma_est &gt; 0) %&gt;% mutate(stable2 = !is.na(Ma_est) &amp; Ma_est &gt; 1.96 * Ma_err &amp; Ma_est &gt; 0)
+message(mean(dd2_sub$stable, na.rm = T), &#39; of brain IDPs have stabled estimate&#39;)</code></pre>
+<pre><code>## 0.792565947242206 of brain IDPs have stabled estimate</code></pre>
+<pre class="r"><code>message(mean(dd3_sub$stable, na.rm = T), &#39; of external/independent GWASs have stabled estimate&#39;)</code></pre>
+<pre><code>## 0.975 of external/independent GWASs have stabled estimate</code></pre>
+<pre class="r"><code>dd2_sub %&gt;% group_by(idp_type) %&gt;% summarize(mean(stable, na.rm = T)) %&gt;% pander::pander()</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<table style="width:51%;">
+<colgroup>
+<col width="15%" />
+<col width="36%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">idp_type</th>
+<th align="center">mean(stable, na.rm = T)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">dMRI</td>
+<td align="center">0.7881</td>
+</tr>
+<tr class="even">
+<td align="center">T1</td>
+<td align="center">0.8113</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>message(mean(dd2_sub$stable2, na.rm = T), &#39; of brain IDPs have Ma_est &gt; 1.96 Ma_err &gt; 0 estimate&#39;)</code></pre>
+<pre><code>## 0.612709832134293 of brain IDPs have Ma_est &gt; 1.96 Ma_err &gt; 0 estimate</code></pre>
+<pre class="r"><code>message(mean(dd3_sub$stable2, na.rm = T), &#39; of external/independent GWASs have Ma_est &gt; 1.96 Ma_err &gt; 0 estimate&#39;)</code></pre>
+<pre><code>## 0.875 of external/independent GWASs have Ma_est &gt; 1.96 Ma_err &gt; 0 estimate</code></pre>
+<pre class="r"><code>dd2_sub %&gt;% group_by(idp_type) %&gt;% summarize(mean(stable2, na.rm = T)) %&gt;% pander::pander()</code></pre>
+<pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<table style="width:53%;">
+<colgroup>
+<col width="15%" />
+<col width="37%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">idp_type</th>
+<th align="center">mean(stable2, na.rm = T)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">dMRI</td>
+<td align="center">0.603</td>
+</tr>
+<tr class="even">
+<td align="center">T1</td>
+<td align="center">0.6541</td>
+</tr>
+</tbody>
+</table>
+<p>Compare external vs independent.</p>
+<pre class="r"><code>map = list(
+  height = c(&#39;PASS_Height1&#39;, &#39;body_HEIGHTz&#39;),
+  BMI = c(&#39;PASS_BMI1&#39;, &#39;body_BMIz&#39;),
+  edu = c(&#39;PASS_Years_of_Education2&#39;, &#39;cov_EDU_COLLEGE&#39;),
+  T2D = c(&#39;PASS_Type_2_Diabetes&#39;, &#39;disease_T2D&#39;),
+  CAD = c(&#39;PASS_Coronary_Artery_Disease&#39;, &#39;disease_CARDIOVASCULAR&#39;)
+)
+df_pair = list()
+for(i in names(map)) {
+  k1 = map[[i]][1]
+  k2 = map[[i]][2]
+  if(sum(map[[i]] %in% dd3_sub$phenotype[dd3_sub$stable]) &lt; 2) {
+    next
+  }
+  df_pair[[length(df_pair) + 1]] = inner_join(
+    dd3_sub %&gt;% filter(phenotype == k1) %&gt;% select(Ma_est, Ma_err, mean_sample_size) %&gt;% mutate(pheno = i), 
+    dd3_sub %&gt;% filter(phenotype == k2) %&gt;% select(Ma_est, Ma_err, mean_sample_size) %&gt;% mutate(pheno = i), by = &#39;pheno&#39;
+  )
+}
+df_pair = do.call(rbind, df_pair)
+df_pair %&gt;% ggplot() + 
+  geom_point(aes(x = Ma_est.x, y = Ma_est.y)) + 
+  geom_errorbar(aes(x = Ma_est.x, ymax = Ma_est.y + 1.96 * Ma_err.y, ymin = Ma_est.y - 1.96 * Ma_err.y), width = .1) + 
+  geom_errorbarh(aes(y = Ma_est.y, xmax = Ma_est.x + 1.96 * Ma_err.x, xmin = Ma_est.x - 1.96 * Ma_err.x), height = .1) +
+  scale_x_log10() + scale_y_log10() + coord_equal() + th + geom_abline(slope = 1, intercept = 0, color = &#39;blue&#39;) + ggtitle(&#39;Me of one phenotype from two GWASs&#39;) + ggrepel::geom_label_repel(aes(x = Ma_est.x, y = Ma_est.y, label = pheno))</code></pre>
+<p><img src="round_2_polygenicity_files/figure-html/unnamed-chunk-177-1.png" width="672" /></p>
+<pre class="r"><code>df_pair %&gt;% pander::pander()</code></pre>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="11%" />
+<col width="22%" />
+<col width="9%" />
+<col width="11%" />
+<col width="11%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Ma_est.x</th>
+<th align="center">Ma_err.x</th>
+<th align="center">mean_sample_size.x</th>
+<th align="center">pheno</th>
+<th align="center">Ma_est.y</th>
+<th align="center">Ma_err.y</th>
+<th align="center">mean_sample_size.y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">3536</td>
+<td align="center">474</td>
+<td align="center">131547</td>
+<td align="center">height</td>
+<td align="center">3377</td>
+<td align="center">206.9</td>
+<td align="center">458303</td>
+</tr>
+<tr class="even">
+<td align="center">4360</td>
+<td align="center">1633</td>
+<td align="center">122033</td>
+<td align="center">BMI</td>
+<td align="center">4936</td>
+<td align="center">1504</td>
+<td align="center">457824</td>
+</tr>
+<tr class="odd">
+<td align="center">12785</td>
+<td align="center">1097</td>
+<td align="center">328917</td>
+<td align="center">edu</td>
+<td align="center">13085</td>
+<td align="center">1217</td>
+<td align="center">454813</td>
+</tr>
+<tr class="even">
+<td align="center">2386</td>
+<td align="center">596.7</td>
+<td align="center">60786</td>
+<td align="center">T2D</td>
+<td align="center">1347</td>
+<td align="center">566</td>
+<td align="center">459324</td>
+</tr>
+<tr class="odd">
+<td align="center">1185</td>
+<td align="center">411.8</td>
+<td align="center">77210</td>
+<td align="center">CAD</td>
+<td align="center">6936</td>
+<td align="center">498.7</td>
+<td align="center">459324</td>
+</tr>
+</tbody>
+</table>
+<p>Compare with paper.</p>
+<pre class="r"><code>parse_number = function(xx) {
+  tmp = stringr::str_match(xx, &#39;([0-9\\.]+) \\(([0-9\\.]+)\\)&#39;)
+  return(list(est = as.numeric(tmp[, 2]), se = as.numeric(tmp[, 3])))
+}
+dmap = readRDS(&#39;../misc_data/ld4m/ld4m_map.rds&#39;)
+oo = parse_number(dmap$log10MeCommon)
+dmap$Ma_est = 10 ^ oo$est
+dmap$Ma_err = (10 ^ (oo$est + oo$se) - 10 ^ (oo$est - oo$se)) / 2
+dmap = dmap %&gt;% inner_join(dd3_sub %&gt;% select(Ma_est, Ma_err, phenotype, stable) %&gt;% filter(stable == T), by = c(&#39;FILE&#39; = &#39;phenotype&#39;), suffix = c(&#39;.paper&#39;, &#39;.myrun&#39;))
+dmap %&gt;% ggplot() + 
+  geom_point(aes(x = Ma_est.paper, y = Ma_est.myrun)) + 
+  geom_errorbar(aes(x = Ma_est.paper, ymax = Ma_est.myrun + 1.96 * Ma_err.myrun, ymin = Ma_est.myrun - 1.96 * Ma_err.myrun)) + 
+  geom_errorbarh(aes(y = Ma_est.myrun, xmax = Ma_est.paper + 1.96 * Ma_err.paper, xmin = Ma_est.paper - 1.96 * Ma_err.paper)) +
+  scale_x_log10() + scale_y_log10() + coord_equal() + th + geom_abline(slope = 1, intercept = 0, color = &#39;blue&#39;) + 
+  ggtitle(&#39;Comparing Me reported in \n the paper and my runs&#39;)</code></pre>
+<pre><code>## Warning in self$trans$transform(x): NaNs produced</code></pre>
+<pre><code>## Warning: Transformation introduced infinite values in continuous y-axis</code></pre>
+<pre><code>## Warning in self$trans$transform(x): NaNs produced</code></pre>
+<pre><code>## Warning: Transformation introduced infinite values in continuous x-axis</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_errorbar).</code></pre>
+<pre><code>## Warning: Removed 1 rows containing missing values (geom_errorbarh).</code></pre>
+<p><img src="round_2_polygenicity_files/figure-html/unnamed-chunk-178-1.png" width="672" /></p>
+<pre class="r"><code>tmp = rbind(
+  dd2_sub %&gt;% filter(stable) %&gt;% select(idp_type, IDP, Ma_est, Ma_err) %&gt;% rename(type = idp_type, phenotype = IDP),
+  dd3_sub %&gt;% filter(stable) %&gt;% select(type, phenotype, Ma_est, Ma_err) #  %&gt;% mutate(type = &#39;other phenotypes&#39;)
+)
+tmp %&gt;% ggplot() + geom_point(aes(x = phenotype, y = Ma_est, color = type)) + theme(axis.text.x = element_blank()) + th2</code></pre>
+<p><img src="round_2_polygenicity_files/figure-html/unnamed-chunk-179-1.png" width="672" /></p>
+<pre class="r"><code>tmp2 = tmp %&gt;% filter(Ma_est &gt; Ma_err * 1.96) %&gt;% mutate(pheno = factor(phenotype, levels = phenotype[order(Ma_est)])) 
+tmp2 %&gt;% ggplot() + 
+  geom_point(aes(x = pheno, y = Ma_est, color = type)) + theme(axis.text.x = element_blank()) + th2 + ggrepel::geom_text_repel(data = tmp2 %&gt;% filter(!type %in% c(&#39;T1&#39;, &#39;dMRI&#39;)), aes(x = pheno, y = Ma_est, label = pheno), angle = 90, force = 5)</code></pre>
+<p><img src="round_2_polygenicity_files/figure-html/unnamed-chunk-180-1.png" width="960" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

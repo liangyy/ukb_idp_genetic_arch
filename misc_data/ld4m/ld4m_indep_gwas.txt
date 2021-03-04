@@ -1,4 +1,4 @@
-PASS_Years_of_Education2PASS_AgeFirstBirth
+PASS_AgeFirstBirth
 PASS_Anorexia	
 PASS_Autism	
 PASS_BMI1	

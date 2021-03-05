@@ -61,7 +61,8 @@ perf_mr = function(exposure, outcome, ld_clump_param, ld_clump_mode) {
   }
   dat = harmonise_data(clumped_exp_dat, extracted_out_dat)
   res = mr(dat)
-  list(data = dat, mr = res)
+  resh = mr_heterogeneity(dat)
+  list(data = dat, mr = res, heterogeneity = resh)
 }
 
 impute_b_from_z = function(zscore, af, sample_size) {

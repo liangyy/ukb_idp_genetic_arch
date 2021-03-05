@@ -74,11 +74,14 @@ if(!is.null(idp_exp_dat)) {
     logging::loginfo('** IDP -> Phenotype: Running MR.')
     dat_forward = harmonise_data(idp_exp_dat, outcome_dat)
     res_forward = mr(dat_forward)
+    resh_forward = mr_heterogeneity(dat_forward)
     res_forward %>% pander::pander(caption = 'IDP -> Phenotype')
+    resh_forward %>% pander::pander(caption = 'IDP -> Phenotype')
   }
 
 } else {
   res_forward = NA
+  resh_forward = NA
   dat_forward = NA
 }
 
@@ -117,17 +120,20 @@ if(!is.null(idp_dat)) {
   logging::loginfo('** Phenotype -> IDP: Running MR.')
   dat_backward = harmonise_data(exp_dat2, idp_dat)
   res_backward = mr(dat_backward)
+  resh_backward = mr_heterogeneity(dat_backward)
   res_backward %>% pander::pander(caption = 'Phenotype -> IDP')
+  resh_backward %>% pander::pander(caption = 'Phenotype -> IDP')
 } else {
   dat_backward = NA
   res_backward = NA
+  resh_backward = NA
 }
 
 logging::loginfo('Saving results.')
 saveRDS(
   list(
-    idp2pheno = list(data = dat_forward, mr = res_forward),
-    pheno2idp = list(data = dat_backward, mr = res_backward),
+    idp2pheno = list(data = dat_forward, mr = res_forward, heterogeneity = resh_forward),
+    pheno2idp = list(data = dat_backward, mr = res_backward, heterogeneity = resh_backward),
     gwas_code = gwas_code
   ),
   opt$output

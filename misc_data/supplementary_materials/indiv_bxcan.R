@@ -65,7 +65,9 @@ do_sbxcan_compare = F
 plot_i_bxcan = F
 do_mr_prep = F
 plot_qq = F
-check_mr_result = T
+check_mr_result = F#T
+save_df = F#T
+save_df_full = T
 
 pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes', 'bmi', 'height')
 models = list(ridge = 'ridge', EN = 'en')
@@ -87,6 +89,9 @@ df$bhat = - df$bhat
 df_all = df
 df_all$model[df_all$model == 'EN'] = 'elastic net'
 df = df_all %>% filter(phenotype %in% pheno_interest) %>% mutate(idp_id = paste(idp_type, IDP, model)) %>% mutate(zscore = p2z(pval, bhat))
+if(isTRUE(save_df_full)) {
+  saveRDS(df %>% select(-idp_id), paste0(foldern, '/dataframe_full.indiv_bxcan.rds'))
+}
 
 
 idp_sig = read.table('supp_table_2.tsv', header = T, sep = '\t')
@@ -96,6 +101,9 @@ alpha = 0.05
 min_pval = 1e-30
 df = df %>% group_by(model, idp_type) %>% mutate(pval_cap = pmax(min_pval, pval)) %>% mutate(p_adj = pval * n()) %>% ungroup()
 
+if(isTRUE(save_df)) {
+  saveRDS(df %>% select(-pval_cap, -p_adj, -idp_id), paste0(foldern, '/dataframe.indiv_bxcan.rds'))
+}
 
 supp3 = 'supp_table_3.tsv'
 if(!file.exists(supp3)) {

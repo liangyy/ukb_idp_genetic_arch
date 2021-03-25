@@ -102,6 +102,8 @@ gen_cor_mr_s = F#T
 gen_cor_compare = F#T
 gen_cor_check_mr = F#T
 plot_sig_mr = F#T
+save_df = F#T
+save_df_full = F#T
 
 not_psych = c('GIANT_2015_BMI_EUR', 'GIANT_2017_BMI_Active_EUR', 'GIANT_HEIGHT', 'UKB_50_Standing_height', 'UKB_21001_Body_mass_index_BMI')
 color_code = c('ridge' = 'blue', 'elastic net' = 'orange', 'rg' = 'pink')
@@ -124,6 +126,11 @@ for(cc in c('gtex_gwas', 'psychiatric')) {
 df = do.call(rbind, df)
 df$model[df$model == 'EN'] = 'elastic net'
 df = df %>% mutate(idp_id = paste(idp_type, IDP, model)) %>% mutate(zscore = p2z(pval, bhat))
+if(isTRUE(save_df_full)) {
+  saveRDS(df %>% select(-idp_id), paste0(foldern, '/dataframe_full.sbxcan.rds'))
+  # saveRDS(df_cor, paste0(foldern, '/dataframe_full.gencor.rds'))
+}
+
 
 idp_sig = read.table('supp_table_2.tsv', header = T, sep = '\t')
 idp_sig = idp_sig %>% filter(is_kept) %>% mutate(idp_id = paste(IDP_type, IDP, model_name))
@@ -298,10 +305,19 @@ if(isTRUE(gen_cor_s)) {
     }
   }
   df_cor = do.call(rbind, df_cor)
+  if(isTRUE(save_df_full)) {
+    # saveRDS(df %>% select(-pval_cap, -p_adj, -idp_id), paste0(foldern, '/dataframe.sbxcan.rds'))
+    saveRDS(df_cor, paste0(foldern, '/dataframe_full.gencor.rds'))
+  }
   df_cor = df_cor %>% mutate(id = paste(phenotype, IDP, idp_type)) %>% 
     filter(id %in% (df %>% mutate(id = paste(phenotype, IDP, idp_type)) %>% pull(id)))
   df_cor_all = df_cor %>% left_join(df_gwas %>% select(phenotype_id, folder), by = c('phenotype' = 'phenotype_id'))
   # df_cor = left_join(df %>% select(IDP, idp_type, phenotype), df_cor, by = c('IDP', 'phenotype', 'idp_type'))
+  
+  if(isTRUE(save_df)) {
+    saveRDS(df %>% select(-pval_cap, -p_adj, -idp_id), paste0(foldern, '/dataframe.sbxcan.rds'))
+    saveRDS(df_cor_all %>% select(-id), paste0(foldern, '/dataframe.gencor.rds'))
+  }
   
   if(isTRUE(gen_cor_qq_s)) {
     tmp = rbind(

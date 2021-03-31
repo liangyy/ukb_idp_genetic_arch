@@ -55,4 +55,20 @@ df = rbind(sub, sub2[, colnames(sub)])
 final_order = c('ukb_field', 't1_or_dmri', 'anatomy', 'left_or_right', 'measurement_type', 'dmri_measure', 't1_anatomy_group', 'notes', 'ukb_link')
 df = df[, final_order]
 
+# ad hoc fix
+# some cortical annotations are wrong
+# see https://docs.google.com/spreadsheets/d/1Jhxw-DkN8kusdnG7eZAXecvJdLJEddefFKMBIDouC4k/edit#gid=0
+df_fix = read.csv('supp_table_1_t1_fix.csv')
+df_fix = df_fix %>% filter(X.1 != '')
+df_fix$X.1 = as.character(df_fix$X.1)
+map = data.frame(x0 = c('brainstem', 'subcortical'), x1 = c('Brainstem', 'Subcortical'))
+df_fix = df_fix %>% inner_join(map, by = c('X.1' = 'x0'))
+df_fix$x1 = as.character(df_fix$x1)
+df = df %>% left_join(df_fix %>% select(ukb_field, x1), by = 'ukb_field')
+df$t1_anatomy_group[ !is.na(df$x1) ] = df$x1[ !is.na(df$x1) ]
+df = df %>% select(-x1)
+
+df = df %>% filter(is.na(dmri_measure) | dmri_measure %in% c('FA', 'ICVF', 'ISOVF', 'OD'))
+
 write.table(df, 'supp_table_1.tsv', quote = F, row.names = F, sep = '\t')
+

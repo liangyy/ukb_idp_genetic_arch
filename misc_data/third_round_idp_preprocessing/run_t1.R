@@ -1,0 +1,101 @@
+# setwd('misc_data/third_round_idp_preprocessing/')
+
+second_dir = '../second_round_idp_preprocessing'
+
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+source(paste0(second_dir, '/scripts/rlib.R'))
+source('rlib.R')
+
+force_run = T
+outdir = 'output'
+dir.create(outdir)
+
+# fig size
+ww = 12
+hh = 10
+# END
+
+tags = c('Total', 'Brainstem', 'Cortical', 'Subcortical', 'Cerebellum')
+do_nothing = c('Total', 'Brainstem')
+exclude_idps = c(25901)  # it has skewed distribution
+
+# load t1
+t1_mat = arrow::read_parquet(paste0(second_dir, '/output/t1.scaled.all_covar.parquet'))
+
+# load idp annot
+idps = read.delim2('../supplementary_materials/supp_table_1.tsv')
+
+
+
+
+# out_mat
+out_mat = list()
+
+
+
+for(tag in tags) {
+  
+  outputs = paste0(outdir, '/', tag, '_t1.png')
+  if(sum(file.exists(outputs)) != 1) {
+    doit = T
+  } else {
+    doit = F
+  }
+  if(doit | force_run) {
+    message('--- Working on ', tag, ' ----')
+    
+    # cortical!
+    
+    # extract ICVF
+    idps_cort = idps %>% filter(t1_or_dmri == 'T1', t1_anatomy_group == tag)
+    
+    # ICVF all
+    cols = paste0('IDP-', idps_cort$ukb_field)
+    cols = cols[ ! cols %in% paste0('IDP-', exclude_idps) ]
+    cort_all = as.matrix(t1_mat[, cols])
+    kk = do_all(cort_all, skip_pca = tag %in% do_nothing)
+    message('PVE = ', kk$res$pve)
+    
+    ggsave(outputs[1], plot_all(kk$ps, tag), width = ww, height = hh)
+    
+    # collect results
+    mat_res = kk$res$residual
+    mat_res = as.data.frame(mat_res)
+    
+    colnames(mat_res) = colnames(cort_all)
+    pc_all = kk$res$pc
+    if(!is.null(pc_all)) {
+      pc_all = as.data.frame(pc_all)
+      colnames(pc_all) = paste0('PC-', tag, '-', 1 : ncol(pc_all))
+      mat_res = cbind(mat_res, pc_all)
+    }
+    
+    out_mat[[length(out_mat) + 1]] = mat_res
+    
+    saveRDS(
+      list(pc_loadings = kk$res$pc_loadings, pve = kk$res$pve), 
+      paste0(outdir, '/', tag, '.pca_results.rds')
+    )
+  
+  }
+}
+
+# add cols being excluded
+dd = as.matrix(t1_mat[, paste0('IDP-', exclude_idps) ])
+dd = standardize(dd)
+mat_res = as.data.frame(dd)
+colnames(mat_res) = colnames(dd)
+out_mat = cbind(out_mat, mat_res)
+
+out_mat = do.call(cbind, out_mat)
+df_out = data.frame(individual = t1_mat$individual)
+df_out = cbind(df_out, out_mat)
+
+message('Performing inverse normalization on residuals.')
+df_out[, -1] = apply(df_out[, -1], 2, inv_norm)
+message('Saving data.frame: shape = ', nrow(df_out), ' x ', ncol(df_out))
+arrow::write_parquet(df_out, paste0(outdir, '/third_round_t1.parquet'))
+
+

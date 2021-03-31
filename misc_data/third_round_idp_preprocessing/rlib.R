@@ -7,17 +7,25 @@ plot_image = function(mat) {
     theme(axis.text.x = element_blank())
   p
 }
-do_all = function(mat) {
+do_all = function(mat, skip_pca = F) {
   tmp1 = cor(mat)
   p1 = plot_image(tmp1)
-  res = split_by_pca(mat, pve_cutoff = 0.1, skip = F)
-  tmp2 = cor(res$residual)
-  p2 = plot_image(tmp2)
-  p4 = data.frame(pc_loading = res$pc_loadings, idp = colnames(mat)) %>% 
-    ggplot() + geom_point(aes(x = pc_loading, y = idp))
-  p3 = data.frame(before = get_upper_tri(tmp1), after = get_upper_tri(tmp2)) %>% 
-    ggplot() + geom_histogram(aes(x = before, fill = 'before'), alpha = 0.5, binwidth = 0.1) +
-    geom_histogram(aes(x = after, fill = 'after'), alpha = 0.5, binwidth = 0.1)
+  if(skip_pca == T) {
+    message('No PCA')
+    p2 = ggplot() + geom_text(x = 1, y = 1, label = 'placeholder')
+    p3 = ggplot() + geom_text(x = 1, y = 1, label = 'placeholder')
+    p4 = ggplot() + geom_text(x = 1, y = 1, label = 'placeholder')
+    res = list(residual = standardize(mat), pc_loadings = NA, pve = NA, pc = NULL)
+  } else {
+    res = split_by_pca(mat, pve_cutoff = 0.1, skip = F)
+    tmp2 = cor(res$residual)
+    p2 = plot_image(tmp2)
+    p4 = data.frame(pc_loading = res$pc_loadings, idp = colnames(mat)) %>% 
+      ggplot() + geom_point(aes(x = pc_loading, y = idp))
+    p3 = data.frame(before = get_upper_tri(tmp1), after = get_upper_tri(tmp2)) %>% 
+      ggplot() + geom_histogram(aes(x = before, fill = 'before'), alpha = 0.5, binwidth = 0.1) +
+      geom_histogram(aes(x = after, fill = 'after'), alpha = 0.5, binwidth = 0.1)
+  }
   list(ps = list(p1, p2, p3, p4), res = res)
 }
 plot_all = function(ps, title) {

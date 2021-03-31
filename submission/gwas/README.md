@@ -22,3 +22,9 @@ t1.scaled.all_covar.w_pc
 t1.scaled.non_idp_covar.no_pc
 t1.scaled.non_idp_covar.w_pc
 ```
+
+For 3rd round.
+
+```
+third_round_dmri
+```

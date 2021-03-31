@@ -3,7 +3,12 @@ outdir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/gw_ridge_3rd
 
 mkdir -p $outdir
 
-nametag=third_round_dmri
+# nametag=third_round_dmri
+# 
+# screen -dmS $nametag bash run_generic.screen $datadir/$nametag.parquet $outdir/$nametag.perf.tsv.gz run_$nametag
+    
+
+nametag=third_round_t1
 
 screen -dmS $nametag bash run_generic.screen $datadir/$nametag.parquet $outdir/$nametag.perf.tsv.gz run_$nametag
     

@@ -15,7 +15,7 @@ load_phenotype = function(phenotype_file, indiv_col, pheno_list, family_col = NU
 }
 
 fix_str = function(str_) {
-  stringr::str_replace(str_, '-', 'x')
+  stringr::str_replace_all(str_, '-', 'x')
 }
 
 load_list = function(fn) {

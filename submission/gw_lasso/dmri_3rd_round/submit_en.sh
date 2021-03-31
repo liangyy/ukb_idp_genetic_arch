@@ -37,7 +37,7 @@ do
       echo qsub -v BATCH=$i,NAMETAG=$nametag -N gw_en_$i run_en.qsub
     fi
   else
-    # :
-    echo qsub -v BATCH=$i,NAMETAG=$nametag -N gw_en_$i run_en.qsub
+    :
+    # echo qsub -v BATCH=$i,NAMETAG=$nametag -N gw_en_$i run_en.qsub
   fi
 done

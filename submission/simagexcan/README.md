@@ -29,3 +29,12 @@ t1.scaled.non_idp_covar.no_pc.gw_ridge_beta
 t1.scaled.non_idp_covar.w_pc.gw_ridge_beta
 [AND MORE ...]
 ```
+
+The list of name tags for the 3rd round.
+
+```
+third_round_dmri.gw_elastic_net_beta
+third_round_dmri.gw_ridge_beta
+third_round_t1.gw_elastic_net_beta
+third_round_t1.gw_ridge_beta
+```

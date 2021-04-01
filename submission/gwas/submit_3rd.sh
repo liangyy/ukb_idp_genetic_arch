@@ -13,9 +13,10 @@ do
     e=`cat logs/run_2nd_${nametag}_${i}.log | tail -n 1 | grep 'FileExistsError\|FileNotFoundError\|unlock'`
     if [[ ! -z $e ]]
     then 
-      qsub -v CHR=$i,NAME=$nametag -N ${i}_${nametag}_gwas run_2nd.qsub
+      echo qsub -v CHR=$i,NAME=$nametag -N ${i}_${nametag}_gwas run_2nd.qsub
     fi
   else
-    qsub -v CHR=$i,NAME=$nametag -N ${i}_${nametag}_gwas run_2nd.qsub
+    # :
+    echo qsub -v CHR=$i,NAME=$nametag -N ${i}_${nametag}_gwas run_2nd.qsub
   fi
 done

@@ -34,10 +34,10 @@ do
     tmp=`cat logs_en/$nametag/run_$i.log | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l`
     if [[ $tmp = 1 ]]
     then
-      qsub -v BATCH=$i,NAMETAG=$nametag -N gw_en_$i run_en.qsub
+      echo qsub -v BATCH=$i,NAMETAG=$nametag -N gw_en_$i run_en.qsub
     fi
   else
-    :
-    # qsub -v BATCH=$i,NAMETAG=$nametag -N gw_en_$i run_en.qsub
+    # :
+    echo qsub -v BATCH=$i,NAMETAG=$nametag -N gw_en_$i run_en.qsub
   fi
 done

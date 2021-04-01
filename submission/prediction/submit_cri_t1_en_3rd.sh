@@ -1,4 +1,4 @@
-prs_parquet=/scratch/t.cri.yliang/ukb_idp/idp_models_3rd/third_round_t1.gw_elastic_net_beta.parquet
+prs_parquet=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_3rd/third_round_t1.gw_elastic_net_beta.parquet
 NAME=t1_en_3rd
 logdir=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/prediction/logs
 

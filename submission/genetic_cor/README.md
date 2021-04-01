@@ -24,5 +24,5 @@ bash submit_run.sh \
   /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/simagexcan/gtex_gwas_list.txt \
   gtex_gwas_3rd \
   t1_3rd \
-  third_round_t1.txt
+  /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/genetic_cor/third_round_t1.txt
 ```

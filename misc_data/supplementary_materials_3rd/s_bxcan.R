@@ -18,7 +18,7 @@ load_sbxcan = function(folder, trait_list) {
 load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_indiv_bxcan/MR.indiv_bxcan_') {
   df_mr = list()
   for(i in 1 : nrow(dd)) {
-    tmp = readRDS(paste0(prefix, dd$idp_type[i], '.', dd$idp[i], '_x_', dd$pheno[i], '.rds'))
+    tmp = readRDS(paste0(prefix, dd$idp_type[i], '_3rd.', dd$idp[i], '_x_', dd$pheno[i], '.rds'))
     df_mr0 = rbind(
       tmp$idp2pheno$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'IDP -> Phenotype'),
       tmp$pheno2idp$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'Phenotype -> IDP') 

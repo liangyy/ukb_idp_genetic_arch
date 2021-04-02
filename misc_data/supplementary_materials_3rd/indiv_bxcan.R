@@ -67,7 +67,7 @@ do_sbxcan_compare = F#T
 plot_i_bxcan = F#T
 do_mr_prep = F
 plot_qq = F#T
-check_mr_result = T
+check_mr_result = F#T
 save_df = F#T
 save_df_full = F#T
 

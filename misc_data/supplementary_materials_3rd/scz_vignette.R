@@ -1,6 +1,6 @@
-# setwd('misc_data/supplementary_materials/')
+# setwd('misc_data/supplementary_materials_3rd/')
 
-load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020/MR_local.scz2020_') {
+load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020_3rd/MR_local.scz2020_') {
   df_mr = list()
   for(i in 1 : nrow(dd)) {
     tmp = readRDS(paste0(prefix, dd$idp_type[i], '.', dd$idp[i], '_x_', dd$pheno[i], '.rds'))
@@ -34,7 +34,7 @@ load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020/MR_local.s
   df_mr
 }
 
-plot_mr = function(model, idp, pheno, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020/MR_local.scz2020_') {
+plot_mr = function(model, idp, pheno, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020_3rd/MR_local.scz2020_') {
   mr_res = readRDS(paste0(prefix, model, '.', idp, '_x_', pheno, '.rds'))
   p1 = mr_res$idp2pheno$data %>% ggplot() + geom_hline(yintercept = 0, color = 'gray') + 
     geom_vline(xintercept = 0, color = 'gray') + 
@@ -65,7 +65,7 @@ save_mr_table = function(df_mr, filename) {
   )
 }
 
-idp_type = list(dMRI = 'dmri.original.all_covar.w_pc', T1 = 't1.scaled.all_covar.w_pc')
+idp_type = list(dMRI = 'third_round_dmri', T1 = 'third_round_t1')
 models = list(ridge = 'gw_ridge', EN = 'gw_elastic_net')
 load_sbxcan = function(folder, trait_list) {
   df1 = list()
@@ -90,6 +90,15 @@ theme_set(theme_bw(base_size = 12))
 source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
 source('../../rmd/rlib.R')
 source('../../rmd/rlib_calc.R')
+source('rlib.R')
+
+plot_overview = T
+mr_prep = T
+mr_check = F
+compare_scz2 = T
+not_run = T  # playground, skip if you'd like
+
+pcs = get_pcs_for_3rd()
 
 foldern = 'scz_vignette'
 dir.create(foldern)
@@ -97,8 +106,8 @@ dir.create(foldern)
 psychiatric = c('SCZ_PGC_2020', 'pgc.scz2')  
 
 
-df1 = load_sbxcan('~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_2nd/', psychiatric[2])
-df2 = load_sbxcan('~/Desktop/tmp/ukb_idp/simagexcan/results_psychiatric_2nd/', psychiatric[1])
+df1 = load_sbxcan('~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_3rd/', psychiatric[2])
+df2 = load_sbxcan('~/Desktop/tmp/ukb_idp/simagexcan/results_psychiatric_3rd/', psychiatric[1])
 df = rbind(df1, df2)
 df$model[df$model == 'EN'] = 'elastic net'
 df$model = factor(df$model, levels = c('ridge', 'elastic net'))
@@ -113,10 +122,10 @@ min_pval = 1e-30
 # load gen cor
 {
   df_cor = list()
-  tags = list(dmri = 'dmri.original.all_covar.w_pc', t1 = 't1.scaled.all_covar.w_pc')
+  tags = list(dmri = 'third_round_dmri', t1 = 'third_round_t1')
   for(rr in psychiatric[1]) {
     for(nn in names(tags)) {
-      tmp = paste0('~/Desktop/tmp/ukb_idp/genetic_cor_2nd/', nn, '_2nd_x_psychiatric_x_', rr, '.ldsc_rg.log')
+      tmp = paste0('~/Desktop/tmp/ukb_idp/genetic_cor_3rd/', nn, '_3rd_x_psychiatric_x_', rr, '.ldsc_rg.log')
       tmp = load_ldsc_rg(tmp)
       tmp = tmp %>% select(p2, rg, p, z, h2_obs, h2_obs_se) %>% rename(IDP = p2, pval = p, zscore = z)
       df_cor[[length(df_cor) + 1]] = tmp %>% 
@@ -125,7 +134,7 @@ min_pval = 1e-30
   }
   for(rr in psychiatric[2]) {
     for(nn in names(tags)) {
-      tmp = paste0('~/Desktop/tmp/ukb_idp/genetic_cor_2nd/', nn, '_2nd_x_gtex-gwas_x_', rr, '.ldsc_rg.log')
+      tmp = paste0('~/Desktop/tmp/ukb_idp/genetic_cor_3rd/', nn, '_3rd_x_gtex-gwas_x_', rr, '.ldsc_rg.log')
       tmp = load_ldsc_rg(tmp)
       tmp = tmp %>% select(p2, rg, p, z, h2_obs, h2_obs_se) %>% rename(IDP = p2, pval = p, zscore = z)
       df_cor[[length(df_cor) + 1]] = tmp %>% 
@@ -152,11 +161,11 @@ min_pval = 1e-30
   annot = rbind(
     annot %>% select(IDP, t1_or_dmri, anatomy, left_or_right, measurement_type, dmri_measure, t1_anatomy_group),
     data.frame(
-      IDP = c(paste0('PC-', 1:9), paste0('PC-', 1:5)), 
-      t1_or_dmri = c(rep('dMRI', 9), rep('T1', 5)),
-      anatomy = c(paste0('PC-', 1:9), paste0('PC-', 1:5)), 
+      IDP = pcs$IDP,  
+      t1_or_dmri = pcs$idp_type,
+      anatomy = pcs$IDP, 
       left_or_right = NA,
-      measurement_type = c(rep('dMRI PCA', 9), rep('T1 PCA', 5)),
+      measurement_type = paste0(pcs$idp_type, ' PCA'),
       dmri_measure = 'PCA',
       t1_anatomy_group = 'PCA'
     )
@@ -188,11 +197,11 @@ df = df %>% mutate(idp_f = paste(IDP, idp_type))
 
 df = df %>% mutate(idp_f = order_idp(idp_f))
 
-not_run = F
-if(isTRUE(not_run)) {
+if(isTRUE(plot_overview)) {
   p = df %>% filter(phenotype == psychiatric[1]) %>% ggplot() + 
     geom_point(
-      data = df %>% filter(phenotype == psychiatric[1], pip > 0.5),
+      data = df %>% filter(phenotype == psychiatric[1]) %>% 
+        filter((pip > 0.5 & p_adj < alpha) | (model == 'genetic correlation' & p_adj < alpha)),
       aes(x = idp_f, y = -log10(pval)), size = 4, shape = 1
     ) +
     geom_point(aes(x = idp_f, y = -log10(pval), color = measurement_type)) +
@@ -212,9 +221,8 @@ if(isTRUE(not_run)) {
 }
 
 # mr preprocess
-mr_prep = F
 if(isTRUE(mr_prep)) {
-  df_sig = df %>% filter(phenotype == psychiatric[1]) %>% filter(pip > 0.5 | (model == 'genetic correlation' & p_adj < alpha))
+  df_sig = df %>% filter(phenotype == psychiatric[1]) %>% filter((pip > 0.5 & p_adj < alpha) | (model == 'genetic correlation' & p_adj < alpha))
   # kk = df_sig %>% mutate(p2 = phenotype) %>% select(phenotype, IDP, p2)
   for(i in c('T1', 'dMRI')) {
     tmp = df_sig %>% filter(idp_type == i) %>% mutate(pp = phenotype) %>% select(phenotype, IDP, pp) %>% rename(pheno = phenotype, idp = IDP, pheno_code = pp) %>% distinct()
@@ -222,7 +230,6 @@ if(isTRUE(mr_prep)) {
   }
 }
 
-mr_check = F
 if(isTRUE(mr_check)) {
   idp_meta = read.delim2('supp_table_1.tsv') %>% mutate(IDP = paste0('IDP-', ukb_field))
   mr_methods = c('Inverse variance weighted', 'Weighted median', 'MR Egger')
@@ -260,7 +267,6 @@ if(isTRUE(mr_check)) {
   # save_mr_table(tt, paste0(foldern, '/scz2020_mr.tex'))
 }
 
-compare_scz2 = T
 if(isTRUE(compare_scz2)) {
   # p = df %>% filter(phenotype == psychiatric[2]) %>% ggplot() + 
   #   geom_point(
@@ -309,7 +315,6 @@ if(!isTRUE(no_run)) {
 }
 
 # en vs ridge
-not_run = T
 if(!isTRUE(not_run)) {
   tmp = full_join(
     df %>% filter(model == 'ridge'),

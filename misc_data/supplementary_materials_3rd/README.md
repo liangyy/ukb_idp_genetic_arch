@@ -33,4 +33,7 @@ pheno_for_bxcan.R
 
 # 10
 s_bxcan.R
+
+# 11 
+scz_vignette.R
 ```

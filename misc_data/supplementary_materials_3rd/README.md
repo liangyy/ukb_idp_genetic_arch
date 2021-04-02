@@ -24,6 +24,15 @@ polygenicity.R
 
 # 07
 indiv_bxcan.R
+# note: pending on mr
 
+# 08 
+match_Elliot_et_al_2018_h2.R
 
+# 09
+pheno_for_bxcan.R
+
+# 10
+s_bxcan.R
+# note: TODO mr
 ```

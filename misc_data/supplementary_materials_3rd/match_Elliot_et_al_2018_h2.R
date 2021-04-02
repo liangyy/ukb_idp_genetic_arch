@@ -1,4 +1,4 @@
-# setwd('misc_data/supplementary_materials/')
+# setwd('misc_data/supplementary_materials_3rd/')
 library(dplyr)
 library(ggplot2)
 theme_set(theme_bw(base_size = 12))
@@ -19,7 +19,7 @@ if(!file.exists(map_file)) {
   # map ids
   df_map = readRDS('../download_some_matching_files/cleanup_annot_our_idps.rds')
   # map another
-  df_map2 = read.delim2('../supplementary_materials/supp_table_1.tsv', header = T)
+  df_map2 = read.delim2('../supplementary_materials_3rd/supp_table_1.tsv', header = T)
   df_map = left_join(df_map2, df_map %>% select(FieldID, n2018_id), by = c('ukb_field' = 'FieldID'))
   
   # matched 
@@ -54,8 +54,8 @@ if(!file.exists(map_file)) {
 df_old = read.csv('../SuppTable_2_Elliot_et_al_2018.csv')
 # our
 df_new = rbind(
-  read.table('~/Desktop/tmp/ukb_idp/heritability_2nd_round/dmri.original.all_covar.w_pc.tsv.gz', header = T) %>% filter(substr(phenotype, 1, 2) != 'PC') %>% mutate(idp_type = 'dMRI'),
-  read.table('~/Desktop/tmp/ukb_idp/heritability_2nd_round/t1.scaled.all_covar.w_pc.tsv.gz', header = T) %>% filter(substr(phenotype, 1, 2) != 'PC') %>% mutate(idp_type = 'T1')
+  read.table('~/Desktop/tmp/ukb_idp/heritability_3rd_round/third_round_dmri.tsv.gz', header = T) %>% filter(substr(phenotype, 1, 2) != 'PC') %>% mutate(idp_type = 'dMRI'),
+  read.table('~/Desktop/tmp/ukb_idp/heritability_3rd_round/third_round_t1.tsv.gz', header = T) %>% filter(substr(phenotype, 1, 2) != 'PC') %>% mutate(idp_type = 'T1')
 )
 # our no PC
 df_new2 = rbind(

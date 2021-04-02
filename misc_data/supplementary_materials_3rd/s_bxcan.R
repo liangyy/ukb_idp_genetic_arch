@@ -1,7 +1,7 @@
-# setwd('~/Documents/repo/github/ukb_idp_genetic_arch/misc_data/supplementary_materials/')
+# setwd('~/Documents/repo/github/ukb_idp_genetic_arch/misc_data/supplementary_materials_3rd/')
 
 load_sbxcan = function(folder, trait_list) {
-  idp_type = list(dMRI = 'dmri.original.all_covar.w_pc', T1 = 't1.scaled.all_covar.w_pc')
+  idp_type = list(dMRI = 'third_round_dmri', T1 = 'third_round_t1')
   models = list(ridge = 'gw_ridge', EN = 'gw_elastic_net')
   df1 = list()
   for(t in trait_list) {
@@ -91,15 +91,15 @@ source('../../rmd/rlib_calc.R')
 foldern = 's_bxcan'
 dir.create(foldern)
 
-plot_s_bxcan = F#T
-plot_s_qq = F#T
-prep_s_mr = F#T
+plot_s_bxcan = T
+plot_s_qq = T
+prep_s_mr = T
 check_s_mr = F#T
-common_pheno_s = T#T
-gen_cor_s = F#T
-gen_cor_qq_s = F#T
+common_pheno_s = T
+gen_cor_s = T
+gen_cor_qq_s = T
 gen_cor_mr_s = F#T
-gen_cor_compare = F#T
+gen_cor_compare = T
 gen_cor_check_mr = F#T
 plot_sig_mr = F#T
 save_df = F#T
@@ -115,7 +115,7 @@ factor_idp = function(cc) {
 }
 
 df_gwas = read.delim2('supp_table_4.tsv', header = T)
-folders = list(gtex_gwas = '~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_2nd', psychiatric = '~/Desktop/tmp/ukb_idp/simagexcan/results_psychiatric_2nd')
+folders = list(gtex_gwas = '~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_3rd', psychiatric = '~/Desktop/tmp/ukb_idp/simagexcan/results_psychiatric_3rd')
 df_gwas$folder = 'gtex_gwas'
 df_gwas$folder[25:35] = 'psychiatric'
 df = list()
@@ -289,14 +289,14 @@ if(isTRUE(common_pheno_s)) {
 if(isTRUE(gen_cor_s)) {
   # load ldsc gen cor
   df_cor = list()
-  tags = list(dMRI = 'dmri.original.all_covar.w_pc', T1 = 't1.scaled.all_covar.w_pc')
-  mids = list(gtex_gwas = '_2nd_x_gtex-gwas_x_', psychiatric = '_2nd_x_psychiatric_x_')
+  tags = list(dMRI = 'third_round_dmri', T1 = 'third_round_dmri')
+  mids = list(gtex_gwas = '_3rd_x_gtex-gwas_x_', psychiatric = '_3rd_x_psychiatric_x_')
   for(m in names(mids)) {
     sub = df_gwas %>% filter(folder == m)
     for(i in 1 : nrow(sub)) {
       rr = sub$phenotype_id[i]
       for(nn in names(tags)) {
-        tmp = paste0('~/Desktop/tmp/ukb_idp/genetic_cor_2nd/', nn, mids[[m]], rr, '.ldsc_rg.log')
+        tmp = paste0('~/Desktop/tmp/ukb_idp/genetic_cor_3rd/', nn, mids[[m]], rr, '.ldsc_rg.log')
         tmp = load_ldsc_rg(tmp)
         tmp = tmp %>% select(p2, rg, p, z, h2_obs, h2_obs_se) %>% rename(IDP = p2, pval = p, zscore = z)
         df_cor[[length(df_cor) + 1]] = tmp %>% 
@@ -335,8 +335,8 @@ if(isTRUE(gen_cor_s)) {
       scale_color_manual(values = color_code) + 
       xlab(expression(paste(-log[10], p[expected]))) + 
       ylab(expression(paste(-log[10], p[observed]))) +
-      theme(legend.position = c(0.89, 0.68), legend.title = element_blank())
-    ggsave(paste0(foldern, '/s_bxcan_qqplot_w_gencor.png'), p, width = 6, height = 3)
+      theme(legend.position = c(0.89, 0.72), legend.title = element_blank())
+    ggsave(paste0(foldern, '/s_bxcan_qqplot_w_gencor.png'), p, width = 6, height = 3.5)
   }
   
   if(isTRUE(gen_cor_mr_s)) {
@@ -356,7 +356,7 @@ if(isTRUE(gen_cor_s)) {
       facet_wrap(~model) + 
       geom_abline(slope = 1, intercept = 0, color = 'gray') + th2 + 
       xlab('z-score of genetic correlation') + 
-      xlab('z-score of S-BrainXcan') +
+      ylab('z-score of S-BrainXcan') +
       scale_color_manual(values = color_code2) +
       theme(legend.position = c(0.6, 0.8), legend.title = element_blank())
     ggsave(paste0(foldern, '/s_bxcan_vs_gencor.png'), p, width = 5.5, height = 3)

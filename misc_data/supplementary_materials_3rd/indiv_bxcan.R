@@ -1,9 +1,9 @@
 # setwd('misc_data/supplementary_materials_3rd/')
 
-load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_indiv_bxcan/MR.indiv_bxcan_') {
+load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_indiv_bxcan_3rd/MR.indiv_bxcan_') {
   df_mr = list()
   for(i in 1 : nrow(dd)) {
-    tmp = readRDS(paste0(prefix, dd$idp_type[i], '.', dd$idp[i], '_x_', dd$pheno[i], '.rds'))
+    tmp = readRDS(paste0(prefix, dd$idp_type[i], '_3rd.', dd$idp[i], '_x_', dd$pheno[i], '.rds'))
     df_mr0 = rbind(
       tmp$idp2pheno$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'IDP -> Phenotype'),
       tmp$pheno2idp$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'Phenotype -> IDP') 
@@ -26,8 +26,8 @@ load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_indiv_bxcan/MR.ind
   df_mr
 }
 
-plot_mr = function(model, idp, pheno, prefix = '~/Desktop/tmp/ukb_idp/mr_indiv_bxcan/MR.indiv_bxcan_') {
-  mr_res = readRDS(paste0(prefix, model, '.', idp, '_x_', pheno, '.rds'))
+plot_mr = function(model, idp, pheno, prefix = '~/Desktop/tmp/ukb_idp/mr_indiv_bxcan_3rd/MR.indiv_bxcan_') {
+  mr_res = readRDS(paste0(prefix, model, '_3rd.', idp, '_x_', pheno, '.rds'))
   p1 = mr_res$idp2pheno$data %>% ggplot() + geom_hline(yintercept = 0, color = 'gray') + 
     geom_vline(xintercept = 0, color = 'gray') + 
     geom_point(aes(x = beta.exposure, y = beta.outcome), alpha = 0.5) + 
@@ -50,6 +50,7 @@ source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b266987
 source('../../rmd/rlib.R')
 library(UpSetR)
 
+options(stringsAsFactors = F)
 foldern = 'indiv_bxcan'
 dir.create(foldern)
 
@@ -62,11 +63,11 @@ factor_idp = function(cc) {
 }
 
 
-do_sbxcan_compare = T
-plot_i_bxcan = T
-do_mr_prep = T
-plot_qq = F
-check_mr_result = F#T
+do_sbxcan_compare = F#T
+plot_i_bxcan = F#T
+do_mr_prep = F
+plot_qq = T
+check_mr_result = T
 save_df = F#T
 save_df_full = F#T
 

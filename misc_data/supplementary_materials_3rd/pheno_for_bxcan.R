@@ -1,7 +1,7 @@
-# setwd('misc_data/supplementary_materials')
+# setwd('misc_data/supplementary_materials_3rd')
 
 # here we form the list of GWAS for S-BrainXcan analysis
-
+options(stringsAsFactors = F)
 library(dplyr)
 
 # gtex-gwas

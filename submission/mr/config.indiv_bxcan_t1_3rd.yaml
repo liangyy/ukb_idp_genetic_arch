@@ -1,0 +1,12 @@
+name_tag: 'indiv_bxcan_t1_3rd'
+idp_pheno_table: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/supplementary_materials_3rd/indiv_bxcan/indiv_bxcan_mr.T1.signif.tsv'
+idp_type: 'third_round_t1'
+
+ld_clump_yaml: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mr/ld_clump2.yaml'
+idp_gwas_pattern: '/scratch/t.cri.yliang/ukb_idp/idp_gwas_3rd/trans_qtl.{idp_type}.chr{chr_num}/{idp}.parquet'
+snp_bim: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr{chr_num}.bim'
+
+gwas_file_pattern: ''
+gwas_yaml: ''
+
+outdir: '/scratch/t.cri.yliang/ukb_idp/mr_indiv_bxcan_3rd'

@@ -3,7 +3,7 @@
 load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020_3rd/MR_local.scz2020_') {
   df_mr = list()
   for(i in 1 : nrow(dd)) {
-    tmp = readRDS(paste0(prefix, dd$idp_type[i], '.', dd$idp[i], '_x_', dd$pheno[i], '.rds'))
+    tmp = readRDS(paste0(prefix, dd$idp_type[i], '_3rd.', dd$idp[i], '_x_', dd$pheno[i], '.rds'))
     df_mr0 = rbind(
       tmp$idp2pheno$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'IDP -> Phenotype'),
       tmp$pheno2idp$mr %>% filter(method %in% mr_methods) %>% mutate(direction = 'Phenotype -> IDP') 
@@ -35,7 +35,7 @@ load_mr = function(dd, df, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020_3rd/MR_loc
 }
 
 plot_mr = function(model, idp, pheno, prefix = '~/Desktop/tmp/ukb_idp/mr_scz2020_3rd/MR_local.scz2020_') {
-  mr_res = readRDS(paste0(prefix, model, '.', idp, '_x_', pheno, '.rds'))
+  mr_res = readRDS(paste0(prefix, model, '_3rd.', idp, '_x_', pheno, '.rds'))
   p1 = mr_res$idp2pheno$data %>% ggplot() + geom_hline(yintercept = 0, color = 'gray') + 
     geom_vline(xintercept = 0, color = 'gray') + 
     geom_point(aes(x = beta.exposure, y = beta.outcome), alpha = 0.5) + 
@@ -92,10 +92,10 @@ source('../../rmd/rlib.R')
 source('../../rmd/rlib_calc.R')
 source('rlib.R')
 
-plot_overview = T
-mr_prep = T
-mr_check = F
-compare_scz2 = T
+plot_overview = F#T
+mr_prep = F#T
+mr_check = T
+compare_scz2 = F#T
 not_run = T  # playground, skip if you'd like
 
 pcs = get_pcs_for_3rd()
@@ -222,7 +222,7 @@ if(isTRUE(plot_overview)) {
 
 # mr preprocess
 if(isTRUE(mr_prep)) {
-  df_sig = df %>% filter(phenotype == psychiatric[1]) %>% filter((pip > 0.5 & p_adj < alpha) | (model == 'genetic correlation' & p_adj < alpha))
+  df_sig = df %>% filter(phenotype == psychiatric[1]) %>% filter(p_adj < alpha)
   # kk = df_sig %>% mutate(p2 = phenotype) %>% select(phenotype, IDP, p2)
   for(i in c('T1', 'dMRI')) {
     tmp = df_sig %>% filter(idp_type == i) %>% mutate(pp = phenotype) %>% select(phenotype, IDP, pp) %>% rename(pheno = phenotype, idp = IDP, pheno_code = pp) %>% distinct()

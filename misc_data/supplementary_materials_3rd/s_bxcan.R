@@ -91,15 +91,15 @@ source('../../rmd/rlib_calc.R')
 foldern = 's_bxcan'
 dir.create(foldern)
 
-plot_s_bxcan = T
-plot_s_qq = T
-prep_s_mr = T
+plot_s_bxcan = F#T
+plot_s_qq = F#T
+prep_s_mr = F#T
 check_s_mr = F#T
-common_pheno_s = T
-gen_cor_s = T
-gen_cor_qq_s = T
+common_pheno_s = F#T
+gen_cor_s = F#T
+gen_cor_qq_s = F#T
 gen_cor_mr_s = F#T
-gen_cor_compare = T
+gen_cor_compare = F#T
 gen_cor_check_mr = F#T
 plot_sig_mr = F#T
 save_df = F#T
@@ -216,8 +216,8 @@ if(isTRUE(check_s_mr)) {
     read.table(paste0(foldern, '/s_bxcan_mr.gtex_gwas.dMRI.signif.tsv'), header = T) %>% mutate(idp_type = 'dmri')
   )
   dd_sbxcan = rbind(dd_psych, dd_gg)
-  psych_prefix = '~/Desktop/tmp/ukb_idp/mr_s_bxcan_psych/MR_local.s_bxcan_psych_'
-  gg_prefix = '~/Desktop/tmp/ukb_idp/mr_s_bxcan_gtexgwas/MR_local.s_bxcan_gtexgwas_'
+  psych_prefix = '~/Desktop/tmp/ukb_idp/mr_s_bxcan_psych_3rd/MR_local.s_bxcan_psych_'
+  gg_prefix = '~/Desktop/tmp/ukb_idp/mr_s_bxcan_gtexgwas_3rd/MR_local.s_bxcan_gtexgwas_'
   df_mr = rbind(
     load_mr(dd_psych, df, prefix = psych_prefix) %>% mutate(source = 'psychiatric'),
     load_mr(dd_gg, df, prefix = gg_prefix) %>% mutate(source = 'gtex_gwas')
@@ -374,8 +374,8 @@ if(isTRUE(gen_cor_s)) {
       read.table(paste0(foldern, '/gencor_mr.gtex_gwas.dMRI.signif.tsv'), header = T) %>% mutate(idp_type = 'dmri')
     )
     dd_gencor = rbind(dd_psych, dd_gg)
-    psych_prefix = '~/Desktop/tmp/ukb_idp/mr_gencor_psych/MR_local.gencor_psych_'
-    gg_prefix = '~/Desktop/tmp/ukb_idp/mr_gencor_gtexgwas/MR_local.gencor_gtexgwas_'
+    psych_prefix = '~/Desktop/tmp/ukb_idp/mr_gencor_psych_3rd/MR_local.gencor_psych_'
+    gg_prefix = '~/Desktop/tmp/ukb_idp/mr_gencor_gtexgwas_3rd/MR_local.gencor_gtexgwas_'
     df_mr = rbind(
       load_mr(dd_psych, df, prefix = psych_prefix) %>% mutate(source = 'psychiatric'),
       load_mr(dd_gg, df, prefix = gg_prefix) %>% mutate(source = 'gtex_gwas')

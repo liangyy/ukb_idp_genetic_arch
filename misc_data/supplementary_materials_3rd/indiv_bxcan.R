@@ -66,10 +66,10 @@ factor_idp = function(cc) {
 do_sbxcan_compare = F#T
 plot_i_bxcan = F#T
 do_mr_prep = F
-plot_qq = T
-check_mr_result = T
-save_df = F#T
-save_df_full = F#T
+plot_qq = F#T
+check_mr_result = F#T
+save_df = T
+save_df_full = T
 
 pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes', 'bmi', 'height')
 models = list(ridge = 'ridge', EN = 'en')

@@ -1,12 +1,14 @@
-# setwd('misc_data/third_round_idp_preprocessing/')
+# setwd('misc_data/fourth_round_idp_preprocessing/')
 
 second_dir = '../second_round_idp_preprocessing'
-
+third_dir = '../third_round_idp_preprocessing'
 library(dplyr)
 library(ggplot2)
 library(patchwork)
 source(paste0(second_dir, '/scripts/rlib.R'))
+# source(paste0(third_dir, '/rlib.R'))
 source('rlib.R')
+
 
 force_run = T
 outdir = 'output'
@@ -78,7 +80,6 @@ for(i in 1 : nrow(df_tag)) {
     cols = cols[ ! cols %in% paste0('IDP-', exclude_idps) ]
     cort_all = as.matrix(t1_mat[, cols])
     kk = do_all(cort_all, skip_pca = tag %in% do_nothing)
-    message('PVE = ', kk$res$pve)
     
     ggsave(outputs[1], plot_all(kk$ps, tag), width = ww, height = hh)
     
@@ -118,6 +119,10 @@ df_out = cbind(df_out, out_mat)
 message('Performing inverse normalization on residuals.')
 df_out[, -1] = apply(df_out[, -1], 2, inv_norm)
 message('Saving data.frame: shape = ', nrow(df_out), ' x ', ncol(df_out))
-arrow::write_parquet(df_out, paste0(outdir, '/third_round_t1.parquet'))
+arrow::write_parquet(df_out, paste0(outdir, '/fourth_round.t1_w_pc.parquet'))
 
 
+message('Performing inverse normalization on originals.')
+t1_mat[, -1] = apply(t1_mat[, -1], 2, inv_norm)
+message('Saving data.frame: shape = ', nrow(t1_mat), ' x ', ncol(t1_mat))
+arrow::write_parquet(t1_mat, paste0(outdir, '/fourth_round.t1_no_pc.parquet'))

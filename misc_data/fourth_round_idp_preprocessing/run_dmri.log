@@ -1,0 +1,45 @@
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Warning message:
+In dir.create(outdir) : 'output' already exists
+--- Working on ICVF ----
+All PC loadings are positive
+PVE = 0.573567708141974
+All PC loadings are positive
+PVE = 0.690052634472594
+All PC loadings are positive
+PVE = 0.534581949693392
+--- Working on ISOVF ----
+All PC loadings are positive
+PVE = 0.289878028817664
+All PC loadings are positive
+PVE = 0.377070560755097
+All PC loadings are positive
+PVE = 0.263632966250548
+--- Working on OD ----
+PC loadings are not all positive or negative
+PVE = 0.181663329349908
+All PC loadings are negative
+PVE = 0.26460000329743
+All PC loadings are negative
+PVE = 0.198793015995914
+--- Working on FA ----
+All PC loadings are positive
+PVE = 0.391151505504913
+All PC loadings are positive
+PVE = 0.459064168606029
+All PC loadings are positive
+PVE = 0.39016939595757
+Performing inverse normalization on residuals.
+Saving data.frame: shape = 24409 x 309
+Performing inverse normalization on originals.
+Saving data.frame: shape = 24409 x 301

@@ -92,9 +92,9 @@ source('../../rmd/rlib.R')
 source('../../rmd/rlib_calc.R')
 source('rlib.R')
 
-plot_overview = F#T
+plot_overview = T
 mr_prep = F#T
-mr_check = T
+mr_check = F#T
 compare_scz2 = F#T
 not_run = T  # playground, skip if you'd like
 

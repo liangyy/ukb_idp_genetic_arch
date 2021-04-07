@@ -1,0 +1,35 @@
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Warning message:
+In dir.create(outdir) : 'output' already exists
+--- Working on Total ----
+No PCA
+PVE = NA
+--- Working on Subcortical_vol ----
+All PC loadings are negative
+PVE = 0.372572790796416
+--- Working on Brainstem ----
+No PCA
+PVE = NA
+--- Working on Cortical ----
+All PC loadings are positive
+PVE = 0.157238885701012
+--- Working on Subcortical_GMvol ----
+All PC loadings are negative
+PVE = 0.342950268519896
+--- Working on Cerebellum ----
+All PC loadings are negative
+PVE = 0.451562692301084
+Performing inverse normalization on residuals.
+Saving data.frame: shape = 24409 x 164
+Performing inverse normalization on originals.
+Saving data.frame: shape = 24409 x 160

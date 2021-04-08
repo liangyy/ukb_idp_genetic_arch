@@ -1,6 +1,6 @@
 parquet2tsv_script: '/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/parquet2table/parquet2tsv.py'
 phenotype:
-  path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/second_round_idp_preprocessing/PLACEHOLDER.parquet'
+  path: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/fourth_round_idp_preprocessing/PLACEHOLDER.parquet'
   list: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/gw_lasso/dmri_4th_round/batch_list_en/PLACEHOLDER/{name_tag}'
   indiv_col: 'individual'
 genotype_prefix: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.merged_all'

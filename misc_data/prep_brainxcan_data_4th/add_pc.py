@@ -1,4 +1,3 @@
-
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(prog='add_pc.py', description='''
@@ -23,7 +22,8 @@ if __name__ == '__main__':
         format = '%(asctime)s  %(message)s',
         datefmt = '%Y-%m-%d %I:%M:%S %p'
     )
-    
+    import pandas as pd
+
     logging.info('Loading input.')
     df1 = pd.read_parquet(args.input)
     logging.info('input shape = {}'.format(df1.shape))

@@ -77,7 +77,7 @@ do
     echo chr_num = $chr_num, idp_modality = $idp_modality, idp_type=$idp_type
     curdir=$OUTDIR/$subdir/${idp_type}.${idp_modality}.chr${chr_num}
     mkdir -p $curdir
-    cp /scratch/t.cri.yliang/ukb_idp/idp_gwas_4th/trans_qtl.fourth_round.${idp_modality}${idp_type_tag}.chr${chr_num}/*.parquet $curdir/
+    cp /scratch/t.cri.yliang/ukb_idp/idp_gwas_4th/trans_qtl.fourth_round.${idp_modality}_${idp_type_tag}.chr${chr_num}/*.parquet $curdir/
   done
 done
 
@@ -92,8 +92,8 @@ do
     echo chr_num = $chr_num, idp_modality = $idp_modality, idp_type=$idp_type
     curdir=$OUTDIR/$subdir/${idp_type}.${idp_modality}.chr${chr_num}
     mkdir -p $curdir
-    cp /scratch/t.cri.yliang/ukb_idp/idp_gwas_4th/trans_qtl.fourth_round.${idp_modality}${idp_type_tag}.chr${chr_num}/*.parquet $curdir/
-    cp /scratch/t.cri.yliang/ukb_idp/idp_gwas_4th/trans_qtl.fourth_round.${idp_modality}${idp_type_tag}.chr${chr_num}/PC-*.parquet $curdir/
+    cp /scratch/t.cri.yliang/ukb_idp/idp_gwas_4th/trans_qtl.fourth_round.${idp_modality}_${idp_type_tag}.chr${chr_num}/*.parquet $curdir/
+    cp /scratch/t.cri.yliang/ukb_idp/idp_gwas_4th/trans_qtl.fourth_round.${idp_modality}_${idp_type_tag2}.chr${chr_num}/PC-*.parquet $curdir/
   done
 done
 

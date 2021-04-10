@@ -7,5 +7,5 @@ tags="fourth_round.dmri_no_pc fourth_round.dmri_w_pc fourth_round.t1_no_pc fourt
     
 for nametag in $tags
 do
-  screen -dmS $nametag bash run_generic.screen $datadir/$nametag.parquet $outdir/$nametag.perf.tsv.gz run_$nametag
+  screen -dmS $nametag bash run_generic.screen $datadir/$nametag.parquet $outdir/$nametag.gw_ridge_beta.perf.tsv.gz run_$nametag
 done  

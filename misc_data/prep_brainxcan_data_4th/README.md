@@ -8,7 +8,7 @@ Here is the one-time-use script to prepare data for brainxcan ([link](https://gi
         + `$OUTDIR/geno_cov/chr{chr_num}.banded.npz`
         + `$OUTDIR/geno_cov/chr{chr_num}.banded.snp_meta.parquet`
 * IDP weights:
-    - Input: `/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/*`
+    - Input: `/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/*.parquet`
     - Output Pattern:
         + `$OUTDIR/idp_weights/{model_type}/{idp_type}.{idp_modality}.parquet`
         + About `idp_type`: Label `no_pc` as `original` and `w_pc` as `residual`.
@@ -31,5 +31,9 @@ Here is the one-time-use script to prepare data for brainxcan ([link](https://gi
         + YAML: `$OUTDIR/mr/ld_clump.yaml`
         + LD panel: `$OUTDIR/mr/ieugwasr/{pop}.[bed|bim|fam]`
 * IDP model performance:
-    - Input: `/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/*`
-        
+    - Input: `/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/*.perf.tsv.gz`
+    - Output Pattern: 
+      + `$OUTDIR/idp_weights/{model_type}/{idp_type}.{idp_modality}.perf.tsv.gz`
+      + About `idp_type`: Label `no_pc` as `original` and `w_pc` as `residual`.
+      + Need to copy PCs to `no_pc` ones.
+      

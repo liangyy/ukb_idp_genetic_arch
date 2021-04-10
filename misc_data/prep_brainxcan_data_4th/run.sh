@@ -51,7 +51,7 @@ do
     out=$OUTDIR/$subdir/$model_type/${idp_type}.${idp_modality}.parquet
     input=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/fourth_round.${idp_modality}_${idp_type_tag}.gw_${model_type}_beta.parquet 
     inputpc=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/fourth_round.${idp_modality}_${idp_type_tag2}.gw_${model_type}_beta.parquet 
-    python add_pc.py \
+    python add_pc_weights.py \
       --out $out \
       --input $input \
       --input_pc $inputpc
@@ -133,3 +133,47 @@ done
 
 cp /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mr/ld_clump_another.yaml $OUTDIR/$subdir/ld_clump.yaml
 echo -----------------------------------------------------------
+
+
+echo ---------------------- idp cv perf ------------------------
+# /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/fourth_round.dmri_no_pc.gw_elastic_net_beta.perf.tsv.gz 
+subdir=idp_weights
+mkdir -p $OUTDIR/$subdir
+modalities="t1 dmri"
+models="ridge elastic_net"
+
+# do w_pc
+idp_type="residual"
+idp_type_tag="w_pc"
+for model_type in $models
+do
+  mkdir -p $OUTDIR/$subdir/$model_type
+  for idp_modality in $modalities
+  do
+    echo model_type = $model_type, idp_modality = $idp_modality, idp_type=$idp_type
+    cp /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/fourth_round.${idp_modality}_${idp_type_tag}.gw_${model_type}_beta.perf.tsv.gz $OUTDIR/$subdir/$model_type/${idp_type}.${idp_modality}.perf.tsv.gz
+  done
+done
+
+# do no_pc
+idp_type="original"
+idp_type_tag="no_pc"
+idp_type_tag2="w_pc"
+for model_type in $models
+do
+  mkdir -p $OUTDIR/$subdir/$model_type
+  for idp_modality in $modalities
+  do
+    echo model_type = $model_type, idp_modality = $idp_modality, idp_type=$idp_type
+    out=$OUTDIR/$subdir/$model_type/${idp_type}.${idp_modality}.perf.tsv.gz
+    input=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/fourth_round.${idp_modality}_${idp_type_tag}.gw_${model_type}_beta.perf.tsv.gz 
+    inputpc=/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/fourth_round.${idp_modality}_${idp_type_tag2}.gw_${model_type}_beta.perf.tsv.gz 
+    python add_pc_perf.py \
+      --out $out \
+      --input $input \
+      --input_pc $inputpc
+  done
+done
+
+echo -----------------------------------------------------------
+

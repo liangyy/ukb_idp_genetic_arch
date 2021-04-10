@@ -23,3 +23,13 @@ Here is the one-time-use script to prepare data for brainxcan ([link](https://gi
     - Input: `/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/*.bim`
     - Output pattern:
         + `$OUTDIR/idp_gwas/snp_bim/chr{chr_num}.bim`
+* MR data:
+    - Input:
+        + LD clump default YAML: `/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mr/ld_clump_another.yaml`
+        + ieugwasr reference LD panel: `/gpfs/data/im-lab/nas40t2/yanyul/data/ieugwasr/`
+    - Output pattern:
+        + YAML: `$OUTDIR/mr/ld_clump.yaml`
+        + LD panel: `$OUTDIR/mr/ieugwasr/{pop}.[bed|bim|fam]`
+* IDP model performance:
+    - Input: `/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/idp_models_4th/*`
+        

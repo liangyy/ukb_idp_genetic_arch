@@ -110,3 +110,26 @@ do
   cp /gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.chr${chr_num}.bim $OUTDIR/$subdir/chr${chr_num}.bim
 done
 echo -----------------------------------------------------------
+
+echo ---------------------- mr data  ---------------------------
+# /gpfs/data/im-lab/nas40t2/yanyul/data/ieugwasr/EUR.bed
+# /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mr/ld_clump_another.yaml
+subdir=mr
+mkdir -p $OUTDIR/$subdir
+
+pops="EUR SAS AMR EAS AFR"
+
+subsubdir=ieugwasr
+mkdir -p $OUTDIR/$subdir/$subsubdir
+suffixes="bed fam bim"
+for pop in $pops
+do 
+  for suffix in $suffixes
+  do
+    echo pop = $pop, suffix = $suffix
+    cp /gpfs/data/im-lab/nas40t2/yanyul/data/ieugwasr/$pop.$suffix $OUTDIR/$subdir/$subsubdir/$pop.$suffix
+  done
+done
+
+cp /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mr/ld_clump_another.yaml $OUTDIR/$subdir/ld_clump.yaml
+echo -----------------------------------------------------------

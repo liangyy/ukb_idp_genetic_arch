@@ -20,6 +20,6 @@ done > tmp
 
 for i in `cat tmp`
 do 
-  echo qsub -v prs_parquet=$prs_parquet,NAME=$NAME,CHR=$i -N pred_cri_${NAME}_$i pred_cri.qsub  
+  qsub -v prs_parquet=$prs_parquet,NAME=$NAME,CHR=$i -N pred_cri_${NAME}_$i pred_cri.qsub  
 done
 rm tmp

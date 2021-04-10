@@ -1,3 +1,9 @@
+import pandas as pd
+
+def load_perf(fn):
+    df = pd.read_csv(fn, sep='\t')
+    df.fillna('NA', inplace=True)
+    return df
 
 if __name__ == '__main__':
     import argparse
@@ -43,16 +49,19 @@ if __name__ == '__main__':
     for model_path in tqdm(model_files):
         model = load_perf(model_path)
         out.append(model)
-    
+    out = pd.concat(out, axis=0)  
+ 
     # clean rename dict so that it only contains keys occurring in out
     rename_dict_new = {}
     for k in rename_dict.keys():
-        if k in out.columns:
+        if k in list(out.phenotype):
             rename_dict_new[k] = rename_dict[k]
     rename_dict = rename_dict_new
-    
+   
+    new_pheno = [] 
     for i in range(out.shape[0]):
-        out.phenotype[i] = rename_dict[out.phenotype[i]]
+        new_pheno.append(rename_dict[out.phenotype.values[i]])
+    out.phenotype = new_pheno
  
     out.to_csv(args.output, compression='gzip', sep='\t', index=False)
     

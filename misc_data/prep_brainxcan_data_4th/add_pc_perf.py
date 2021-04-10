@@ -42,7 +42,7 @@ if __name__ == '__main__':
     
     logging.info('Adding input_pc to input.')
     df_merge = pd.concat([df1, df2], axis=0)
-    df_merge.fillna(NA, inplace=True)
+    df_merge.fillna('NA', inplace=True)
     logging.info('Merged df shape = {}'.format(df_merge.shape))
     
     logging.info('Saving to output.')

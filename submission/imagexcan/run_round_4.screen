@@ -22,7 +22,7 @@ tmp_indiv=run_round_4.${idptag}.txt
 cat $eur_indiv | tail -n +2 | cut -f 1 -d ' '  > $tmp_indiv
 
 
-logfile=run_round_3.${idptag}.log
+logfile=run_round_4.${idptag}.log
 if [[ -f $logfile ]]
 then
   rm $logfile

@@ -38,3 +38,16 @@ third_round_dmri.gw_ridge_beta
 third_round_t1.gw_elastic_net_beta
 third_round_t1.gw_ridge_beta
 ```
+
+The list of name tags for the 4th round.
+
+```
+fourth_round.dmri_no_pc.gw_elastic_net_beta
+fourth_round.dmri_w_pc.gw_elastic_net_beta
+fourth_round.dmri_no_pc.gw_ridge_beta
+fourth_round.dmri_w_pc.gw_ridge_beta
+fourth_round.t1_no_pc.gw_elastic_net_beta
+fourth_round.t1_w_pc.gw_elastic_net_beta
+fourth_round.t1_no_pc.gw_ridge_beta
+fourth_round.t1_w_pc.gw_ridge_beta
+```

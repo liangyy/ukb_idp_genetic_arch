@@ -36,4 +36,5 @@ Here is the one-time-use script to prepare data for brainxcan ([link](https://gi
       + `$OUTDIR/idp_weights/{model_type}/{idp_type}.{idp_modality}.perf.tsv.gz`
       + About `idp_type`: Label `no_pc` as `original` and `w_pc` as `residual`.
       + Need to copy PCs to `no_pc` ones.
-      
+* BrainXcan visualization meta files:
+    - Copy from `ukb_idp_genetic_arch/misc_data/prep_bxcan_vis/bxcan_vis`    

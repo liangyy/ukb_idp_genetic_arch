@@ -15,7 +15,7 @@ up-to-date meta files.
 
 * Cortical (based on FAST (Harvard + Oxford))
 * Subcortical total volumes (based on FIRST) 
-* Subcortical gray matter (FAST ones): **No annotation, so no support**
+* Subcortical gray matter (FAST ones): use the same as Subcortical FIRST 
 * Cerebellum (based on the Diedrichsen cerebellar atlas)
 * Brainstem and Total: **No support**
 

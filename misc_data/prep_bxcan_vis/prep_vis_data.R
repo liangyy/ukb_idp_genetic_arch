@@ -11,7 +11,7 @@ idps = read.delim2('../supplementary_materials_3rd/supp_table_1.tsv')
 idps$left_or_right[is.na(idps$left_or_right)] = 'NA'
 idps = idps %>% mutate(IDP = paste0('IDP-', ukb_field))
 
-t1_tags = c('Subcortical-vol', 'Cortical', 'Cerebellum')
+t1_tags = c('Subcortical-vol', 'Subcortical-GMvol', 'Cortical', 'Cerebellum')
 dmri_tag = 'TBSS'
 dmri_measures = c('ICVF', 'ISOVF', 'FA', 'OD')
 
@@ -19,6 +19,7 @@ message('--------------------- T1 IDPs --------------------')
 results = list()
 categories = list()
 ii = 1
+
 
 measurement_type = 'Subcortical volumes (FIRST)'
 t1_anatomy_group = 'Subcortical'
@@ -30,6 +31,19 @@ categories[[t1_tags[ii]]] = list(
   slide_position = c(2, 2, 2)
 )
 results[[t1_tags[ii]]] = df_subcortical_vol
+ii = ii + 1
+
+
+measurement_type = 'Regional grey matter volumes (FAST)'
+t1_anatomy_group = 'Subcortical'
+tmp = prep_data(load_first, idps, measurement_type, t1_anatomy_group)
+df_subcortical_gm = tmp$df
+categories[[t1_tags[ii]]] = list(
+  IDP = tmp$IDPs,
+  vis_rds = paste0(t1_tags[ii], '.rds'),
+  slide_position = c(2, 2, 2)
+)
+results[[t1_tags[ii]]] = df_subcortical_gm
 ii = ii + 1
 
 

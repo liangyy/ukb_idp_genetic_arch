@@ -12,7 +12,7 @@ load_snp_meta = function(bim_pattern) {
     snp_meta[[length(snp_meta) + 1]] = read.table(glue::glue(bim_pattern, .open = '[', .close = ']'), header = F) 
   }
   snp_meta = do.call(rbind, snp_meta)
-  snp_meta = snp_meta %>% select(V2, V5, V6) %>% rename(rsid = V2, ref = V5, alt = V6)
+  snp_meta = snp_meta %>% select(V2, V5, V6) %>% rename(rsid = V2, ref = V6, alt = V5) # BIM use A1 as effect allele
 }
 
 ld_clump_local = function(dat, ld_clump_param, mode = 'idp2pheno') {

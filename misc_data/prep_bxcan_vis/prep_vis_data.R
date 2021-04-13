@@ -36,7 +36,8 @@ ii = ii + 1
 
 measurement_type = 'Regional grey matter volumes (FAST)'
 t1_anatomy_group = 'Subcortical'
-tmp = prep_data(load_first, idps, measurement_type, t1_anatomy_group)
+map = data.frame(position = 'accumbens', new_name = 'ventral striatum')
+tmp = prep_data(load_first, idps, measurement_type, t1_anatomy_group, map)
 df_subcortical_gm = tmp$df
 categories[[t1_tags[ii]]] = list(
   IDP = tmp$IDPs,

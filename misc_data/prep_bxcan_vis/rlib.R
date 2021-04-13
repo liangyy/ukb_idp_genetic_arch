@@ -1,4 +1,8 @@
-add_idp = function(df_label, df_idp, idp_col = 't1_anatomy_group') {
+add_idp = function(df_label, df_idp, idp_col = 't1_anatomy_group', map = NULL) {
+  if(!is.null(map)) {
+    tmp = left_join(df_label %>% select(position), map, by = 'position')
+    df_label$position[!is.na(tmp$new_name)] = tmp$new_name[ !is.na(tmp$new_name) ]
+  }
   kk = inner_join(df_label, df_idp, by = c('measurement_type', idp_col, 'position' = 'anatomy', 'lr' = 'left_or_right'))
   kk = kk %>% mutate(IDP = paste0('IDP-', ukb_field))
   kk = kk %>% distinct()
@@ -24,7 +28,7 @@ is_same = function(l1, l2) {
   }
 }
 
-prep_data = function(load_func, idps, measurement_type_, t1_anatomy_group_ = NULL) {
+prep_data = function(load_func, idps, measurement_type_, t1_anatomy_group_ = NULL, map = NULL) {
   message(measurement_type_, ' ', t1_anatomy_group_)
   dd = load_func()
   dd$label = dd$label %>% 
@@ -40,7 +44,7 @@ prep_data = function(load_func, idps, measurement_type_, t1_anatomy_group_ = NUL
   }
   IDPs = IDPs %>% pull(IDP)
   message('Number of IDPs in meta = ', length(IDPs))
-  dd$label = add_idp(dd$label, idps, idp_col = if(! is.null(t1_anatomy_group_)) {'t1_anatomy_group' } else {NULL})
+  dd$label = add_idp(dd$label, idps, idp_col = if(! is.null(t1_anatomy_group_)) {'t1_anatomy_group' } else {NULL}, map = map)
   if(!is_same(dd$label$IDP, IDPs)) {
     message('Something is wrong')
   }

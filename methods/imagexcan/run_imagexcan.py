@@ -146,6 +146,7 @@ if __name__ == '__main__':
         if test_type == 'logistic_regression':
             bhat, pval = logistic_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
             res = { 'bhat': bhat, 'pval': pval }
+            res['test'] = [ 'logistic_univariate' for i in range(res['bhat'].shape[0]) ]
         elif test_type == 'linear_regression':
             if args.inv_norm is True:
                 y[not_nan] = inv_norm_vec(y[not_nan])

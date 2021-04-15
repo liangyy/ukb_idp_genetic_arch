@@ -11,6 +11,8 @@ source('rlib.R')
 
 
 force_run = T
+save_yaml = T
+save_df = F
 outdir = 'output'
 dir.create(outdir)
 
@@ -40,6 +42,8 @@ df_tag = idps %>%
 out_mat = list()
 
 
+# yaml
+idp_dict = list()
 
 for(i in 1 : nrow(df_tag)) {
   
@@ -81,7 +85,9 @@ for(i in 1 : nrow(df_tag)) {
     cort_all = as.matrix(t1_mat[, cols])
     kk = do_all(cort_all, skip_pca = tag %in% do_nothing)
     
-    ggsave(outputs[1], plot_all(kk$ps, tag), width = ww, height = hh)
+    if(isTRUE(save_df)) {
+      ggsave(outputs[1], plot_all(kk$ps, tag), width = ww, height = hh)
+    }
     
     # collect results
     mat_res = kk$res$residual
@@ -93,36 +99,49 @@ for(i in 1 : nrow(df_tag)) {
       pc_all = as.data.frame(pc_all)
       colnames(pc_all) = paste0('PC-', tag, '-', 1 : ncol(pc_all))
       mat_res = cbind(mat_res, pc_all)
+      idp_dict[[as.character(tag)]] = list(
+        covariates = colnames(pc_all),
+        x = colnames(cort_all)
+      )
     }
     
     out_mat[[length(out_mat) + 1]] = mat_res
-    
-    saveRDS(
-      list(pc_loadings = kk$res$pc_loadings, pve = kk$res$pve), 
-      paste0(outdir, '/', tag, '.pca_results.rds')
-    )
-  
+    if(isTRUE(save_df)) {
+      saveRDS(
+        list(pc_loadings = kk$res$pc_loadings, pve = kk$res$pve), 
+        paste0(outdir, '/', tag, '.pca_results.rds')
+      )
+    }
   }
 }
 
-# add cols being excluded
-dd = as.matrix(t1_mat[, paste0('IDP-', exclude_idps) ])
-dd = standardize(dd)
-mat_res = as.data.frame(dd)
-colnames(mat_res) = colnames(dd)
-out_mat = cbind(out_mat, mat_res)
+if(isTRUE(save_yaml)) {
+  yaml::write_yaml(idp_dict, paste0(outdir, '/t1_covar.yaml'))
+}
 
-out_mat = do.call(cbind, out_mat)
-df_out = data.frame(individual = t1_mat$individual)
-df_out = cbind(df_out, out_mat)
+if(doit | force_run) {
+  # add cols being excluded
+  dd = as.matrix(t1_mat[, paste0('IDP-', exclude_idps) ])
+  dd = standardize(dd)
+  mat_res = as.data.frame(dd)
+  colnames(mat_res) = colnames(dd)
+  out_mat = cbind(out_mat, mat_res)
 
-message('Performing inverse normalization on residuals.')
-df_out[, -1] = apply(df_out[, -1], 2, inv_norm)
-message('Saving data.frame: shape = ', nrow(df_out), ' x ', ncol(df_out))
-arrow::write_parquet(df_out, paste0(outdir, '/fourth_round.t1_w_pc.parquet'))
+  out_mat = do.call(cbind, out_mat)
+  df_out = data.frame(individual = t1_mat$individual)
+  df_out = cbind(df_out, out_mat)
 
+  message('Performing inverse normalization on residuals.')
+  df_out[, -1] = apply(df_out[, -1], 2, inv_norm)
+  message('Saving data.frame: shape = ', nrow(df_out), ' x ', ncol(df_out))
+  if(isTRUE(save_df)) {
+    arrow::write_parquet(df_out, paste0(outdir, '/fourth_round.t1_w_pc.parquet'))
+  }
 
-message('Performing inverse normalization on originals.')
-t1_mat[, -1] = apply(t1_mat[, -1], 2, inv_norm)
-message('Saving data.frame: shape = ', nrow(t1_mat), ' x ', ncol(t1_mat))
-arrow::write_parquet(t1_mat, paste0(outdir, '/fourth_round.t1_no_pc.parquet'))
+  message('Performing inverse normalization on originals.')
+  t1_mat[, -1] = apply(t1_mat[, -1], 2, inv_norm)
+  message('Saving data.frame: shape = ', nrow(t1_mat), ' x ', ncol(t1_mat))
+  if(isTRUE(save_df)) {
+    arrow::write_parquet(t1_mat, paste0(outdir, '/fourth_round.t1_no_pc.parquet'))
+  }
+}

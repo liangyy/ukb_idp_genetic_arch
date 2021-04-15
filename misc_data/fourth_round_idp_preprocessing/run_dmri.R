@@ -10,6 +10,8 @@ source(paste0(second_dir, '/scripts/rlib.R'))
 source('rlib.R')
 
 force_run = T
+save_yaml = T
+save_df = F
 outdir = 'output'
 dir.create(outdir)
 
@@ -28,6 +30,9 @@ idps = read.delim2('../supplementary_materials/supp_table_1.tsv')
 
 # out_mat
 out_mat = list()
+
+# yaml
+idp_dict = list()
 
 for(tag in tags) {
   outputs = c(paste0(outdir, '/', tag, '_probt_tbss.png'), paste0(outdir, '/', tag, '_probt.png'), paste0(outdir, '/', tag, '_tbss.png'))
@@ -60,9 +65,11 @@ for(tag in tags) {
     icvf_tbss = as.matrix(dmri_mat[, paste0('IDP-', idps_icvf_tbss$ukb_field)])
     kk3 = do_all(icvf_tbss)
     
-    ggsave(outputs[1], plot_all(kk$ps, paste0(tag, ': TBSS + ProbTrack')), width = ww, height = hh)
-    ggsave(outputs[2], plot_all(kk2$ps, paste0(tag, ': ProbTrack only')), width = ww, height = hh)
-    ggsave(outputs[3], plot_all(kk3$ps, paste0(tag, ': TBSS only')), width = ww, height = hh)
+    if(isTRUE(save_df)) {
+      ggsave(outputs[1], plot_all(kk$ps, paste0(tag, ': TBSS + ProbTrack')), width = ww, height = hh)
+      ggsave(outputs[2], plot_all(kk2$ps, paste0(tag, ': ProbTrack only')), width = ww, height = hh)
+      ggsave(outputs[3], plot_all(kk3$ps, paste0(tag, ': TBSS only')), width = ww, height = hh)
+    }
     
     # collect results
     mat_res2 = kk2$res$residual
@@ -83,31 +90,51 @@ for(tag in tags) {
     
     out_mat[[length(out_mat) + 1]] = cbind(mat_res2, mat_res3)
     
-    saveRDS(
-      list(
-        TBSS = list(pc_loadings = kk3$res$pc_loadings, pve = kk3$res$pve),
-        ProbTrack = list(pc_loadings = kk2$res$pc_loadings, pve = kk2$res$pve),
-        Combined = list(pc_loadings = kk$res$pc_loadings, pve = kk$res$pve)
-      ), 
-      paste0(outdir, '/', tag, '.pca_results.rds'))
-  
+    idp_dict[[paste0(tag, '-ProbTrack')]] = list(
+      covariates = colnames(pc_all2),
+      x = colnames(icvf_prob)
+    )
+    idp_dict[[paste0(tag, '-TBSS')]] = list(
+      covariates = colnames(pc_all3),
+      x = colnames(icvf_tbss)
+    )
+    
+    if(isTRUE(save_df)) {
+      saveRDS(
+        list(
+          TBSS = list(pc_loadings = kk3$res$pc_loadings, pve = kk3$res$pve),
+          ProbTrack = list(pc_loadings = kk2$res$pc_loadings, pve = kk2$res$pve),
+          Combined = list(pc_loadings = kk$res$pc_loadings, pve = kk$res$pve)
+        ), 
+        paste0(outdir, '/', tag, '.pca_results.rds'))
+    }
+    
   }
 }
 
-out_mat = do.call(cbind, out_mat)
-df_out = data.frame(individual = dmri_mat$individual)
-df_out = cbind(df_out, out_mat)
+if(isTRUE(save_yaml)) {
+  yaml::write_yaml(idp_dict, paste0(outdir, '/dmri_covar.yaml'))
+}
 
-message('Performing inverse normalization on residuals.')
-df_out[, -1] = apply(df_out[, -1], 2, inv_norm)
-message('Saving data.frame: shape = ', nrow(df_out), ' x ', ncol(df_out))
-arrow::write_parquet(df_out, paste0(outdir, '/fourth_round.dmri_w_pc.parquet'))
+if(doit | force_run) {
+  out_mat = do.call(cbind, out_mat)
+  df_out = data.frame(individual = dmri_mat$individual)
+  df_out = cbind(df_out, out_mat)
 
-message('Performing inverse normalization on originals.')
-idps_sub = idps %>% filter(t1_or_dmri == 'dMRI', dmri_measure %in% tags)
-dmri_mat_sub = dmri_mat[, c('individual', paste0('IDP-', idps_sub$ukb_field))]
-dmri_mat_sub[, -1] = apply(dmri_mat_sub[, -1], 2, inv_norm)
-message('Saving data.frame: shape = ', nrow(dmri_mat_sub), ' x ', ncol(dmri_mat_sub))
-arrow::write_parquet(dmri_mat_sub, paste0(outdir, '/fourth_round.dmri_no_pc.parquet'))
-
+  message('Performing inverse normalization on residuals.')
+  df_out[, -1] = apply(df_out[, -1], 2, inv_norm)
+  message('Saving data.frame: shape = ', nrow(df_out), ' x ', ncol(df_out))
+  if(isTRUE(save_df)) {
+    arrow::write_parquet(df_out, paste0(outdir, '/fourth_round.dmri_w_pc.parquet'))
+  }
+  
+  message('Performing inverse normalization on originals.')
+  idps_sub = idps %>% filter(t1_or_dmri == 'dMRI', dmri_measure %in% tags)
+  dmri_mat_sub = dmri_mat[, c('individual', paste0('IDP-', idps_sub$ukb_field))]
+  dmri_mat_sub[, -1] = apply(dmri_mat_sub[, -1], 2, inv_norm)
+  message('Saving data.frame: shape = ', nrow(dmri_mat_sub), ' x ', ncol(dmri_mat_sub))
+  if(isTRUE(save_df)) {
+    arrow::write_parquet(dmri_mat_sub, paste0(outdir, '/fourth_round.dmri_no_pc.parquet'))
+  }
+}
 

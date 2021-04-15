@@ -299,7 +299,7 @@ if __name__ == '__main__':
         Along with all other columns for the IDPs.
         Specify the column names, e.g.: snpid:rsID, ..., chr:chr
     ''')
-    parser.add_argument('--idp_yaml', help='''
+    parser.add_argument('--idp_yaml', default=None, help='''
         A YAML file telling which PC is for which set of IDPs.
         Example:
             set1:
@@ -355,10 +355,13 @@ if __name__ == '__main__':
     df_gwas, df_weight = harmonize_gwas_and_weight(df_gwas, df_weight)
     logging.info('{} SNPs left after harmonizing GWAS and IDP weights.'.format(df_gwas.shape[0]))
     
-    logging.info('Loading IDP YAML.')
-    idp_grp_dict = read_yaml(args.idp_yaml)
-    idp_grp_dict = cleanup_idp_grp_dict(idp_grp_dict, idp_names)
-    logging.info('There are {} IDP sets'.format(len(idp_grp_dict.keys())))
+    if args.idp_yaml is not None:
+        logging.info('Loading IDP YAML.')
+        idp_grp_dict = read_yaml(args.idp_yaml)
+        idp_grp_dict = cleanup_idp_grp_dict(idp_grp_dict, idp_names)
+        logging.info('There are {} IDP sets'.format(len(idp_grp_dict.keys())))
+    else:
+        idp_grp_dict = None
     
     # please refer to https://github.com/hakyimlab/yanyu-notebook/blob/master/notes/date_112420.Rmd
     # for the details of the S-ImageXcan formula
@@ -459,37 +462,38 @@ if __name__ == '__main__':
     })
     df_res1['test'] = 'univariate'
     
-    logging.info('Step4: Computing the extended marginal test.')
     df_res2 = None
-    if len(idp_grp_dict.keys()) > 0:
-        df_res2 = []
-        for grp in idp_grp_dict.keys():
-            logging.info(f'Working on extended marginal test: set = {grp}.')
-            covar_idxs = np.where(np.isin(idp_names, idp_grp_dict[grp]['covariates']))[0]
-            x_idxs = np.where(np.isin(idp_names, idp_grp_dict[grp]['x']))[0]
-            c_jj = D[:, x_idxs][x_idxs, :]
-            c_dj = D[:, x_idxs][covar_idxs, :]
-            c_dd = D[:, covar_idxs][covar_idxs, :]
-            U = np.linalg.solve(c_dd, c_dj)
-            c_ = np.einsum('dj,dj->j', c_dj, U)
-            a_ = c_jj.diagonal() - c_
-            betahat1 = ( numer_b[x_idxs] - U.T @ numer_b[covar_idxs] ) / a_
-            z1 = ( numer_z[x_idxs] - U.T @ numer_z[covar_idxs] ) / np.sqrt(a_)
-            df_res2.append(
-                pd.DataFrame({
-                    'IDP': np.array(idp_names)[x_idxs],
-                    'bhat': betahat1,
-                    'pval': z2p(z1),
-                    'pip': np.zeros(betahat1.shape[0]) * np.nan,
-                    'cs95': - np.ones(betahat1.shape[0])
-                })
-            )
-        df_res2 = pd.concat(df_res2, axis=0)
-        df_res2['test'] = f'adj_covar:{grp}'
-    if df_res2 is None:
-        df_res = df_res1
-    else:
-        df_res = pd.concat([df_res1, df_res2], axis=0)    
+    if idp_grp_dict is not None:
+        logging.info('Step4: Computing the extended marginal test.')
+        if len(idp_grp_dict.keys()) > 0:
+            df_res2 = []
+            for grp in idp_grp_dict.keys():
+                logging.info(f'Working on extended marginal test: set = {grp}.')
+                covar_idxs = np.where(np.isin(idp_names, idp_grp_dict[grp]['covariates']))[0]
+                x_idxs = np.where(np.isin(idp_names, idp_grp_dict[grp]['x']))[0]
+                c_jj = D[:, x_idxs][x_idxs, :]
+                c_dj = D[:, x_idxs][covar_idxs, :]
+                c_dd = D[:, covar_idxs][covar_idxs, :]
+                U = np.linalg.solve(c_dd, c_dj)
+                c_ = np.einsum('dj,dj->j', c_dj, U)
+                a_ = c_jj.diagonal() - c_
+                betahat1 = ( numer_b[x_idxs] - U.T @ numer_b[covar_idxs] ) / a_
+                z1 = ( numer_z[x_idxs] - U.T @ numer_z[covar_idxs] ) / np.sqrt(a_)
+                df_res2.append(
+                    pd.DataFrame({
+                        'IDP': np.array(idp_names)[x_idxs],
+                        'bhat': betahat1,
+                        'pval': z2p(z1),
+                        'pip': np.zeros(betahat1.shape[0]) * np.nan,
+                        'cs95': - np.ones(betahat1.shape[0])
+                    })
+                )
+            df_res2 = pd.concat(df_res2, axis=0)
+            df_res2['test'] = f'adj_covar:{grp}'
+        if df_res2 is None:
+            df_res = df_res1
+        else:
+            df_res = pd.concat([df_res1, df_res2], axis=0)    
     df_res.fillna('NA', inplace=True)
  
     logging.info('Saving outputs.')

@@ -13,6 +13,14 @@ def get_gwas_list(fn):
         for i in f:
             res.append(i.strip())
     return res
+def idp_yaml_arg(config):
+    if 'idp_yaml' in config:
+        arg = '--idp_yaml {config[idp_yaml]}'
+    else:
+        arg = ''
+    return arg
+
+idp_yaml_opt = idp_yaml_arg(config)
 
 if 'gwas_list' in config:
     gwas_list = get_gwas_list(config['gwas_list'])
@@ -33,8 +41,7 @@ rule run:
     input:
         gwas = config['gwas']['filename'],
         idp = config['idp_weight']['filename'],
-        cov = [ config['genotype_covariance'].format(chr_num=i) for i in range(1, 23) ],
-        idp_yaml = config['idp_yaml']
+        cov = [ config['genotype_covariance'].format(chr_num=i) for i in range(1, 23) ]
     params:
         gwas_cols = get_cols(config['gwas']['cols']),
         idp_cols = get_cols(config['idp_weight']['cols'])
@@ -47,5 +54,5 @@ rule run:
            --genotype_covariance {config[genotype_covariance]} \
            --gwas {input.gwas} {params.gwas_cols} \
            --idp_weight {input.idp} {params.idp_cols} \
-           --idp_yaml {input.idp_yaml} \
+           {idp_yaml_opt} \
            --output {output[0]} > {log} 2>&1'

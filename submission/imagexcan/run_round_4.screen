@@ -36,7 +36,7 @@ models='elastic_net ridge'
 
 for model in $models
 do
-  idp=/vol/bmd/yanyul/data/brainxcan_data/idp_weights/$model/original.${idptag}.parquet
+  idp=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.fourth_round.${idptag}.original.gw_${model}_beta.parquet
   # output file
   outfile_linear=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_linear.fourth_round.${idptag}.gw_${model}_beta.csv
   outfile_susie=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_susie.fourth_round.${idptag}.gw_${model}_beta.csv

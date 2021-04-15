@@ -250,7 +250,7 @@ def cleanup_idp_grp_dict(idp_grp_dict, idp_names):
     Return the cleaned up idp_grp_dict.
     '''
     for k in idp_grp_dict.keys():
-        if 'covariates' not idp_grp_dict[k] or 'x' not in idp_grp_dict[k]:
+        if 'covariates' not in idp_grp_dict[k] or 'x' not in idp_grp_dict[k]:
             raise ValueError('For each entry, we require covariates and x.')
         lc = intersection(idp_grp_dict[k]['covariates'], idp_names)
         lx = intersection(idp_grp_dict[k]['x'], idp_names)

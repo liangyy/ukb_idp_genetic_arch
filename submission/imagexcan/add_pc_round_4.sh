@@ -1,3 +1,4 @@
+source /vol/bmd/yanyul/miniconda3/etc/profile.d/conda.sh
 conda activate ukb_idp
 datadir=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction 
 models="ridge elastic_net"

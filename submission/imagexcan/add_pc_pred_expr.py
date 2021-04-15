@@ -42,7 +42,7 @@ if __name__ == '__main__':
     
     logging.info('Adding input_pc to input.')
     df_merge = pd.merge(df1, df2, on=['indiv'], how='inner')
-    logging.info('There are {} NAs in the resulting data frame'.format(df_merge.isna().sum().sum())
+    logging.info('There are {} NAs in the resulting data frame'.format(df_merge.isna().sum().sum()))
     if df_merge.indiv.unique().shape[0] != df_merge.shape[0]:
         raise ValueError('Duplicated indiv.')
     logging.info('Merged df shape = {}'.format(df_merge.shape))

@@ -131,7 +131,7 @@ def intersection(l1, l2):
     a = a.intersection(set(l2))
     return sorted(list(a))
     
-def _to_list(var):
+def to_list(var):
     if not isinstance(var, list):
         return [ var ]
     else:

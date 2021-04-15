@@ -12,8 +12,8 @@ def cleanup_idp_grp_dict(idp_grp_dict, idp_names):
     for k in idp_grp_dict.keys():
         if 'covariates' not in idp_grp_dict[k] or 'x' not in idp_grp_dict[k]:
             raise ValueError('For each entry, we require covariates and x.')
-        idp_grp_dict[k]['covariates'] = _to_list( idp_grp_dict[k]['covariates'] )
-        idp_grp_dict[k]['x'] = _to_list( idp_grp_dict[k]['x'] )
+        idp_grp_dict[k]['covariates'] = to_list( idp_grp_dict[k]['covariates'] )
+        idp_grp_dict[k]['x'] = to_list( idp_grp_dict[k]['x'] )
         lc = intersection(idp_grp_dict[k]['covariates'], idp_names)
         lx = intersection(idp_grp_dict[k]['x'], idp_names)
         if len(lc) > 0 and len(lx) > 0:
@@ -151,7 +151,7 @@ if __name__ == '__main__':
                 y[not_nan] = inv_norm_vec(y[not_nan])
             bhat, pval, _ = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
             res = { 'bhat': bhat, 'pval': pval }
-            res['test'] = [ 'univariate' for i in range(res['bhat']) ]
+            res['test'] = [ 'univariate' for i in range(res['bhat'].shape[0]) ]
         elif test_type == 'susie':
             if args.inv_norm is True:
                 y[not_nan] = inv_norm_vec(y[not_nan])
@@ -160,7 +160,7 @@ if __name__ == '__main__':
             cor = calc_cor(Idp[not_nan, :], covar=Covar[not_nan, :])
             pip, cs = run_susie_wrapper(zscore, cor)
             res = { 'pip': pip, 'cs': cs }
-            res['test'] = [ 'susie' for i in range(res['pip']) ]
+            res['test'] = [ 'susie' for i in range(res['pip'].shape[0]) ]
         elif test_type == 'linear_regression_w_covar':
             if args.idp_yaml is None:
                 raise ValueError('Require idp_yaml when using linear_regression_w_covar.')

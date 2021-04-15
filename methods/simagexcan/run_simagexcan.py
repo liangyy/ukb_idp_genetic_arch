@@ -243,22 +243,33 @@ def load_cov_meta(fn):
     fn = fn + '.snp_meta.parquet'
     return pd.read_parquet(fn)
 
+def _to_list(var):
+    if not isinstance(var, list):
+        return [ var ]
+    else:
+        return var
+
 def cleanup_idp_grp_dict(idp_grp_dict, idp_names):
     '''
     Check if keys and values in idp_grp_dict appear in idp_names.
     If not, remove the key or value.
     Return the cleaned up idp_grp_dict.
     '''
+    to_drop = []
     for k in idp_grp_dict.keys():
         if 'covariates' not in idp_grp_dict[k] or 'x' not in idp_grp_dict[k]:
             raise ValueError('For each entry, we require covariates and x.')
+        idp_grp_dict[k]['covariates'] = _to_list( idp_grp_dict[k]['covariates'] )
+        idp_grp_dict[k]['x'] = _to_list( idp_grp_dict[k]['x'] )
         lc = intersection(idp_grp_dict[k]['covariates'], idp_names)
         lx = intersection(idp_grp_dict[k]['x'], idp_names)
         if len(lc) > 0 and len(lx) > 0:
             idp_grp_dict[k]['covariates'] = lc
             idp_grp_dict[k]['x'] = lx
         else:
-            del idp_grp_dict[k]
+            to_drop.append(k)
+    for k in to_drop:
+        del idp_grp_dict[k]
     return idp_grp_dict
     
 if __name__ == '__main__':
@@ -457,15 +468,16 @@ if __name__ == '__main__':
             covar_idxs = np.where(np.isin(idp_names, idp_grp_dict[grp]['covariates']))[0]
             x_idxs = np.where(np.isin(idp_names, idp_grp_dict[grp]['x']))[0]
             c_jj = D[:, x_idxs][x_idxs, :]
-            c_dj = D[:, covar_idxs][x_idxs, :]
-            U = np.linalg.solve(c_jj, c_dj)
-            c = np.einsum(c_dj, U, 'dj,jd->j')
-            a = D.diagonal() - c
-            betahat1 = ( numer_b[x_idxs] - U @ numer_b[covar_idxs] ) / a
-            z1 = ( numer_z[x_idxs] - U @ numer_z[covar_idxs] ) / np.sqrt(a)
+            c_dj = D[:, x_idxs][covar_idxs, :]
+            c_dd = D[:, covar_idxs][covar_idxs, :]
+            U = np.linalg.solve(c_dd, c_dj)
+            c_ = np.einsum('dj,dj->j', c_dj, U)
+            a_ = c_jj.diagonal() - c_
+            betahat1 = ( numer_b[x_idxs] - U.T @ numer_b[covar_idxs] ) / a_
+            z1 = ( numer_z[x_idxs] - U.T @ numer_z[covar_idxs] ) / np.sqrt(a_)
             df_res2.append(
                 pd.DataFrame({
-                    'IDP': idp_names[x_idxs],
+                    'IDP': np.array(idp_names)[x_idxs],
                     'bhat': betahat1,
                     'pval': z2p(z1),
                     'pip': np.zeros(betahat1.shape[0]) * np.nan,
@@ -477,10 +489,10 @@ if __name__ == '__main__':
     if df_res2 is None:
         df_res = df_res1
     else:
-        df_res = pd.concat(df_res1, df_res2, axis=0)    
-         
+        df_res = pd.concat([df_res1, df_res2], axis=0)    
+    df_res.fillna('NA', inplace=True)
+ 
     logging.info('Saving outputs.')
-    
     df_res.to_csv(args.output, index=False)
     
     logging.info('Done.')

@@ -125,3 +125,14 @@ def load_covariate(file_list, fyaml):
                 )
             )
     return pd.concat(df_res, axis=1)
+
+def intersection(l1, l2):
+    a = set(l1)
+    a = a.intersection(set(l2))
+    return sorted(list(a))
+    
+def to_list(var):
+    if not isinstance(var, list):
+        return [ var ]
+    else:
+        return var

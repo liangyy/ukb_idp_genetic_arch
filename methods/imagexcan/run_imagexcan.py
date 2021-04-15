@@ -2,6 +2,29 @@ from util import *
 from solver import *
 from susie_wrapper import run_susie_wrapper
 
+def cleanup_idp_grp_dict(idp_grp_dict, idp_names):
+    '''
+    Check if keys and values in idp_grp_dict appear in idp_names.
+    If not, remove the key or value.
+    Return the cleaned up idp_grp_dict.
+    '''
+    to_drop = []
+    for k in idp_grp_dict.keys():
+        if 'covariates' not in idp_grp_dict[k] or 'x' not in idp_grp_dict[k]:
+            raise ValueError('For each entry, we require covariates and x.')
+        idp_grp_dict[k]['covariates'] = to_list( idp_grp_dict[k]['covariates'] )
+        idp_grp_dict[k]['x'] = to_list( idp_grp_dict[k]['x'] )
+        lc = intersection(idp_grp_dict[k]['covariates'], idp_names)
+        lx = intersection(idp_grp_dict[k]['x'], idp_names)
+        if len(lc) > 0 and len(lx) > 0:
+            idp_grp_dict[k]['covariates'] = lc
+            idp_grp_dict[k]['x'] = lx
+        else:
+            to_drop.append(k)
+    for k in to_drop:
+        del idp_grp_dict[k]
+    return idp_grp_dict
+
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(prog='run_imagexcan.py', description='''
@@ -34,6 +57,20 @@ if __name__ == '__main__':
     parser.add_argument('--idp_table', nargs='+', help='''
         In parquet or csv format.
         Specify the filename followed by the column of individual ID.
+    ''')
+    parser.add_argument('--idp_yaml', default=None, help='''
+        A YAML file telling which PC is for which set of IDPs.
+        Example:
+            set1:
+                covariates: 
+                    - PC1
+                    - PC2
+                x: 
+                    - IDP1
+                    - IDP2
+            set2: 
+                ... 
+        NOTE: it is required if test_type = 'linear_regression_w_covar'
     ''')
     parser.add_argument('--output', help='''
         A table in csv format where each row is the test result of one
@@ -114,6 +151,7 @@ if __name__ == '__main__':
                 y[not_nan] = inv_norm_vec(y[not_nan])
             bhat, pval, _ = linear_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
             res = { 'bhat': bhat, 'pval': pval }
+            res['test'] = [ 'univariate' for i in range(res['bhat'].shape[0]) ]
         elif test_type == 'susie':
             if args.inv_norm is True:
                 y[not_nan] = inv_norm_vec(y[not_nan])
@@ -122,6 +160,29 @@ if __name__ == '__main__':
             cor = calc_cor(Idp[not_nan, :], covar=Covar[not_nan, :])
             pip, cs = run_susie_wrapper(zscore, cor)
             res = { 'pip': pip, 'cs': cs }
+            res['test'] = [ 'susie' for i in range(res['pip'].shape[0]) ]
+        elif test_type == 'linear_regression_w_covar':
+            if args.idp_yaml is None:
+                raise ValueError('Require idp_yaml when using linear_regression_w_covar.')
+            idp_dict = read_yaml(args.idp_yaml)
+            idp_dict = cleanup_idp_grp_dict(idp_dict, idp_cols)
+            res = { 'bhat': [], 'pval': [], 'test': [] }
+            for grp in idp_dict.keys():
+                covar_idxs = np.where(np.isin(idp_cols, idp_dict[grp]['covariates']))[0]
+                x_idxs = np.where(np.isin(idp_cols, idp_dict[grp]['x']))[0]
+                Covar_ = np.concatenate(
+                    [
+                        Covar[not_nan, :], 
+                        Idp[not_nan, :][:, covar_idxs]
+                    ],
+                    axis=1
+                )
+                Idp_ = Idp[not_nan, :][:, x_idxs]
+                bhat, pval, _ = linear_regression(y[not_nan], X=Idp_, C=Covar_)
+                res['bhat'].append(bhat)
+                res['pval'].append(pval)
+                res['test'].append([ f'adj_covar:{grp}' for i in range(bhat.shape[0])])
+            
         df = pd.DataFrame({ 'IDP': idp_cols, 'phenotype': pheno_col, **res })
         df_list.append(df)
     df_list = pd.concat(df_list, axis=0)

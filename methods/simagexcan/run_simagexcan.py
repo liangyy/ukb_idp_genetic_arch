@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import pathlib
 from collections import OrderedDict 
-from pyutil import read_table
+from pyutil import read_table, intersection
 
 BASE_PAIR = {
     'A': 'T',
@@ -243,6 +243,24 @@ def load_cov_meta(fn):
     fn = fn + '.snp_meta.parquet'
     return pd.read_parquet(fn)
 
+def cleanup_idp_grp_dict(idp_grp_dict, idp_names):
+    '''
+    Check if keys and values in idp_grp_dict appear in idp_names.
+    If not, remove the key or value.
+    Return the cleaned up idp_grp_dict.
+    '''
+    for k in idp_grp_dict.keys():
+        if 'covariates' not idp_grp_dict[k] or 'x' not in idp_grp_dict[k]:
+            raise ValueError('For each entry, we require covariates and x.')
+        lc = intersection(idp_grp_dict[k]['covariates'], idp_names)
+        lx = intersection(idp_grp_dict[k]['x'], idp_names)
+        if len(lc) > 0 and len(lx) > 0:
+            idp_grp_dict[k]['covariates'] = lc
+            idp_grp_dict[k]['x'] = lx
+        else:
+            del idp_grp_dict[k]
+    return idp_grp_dict
+    
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(prog='run_simagexcan.py', description='''
@@ -270,6 +288,19 @@ if __name__ == '__main__':
         Along with all other columns for the IDPs.
         Specify the column names, e.g.: snpid:rsID, ..., chr:chr
     ''')
+    parser.add_argument('--idp_yaml', help='''
+        A YAML file telling which PC is for which set of IDPs.
+        Example:
+            set1:
+                covariates: 
+                    - PC1
+                    - PC2
+                x: 
+                    - IDP1
+                    - IDP2
+            set2: 
+                ... 
+    ''')
     parser.add_argument('--output', help='''
         The output CSV filename.
         Will return both marginal test result and also the susieR result.
@@ -292,6 +323,7 @@ if __name__ == '__main__':
     from CovConstructor import CovMatrix
     from susie_wrapper import run_susie_wrapper
     from pystat import z2p
+    from pyutil import read_yaml
     
     logging.info('Loading GWAS.')
     df_gwas = load_gwas(args.gwas)
@@ -312,6 +344,11 @@ if __name__ == '__main__':
     df_gwas, df_weight = harmonize_gwas_and_weight(df_gwas, df_weight)
     logging.info('{} SNPs left after harmonizing GWAS and IDP weights.'.format(df_gwas.shape[0]))
     
+    logging.info('Loading IDP YAML.')
+    idp_grp_dict = read_yaml(args.idp_yaml)
+    idp_grp_dict = cleanup_idp_grp_dict(idp_grp_dict, idp_names)
+    logging.info('There are {} IDP sets'.format(len(idp_grp_dict.keys())))
+    
     # please refer to https://github.com/hakyimlab/yanyu-notebook/blob/master/notes/date_112420.Rmd
     # for the details of the S-ImageXcan formula
     # to take the following procedure.
@@ -326,6 +363,10 @@ if __name__ == '__main__':
     #   2.3 z_imagexcan =  ( sum_chr numer_z(chr) ) / S_D
     # 3. run susieR.
     #   3.1 Sigma = D / S_D[:, np.newaxis] / S_D[np.newaxis, :]
+    
+    # also, we do an extension of the marginal test where we account for PCs when testing one IDP at a time.
+    # for the details of the formula see:
+    # https://github.com/hakyimlab/yanyu-notebook/blob/master/notes/date_041421.Rmd
     
     D = np.zeros((nidp, nidp))
     numer_b = np.zeros((nidp))
@@ -397,15 +438,49 @@ if __name__ == '__main__':
     logging.info('Step3: Running susieR.')
     Sigma =  D / S_D[:, np.newaxis] / S_D[np.newaxis, ]
     susie_pip, susie_cs = run_susie_wrapper(z_imagexcan, Sigma, params={'z_ld_weight': args.z_ld_weight})
-         
-    logging.info('Saving outputs.')
-    df_res = pd.DataFrame({
+    
+    df_res1 = pd.DataFrame({
         'IDP': idp_names,
         'bhat': beta_imagexcan,
         'pval': z2p(z_imagexcan),
         'pip': susie_pip,
         'cs95': susie_cs
     })
+    df_res1['test'] = 'univariate'
+    
+    logging.info('Step4: Computing the extended marginal test.')
+    df_res2 = None
+    if len(idp_grp_dict.keys()) > 0:
+        df_res2 = []
+        for grp in idp_grp_dict.keys():
+            logging.info(f'Working on extended marginal test: set = {grp}.')
+            covar_idxs = np.where(np.isin(idp_names, idp_grp_dict[grp]['covariates']))[0]
+            x_idxs = np.where(np.isin(idp_names, idp_grp_dict[grp]['x']))[0]
+            c_jj = D[:, x_idxs][x_idxs, :]
+            c_dj = D[:, covar_idxs][x_idxs, :]
+            U = np.linalg.solve(c_jj, c_dj)
+            c = np.einsum(c_dj, U, 'dj,jd->j')
+            a = D.diagonal() - c
+            betahat1 = ( numer_b[x_idxs] - U @ numer_b[covar_idxs] ) / a
+            z1 = ( numer_z[x_idxs] - U @ numer_z[covar_idxs] ) / np.sqrt(a)
+            df_res2.append(
+                pd.DataFrame({
+                    'IDP': idp_names[x_idxs],
+                    'bhat': betahat1,
+                    'pval': z2p(z1),
+                    'pip': np.zeros(betahat1.shape[0]) * np.nan,
+                    'cs95': - np.ones(betahat1.shape[0])
+                })
+            )
+        df_res2 = pd.concat(df_res2, axis=0)
+        df_res2['test'] = f'adj_covar:{grp}'
+    if df_res2 is None:
+        df_res = df_res1
+    else:
+        df_res = pd.concat(df_res1, df_res2, axis=0)    
+         
+    logging.info('Saving outputs.')
+    
     df_res.to_csv(args.output, index=False)
     
     logging.info('Done.')

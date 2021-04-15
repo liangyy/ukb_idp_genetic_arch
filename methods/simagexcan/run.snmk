@@ -15,7 +15,7 @@ def get_gwas_list(fn):
     return res
 def idp_yaml_arg(config):
     if 'idp_yaml' in config:
-        arg = '--idp_yaml {config[idp_yaml]}'
+        arg = '--idp_yaml {}'.format(config['idp_yaml'])
     else:
         arg = ''
     return arg

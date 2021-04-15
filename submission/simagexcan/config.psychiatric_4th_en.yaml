@@ -1,4 +1,4 @@
-outdir: '/scratch/t.cri.yliang/ukb_idp/simagexcan/results_psychiatric_4th'
+outdir: '/scratch/t.cri.yliang/ukb_idp/simagexcan/results_psychiatric_4th_en'
 name_tag: 'PLACEHOLDER'
 gwas:
   filename: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/formatted/harmonized_gwas.{gwas_name}.tsv.gz'

@@ -1,4 +1,4 @@
-outdir: '/scratch/t.cri.yliang/ukb_idp/simagexcan/results_gtex_gwas_4th'
+outdir: '/scratch/t.cri.yliang/ukb_idp/simagexcan/results_gtex_gwas_4th_en'
 name_tag: 'PLACEHOLDER'
 gwas:
   filename: '/gpfs/data/im-lab/nas40t2/Data/SummaryResults/imputed_gwas_hg38_1.1/imputed_{gwas_name}.txt.gz'

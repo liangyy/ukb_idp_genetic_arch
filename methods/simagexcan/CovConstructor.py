@@ -58,6 +58,9 @@ class CovConstructor:
         elif mode == 'banded':
             fn = output_prefix + '.banded.npz'
             self.compute_to_banded_npz(fn, band_size=param)
+        elif mode == 'evd':
+            fn = output_prefix + '.evd.npz'
+            self.compute_to_evd_npz(fn, min_max_thres=param)
     def _compute_cov(self, s1, e1, s2, e2, flatten=True, triu=True):
         '''
         Given submatrix index: 
@@ -140,7 +143,7 @@ class CovConstructor:
         elif mode == 'XXt':
             target_mat = self.data @ self.data.T / (self.nrow - 1)
         
-        eig_vec, eig_val = np.eigh(target_mat)
+        eig_val, eig_vec = np.linalg.eigh(target_mat)
         
         # thresholding
         max_ = eig_val[-1]
@@ -150,13 +153,13 @@ class CovConstructor:
         eig_vec = eig_vec[:, to_keep_ind]
         eig_val = eig_val[to_keep_ind]
         
-        # calculate U for XtX
-        if mode == 'XtX':
-            # X'X / (n - 1) = V S V'
+        # calculate V for XXt
+        if mode == 'XXt':
             # XX' / (n - 1) = U S U'
-            # X / sqrt(n - 1) V L^-1 = U L V' V L^-1 = U
+            # X'X / (n - 1) = V S V'
+            # L^-1 U' X / sqrt(n - 1) = L^-1 U' U L V' = V'
             # L = sqrt(S)
-            eig_vec = self.data @ eig_vec / np.sqrt(eig_val)[np.newaxis, :]
+            eig_vec = self.data.T @ eig_vec / np.sqrt(eig_val)[np.newaxis, :] / np.sqrt(self.nrow - 1)
         
         # save to disk
         np.savez(fn, eig_val=eig_val, eig_vec=eig_vec)  
@@ -179,6 +182,8 @@ class CovMatrix:
             return self._eval_matmul_on_left_npz(left_mat)
         elif self.mode == 'naive':
             return self._eval_matmul_on_left_h5(left_mat, batch_size=param)
+        elif self.mode == 'evd':
+            return self._eval_matmul_on_left_evd(left_mat)
     def _eval_matmul_on_left_evd(self, mat):
         res = np.load(self.fn)
         if 'eig_val' not in res or 'eig_vec' not in res:
@@ -186,7 +191,8 @@ class CovMatrix:
         eig_val, eig_vec = res['eig_val'], res['eig_vec']
         s1 = eig_vec.T @ mat
         s2 = eig_val[:, np.newaxis] * s1
-        return eig_vec @ s2
+        s3 = eig_vec @ s2
+        return s3, s3.diagonal().copy() 
     def _eval_matmul_on_left_npz(self, mat):
         csr = load_npz(self.fn).tocsr()
         diag_csr = csr.diagonal()

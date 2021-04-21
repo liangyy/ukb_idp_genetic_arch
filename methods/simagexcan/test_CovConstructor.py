@@ -49,9 +49,10 @@ constructor.compute_to_disk(
 )
 constructor.compute_to_disk(
     mode='evd',
-    param=band2,
+    param=0,
     output_prefix=output_prefix
 )
+
 with h5py.File(f'{output_prefix}.naive.h5', 'r') as f:
     res0 = f['cov'][:]
 covmat0 = CovMatrix(f'{output_prefix}.naive.h5')
@@ -61,8 +62,9 @@ res2 = load_npz(f'{output_prefix}.banded.npz').todense()
 covmat2 = CovMatrix(f'{output_prefix}.banded.npz')
 res3 = load_npz(f'{output_prefix}2.banded.npz').todense()
 covmat3 = CovMatrix(f'{output_prefix}2.banded.npz')
-res4 = load_npz(f'{output_prefix}.evd.npz').todense()
+res4 = np.load(f'{output_prefix}.evd.npz')
 covmat4 = CovMatrix(f'{output_prefix}.evd.npz')
+res4 = evd2mat(res4)
 
 cov1 = np.cov(mat.T)
 mat_centered = mat - mat.mean(axis=0)
@@ -92,7 +94,6 @@ for cov in [ cov1, cov2 ]:
     
     # evd
     tmp = cov.copy()
-    res4 = evd2mat(res4)
     print('evd', np.allclose(res4, tmp))
     
 
@@ -103,31 +104,31 @@ for cov in [ cov1, cov2 ]:
     # naive
     tmp = cov.copy()
     tmp = tmp @ x
-    mul0 = covmat0.eval_matmul_on_left(x)
+    mul0, _ = covmat0.eval_matmul_on_left(x)
     print('naive', np.allclose(mul0, tmp))
     
     # cap
     tmp = cov.copy()
     tmp[ np.absolute(tmp) < threshold ] = 0
     tmp = tmp @ x
-    mul1 = covmat1.eval_matmul_on_left(x)
+    mul1, _ = covmat1.eval_matmul_on_left(x)
     print('cap', np.allclose(mul1, tmp))
     
     # band 1
     tmp = get_band(cov.copy(), band1, tri=False)
     tmp = tmp @ x
-    mul2 = covmat2.eval_matmul_on_left(x)
+    mul2, _ = covmat2.eval_matmul_on_left(x)
     print('band1', np.allclose(mul2, tmp))
     
     # band 2
     tmp = get_band(cov.copy(), band2, tri=False)
     tmp = tmp @ x
-    mul3 = covmat3.eval_matmul_on_left(x)
+    mul3, _ = covmat3.eval_matmul_on_left(x)
     print('band2', np.allclose(mul3, tmp))
     
     # evd
     tmp = cov.copy()
     tmp = tmp @ x
-    mul4 = covmat4.eval_matmul_on_left(x)
+    mul4, _ = covmat4.eval_matmul_on_left(x)
     print('evd', np.allclose(mul4, tmp))
     

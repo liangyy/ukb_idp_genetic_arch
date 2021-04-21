@@ -11,6 +11,10 @@ def get_band(mat, band_size, tri=True):
         return np.triu(mat)
     else:
         return mat
+def evd2mat(dict_):
+    val = dict_['eig_val']
+    vec = dict_['eig_vec']
+    return vec @ np.diag(val) @ vec.T
 
 output_prefix = 'test_CovConstructor'
 
@@ -43,6 +47,11 @@ constructor.compute_to_disk(
     param=band2,
     output_prefix=output_prefix + '2'
 )
+constructor.compute_to_disk(
+    mode='evd',
+    param=band2,
+    output_prefix=output_prefix
+)
 with h5py.File(f'{output_prefix}.naive.h5', 'r') as f:
     res0 = f['cov'][:]
 covmat0 = CovMatrix(f'{output_prefix}.naive.h5')
@@ -52,6 +61,8 @@ res2 = load_npz(f'{output_prefix}.banded.npz').todense()
 covmat2 = CovMatrix(f'{output_prefix}.banded.npz')
 res3 = load_npz(f'{output_prefix}2.banded.npz').todense()
 covmat3 = CovMatrix(f'{output_prefix}2.banded.npz')
+res4 = load_npz(f'{output_prefix}.evd.npz').todense()
+covmat4 = CovMatrix(f'{output_prefix}.evd.npz')
 
 cov1 = np.cov(mat.T)
 mat_centered = mat - mat.mean(axis=0)
@@ -78,6 +89,11 @@ for cov in [ cov1, cov2 ]:
     # band 2
     tmp = get_band(cov.copy(), band2)
     print('band2', np.allclose(res3, tmp))
+    
+    # evd
+    tmp = cov.copy()
+    res4 = evd2mat(res4)
+    print('evd', np.allclose(res4, tmp))
     
 
 print('---- testing cov eval_matmul_on_left ----')
@@ -108,4 +124,10 @@ for cov in [ cov1, cov2 ]:
     tmp = tmp @ x
     mul3 = covmat3.eval_matmul_on_left(x)
     print('band2', np.allclose(mul3, tmp))
+    
+    # evd
+    tmp = cov.copy()
+    tmp = tmp @ x
+    mul4 = covmat4.eval_matmul_on_left(x)
+    print('evd', np.allclose(mul4, tmp))
     

@@ -126,7 +126,41 @@ class CovConstructor:
             shape=(self.ncol, self.ncol)
         )
         save_npz(fn, cov_coo)    
-
+    def compute_to_evd_npz(self, fn, min_max_thres=0):
+        
+        # determine mode
+        if self.ncol > self.nrow:
+            mode = 'XXt'
+        else:
+            mode = 'XtX'
+        
+        # run evd
+        if mode == 'XtX':
+            target_mat = self.data.T @ self.data / (self.nrow - 1)
+        elif mode == 'XXt':
+            target_mat = self.data @ self.data.T / (self.nrow - 1)
+        
+        eig_vec, eig_val = np.eigh(target_mat)
+        
+        # thresholding
+        max_ = eig_val[-1]
+        if max_ < 0:
+            raise ValueError('Largest eigen value is smaller than zero. Something wrong.')
+        to_keep_ind = eig_val / max_ > min_max_thres
+        eig_vec = eig_vec[:, to_keep_ind]
+        eig_val = eig_val[to_keep_ind]
+        
+        # calculate U for XtX
+        if mode == 'XtX':
+            # X'X / (n - 1) = V S V'
+            # XX' / (n - 1) = U S U'
+            # X / sqrt(n - 1) V L^-1 = U L V' V L^-1 = U
+            # L = sqrt(S)
+            eig_vec = self.data @ eig_vec / np.sqrt(eig_val)[np.newaxis, :]
+        
+        # save to disk
+        np.savez(fn, eig_val=eig_val, eig_vec=eig_vec)  
+        
 class CovMatrix:
     def __init__(self, fn):
         self.fn = fn
@@ -145,6 +179,14 @@ class CovMatrix:
             return self._eval_matmul_on_left_npz(left_mat)
         elif self.mode == 'naive':
             return self._eval_matmul_on_left_h5(left_mat, batch_size=param)
+    def _eval_matmul_on_left_evd(self, mat):
+        res = np.load(self.fn)
+        if 'eig_val' not in res or 'eig_vec' not in res:
+            raise ValueError('There are {} in file but missing either eig_val or eig_vec.'.format(list(res.keys())))
+        eig_val, eig_vec = res['eig_val'], res['eig_vec']
+        s1 = eig_vec.T @ mat
+        s2 = eig_val[:, np.newaxis] * s1
+        return eig_vec @ s2
     def _eval_matmul_on_left_npz(self, mat):
         csr = load_npz(self.fn).tocsr()
         diag_csr = csr.diagonal()

@@ -5,11 +5,12 @@ outdir: '/scratch/t.cri.yliang/ukb_idp/brainxcan_pipeline/gtex_gwas'
 # brainxcan_path: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan'
 
 gwas_pop: 'EUR'
-snpid: 'rsid'
+snpid: 'variant_id'
 effect_allele: 'effect_allele'
 non_effect_allele: 'non_effect_allele'
-effect_size: 'effect_size'
-effect_size_se: 'standard_error'
+zscore: 'zscore'
+sample_size: 'sample_size'
+allele_frequency: 'frequency'
 chr: 'chromosome'
 
 

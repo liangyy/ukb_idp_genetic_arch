@@ -1,4 +1,4 @@
-gwas: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/formatted/harmonized_gwas.{name_tag}.tsv.gz'  
+gwas: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/formatted/harmonized_gwas.{prefix}.tsv.gz'  
 datadir: '/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data'
 outdir: '/scratch/t.cri.yliang/ukb_idp/brainxcan_pipeline/psychiatric'
 # prefix: 'SCZ_PGC_2020'

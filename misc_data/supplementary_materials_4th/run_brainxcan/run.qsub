@@ -1,6 +1,7 @@
 #PBS -S /bin/bash
 #PBS -l walltime=24:00:00
 #PBS -l mem=64gb
+#PBS -l nodes=1:ppn=6
 #PBS -e logs/${CONFIGNAME}_${PHENOTYPE}.err
 #PBS -o logs/${CONFIGNAME}_${PHENOTYPE}.out
 
@@ -8,26 +9,32 @@
 # args1: PHENOTYPE
 # args2: CONFIGNAME
 
-
 module load gcc/6.2.0
 
 # set standalone R dependencies
-module load R/3.6.4
-export R_LIBS=$R_LIB:~/labshare/softwares/rlib/3.6/
+module load R/3.6.3
+export R_LIBS=$R_LIBS:/gpfs/data/im-lab/nas40t2/yanyul/softwares/rlib/3.6/
 
 BXCAN=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan
-CONFIGPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/supplementary_materials_4th/run_brainxcan
 
 # load plink1.9
 module load plink/1.90
 
+# need to load mosek for new snakemake
+module load mosek/8.1
+
 # load conda 
-module load conda
+source ~/.bash_profile
+source ~/.bashrc
 
 conda activate brainxcan
 
+export PYTHONPATH=$BXCAN:$PYTHONPATH
+
 snakemake -s $BXCAN/brainxcan/snmk/run.snmk \
-  --configfile $CONFIGPATH/config.$CONFIGNAME.yaml \
-  -p SBrainXcan -j5 --config \
-  brainxcan_path=$BXCAN \    
-  prefix=$PHENOTYPE > logs/${CONFIGNAME}_${PHENOTYPE}.log 2>&1
+  --configfile ${PBS_O_WORKDIR}/config.$CONFIGNAME.yaml \
+  -p SBrainXcan --cores 5 \
+  --config brainxcan_path=$BXCAN prefix=$PHENOTYPE \
+  > ${PBS_O_WORKDIR}/logs/${CONFIGNAME}_${PHENOTYPE}.log 2>&1
+
+

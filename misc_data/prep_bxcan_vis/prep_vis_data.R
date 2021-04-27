@@ -29,7 +29,8 @@ categories[[t1_tags[ii]]] = list(
   IDP = tmp$IDPs,
   vis_rds = paste0(t1_tags[ii], '.rds'),
   slide_position = c(2, 2, 2),
-  full_name = 'T1 Subcortical Total Volume'
+  full_name = 'Subcortical Total Volume',
+  type = 'T1'
 )
 results[[t1_tags[ii]]] = df_subcortical_vol
 ii = ii + 1
@@ -44,7 +45,8 @@ categories[[t1_tags[ii]]] = list(
   IDP = tmp$IDPs,
   vis_rds = paste0(t1_tags[ii], '.rds'),
   slide_position = c(2, 2, 2),
-  full_name = 'T1 Subcortical Gray Matter Volume'
+  full_name = 'Subcortical Gray Matter Volume',
+  type = 'T1'
 )
 results[[t1_tags[ii]]] = df_subcortical_gm
 ii = ii + 1
@@ -58,7 +60,8 @@ categories[[t1_tags[ii]]] = list(
   IDP = tmp$IDPs,
   vis_rds = paste0(t1_tags[ii], '.rds'),
   slide_position = c(2, 2, 2),
-  full_name = 'T1 Cortical Gray Matter Volume'
+  full_name = 'Cortical Gray Matter Volume',
+  type = 'T1'
 )
 results[[t1_tags[ii]]] = df_cortical
 ii = ii + 1
@@ -72,7 +75,8 @@ categories[[t1_tags[ii]]] = list(
   IDP = tmp$IDPs,
   vis_rds = paste0(t1_tags[ii], '.rds'),
   slide_position = c(2, 4, 3),
-  full_name = 'T1 Cerebellum Gray Matter Volume'
+  full_name = 'Cerebellum Gray Matter Volume',
+  type = 'T1'
 )
 results[[t1_tags[ii]]] = df_cerebellum
 
@@ -108,7 +112,8 @@ for(dm in dmri_measures) {
     IDP = idp_ext,
     vis_rds = paste0(dmri_tag, '.rds'),
     slide_position = c(2, 2, 2),
-    full_name = paste0('dMRI ', dmri_full_name_map[[dm]])
+    full_name = dmri_full_name_map[[dm]],
+    type = 'dMRI'
   )
 }
 

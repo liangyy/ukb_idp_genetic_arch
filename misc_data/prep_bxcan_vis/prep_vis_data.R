@@ -28,7 +28,8 @@ df_subcortical_vol = tmp$df
 categories[[t1_tags[ii]]] = list(
   IDP = tmp$IDPs,
   vis_rds = paste0(t1_tags[ii], '.rds'),
-  slide_position = c(2, 2, 2)
+  slide_position = c(2, 2, 2),
+  full_name = 'T1 Subcortical Total Volume'
 )
 results[[t1_tags[ii]]] = df_subcortical_vol
 ii = ii + 1
@@ -42,7 +43,8 @@ df_subcortical_gm = tmp$df
 categories[[t1_tags[ii]]] = list(
   IDP = tmp$IDPs,
   vis_rds = paste0(t1_tags[ii], '.rds'),
-  slide_position = c(2, 2, 2)
+  slide_position = c(2, 2, 2),
+  full_name = 'T1 Subcortical Gray Matter Volume'
 )
 results[[t1_tags[ii]]] = df_subcortical_gm
 ii = ii + 1
@@ -55,7 +57,8 @@ df_cortical = tmp$df
 categories[[t1_tags[ii]]] = list(
   IDP = tmp$IDPs,
   vis_rds = paste0(t1_tags[ii], '.rds'),
-  slide_position = c(2, 2, 2)
+  slide_position = c(2, 2, 2),
+  full_name = 'T1 Cortical Gray Matter Volume'
 )
 results[[t1_tags[ii]]] = df_cortical
 ii = ii + 1
@@ -68,7 +71,8 @@ df_cerebellum = tmp$df
 categories[[t1_tags[ii]]] = list(
   IDP = tmp$IDPs,
   vis_rds = paste0(t1_tags[ii], '.rds'),
-  slide_position = c(2, 4, 3)
+  slide_position = c(2, 4, 3),
+  full_name = 'T1 Cerebellum Gray Matter Volume'
 )
 results[[t1_tags[ii]]] = df_cerebellum
 
@@ -83,6 +87,12 @@ for(tag in names(results)) {
 
 message('--------------------- dMRI IDPs --------------------')
 measurement_type_ = 'dMRI skeleton (TBSS-style measurement)'
+dmri_full_name_map = list(
+  FA = 'Fractional Anisotropy',
+  ICVF = 'Intra-Cellular Volume Fraction',
+  ISOVF = 'Isotropic or free water Volume Fraction',
+  OD = 'Orientation Dispersion Index'
+)
 t1_anatomy_group = NULL
 tmp = prep_data(load_tbss, idps, measurement_type_, t1_anatomy_group)
 df_tbss = tmp$df
@@ -97,7 +107,8 @@ for(dm in dmri_measures) {
   categories[[paste0(dmri_tag, '-', dm)]] = list(
     IDP = idp_ext,
     vis_rds = paste0(dmri_tag, '.rds'),
-    slide_position = c(2, 2, 2)
+    slide_position = c(2, 2, 2),
+    full_name = paste0('dMRI ', dmri_full_name_map[[dm]])
   )
 }
 

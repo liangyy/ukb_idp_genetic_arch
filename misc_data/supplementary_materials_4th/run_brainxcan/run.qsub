@@ -20,9 +20,6 @@ BXCAN=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan
 # load plink1.9
 module load plink/1.90
 
-# need to load mosek for new snakemake
-module load mosek/8.1
-
 # load conda 
 source ~/.bash_profile
 source ~/.bashrc
@@ -30,6 +27,8 @@ source ~/.bashrc
 conda activate brainxcan
 
 export PYTHONPATH=$BXCAN:$PYTHONPATH
+
+cd ${PBS_O_WORKDIR}
 
 snakemake -s $BXCAN/brainxcan/snmk/run.snmk \
   --configfile ${PBS_O_WORKDIR}/config.$CONFIGNAME.yaml \

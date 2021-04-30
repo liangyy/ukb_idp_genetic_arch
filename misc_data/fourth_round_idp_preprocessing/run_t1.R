@@ -117,6 +117,13 @@ for(i in 1 : nrow(df_tag)) {
 
 if(isTRUE(save_yaml)) {
   yaml::write_yaml(idp_dict, paste0(outdir, '/t1_covar.yaml'))
+  kk = idp_dict
+  for(n in names(kk)) {
+    tmp_x = kk[[n]][['x']]
+    kk[[n]][['x']] = kk[[n]][['covariates']]
+    kk[[n]][['covariates']] = tmp_x
+  }
+  yaml::write_yaml(kk, paste0(outdir, '/t1_covar_for_pc.yaml'))
 }
 
 if(doit | force_run) {

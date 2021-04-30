@@ -1,4 +1,4 @@
-outdir: '/scratch/t.cri.yliang/ukb_idp/simagexcan/results_psychiatric_4th_ridge'
+outdir: '/scratch/t.cri.yliang/ukb_idp/simagexcan/results_psychiatric_4th_ridge_wPCadj'
 name_tag: 'PLACEHOLDER'
 gwas:
   filename: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/formatted/harmonized_gwas.{gwas_name}.tsv.gz'
@@ -13,7 +13,7 @@ gwas:
     sample_size: 'sample_size'
     allele_frequency: 'frequency'
 idp_weight:
-  filename: '/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data/idp_weights/ridge/original.PLACEHOLDER.parquet'
+  filename: '/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data/idp_weights/ridge/residual.PLACEHOLDER.parquet'
   cols:
     snpid: 'variant_id'
     effect_allele: 'a1'

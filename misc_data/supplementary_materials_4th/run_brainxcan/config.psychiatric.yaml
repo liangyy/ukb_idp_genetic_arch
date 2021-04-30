@@ -22,5 +22,5 @@ signif_pval: 1e-5
 signif_max_idps: 20
 # ld_clump_yaml: '{datadir}/mr/ld_clump.yaml'
      
-# rscript_exe: 'Rscript' 
+rscript_exe: '/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/r_36/bin/Rscript' 
 # python_exe: 'python'

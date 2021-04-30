@@ -51,3 +51,16 @@ fourth_round.t1_w_pc.gw_elastic_net_beta
 fourth_round.t1_no_pc.gw_ridge_beta
 fourth_round.t1_w_pc.gw_ridge_beta
 ```
+
+New 4th round (wPCadj)
+
+```
+bash submit_4th.sh dmri psychiatric_4th_en_wPCadj 2
+bash submit_4th.sh t1 psychiatric_4th_en_wPCadj 12
+bash submit_4th.sh dmri psychiatric_4th_ridge_wPCadj 2
+bash submit_4th.sh t1 psychiatric_4th_ridge_wPCadj 12
+bash submit_4th.sh dmri gtex_gwas_4th_en_wPCadj 2
+bash submit_4th.sh t1 gtex_gwas_4th_en_wPCadj 12
+bash submit_4th.sh dmri gtex_gwas_4th_ridge_wPCadj 2
+bash submit_4th.sh t1 gtex_gwas_4th_ridge_wPCadj 12
+```

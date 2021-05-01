@@ -479,17 +479,17 @@ if __name__ == '__main__':
                 a_ = c_jj.diagonal() - c_
                 betahat1 = ( numer_b[x_idxs] - U.T @ numer_b[covar_idxs] ) / a_
                 z1 = ( numer_z[x_idxs] - U.T @ numer_z[covar_idxs] ) / np.sqrt(a_)
-                df_res2.append(
-                    pd.DataFrame({
-                        'IDP': np.array(idp_names)[x_idxs],
-                        'bhat': betahat1,
-                        'pval': z2p(z1),
-                        'pip': np.zeros(betahat1.shape[0]) * np.nan,
-                        'cs95': - np.ones(betahat1.shape[0])
-                    })
-                )
+                df_tmp = pd.DataFrame({
+                             'IDP': np.array(idp_names)[x_idxs],
+                             'bhat': betahat1,
+                             'pval': z2p(z1),
+                             'pip': np.zeros(betahat1.shape[0]) * np.nan,
+                             'cs95': - np.ones(betahat1.shape[0])
+                         })
+                df_tmp['test'] = f'adj_covar:{grp}'
+                df_res2.append(df_tmp)
             df_res2 = pd.concat(df_res2, axis=0)
-            df_res2['test'] = f'adj_covar:{grp}'
+        
         if df_res2 is None:
             df_res = df_res1
         else:

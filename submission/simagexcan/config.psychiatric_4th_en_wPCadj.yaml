@@ -1,0 +1,24 @@
+outdir: '/scratch/t.cri.yliang/ukb_idp/simagexcan/results_psychiatric_4th_en_wPCadj'
+name_tag: 'PLACEHOLDER'
+gwas:
+  filename: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/formatted/harmonized_gwas.{gwas_name}.tsv.gz'
+  cols:
+    snpid: 'rsid'
+    effect_allele: 'effect_allele'
+    non_effect_allele: 'non_effect_allele'
+    effect_size: 'effect_size'
+    effect_size_se: 'standard_error'
+    chr: 'chromosome'
+    zscore: 'zscore'
+    sample_size: 'sample_size'
+    allele_frequency: 'frequency'
+idp_weight:
+  filename: '/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data/idp_weights/elastic_net/residual.PLACEHOLDER.parquet'
+  cols:
+    snpid: 'variant_id'
+    effect_allele: 'a1'
+    non_effect_allele: 'a0'
+    chr: 'chr'
+idp_yaml: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/fourth_round_idp_preprocessing/output/PLACEHOLDER_covar_for_pc.yaml'
+genotype_covariance: '/scratch/t.cri.yliang/ukb_idp/simagexcan_geno_cov/ukb_idp.geno_cov.chr{chr_num}.banded.npz'
+gwas_list: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/preprocess_psychiatric_traits/trait_list.txt'

@@ -114,6 +114,13 @@ for(tag in tags) {
 
 if(isTRUE(save_yaml)) {
   yaml::write_yaml(idp_dict, paste0(outdir, '/dmri_covar.yaml'))
+  kk = idp_dict
+  for(n in names(kk)) {
+    tmp_x = kk[[n]][['x']]
+    kk[[n]][['x']] = kk[[n]][['covariates']]
+    kk[[n]][['covariates']] = tmp_x
+  }
+  yaml::write_yaml(kk, paste0(outdir, '/dmri_covar_for_pc.yaml'))
 }
 
 if(doit | force_run) {

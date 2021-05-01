@@ -1,0 +1,26 @@
+gwas: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/psychiatric_gwas/formatted/harmonized_gwas.{prefix}.tsv.gz'  
+datadir: '/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data'
+outdir: '/scratch/t.cri.yliang/ukb_idp/brainxcan_pipeline/psychiatric'
+# prefix: 'SCZ_PGC_2020'
+# brainxcan_path: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan'
+
+gwas_pop: 'EUR'
+snpid: 'rsid'
+effect_allele: 'effect_allele'
+non_effect_allele: 'non_effect_allele'
+effect_size: 'effect_size'
+effect_size_se: 'standard_error'
+chr: 'chromosome'
+zscore: 'zscore'
+sample_size: 'sample_size'
+allele_frequency: 'frequency'
+
+
+# model_type: 'ridge'
+idp_type: 'residual'
+signif_pval: 1e-5
+signif_max_idps: 20
+# ld_clump_yaml: '{datadir}/mr/ld_clump.yaml'
+     
+rscript_exe: '/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/r_36/bin/Rscript' 
+# python_exe: 'python'

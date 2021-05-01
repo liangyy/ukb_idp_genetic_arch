@@ -1,0 +1,74 @@
+# ARGS1: t1 or dmri
+
+# environment setup
+source /vol/bmd/yanyul/miniconda3/etc/profile.d/conda.sh
+conda activate ukb_idp
+
+export PYTHONPATH=/vol/bmd/yanyul/GitHub/misc-tools/pyutil
+
+idptag=$1
+
+scriptpath=/vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/methods/imagexcan/run_imagexcan.py
+
+# input files
+covar=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_covariate_round_1.parquet
+pheno=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_phenotype_round_1.parquet
+eur_indiv=/vol/bmd/yanyul/UKB/predicted_expression_tf2/British.txt
+idp_indiv=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/idp_cohort.txt
+covar_yaml=covariate_round_1.yaml
+pheno_linear_yaml=phenotype_linear.yaml
+pheno_susie_yaml=phenotype_susie.yaml
+pheno_linear_adj_yaml=phenotype_linear_adj.yaml
+idp_yaml=/vol/bmd/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/fourth_round_idp_preprocessing/output/${idptag}_covar_for_pc.yaml
+
+tmp_indiv=run_round_4_wPCadj.${idptag}.txt
+cat $eur_indiv | tail -n +2 | cut -f 1 -d ' '  > $tmp_indiv
+
+
+logfile=run_round_4_wPCadj.${idptag}.log
+if [[ -f $logfile ]]
+then
+  rm $logfile
+fi
+
+models='elastic_net ridge'
+
+
+for model in $models
+do
+  idp=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/prediction/pred_idp.fourth_round.${idptag}_w_pc.gw_${model}_beta.parquet
+  # output file
+  # outfile_linear=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_linear.fourth_round.${idptag}.gw_${model}_beta.csv
+  # outfile_susie=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_susie.fourth_round.${idptag}.gw_${model}_beta.csv
+  outfile_linear_adj=/vol/bmd/yanyul/UKB/ukb_idp_genetic_arch/data/imagexcan_linear_wPCadj.fourth_round.${idptag}.gw_${model}_beta.csv
+  
+  echo $model $idptag >> $logfile
+  # run
+  # python $scriptpath \
+  #   --phenotype_table $pheno eid \
+  #   --covariate_table $covar eid \
+  #   --phenotype_yaml $pheno_linear_yaml \
+  #   --individual_list $tmp_indiv \
+  #   --individual_list_exclude $idp_indiv \
+  #   --covariate_yaml $covar_yaml \
+  #   --idp_table $idp indiv \
+  #   --output $outfile_linear \
+  #   >> $logfile 2>&1
+
+  # --first_30_idp \
+
+  python $scriptpath \
+    --phenotype_table $pheno eid \
+    --covariate_table $covar eid \
+    --phenotype_yaml $pheno_linear_adj_yaml \
+    --individual_list $tmp_indiv \
+    --individual_list_exclude $idp_indiv \
+    --covariate_yaml $covar_yaml \
+    --idp_table $idp indiv \
+    --output $outfile_linear_adj \
+    --idp_yaml $idp_yaml \
+    >> $logfile 2>&1
+
+done
+rm $tmp_indiv
+

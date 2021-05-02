@@ -6,14 +6,14 @@
 
 # setwd('misc_data/supplementary_materials_4th/')
 
-load_sbxcan = function(folder_prefix, trait_list, idp_type) {
+load_sbxcan = function(folder_prefix, trait_list, idp_type, dir_suffix = NULL) {
   # idp_type = list(dMRI = 'fourth_round.dmri_no_pc', T1 = 'third_round_t1')
   models = list(ridge = 'ridge', en = 'elastic_net')
   df1 = list()
   for(t in trait_list) {
     for(i in names(idp_type)) {
       for(m in names(models)) {
-        df1[[length(df1) + 1]] = read.csv(paste0(folder_prefix, '_', m, '/', idp_type[[i]], '_x_', t, '_x_simagexcan.csv'), header = T) %>% mutate(idp_type = i, model = m, phenotype = t)
+        df1[[length(df1) + 1]] = read.csv(paste0(folder_prefix, '_', m, dir_suffix, '/', idp_type[[i]], '_x_', t, '_x_simagexcan.csv'), header = T) %>% mutate(idp_type = i, model = m, phenotype = t)
       }
     }
   }
@@ -37,10 +37,12 @@ library(dplyr)
 options(stringsAsFactors = F)
 source('../../rmd/rlib.R')
 
-sbxcan = T
-ibxcan = T
-herit = T
-cv_perf = T
+sbxcan = F
+ibxcan = F
+herit = F
+cv_perf = F
+sbxcan_wPCadj = F
+ibxcan_wPCadj = T
 
 foldern = 'result2rds'
 dir.create(foldern)
@@ -70,6 +72,31 @@ if(isTRUE(sbxcan)) {
   saveRDS(df, paste0(foldern, '/sbxcan.rds'))
 }
 
+if(isTRUE(sbxcan_wPCadj)) {
+  df_gwas = read.delim2('../supplementary_materials_3rd/supp_table_4.tsv', header = T)
+  folder_prefixes = list(gtex_gwas = '~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_4th', psychiatric = '~/Desktop/tmp/ukb_idp/simagexcan/results_psychiatric_4th')
+  df_gwas$folder = 'gtex_gwas'
+  df_gwas$folder[25:35] = 'psychiatric'
+  idp_type = list(dMRI = 'dmri', T1 = 't1')
+  df = list()
+  for(cc in c('gtex_gwas', 'psychiatric')) {
+    traits = df_gwas %>% filter(folder == cc) %>% pull(phenotype_id)
+    df[[length(df) + 1]] = load_sbxcan(folder_prefixes[[cc]], traits, idp_type, dir_suffix = '_wPCadj')
+  }
+  df = do.call(rbind, df)
+  df = df %>% mutate(zscore = p2z(pval, bhat))
+  df$test = trim_test(df$test)
+  df$pip = NULL
+  df$cs95 = NULL
+  df = left_join(
+    df %>% filter(test == 'univariate') %>% select(-test),
+    df %>% filter(test == 'adj_covar') %>% select(-test),
+    by = c('IDP', 'idp_type', 'model', 'phenotype'),
+    suffix = c('.univariate', '.adj_covar')
+  )
+  saveRDS(df, paste0(foldern, '/sbxcan_wPCadj.rds'))
+}
+
 if(isTRUE(ibxcan)) {
   pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes', 'bmi', 'height')
   models = list(ridge = 'ridge', en = 'elastic_net')
@@ -96,6 +123,34 @@ if(isTRUE(ibxcan)) {
     suffix = c('.univariate', '.adj_covar')
   )
   saveRDS(df, paste0(foldern, '/indiv_bxcan.rds'))
+}
+
+if(isTRUE(ibxcan_wPCadj)) {
+  pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes', 'bmi', 'height')
+  models = list(ridge = 'ridge', en = 'elastic_net')
+  idps = list(dMRI = 'dmri', T1 = 't1') 
+  # types = c('linear', 'susie')
+  df = list()
+  for(m in names(models)) {
+    for(t in names(idps)) {
+      fn1 = paste0('~/Desktop/tmp/ukb_idp/data/imagexcan_linear_residual.fourth_round.', idps[[t]], '.gw_', models[[m]], '_beta.csv')
+      tmp1 = read.csv(fn1)
+      fn2 = paste0('~/Desktop/tmp/ukb_idp/data/imagexcan_linear_wPCadj.fourth_round.', idps[[t]], '.gw_', models[[m]], '_beta.csv')
+      tmp2 = read.csv(fn2)
+      tmp = rbind(tmp1, tmp2)
+      df[[length(df) + 1]] = tmp %>% mutate(model = m, idp_type = t)
+    }
+  }
+  df = do.call(rbind, df)
+  df = df %>% filter(phenotype %in% pheno_interest) %>% mutate(zscore = p2z(pval, bhat))
+  df$test = trim_test(df$test)
+  df = left_join(
+    df %>% filter(test == 'univariate') %>% select(-test),
+    df %>% filter(test == 'adj_covar') %>% select(-test),
+    by = c('IDP', 'idp_type', 'model', 'phenotype'),
+    suffix = c('.univariate', '.adj_covar')
+  )
+  saveRDS(df, paste0(foldern, '/indiv_bxcan_wPCadj.rds'))
 }
 
 if(isTRUE(herit)) {

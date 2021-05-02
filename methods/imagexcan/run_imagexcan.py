@@ -143,6 +143,7 @@ if __name__ == '__main__':
         logging.info(f'Working on {pheno_col}')
         y = df_pheno[pheno_col].to_numpy()
         not_nan = np.logical_not(np.isnan(y))
+        idp_cols_now = idp_cols
         if test_type == 'logistic_regression':
             bhat, pval = logistic_regression(y[not_nan], X=Idp[not_nan, :], C=Covar[not_nan, :])
             res = { 'bhat': bhat, 'pval': pval }
@@ -161,16 +162,18 @@ if __name__ == '__main__':
             cor = calc_cor(Idp[not_nan, :], covar=Covar[not_nan, :])
             pip, cs = run_susie_wrapper(zscore, cor)
             res = { 'pip': pip, 'cs': cs }
-            res['test'] = [ 'susie' for i in range(res['pip'].shape[0]) ]
+            res['test'] = [ 'susie' for i in range(len(res['pip'])) ]
         elif test_type == 'linear_regression_w_covar':
             if args.idp_yaml is None:
                 raise ValueError('Require idp_yaml when using linear_regression_w_covar.')
             idp_dict = read_yaml(args.idp_yaml)
             idp_dict = cleanup_idp_grp_dict(idp_dict, idp_cols)
             res = { 'bhat': [], 'pval': [], 'test': [] }
+            idp_cols_now = []
             for grp in idp_dict.keys():
                 covar_idxs = np.where(np.isin(idp_cols, idp_dict[grp]['covariates']))[0]
                 x_idxs = np.where(np.isin(idp_cols, idp_dict[grp]['x']))[0]
+                idp_cols_now.append(np.array(idp_cols)[x_idxs])
                 Covar_ = np.concatenate(
                     [
                         Covar[not_nan, :], 
@@ -182,9 +185,14 @@ if __name__ == '__main__':
                 bhat, pval, _ = linear_regression(y[not_nan], X=Idp_, C=Covar_)
                 res['bhat'].append(bhat)
                 res['pval'].append(pval)
-                res['test'].append([ f'adj_covar:{grp}' for i in range(bhat.shape[0])])
+                res['test'].append(np.array([ f'adj_covar:{grp}' for i in range(bhat.shape[0])]))
+            res['bhat'] = np.concatenate(res['bhat'], axis=0)
+            res['pval'] = np.concatenate(res['pval'], axis=0)
+            res['test'] = np.concatenate(res['test'], axis=0)
+            idp_cols_now = np.concatenate(idp_cols_now, axis=0)
+
             
-        df = pd.DataFrame({ 'IDP': idp_cols, 'phenotype': pheno_col, **res })
+        df = pd.DataFrame({ 'IDP': idp_cols_now, 'phenotype': pheno_col, **res })
         df_list.append(df)
     df_list = pd.concat(df_list, axis=0)
     

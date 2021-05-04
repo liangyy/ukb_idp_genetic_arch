@@ -112,3 +112,35 @@ do
   echo sbatch --export=NAME_LIST=$NAME_LIST,MYJOB_NAME=$MYJOB_NAME run_sld4m.sbatch
 done
 ```
+
+## Fourth round
+
+```
+# mkdir -p idp_lists_4th
+# ls /project2/haky/Data/BrainXcan/idp_gwas_4th/trans_qtl.fourth_round.t1_w_pc.chr22/* | sed 's#/project2/haky/Data/BrainXcan/idp_gwas_4th/trans_qtl.fourth_round.t1_w_pc.chr22/##g' | sed 's#.parquet##g' > idp_lists_4th/t1_list
+# cd idp_lists_4th
+# split -l 50 -d t1_list t1_
+# rm t1_list
+# cd ../
+for i in `ls idp_lists_4th/t1_*`
+do
+  NAME_LIST=`pwd -P`/$i
+  MYJOB_NAME=sld4m_t1_4th
+  echo sbatch --export=NAME_LIST=$NAME_LIST,MYJOB_NAME=$MYJOB_NAME run_sld4m.sbatch
+done
+```
+
+```
+# mkdir -p idp_lists_4th
+# ls /project2/haky/Data/BrainXcan/idp_gwas_4th/trans_qtl.fourth_round.dmri_w_pc.chr22/* | sed 's#/project2/haky/Data/BrainXcan/idp_gwas_4th/trans_qtl.fourth_round.dmri_w_pc.chr22/##g' | sed 's#.parquet##g' > idp_lists_4th/dmri_list
+# cd idp_lists_4th
+# split -l 50 -d dmri_list dmri_
+# rm dmri_list
+# cd ../
+for i in `ls idp_lists_4th/dmri_*`
+do
+  NAME_LIST=`pwd -P`/$i
+  MYJOB_NAME=sld4m_dmri_4th
+  echo sbatch --export=NAME_LIST=$NAME_LIST,MYJOB_NAME=$MYJOB_NAME run_sld4m.sbatch
+done
+```

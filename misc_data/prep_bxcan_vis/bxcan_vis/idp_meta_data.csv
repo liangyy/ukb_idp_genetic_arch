@@ -458,3 +458,15 @@
 "IDP-25728","dMRI","w-ISOVF","right","superior thalamic radiation","Weighted-mean ISOVF (isotropic or free water volume fraction) in tract right superior thalamic radiation (from dMRI data)","http://biobank.ndph.ox.ac.uk/ukb/field.cgi?id=25728"
 "IDP-25729","dMRI","w-ISOVF","left","uncinate fasciculus","Weighted-mean ISOVF (isotropic or free water volume fraction) in tract left uncinate fasciculus (from dMRI data)","http://biobank.ndph.ox.ac.uk/ukb/field.cgi?id=25729"
 "IDP-25730","dMRI","w-ISOVF","right","uncinate fasciculus","Weighted-mean ISOVF (isotropic or free water volume fraction) in tract right uncinate fasciculus (from dMRI data)","http://biobank.ndph.ox.ac.uk/ukb/field.cgi?id=25730"
+"PC-ICVF-ProbTrack-1","dMRI","w-ICVF",NA,"PC","PC-ICVF-ProbTrack-1",NA
+"PC-ICVF-TBSS-1","dMRI","ICVF",NA,"PC","PC-ICVF-TBSS-1",NA
+"PC-ISOVF-ProbTrack-1","dMRI","w-ISOVF",NA,"PC","PC-ISOVF-ProbTrack-1",NA
+"PC-ISOVF-TBSS-1","dMRI","ISOVF",NA,"PC","PC-ISOVF-TBSS-1",NA
+"PC-OD-ProbTrack-1","dMRI","w-OD",NA,"PC","PC-OD-ProbTrack-1",NA
+"PC-OD-TBSS-1","dMRI","OD",NA,"PC","PC-OD-TBSS-1",NA
+"PC-FA-ProbTrack-1","dMRI","w-FA",NA,"PC","PC-FA-ProbTrack-1",NA
+"PC-FA-TBSS-1","dMRI","FA",NA,"PC","PC-FA-TBSS-1",NA
+"PC-Subcortical_vol-1","T1","Subcortical",NA,"PC","PC-Subcortical_vol-1",NA
+"PC-Cortical-1","T1","Gray-Cortical",NA,"PC","PC-Cortical-1",NA
+"PC-Subcortical_GMvol-1","T1","Gray-Subcortical",NA,"PC","PC-Subcortical_GMvol-1",NA
+"PC-Cerebellum-1","T1","Gray-Cerebellum",NA,"PC","PC-Cerebellum-1",NA

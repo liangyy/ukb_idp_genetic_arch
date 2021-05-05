@@ -23,7 +23,7 @@ gannot2$subtype = gen_substype(gannot2)
 
 write.table(
   gannot2 %>% select(IDP, t1_or_dmri, subtype, left_or_right, region, notes, ukb_link), 
-  paste0(outdir, '/idp_meta_data.csv'), 
+  paste0(outdir, '/idp_meta_data_tmp.csv'), 
   quo = T, row = F, sep = ',', col = T
 )
 

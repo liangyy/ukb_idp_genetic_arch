@@ -55,7 +55,7 @@ tmp$subtype[ tmp$subtype %in% other_subtypes ] = 'Other'
   p1
   
   tags = 'Gray-Cortical'
-  p2 = gen_panel(tmp, tags) + theme(legend.position = c(0.2, 0.75)) + theme(axis.title.x = element_blank())
+  p2 = gen_panel(tmp, tags) + theme(legend.position = c(0.2, 0.7)) + theme(axis.title.x = element_blank())
   
   # ggsave(paste0(outdir, '/heritability', '.t1', '.png'), (p1 / p2), width = 7, height = 5)
 
@@ -64,5 +64,5 @@ tmp$subtype[ tmp$subtype %in% other_subtypes ] = 'Other'
   p3
   
   
-  ggsave(paste0(outdir, '/heritability.png'), (p1 / p2 / p3), width = 7, height = 7)
+  ggsave(paste0(outdir, '/heritability.png'), (p1 / p2 / p3), width = 7, height = 6.6)
 }

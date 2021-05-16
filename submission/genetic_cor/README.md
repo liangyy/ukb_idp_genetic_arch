@@ -26,3 +26,13 @@ bash submit_run.sh \
   t1_3rd \
   /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/genetic_cor/third_round_t1.txt
 ```
+
+Fourth round (residual only)
+
+```
+bash submit_run.sh \
+  /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/simagexcan/gtex_gwas_list.txt \
+  gtex_gwas_4th \
+  t1_4th \
+  /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/genetic_cor/fourth_round_t1_residual.txt
+```

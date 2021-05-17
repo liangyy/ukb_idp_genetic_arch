@@ -490,10 +490,10 @@ if __name__ == '__main__':
                 df_res2.append(df_tmp)
             df_res2 = pd.concat(df_res2, axis=0)
         
-        if df_res2 is None:
-            df_res = df_res1
-        else:
-            df_res = pd.concat([df_res1, df_res2], axis=0)    
+    if df_res2 is None:
+        df_res = df_res1
+    else:
+        df_res = pd.concat([df_res1, df_res2], axis=0)    
     df_res.fillna('NA', inplace=True)
  
     logging.info('Saving outputs.')

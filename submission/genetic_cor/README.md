@@ -35,4 +35,10 @@ bash submit_run.sh \
   gtex_gwas_4th \
   t1_4th \
   /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/genetic_cor/fourth_round_t1_residual.txt
+
+bash submit_run.sh \
+  /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/preprocess_psychiatric_traits/trait_list.txt \
+  psychiatric_4th \
+  t1_4th \
+  /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/genetic_cor/fourth_round_t1_residual.txt
 ```

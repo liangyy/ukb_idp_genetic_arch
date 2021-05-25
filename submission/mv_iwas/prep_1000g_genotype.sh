@@ -2,6 +2,7 @@
 # args2: outdir
 # args3: eur_list
 # args4: 1000g data dir
+# args5: download only
 
 # use plink1.9
 
@@ -24,6 +25,11 @@ then
   echo "Generating $datadir/$raw_vcf"
   # wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/$raw_vcf -O $raw_vcf
   wget http://hgdownload.cse.ucsc.edu/gbdb/hg19/1000Genomes/phase3/$raw_vcf -O $datadir/$raw_vcf
+fi
+
+if [[ ! -z $6 ]]
+then 
+  exit 0
 fi
 
 # add_snpid_vcf=chr$chr.vcf.gz

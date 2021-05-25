@@ -7,7 +7,7 @@
 chr=$1
 outdir=$2
 eur=$3
-
+plink_opt="--memory 16000 --threads 2"
 cd $outdir
 
 raw_vcf=ALL.chr$chr.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz
@@ -21,7 +21,7 @@ all_bed_pre=chr$chr
 if [[ ! -f $all_bed_pre.bed ]]
 then
   echo "Generating $all_bed_pre"
-  plink --vcf $raw_vcf --out $all_bed_pre
+  plink --vcf $raw_vcf --out $all_bed_pre $plink_opt
 fi
 
 
@@ -29,7 +29,7 @@ eur_bed_pre=1000G.EUR.$chr
 if [[ ! -f $eur_bed_pre.bed ]]
 then
   echo "Generating $eur_bed_pre"
-  plink --bfile $all_bed_pre --keep $eur --make-bed --out $eur_bed_pre )
+  plink --bfile $all_bed_pre --keep $eur --make-bed --out $eur_bed_pre $plink_opt
 fi
 
 #remove duplicated variants
@@ -37,7 +37,7 @@ snplist=all_snps.$eur_bed_pre.snplist
 if [[ ! -f $snplist ]]
 then
   echo "Generating $snplist"
-  plink --bfile $eur_bed_pre --write-snplist --out all_snps.$eur_bed_pre
+  plink --bfile $eur_bed_pre --write-snplist --out all_snps.$eur_bed_pre $plink_opt
 fi
 
 out_pre=1000G.EUR.$chr.DuplicatesRemoved
@@ -45,7 +45,7 @@ if [[ ! -f $out_pre.bed ]]
 then
   echo "Generating $out_pre"
   cat all_snps.$eur_bed_pre.snplist | sort | uniq -d > duplicated_snps.$eur_bed_pre.snplist
-  plink --bfile $eur_bed_pre --exclude duplicated_snps.$eur_bed_pre.snplist --make-bed --out $out_pre
+  plink --bfile $eur_bed_pre --exclude duplicated_snps.$eur_bed_pre.snplist --make-bed --out $out_pre $plink_opt
 fi
 
 echo "Done"

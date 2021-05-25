@@ -15,5 +15,5 @@ eurlist=/project2/haky/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/EUR
 
 cd $outdir 
 
-bash $runscript $CHR $outdir 
+bash $runscript $CHR $outdir $eurlist 
 

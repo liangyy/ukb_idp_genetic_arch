@@ -1,0 +1,26 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l mem=8gb
+#PBS -e logs/prep_ukb_idp_gwas.err
+#PBS -o logs/prep_ukb_idp_gwas.out
+
+outdir=/scratch/t.cri.yliang/ukb_idp/mv_iwas/ukb_idp_gwas
+runscript=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/prep_ukb_idp_gwas.sh
+
+idp_list=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/ukb_idp_list.txt
+
+position=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/ukb_idp_gwas.positions.txt
+if [[ ! -f $position ]]
+then
+  bash /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/prep_ukb_idp_gwas_position.sh
+fi
+
+mkdir -p $outdir
+cd $outdir 
+
+while IFS=$'\t' read -r kk url fn idptag rem
+do
+    bash $runscript $url $fn $idptag $outdir $position 
+done < $idp_list
+
+

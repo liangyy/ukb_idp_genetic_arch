@@ -1,0 +1,16 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l mem=16gb
+#PBS -e logs/prep_1000g_genotype.err
+#PBS -o logs/prep_1000g_genotype.out
+
+outdir=/scratch/t.cri.yliang/ukb_idp/mv_iwas
+runscript=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/prep_1000g_genotype.sh
+eurlist=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/EUR.txt
+datadir=/gpfs/data/im-lab/nas40t2/Data/1000G/vcf
+
+mkdir -p $outdir
+cd $outdir 
+
+bash $runscript $CHR $outdir $eurlist $datadir
+

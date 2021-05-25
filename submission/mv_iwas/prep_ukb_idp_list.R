@@ -6,4 +6,4 @@ idp = read.delim2('../../misc_data/supplementary_materials_4th/supp_table_1.tsv'
 df_map = df_map %>% filter(ukb_field %in% idp$ukb_field)
 df_all = df_all %>% filter(idp %in% df_map$n2018_id)
 df_all = df_all %>% select(idp, link, file) %>% left_join(df_map, by = c('idp' = 'n2018_id'))
-write.table(df_all, 'ukb_idp_list.txt', quo = T, row = F, col = F, sep = '\t')
+write.table(df_all, 'ukb_idp_list.txt', quo = F, row = F, col = F, sep = '\t')

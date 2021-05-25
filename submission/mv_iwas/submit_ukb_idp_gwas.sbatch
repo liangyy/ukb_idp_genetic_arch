@@ -20,9 +20,9 @@ fi
 
 cd $outdir 
 
-while IFS="\t" read -r kk url fn idptag rem
+while IFS=$'\t' read -r kk url fn idptag rem
 do
-    echo bash $runscript $url $fn $idptag $outdir $position 
+    bash $runscript $url $fn $idptag $outdir $position 
 done < $idp_list
 
 

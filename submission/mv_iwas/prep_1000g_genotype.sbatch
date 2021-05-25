@@ -11,7 +11,7 @@ module load plink
 module load htslib
 module load bcftools
 
-outdir=/project2/haky/yanyul/data/mv_iwas
+outdir=/project2/haky/yanyul/data/mv_iwas/1000g
 runscript=/project2/haky/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/prep_1000g_genotype.sh
 eurlist=/project2/haky/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/EUR.txt
 

@@ -17,11 +17,18 @@ then
   wget ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/$raw_vcf -O $raw_vcf
 fi
 
+add_snpid_vcf=chr$chr.vcf.gz
+if [[ ! -f $add_snpid_vcf ]]
+then
+  echo "Adding variant ID"
+  bcftools annotate --set-id +'%CHROM\_%POS\_%REF\_%FIRST_ALT' $raw_vcf | bgzip > $add_snpid_vcf
+fi
+
 all_bed_pre=chr$chr
 if [[ ! -f $all_bed_pre.bed ]]
 then
   echo "Generating $all_bed_pre"
-  plink --vcf $raw_vcf --out $all_bed_pre $plink_opt
+  plink --vcf $add_snpid_vcf --out $all_bed_pre $plink_opt
 fi
 
 

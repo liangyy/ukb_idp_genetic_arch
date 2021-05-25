@@ -8,6 +8,8 @@ source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b266987
 
 options(stringsAsFactors = F)
 
+source('rlib.R')
+
 foldern = 'polygenicity'
 dir.create(foldern)
 
@@ -51,6 +53,8 @@ pcs = df_h2 %>% filter(is_pc) %>% select(IDP, idp_type)
   dd2 = do.call(rbind, dd2)
   df_poly = dd2 %>% filter(Var1 == 'Manual_aggregated')
   df_poly = df_poly %>% mutate(stable = Ma_est > 0 & Ma_est > 1.96 * Ma_err)
+  # remove TBSS IDPs
+  df_poly = remove_probtrack_idp(df_poly)
 }
 
 # load prediction performance
@@ -158,7 +162,7 @@ if(isTRUE(plot_idp_vs_some_traits)) {
   
   tmp2 = df_poly %>% filter(stable) %>% mutate(phenotype = paste(idp_type, IDP)) %>% 
     mutate(pheno = factor(phenotype, levels = phenotype[order(idp_type, Ma_est)]))
-  labx = 350
+  labx = 280
   pp = tmp2 %>% ggplot() + 
     geom_errorbar(aes(x = pheno, ymax = Ma_est + 1.96 * Ma_err, ymin = Ma_est - 1.96 * Ma_err), width = 0.025, color = 'gray') + 
     geom_point(aes(x = pheno, y = Ma_est, color = idp_type))  + 
@@ -190,7 +194,7 @@ if(isTRUE(plot_idp_vs_some_traits)) {
     xlab('Brain IDPs') +
     ylab('Estimated polygenicity (Me)') +
     scale_color_manual(values = color_code2); pp
-  ggsave(paste0(foldern, '/overview_of_brain_idp_Me.png'), pp, width = 8, height = 5)
+  ggsave(paste0(foldern, '/overview_of_brain_idp_Me.png'), pp, width = 7, height = 5)
 }
 
 plot_h2_vs_me = T
@@ -208,4 +212,13 @@ if(isTRUE(plot_h2_vs_me)) {
     theme(legend.position = c(0.8, 0.18), legend.title = element_blank()) +
     scale_color_manual(values = c('Common Factor' = 'red', 'Region-Specific' = 'black'))
   ggsave(paste0(foldern, '/pred_perf_vs_Me.png'), pp, width = 5.5, height = 5)
+}
+
+# count number
+{
+  df_poly = df_poly %>% mutate(signif = Ma_est - 1.96 * Ma_err > 0 | Ma_est + 1.96 * Ma_err < 0, pos_signif = Ma_est - 1.96 * Ma_err > 0)
+  df_poly_signif = df_poly %>% filter(pos_signif == T)
+  message('Significant under alpha = 0.05: ', sum(df_poly$signif), ' out of ', nrow(df_poly))
+  message('Significant under alpha = 0.05 (positive only): ', sum(df_poly$pos_signif), ' out of ', nrow(df_poly))
+  df_poly_signif %>% summarize(median(Ma_est), min(Ma_est), max(Ma_est))
 }

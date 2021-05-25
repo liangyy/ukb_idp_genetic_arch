@@ -21,7 +21,7 @@ gen_panel = function(tmp, tag, idp_type = 'T1') {
 
 library(ggplot2)
 library(dplyr)
-theme_set(theme_bw(base_size = 15))
+theme_set(theme_bw(base_size = 12))
 source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
 library(patchwork)
 source('rlib.R')
@@ -55,7 +55,7 @@ tmp$subtype[ tmp$subtype %in% other_subtypes ] = 'Other'
   p1
   
   tags = 'Gray-Cortical'
-  p2 = gen_panel(tmp, tags) + theme(legend.position = c(0.2, 0.7)) + theme(axis.title.x = element_blank())
+  p2 = gen_panel(tmp, tags) + theme(legend.position = c(0.2, 0.65)) + theme(axis.title.x = element_blank()) + theme(legend.background=element_rect(fill = alpha("white", 0)))
   
   # ggsave(paste0(outdir, '/heritability', '.t1', '.png'), (p1 / p2), width = 7, height = 5)
 
@@ -64,5 +64,13 @@ tmp$subtype[ tmp$subtype %in% other_subtypes ] = 'Other'
   p3
   
   
-  ggsave(paste0(outdir, '/heritability.png'), (p1 / p2 / p3), width = 7, height = 6.6)
+  ggsave(paste0(outdir, '/heritability.png'), (p1 / p2 / p3), width = 7, height = 5)
+  
+  # another layout 
+  p4 = p3 + facet_wrap(.~subtype, ncol = 2, scales = 'free_x')
+  ggsave(paste0(outdir, '/heritability2.png'), ((p1 / p2) | p4)  + plot_layout(ncol = 2, widths = c(1, 1)), width = 11, height = 5)
+  
 }
+
+df = remove_probtrack_idp(tmp %>% mutate(IDP = phenotype))
+df %>% summarize(min = min(h2), max = max(h2))

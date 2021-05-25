@@ -6,6 +6,8 @@ theme_set(theme_bw(base_size = 12))
 source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
 options(stringsAsFactors = F)
 
+source('rlib.R')
+
 foldern = 'cv_pred_perf/'
 dir.create(foldern)
 
@@ -26,6 +28,20 @@ df2$pc = rep('Region-Specific', nrow(df2))
 df2$pc[df2$is_pc] = 'Common Factor'
 df1$pc = rep('Region-Specific', nrow(df1))
 df1$pc[df1$is_pc] = 'Common Factor'
+df10 = df1
+df20 = df2
+df1 = df1 %>% mutate(IDP = phenotype)
+df2 = df2 %>% mutate(IDP = phenotype)
+df1 = remove_probtrack_idp(df1)
+df2 = remove_probtrack_idp(df2)
+df1 = df1 %>% select(-IDP)
+df2 = df2 %>% select(-IDP)
+
+rbind(df1, df2) %>% group_by(model) %>% 
+  summarize(min_spearman = min(Spearman), max_spearman = max(Spearman), median_spearman = median(Spearman)) %>% 
+  pander::pander()
+
+rbind(df1, df2) %>% group_by(model) %>% summarize(fraction_pos = mean(Spearman > 0))
 
 p = rbind(df2 %>% mutate(idp_type = factor('dMRI', levels = c('T1', 'dMRI'))), df1 %>% mutate(idp_type = factor('T1', levels = c('T1', 'dMRI')))) %>% 
   mutate(PC = as.character(pc)) %>% 
@@ -135,10 +151,11 @@ p2 = dd %>% filter(model == 'EN') %>% select(-model, -is_pc, -pc) %>% reshape2::
 ggsave(paste0(foldern, 'cv_pred_perf_hist_ridge.png'), p1, width = 6, height = 4.5)
 ggsave(paste0(foldern, 'cv_pred_perf_hist_en.png'), p2, width = 6, height = 4.5)
 
-dd %>% group_by(model) %>% summarize(mean(Spearman > 0), mean(Pearson > 0), mean(R2 > 0))
-dd$model_name = rep('ridge', nrow(dd))
-dd$model_name[dd$model == 'EN'] = 'elastic net'
-dd %>% select(-is_pc, -pc, -model) %>% select(idp_type, phenotype, model_name, Spearman, Pearson, R2) %>% 
+dd2 = rbind(df10 %>% mutate(idp_type = 'T1'), df20 %>% mutate(idp_type = 'dMRI'))
+dd2 %>% group_by(model) %>% summarize(mean(Spearman > 0), mean(Pearson > 0), mean(R2 > 0))
+dd2$model_name = rep('ridge', nrow(dd2))
+dd2$model_name[dd2$model == 'EN'] = 'elastic net'
+dd2 %>% select(-is_pc, -pc, -model) %>% select(idp_type, phenotype, model_name, Spearman, Pearson, R2) %>% 
   rename(IDP = phenotype, IDP_type = idp_type) %>% 
   mutate(is_kept = Spearman > 0.1) %>% 
   write.table('supp_table_2.tsv', quote = F, sep = '\t', row.names = F, col.names = T)
@@ -163,3 +180,13 @@ dev.off()
 png(paste0(foldern, '/', 'kept_models_dmri.png'), width = 7, height = 5, units = 'in', res = 300)
 upset(tmp %>% filter(IDP_type == 'dMRI'), main.bar.color = dmri_col, point.size = 5, line.size = 0.5, text.scale = 2)
 dev.off()
+
+
+annot = read.delim2('supp_table_1.tsv') %>% mutate(IDP = paste0('IDP-', ukb_field))
+annot = annot %>% filter(measurement_type != 'dMRI weighted means (probabilistic-tractography-based measurement)')
+kk = read.delim2('supp_table_2.tsv')
+kk %>% filter(IDP %in% annot$IDP) %>% 
+  group_by(model_name, IDP_type) %>% 
+  summarize(n_pass = sum(Spearman > 0.1), n_total = n())
+kk %>% filter(substr(IDP, 1, 2) == 'PC') %>% filter(is.na(stringr::str_match(IDP, 'ProbTrack'))) %>%
+  filter(Spearman < 0.1)

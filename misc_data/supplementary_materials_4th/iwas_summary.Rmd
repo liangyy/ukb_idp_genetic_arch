@@ -1,0 +1,56 @@
+---
+title: "Brief summary of IWAS results"
+author: "Yanyu Liang"
+date: "5/26/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(stringsAsFactors = F)
+library(ggplot2)
+theme_set(theme_classic(base_size = 12))
+library(dplyr)
+library(pander)
+panderOptions('table.split.table', Inf)
+```
+
+# About
+
+Here I summarize some of the results shared by IWAS paper [https://www.sciencedirect.com/science/article/pii/S1053811920308338](https://www.sciencedirect.com/science/article/pii/S1053811920308338).
+
+I focused on structural and diffusion IDPs from UKB part (supplementary table).
+
+# Load data
+
+```{r}
+kk = rbind(
+  read.csv('../iwas_s1_structural.csv')[-1, ],
+  read.csv('../iwas_s1_diffusion.csv')[-1, ]
+)
+ff = rbind(
+  read.csv('../iwas_s1_structural.csv')[1, ] %>% mutate(type = 'structural'),
+  read.csv('../iwas_s1_diffusion.csv')[1, ] %>% mutate(type = 'diffusion')
+)
+kk %>% ggplot() + geom_point(aes(x = beta_MVIWAS, y = beta_MVIWAS_Egger)) + coord_equal()
+kk %>% ggplot() + geom_point(aes(x = -log(p_MVIWAS), y = -log(p_MVIWAS_Egger))) + coord_equal()
+ff[, c(-2:-7, -11)] %>% pander(caption = 'Mu in Egger')
+```
+
+# A brief summary
+
+Differences between BrainXcan and IWAS:
+
+* They did not do decomposition (PCA for obtaining region-specific and common factors).
+* They proposed MV-IWAS which fit multiple IDPs jointly.
+* They also proposed MV-IWAS-Egger which considers the direct effect of SNPs.
+    - But the Egger version does not change the result much (see Figures above).
+    
+Pitfalls of IWAS:
+
+* They did not use up-to-date UKB IDP GWAS.
+* The joint model is sensitive to LD.
+* The MV-IWAS was done for significant IDPs which is subject to selective bias and they do not account for this bias. 
+
+
+

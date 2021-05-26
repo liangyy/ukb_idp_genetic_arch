@@ -16,6 +16,8 @@ bedprefix=$3
 outtag=$5
 pval=$6
 
+plink_opt="--memory 16000 --threads 1"
+
 tmpfile=$outdir/$outtag.tmp
 if [[ ! -f $tmpfile ]]
 then
@@ -31,7 +33,8 @@ then
     --clump $tmpfile \
     --clump-p1 1 --clump-p2 1 \
     --clump-r2 0.10 --clump-kb 1000 \
-    --out $outfile_prefix
+    --out $outfile_prefix \
+    $plink_opt 
 fi
 
 weightfile=$outdir/$outtag.CPT.pval$pval.txt

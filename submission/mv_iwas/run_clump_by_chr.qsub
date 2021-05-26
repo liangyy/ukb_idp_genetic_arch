@@ -1,0 +1,28 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l mem=8gb
+#PBS -e logs/run_clump_by_chr.$CHR.err
+#PBS -o logs/run_clump_by_chr.$CHR.out
+
+module load gcc/6.2.0
+module load plink/1.90
+conda activate two_sample_mr
+
+idp_list=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/ukb_idp_list.txt
+outdir=/scratch/t.cri.yliang/ukb_idp/mv_iwas/ld_clump
+runscript=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/run_clump.sh
+
+mkdir -p $outdir
+cd $outdir 
+
+idp_prefix=/scratch/t.cri.yliang/ukb_idp/mv_iwas/ukb_idp_gwas/
+idp_suffix=.tmp2.txt
+bed_prefix=/scratch/t.cri.yliang/ukb_idp/mv_iwas/1000g/1000G.EUR.$CHR.DuplicatesRemoved
+pval=5e-5
+
+
+while IFS=$'\t' read -r kk url fn idptag rem
+do
+    bash $runscript $idp_prefix$idptag$idp_suffix $CHR $bed_prefix $outdir $idptag $pval
+done < $idp_list
+

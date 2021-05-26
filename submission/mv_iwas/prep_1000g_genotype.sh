@@ -27,7 +27,7 @@ then
   wget http://hgdownload.cse.ucsc.edu/gbdb/hg19/1000Genomes/phase3/$raw_vcf -O $datadir/$raw_vcf
 fi
 
-if [[ ! -z $6 ]]
+if [[ ! -z $5 ]]
 then 
   exit 0
 fi

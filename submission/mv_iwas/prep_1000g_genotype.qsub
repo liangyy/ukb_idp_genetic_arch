@@ -5,7 +5,7 @@
 #PBS -o logs/prep_1000g_genotype_$CHR.out
 
 module load gcc/6.2.0
-module load plink
+module load plink/1.90
 module load htslib
 module load bcftools
 

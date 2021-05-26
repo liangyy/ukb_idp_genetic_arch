@@ -5,9 +5,9 @@
 # args5: output tag
 # args6: pval cutoff
 
-module load gcc/6.2.0
-module load plink/1.90
-conda activate two_sample_mr
+# module load gcc/6.2.0
+# module load plink/1.90
+# conda activate two_sample_mr
 
 outdir=$4
 idpfile=$1
@@ -37,9 +37,11 @@ fi
 weightfile=$outdir/$outtag.CPT.pval$pval.txt
 if [[ ! -f $weightfile ]]
 then
+  echo "Post-processing $weightfile"
   Rscript post_process_clump.R \
     --clump $outfile_prefix.clumped \
     --weight $tmpfile \
     --output $weightfile \
     --pval $pval
 fi
+

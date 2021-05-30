@@ -5,7 +5,7 @@ outdir = 'bxcan_vis'
 dir.create(outdir)
 
 options(stringsAsFactors = F)
-gannot2 = read.delim2('../supplementary_materials_3rd/supp_table_1.tsv')
+gannot2 = read.delim2('../supplementary_materials_4th/supp_table_1.tsv')
 gannot2 = gannot2 %>% mutate(IDP = paste0('IDP-', ukb_field)) %>% rename(region = anatomy)
 # gannot2$region = as.character(gannot2$region)
 gen_substype = function(gannot2) {

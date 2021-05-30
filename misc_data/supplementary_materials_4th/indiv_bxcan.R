@@ -56,6 +56,7 @@ dir.create(foldern)
 
 color_code = c('ridge' = 'blue', 'elastic net' = 'orange')
 color_code2 = c('T1' = 'orange', 'dMRI' = 'blue')
+color_code3 = c('Height' = 'orange', 'BMI' = 'blue')
 t1_col = 'orange'  # rgb()
 dmri_col = 'blue'  # rgb()
 factor_idp = function(cc) {
@@ -64,12 +65,12 @@ factor_idp = function(cc) {
 
 
 do_sbxcan_compare = T#T
-plot_i_bxcan = T#T
+plot_i_bxcan = F#T
 # do_mr_prep = F
 # plot_qq = F#T
 # check_mr_result = F#T
 save_df = F#T
-save_df_full = T#T
+save_df_full = F#T
 
 pheno_interest = c('weekly_alcohol', 'recurrent_depressive_disorder', 'parent_depression', 'parent_AD', 'handedness', 'daily_coffee', 'daily_cigarettes', 'bmi', 'height')
 models = list(ridge = 'gw_ridge_beta', EN = 'gw_elastic_net_beta')
@@ -328,11 +329,15 @@ if(isTRUE(do_sbxcan_compare)) {
     df_in %>% select(IDP, bhat, zscore, model, idp_type, phenotype), 
     by = c('IDP', 'idp_type', 'model', 'pheno' = 'phenotype'),
     suffix = c('.sb', '.in'))
+  ppheno = df_both$pheno
+  ppheno[ppheno == 'height'] = 'Height'
+  ppheno[ppheno == 'bmi'] = 'BMI'
+  df_both$ppheno = ppheno
   
-  p = df_both %>% ggplot() + geom_point(aes(x = zscore.in, y = zscore.sb, color = idp_type), alpha = 0.5) + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray') + coord_equal() + facet_wrap(~model) + 
+  p = df_both %>% ggplot() + geom_point(aes(x = zscore.in, y = zscore.sb, color = ppheno), alpha = 0.5) + th2 + geom_abline(slope = 1, intercept = 0, color = 'gray') + coord_equal() + facet_wrap(~model) + 
     xlab('BrainXcan z-score') + 
     ylab('S-BrainXcan z-score') +
-    scale_color_manual(values = color_code2) +
+    scale_color_manual(values = color_code3) +
     theme(legend.position = c(0.65, 0.8), legend.title = element_blank())
   ggsave(paste0(foldern, '/ukb_height_bmi_comparison.png'), p, width = 5, height = 3)
   

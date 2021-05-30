@@ -1,4 +1,4 @@
-# setwd('misc_data/supplementary_materials_3rd/')
+# setwd('misc_data/supplementary_materials_4th/')
 library(dplyr)
 
 annot_t1 = readRDS('../process_t1/t1_meta.rds')
@@ -69,5 +69,12 @@ df$t1_anatomy_group[ !is.na(df$x1) ] = df$x1[ !is.na(df$x1) ]
 df = df %>% select(-x1)
 
 df = df %>% filter(is.na(dmri_measure) | dmri_measure %in% c('FA', 'ICVF', 'ISOVF', 'OD'))
+
+tmps = df[ is.na(df$anatomy), ]
+kk = stringr::str_remove(tmps$notes, 'Volume of ')
+kk = stringr::str_remove(kk, ' \\(from T1 brain image\\)')
+kk = stringr::str_remove(kk, ', from T1 brain image')
+tmps$anatomy = kk
+df$anatomy[ is.na(df$anatomy) ] = tmps$anatomy[match(df$ukb_field[ is.na(df$anatomy) ], tmps$ukb_field)]
 
 write.table(df, 'supp_table_1.tsv', quote = F, row.names = F, sep = '\t')

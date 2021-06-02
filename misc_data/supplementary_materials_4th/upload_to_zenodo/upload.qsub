@@ -1,0 +1,16 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l mem=4gb
+#PBS -e upload.err
+#PBS -o upload.out
+
+source ~/.bash_profile
+source ~/.bashrc
+cd ${PBS_O_WORKDIR}
+
+conda activate zenodo
+
+python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/zenodo_upload/zenodo_uploader.py \
+  --meta-yaml meta.yaml \
+  --file-list file_list.txt \
+  --token /home/t.cri.yliang/zenodo_haky.txt 

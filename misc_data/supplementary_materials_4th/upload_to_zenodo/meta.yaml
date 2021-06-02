@@ -1,0 +1,22 @@
+metadata:
+  title: 'BrainXcan database'
+  upload_type: 'dataset'
+  description: "BrainXcan database for paper: BrainXcan identifies brain features associated with behavioral and psychiatric traits using large scale genetic and imaging data [add url here]"
+  creators: 
+    - name: "Liang, Yanyu"
+      affiliation: 'The University of Chicago'
+      orcid: "0000-0001-8893-6505"
+    - name: 'Owen Melia'
+      affiliation: 'The University of Chicago'
+      orcid: '0000-0003-0737-3718'
+    - name: 'Thomas Brettin'
+      affiliation: 'Argonne National Laboratory'
+    - name: 'Andrew Brown'
+      affiliation: 'University of Dundee'
+      orcid: '0000-0002-8087-3033'
+    - name: 'Hae Kyung Im'
+      affiliation: 'The University of Chicago'
+      orcid: '0000-0003-0333-5685'
+  keywords: 
+    - 'genetics'
+    - 'neuroscience'

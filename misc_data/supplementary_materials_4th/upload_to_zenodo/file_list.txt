@@ -1,0 +1,1 @@
+/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data.zip

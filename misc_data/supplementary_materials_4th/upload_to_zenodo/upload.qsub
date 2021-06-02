@@ -3,6 +3,7 @@
 #PBS -l mem=4gb
 #PBS -e upload.err
 #PBS -o upload.out
+#PBS -N upload
 
 source ~/.bash_profile
 source ~/.bashrc

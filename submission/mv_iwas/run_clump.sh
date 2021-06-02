@@ -18,14 +18,14 @@ pval=$6
 
 plink_opt="--memory 16000 --threads 1"
 
-tmpfile=$outdir/$outtag.tmp
+tmpfile=$outdir/$outtag.chr$chr.tmp
 if [[ ! -f $tmpfile ]]
 then
   echo "Subsetting to chromosome $chr for $idpfile"
   awk -F'\t' -v chr="$chr" 'NR==1{print;next}$1 == chr' $idpfile > $tmpfile
 fi
 
-outfile_prefix=$outdir/$outtag
+outfile_prefix=$outdir/$outtag.chr$chr
 if [[ ! -f $outfile_prefix.clumped ]]
 then
   plink \
@@ -37,11 +37,11 @@ then
     $plink_opt 
 fi
 
-weightfile=$outdir/$outtag.CPT.pval$pval.txt
+weightfile=$outdir/$outtag.chr$chr.CPT.pval$pval.txt
 if [[ ! -f $weightfile ]]
 then
   echo "Post-processing $weightfile"
-  Rscript post_process_clump.R \
+  Rscript /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/mv_iwas/post_process_clump.R \
     --clump $outfile_prefix.clumped \
     --weight $tmpfile \
     --output $weightfile \

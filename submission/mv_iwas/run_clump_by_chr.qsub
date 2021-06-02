@@ -1,8 +1,12 @@
 #PBS -S /bin/bash
-#PBS -l walltime=24:00:00
-#PBS -l mem=8gb
+#PBS -l walltime=48:00:00
+#PBS -l mem=16gb
 #PBS -e logs/run_clump_by_chr.$CHR.err
 #PBS -o logs/run_clump_by_chr.$CHR.out
+
+
+source ~/.bash_profile
+source ~/.bashrc
 
 module load gcc/6.2.0
 module load plink/1.90

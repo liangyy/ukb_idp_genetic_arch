@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Simulation study</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fas fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Simulation study</h1>
+<h4 class="date">24 October, 2021</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+source(&#39;https://gist.githubusercontent.com/liangyy/489d1519dd45246caf4756d7722bfa25/raw/9bbb39b80243325b7930083063566fae4af85d48/fast_linear_regression&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+source(&#39;rlib.R&#39;)</code></pre>
+<div id="about" class="section level1">
+<h1><span class="header-section-number">1</span> About</h1>
+<p>Here we perform a simulation study to compare the power of PrediXcan vs genetic correlation. We assume a mediation model underlying. <span class="math display">\[\begin{aligned}
+  M &amp;= X B + E \\
+  Y &amp;= M \beta + \epsilon \\
+  b_{jk} &amp;\sim N(0, 1) \\
+  E_{ik} &amp;\sim N(0, \sigma_k^2) \\ 
+  \beta_k &amp;\sim \pi_0 \delta_0 + (1 - \pi_0) N(0, 1)
+\end{aligned}\]</span> , where <span class="math inline">\(i\)</span>, <span class="math inline">\(j\)</span>, <span class="math inline">\(k\)</span> index individuals, variants, and phenotypes respectively. <span class="math inline">\(\sigma_k^2\)</span> is set so that the heritability of phenotype <span class="math inline">\(k\)</span> is <span class="math inline">\(h^2\)</span>. We also simulate genotypes with the block-diagonal-like LD matrix.</p>
+<p>The block shape LD matrix (<span class="math inline">\(J\)</span>-by-<span class="math inline">\(J\)</span> matrix) is simulated by the following procedure:</p>
+<ol style="list-style-type: decimal">
+<li>Let the rank of LD matrix be <span class="math inline">\(r = 0.1 \times J\)</span>. Simulate the number of blocks by <span class="math inline">\(\text{Binomial}(30, 0.6)\)</span>. And simulate the size (fraction) of each block by <span class="math inline">\(Unif(0, 1)\)</span> (obtain <span class="math inline">\(J_l\)</span>). Simulate the rank of each block <span class="math inline">\(r_l\)</span> similar to <span class="math inline">\(J_l\)</span>.</li>
+<li>Simulate <span class="math inline">\(N \times r\)</span> matrix with entries <span class="math inline">\(\sim N(0, 1)\)</span>. Simulate <span class="math inline">\(R_l = J_l \times r_l\)</span> matrix with entries <span class="math inline">\(\sim Unif(-0.5, 0.5)\)</span>. Form block-diagonal matrix <span class="math inline">\(R_0 = \text{diag}(R_1, \cdots, R_L)\)</span>. And add some leaking terms <span class="math inline">\(R = R_0 + Unif(-0.1, 0.1)\)</span>.</li>
+</ol>
+</div>
+<div id="implementation" class="section level1">
+<h1><span class="header-section-number">2</span> Implementation</h1>
+<div id="genotype-simulator" class="section level2">
+<h2><span class="header-section-number">2.1</span> Genotype simulator</h2>
+<pre class="r"><code># get_blk &lt;- function(total_size, fractions) {
+#   blks &lt;- round(total_size * fractions)
+#   blks &lt;- c(blks[-length(blks)], total_size - sum(blks[-length(blks)]))
+#   return(blks)
+# }
+# sim_fracs &lt;- function(n) {
+#   fracs &lt;- runif(n)
+#   fracs &lt;- fracs / sum(fracs)
+#   return(fracs)
+# }
+sim_blk &lt;- function(n_total, n_blk) {
+  if (n_total / n_blk &lt; 3) {
+    blks &lt;- rep(floor(n_total / n_blk), n_blk)
+    n_extra &lt;- n_total - sum(blks)
+    blks[1 : n_extra] &lt;- blks[1 : n_extra] + 1
+    return(blks)
+  }
+  blks &lt;- 0
+  while(any(blks &lt;= 0)) {
+    fracs &lt;- runif(n_blk)
+    fracs &lt;- fracs / sum(fracs)
+    blks &lt;- floor(n_total * fracs)
+    # print(blks)
+  }
+  blks &lt;- c(blks[-length(blks)], n_total - sum(blks[-length(blks)]))
+  return(blks)
+}
+simulate_ld &lt;- function(J, rank_frac = 0.1, bin_n = 30, bin_rate = 0.5) {
+  r &lt;- round(rank_frac * J)
+  n_blk &lt;- rbinom(1, bin_n, bin_rate)
+  J_blks &lt;- sim_blk(J, n_blk)
+  r_blks &lt;- sim_blk(r, n_blk)
+  # Z &lt;- matrix(rnorm(N * r), nrow = N)
+  Rs &lt;- list()
+  for(i in 1 : n_blk) {
+    Rs[[i]] &lt;- matrix(runif(J_blks[i] * r_blks[i], -0.5, 0.5), nrow = J_blks[i])
+  }
+  R &lt;- do.call(Matrix::bdiag, Rs) %&gt;% as.matrix
+  R &lt;- R + matrix(runif(J * r, -0.1, 0.1), nrow = J)
+  LD &lt;- R %*% t(R)
+  sd_diag_ld &lt;- sqrt(diag(LD))
+  LD &lt;- sweep(LD, 1, sd_diag_ld, &#39;/&#39;)
+  LD &lt;- sweep(LD, 2, sd_diag_ld, &#39;/&#39;)
+  return(list(LD = LD, rank = r))
+}
+simulate_genotype &lt;- function(N, LD) {
+  r &lt;- LD$rank
+  kk &lt;- eigen(LD$LD)
+  L &lt;- kk$vectors[, 1 : r]
+  v &lt;- kk$values[1 : r]
+  L &lt;- sweep(L, 1, sqrt(v), &#39;*&#39;)
+  Z &lt;- matrix(rnorm(r * N), nrow = N)
+  return(Z %*% t(L))
+}</code></pre>
+</div>
+<div id="phenotype-simulator" class="section level2">
+<h2><span class="header-section-number">2.2</span> Phenotype simulator</h2>
+<pre class="r"><code>simulate_B &lt;- function(genotypes, K) {
+  J &lt;- ncol(genotypes)
+  B &lt;- matrix(rnorm(J * K), ncol = K)
+  return(B)
+}
+simulate_mediators &lt;- function(genotypes, K, B, h2 = 0.1) {
+  N &lt;- nrow(genotypes)
+  M &lt;- genotypes %*% B
+  gvar &lt;- sum(apply(genotypes, 2, var))
+  evar &lt;- gvar / h2 * (1 - h2)
+  M &lt;- M + matrix(rnorm(N * K, sd = sqrt(evar)), nrow = N)
+  return(M)
+}
+simulate_beta &lt;- function(K, pi0 = 0.9) {
+  draw_zero &lt;- runif(K)
+  beta &lt;- rnorm(K)
+  beta[draw_zero &lt; pi0] = 0
+  return(beta)
+}
+simulate_phenotype &lt;- function(genotypes, K, B, beta, mediators = NULL, h2_mediator = 0.1, pve_phenotype = 0.1, null = FALSE) {
+  N &lt;- nrow(genotypes)
+  if (null) {
+    return(rnorm(N))
+  }
+  if (is.null(mediators)) {
+    M &lt;- simulate_mediators(genotypes, K, B, h2 = h2_mediator)
+  } else {
+    M &lt;- mediators
+  }
+  y &lt;- M %*% beta
+  evar &lt;- var(y) / pve_phenotype * (1 - pve_phenotype)
+  y &lt;- y + rnorm(N, sd = sqrt(evar))
+  return(y)
+}</code></pre>
+</div>
+<div id="predixcan-approach" class="section level2">
+<h2><span class="header-section-number">2.3</span> PrediXcan approach</h2>
+<pre class="r"><code>train_ridge_grm &lt;- function(x, y, grm, thetas) {
+  bhat &lt;- matrix(0, nrow = ncol(x), ncol = length(thetas))
+  for(i in 1 : length(thetas)) {
+    theta &lt;- thetas[i]
+    M &lt;- (1 - theta) * diag(nrow(x)) + theta * grm
+    bhat[, i] &lt;- t(x) %*% solve(M, y) / nrow(x) * theta
+  }
+  return(bhat)
+}
+standardize &lt;- function(v) {
+  return(apply(v, 2, function(x) { (x - mean(x)) / sd(x)}))
+}
+calc_GRM &lt;- function(x) {
+  # x is required to be column-wise standardized
+  return(x %*% t(x) / ncol(x))
+}
+get_cv_partition &lt;- function(ntotal, nfold) {
+  n &lt;- floor(ntotal / nfold)
+  pool &lt;- rep(1 : nfold, n)
+  if (length(pool) &lt; ntotal) {
+    for(k in 1 : (ntotal - length(pool))) {
+      pool &lt;- c(pool, k)
+    }
+  }
+  return(sample(pool))
+}
+eval_perf &lt;- function(ypred, yobs) {
+  if (is.null(dim(ypred))) {
+    ypred &lt;- as.matrix(ypred)
+  }
+  cor_sp &lt;- cor(ypred, yobs, method = &#39;spearman&#39;)[, 1]
+  cor_p &lt;- cor(ypred, yobs, method = &#39;pearson&#39;)[, 1]
+  r2 &lt;- 1 - apply(ypred, 2, function(x) {sum((x - yobs) ^ 2) / sum(yobs ^ 2)})
+  return(data.frame(pearson = cor_p, spearman = cor_sp, R2 = r2))
+}
+train_ridge_cv &lt;- function(x, y, grm = NULL, nfold = 5, nested_perf = FALSE, 
+                           thetas = c(0.01, 0.05, 0.1, 0.2, 0.3, 0.4, 
+                                      0.5, 0.6, 0.7, 0.8, 0.9, 0.95),
+                           criteria = &#39;spearman&#39;) {
+  x &lt;- standardize(x)
+  y &lt;- y - mean(y)
+  if (is.null(grm)) {
+    grm &lt;- calc_GRM(x)
+  }
+  cv_idxs &lt;- get_cv_partition(nrow(x), nfold)
+  res_bhat &lt;- train_ridge_grm(x, y, grm, thetas)
+  ypred &lt;- matrix(0, nrow = nrow(x), ncol = length(thetas))
+  for(i in 1 : nfold) {
+    train_inds &lt;- cv_idxs != i
+    bhat &lt;- train_ridge_grm(
+      x[train_inds, ], 
+      y[train_inds], 
+      grm[train_inds, train_inds],
+      thetas)
+    ypred[!train_inds, ] &lt;- x[!train_inds, ] %*% bhat
+  }
+  cv_perf &lt;- eval_perf(ypred, y)
+  cv_perf$theta &lt;- thetas
+  bhat_opt &lt;- res_bhat[, which.max(cv_perf[[criteria]])]
+  theta_opt &lt;- cv_perf$theta[which.max(cv_perf[[criteria]])]
+  if (!nested_perf) {
+    return(list(bhat = res_bhat, cv_perf = cv_perf, bhat_opt = bhat_opt, theta_opt = theta_opt))
+  }
+  cv2_idxs &lt;- get_cv_partition(nrow(x), nfold)
+  ypred &lt;- rep(0, length(y))
+  for(i in 1 : nfold) {
+    train_inds &lt;- cv2_idxs != i
+    res &lt;- train_ridge_cv(
+      x[train_inds, ], 
+      y[train_inds], 
+      grm = grm[train_inds, train_inds],
+      nfold = nfold,
+      nested_perf = FALSE, 
+      thetas = thetas
+    )
+    ypred[!train_inds] &lt;- x[!train_inds, ] %*% res$bhat_opt
+  }
+  perf &lt;- eval_perf(ypred, y)
+  return(list(bhat = res_bhat, cv_perf = cv_perf, bhat_opt = bhat_opt, theta_opt = theta_opt, perf = perf))
+}
+build_ridge_models &lt;- function(genotypes, ys, ...) {
+  bhat &lt;- matrix(0, nrow = ncol(genotypes), ncol = ncol(ys))
+  perf &lt;- list()
+  for(i in 1 : ncol(ys)) {
+    res &lt;- train_ridge_cv(genotypes, ys[, i], nested_perf = TRUE, ...)
+    bhat[, i] &lt;- res$bhat_opt
+    perf[[length(perf) + 1]] &lt;- res$perf
+  }
+  return(list(bhat = bhat, perf = do.call(rbind, perf)))
+} 
+pxcan_assoc &lt;- function(bhat, genotypes, y) {
+  pred_m &lt;- genotypes %*% bhat
+  res &lt;- fast_linear_regression(y, pred_m)
+  return(res)
+}</code></pre>
+</div>
+<div id="genetic-correlation-approach-gcta" class="section level2">
+<h2><span class="header-section-number">2.4</span> Genetic correlation approach (GCTA)</h2>
+<pre class="r"><code>gen_grm_file &lt;- function(genotypes, file_prefix) {
+  x &lt;- standardize(genotypes)
+  grm &lt;- x %*% t(x) / ncol(x)
+  df_v &lt;- list()
+  for (i in 1 : nrow(genotypes)) {
+    for (j in 1 : i) {
+      df_v[[length(df_v) + 1]] &lt;- data.frame(i = i, j = j, n = ncol(genotypes), v = grm[i, j])
+    }
+  }
+  df_v &lt;- do.call(rbind, df_v)
+  gz1 &lt;- gzfile(glue::glue(&#39;{file_prefix}.grm.gz&#39;), &#39;w&#39;)
+  write.table(df_v, gz1, quote = F, col = F, row = F, sep = &#39;\t&#39;)
+  close(gz1)
+  write.table(
+    data.frame(i = 1 : nrow(x), j = 1 : nrow(x)), 
+    glue::glue(&#39;{file_prefix}.grm.id&#39;),
+    quote = F, col = F, row = F, sep = &#39;\t&#39;)
+}
+gen_pheno &lt;- function(y1, y2, file_name) {
+  write.table(
+    data.frame(i = 1 : length(y1), j = 1 : length(y1), y1 = y1, y2 = y2),
+    file_name,
+    quote = F,
+    col = F,
+    row = F,
+    sep = &#39;\t&#39;)
+} 
+load_gcta_output &lt;- function(fn) {
+  kk &lt;- read.delim2(fn)
+  kk &lt;- kk[ kk$Source == &#39;rG&#39;, ]
+  return(data.frame(rg = kk$Variance, se = kk$SE))
+}
+gen_cor_GCTA &lt;- function(grm_prefix, mediator, y, file_prefix, path_to_gcta, wkdir = NULL) {
+  if (is.null(wkdir)) {
+    mydir &lt;- tempdir()
+  } else {
+    mydir &lt;- wkdir
+  }
+  gen_pheno(mediator, y, file_name = glue::glue(&#39;{mydir}/pheno.{file_prefix}&#39;))
+  cmd_gcta &lt;- glue::glue(&#39;{path_to_gcta}  --reml-bivar --grm-gz {grm_prefix}  --pheno {mydir}/pheno.{file_prefix}  --out {mydir}/out.{file_prefix} &gt; {mydir}/tmp.{file_prefix}.log 2&gt;&amp;1&#39;)
+  system(cmd_gcta)
+  return(load_gcta_output(glue::glue(&#39;{mydir}/out.{file_prefix}.hsq&#39;)))
+}
+gencor_assoc &lt;- function(genotypes, mediators, y, path_to_gcta) {
+  mydir &lt;- tempdir()
+  gen_grm_file(genotypes, file_prefix = glue::glue(&#39;{mydir}/gen_cor_GCTA&#39;))
+  out &lt;- list()
+  for (i in 1 : ncol(mediators)) {
+    res &lt;- gen_cor_GCTA(
+      glue::glue(&#39;{mydir}/gen_cor_GCTA&#39;),
+      mediators[, i], 
+      y, i, path_to_gcta, wkdir = mydir)
+    out[[length(out) + 1]] &lt;- res 
+  }
+  out &lt;- do.call(rbind, out)
+  out$rg &lt;- as.numeric(out$rg)
+  out$se &lt;- as.numeric(out$se)
+  return(out)
+}</code></pre>
+</div>
+<div id="genetic-correlation-approach-ldsc" class="section level2">
+<h2><span class="header-section-number">2.5</span> Genetic correlation approach (LDSC)</h2>
+<pre class="r"><code>ldsc_one_fit &lt;- function(y, x) {
+  res &lt;- lm(y ~ 1 + x, weights = 1 / x)
+  res &lt;- summary(res)$coefficients[2, ]
+  return(data.frame(slope = res[1], se = res[2], pval = res[4]))
+}
+get_block &lt;- function(ntotal, blk_size) {
+  nblk &lt;- floor(ntotal / blk_size)
+  res &lt;- c()
+  for (i in 1 : nblk) {
+    res &lt;- c(res, rep(i, blk_size))
+    if (i &lt;= ntotal - blk_size * nblk) {
+      res &lt;- c(res, i)
+    }
+  }
+  return(res)
+}
+gen_cor_ldsc &lt;- function(ldscores, z1, z2, n1, n2, block_size = NULL) {
+  y &lt;- z1 * z2
+  x &lt;- ldscores
+  res &lt;- ldsc_one_fit(y, x)
+  if (is.null(block_size)) {
+    return(res)
+  }
+  block_idxs &lt;- get_block(length(x), block_size)
+  nblock &lt;- length(unique(block_idxs))
+  jk_res &lt;- list()
+  for (i in unique(block_idxs)) {
+    x_ &lt;- x[block_idxs != i]
+    y_ &lt;- y[block_idxs != i]
+    res_ &lt;- ldsc_one_fit(y_, x_)
+    jk_res[[length(jk_res) + 1]] &lt;- res_
+  }
+  jk_res &lt;- do.call(rbind, jk_res)
+  jk_est &lt;- nblock * res$slope - (nblock - 1) / nblock * sum(jk_res$slope)
+  jk_var &lt;- (nblock - 1) / nblock * sum((jk_est - jk_res$slope) ^ 2)
+  jk_se &lt;- sqrt(jk_var)
+  return(res %&gt;% mutate(jk_slope = jk_est, jk_se = jk_se))
+}
+calc_ldscore &lt;- function(genotypes) {
+  x &lt;- standardize(genotypes)
+  ld &lt;- t(x) %*% x / nrow(genotypes)
+  ldscore &lt;- rowSums(ld ^ 2)
+  return(ldscore)
+}
+ldsc_assoc &lt;- function(genotypes1, y1, genotypes2, mediators2, block_size = 100) {
+  ldsc &lt;- calc_ldscore(rbind(genotypes1, genotypes2))
+  gwas1 &lt;- fast_linear_regression(y1, genotypes1)
+  z1 &lt;- gwas1$bhat / gwas1$se
+  out &lt;- list()
+  for(i in 1 : ncol(mediators2)) {
+    gwas2 &lt;- fast_linear_regression(mediators2[, i], genotypes2)
+    z2 &lt;- gwas2$bhat / gwas2$se
+    res &lt;- gen_cor_ldsc(
+      ldsc, z1, z2, nrow(genotypes1), nrow(genotypes2), 
+      block_size = block_size)
+    out[[length(out) + 1]] &lt;- res
+  }
+  out &lt;- do.call(rbind, out)
+  return(out)
+}</code></pre>
+</div>
+</div>
+<div id="test-run" class="section level1">
+<h1><span class="header-section-number">3</span> Test run</h1>
+<pre class="r"><code>set.seed(2021)
+nsnp &lt;- 750
+N &lt;- 370
+n2 &lt;- 3000
+h2_m &lt;- 0.3
+bin_n &lt;- 30
+bin_rate &lt;- 0.6
+ld &lt;- simulate_ld(nsnp, bin_n = bin_n, bin_rate = bin_rate)
+x &lt;- simulate_genotype(N, ld)
+x2 &lt;- simulate_genotype(n2, ld)
+K = 30
+bb &lt;- simulate_B(x, K)
+beta &lt;- simulate_beta(K, pi0 = 0.8)
+m &lt;- simulate_mediators(x, K, bb, h2 = h2_m)
+m2 &lt;- simulate_mediators(x2, K, bb, h2 = h2_m)
+y &lt;- simulate_phenotype(x, K, bb, beta, pve_phenotype = 0.5, mediators = m)
+y2 &lt;- simulate_phenotype(x2, K, bb, beta, pve_phenotype = 0.5, mediators = m2)
+y_null &lt;- simulate_phenotype(x, K, bb, beta, pve_phenotype = 0.5, mediators = m, null = TRUE)
+y2_null &lt;- simulate_phenotype(x2, K, bb, beta, pve_phenotype = 0.5, mediators = m2, null = TRUE)
+res &lt;- build_ridge_models(x, m)
+
+
+res_pxcan_null &lt;- pxcan_assoc(res$bhat, x2, as.numeric(y2_null))
+res_pxcan &lt;- pxcan_assoc(res$bhat, x2, as.numeric(y2))
+res_pxcan_obs_null &lt;- fast_linear_regression(as.numeric(y2_null), m2)
+res_pxcan_obs &lt;- fast_linear_regression(as.numeric(y2), m2)
+m2_gen &lt;- x2 %*% bb 
+res_pxcan_gen_null &lt;- fast_linear_regression(as.numeric(y2_null), m2_gen)
+res_pxcan_gen &lt;- fast_linear_regression(as.numeric(y2), m2_gen)
+res_ldsc_null &lt;- ldsc_assoc(x2, as.numeric(y2_null), x, m, block_size = floor(ncol(x) / bin_n / bin_rate / 4))
+res_ldsc_null_0 &lt;- ldsc_assoc(x2, runif(n2), x, matrix(runif(N * K), nrow = N), block_size = floor(ncol(x) / bin_n / bin_rate / 4))
+res_ldsc &lt;- ldsc_assoc(x2, as.numeric(y2), x, m, block_size = floor(ncol(x) / bin_n / bin_rate / 4))
+to_data_frame &lt;- function(df) {
+  return(data.frame(pval = df$pval, zscore = df$bhat / df$se, est = df$bhat, idx = 1 : length(df$pval)))
+}
+to_data_frame2 &lt;- function(df, n1, n2, m) {
+  return(data.frame(zscore = df$jk_slope / df$jk_se, est = df$jk_slope / sqrt(n1 * n2) * m, idx = 1 : length(df$pval)) %&gt;% mutate(pval = exp(pnorm(abs(zscore), lower.tail = FALSE, log.p = TRUE)) * 2) %&gt;% select(pval, zscore, est, idx))
+}
+tmp = rbind(
+  to_data_frame(res_pxcan) %&gt;% mutate(method = &#39;pxcan&#39;, type = &#39;alt&#39;),
+  to_data_frame(res_pxcan_null) %&gt;% mutate(method = &#39;pxcan&#39;, type = &#39;null&#39;),
+  to_data_frame(res_pxcan_obs) %&gt;% mutate(method = &#39;pxcan_obs&#39;, type = &#39;alt&#39;),
+  to_data_frame(res_pxcan_obs_null) %&gt;% mutate(method = &#39;pxcan_obs&#39;, type = &#39;null&#39;),
+  to_data_frame(res_pxcan_gen) %&gt;% mutate(method = &#39;pxcan_gen&#39;, type = &#39;alt&#39;),
+  to_data_frame(res_pxcan_gen_null) %&gt;% mutate(method = &#39;pxcan_gen&#39;, type = &#39;null&#39;),
+  to_data_frame2(res_ldsc, N, n2, nsnp) %&gt;% mutate(method = &#39;ldsc&#39;, type = &#39;alt&#39;),
+  to_data_frame2(res_ldsc_null, N, n2, nsnp) %&gt;% mutate(method = &#39;ldsc&#39;, type = &#39;null&#39;),
+  to_data_frame2(res_ldsc_null_0, N, n2, nsnp) %&gt;% mutate(method = &#39;ldsc_0&#39;, type = &#39;null&#39;)) %&gt;% 
+  left_join(data.frame(idx = 1 : K, beta = beta), by = &#39;idx&#39;)
+tmp %&gt;% 
+  group_by(method, type) %&gt;% 
+  mutate(p_exp = rank(pval) / (n() + 1)) %&gt;%
+  # filter(method %in% c(&#39;ldsc&#39;, &#39;ldsc_0&#39;)) %&gt;% 
+  ggplot() +
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval), color = method)) +
+  facet_wrap(~type, scales = &#39;free_y&#39;) +
+  geom_abline(slope = 1, intercept = 0)</code></pre>
+<p><img src="simulation_study_files/figure-html/test-1.png" width="672" /></p>
+<pre class="r"><code>tmp %&gt;% reshape2::dcast(idx + type + beta ~ method, value.var = &#39;zscore&#39;) %&gt;% 
+  ggplot() +
+  geom_point(aes(x = ldsc, y = pxcan, color = beta)) +
+  facet_wrap(~type) +
+  scale_color_gradient2(mid = &#39;gray&#39;, high = &#39;red&#39;, low = &#39;blue&#39;, midpoint = 0)</code></pre>
+<p><img src="simulation_study_files/figure-html/test-2.png" width="672" /></p>
+<!-- ```{r} -->
+<!-- gcta_path <- '/Users/yanyuluchicago/Documents/softwares/gcta_1.93.2beta_mac/gcta64' -->
+<!-- res_g <- gencor_assoc(x, m, y, gcta_path) -->
+<!-- data.frame(beta = beta, z = res_g$rg / res_g$se) %>%  -->
+<!--   ggplot() + -->
+<!--   geom_point(aes(x = beta, y = z)) -->
+<!-- ``` -->
+<!-- ```{r} -->
+<!-- res_l <- ldsc_assoc(x2, as.numeric(y2_null), x, m, block_size = floor(ncol(x) / 15 / 5)) -->
+<!-- data.frame(beta = beta, z = res_l$jk_slope / res_l$jk_se) %>%  -->
+<!--   ggplot() + -->
+<!--   geom_point(aes(x = beta, y = z)) -->
+<!-- data.frame(beta = beta, z_l = res_l$jk_slope / res_l$jk_se, z_p = res_p$bhat / res_p$se) %>%  -->
+<!--   ggplot() + -->
+<!--   geom_point(aes(x = z_l, y = z_p, color = beta != 0)) -->
+<!-- ``` -->
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

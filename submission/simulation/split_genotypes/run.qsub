@@ -1,0 +1,20 @@
+#PBS -S /bin/bash
+#PBS -l walltime=48:00:00
+#PBS -l nodes=1:ppn=16
+#PBS -l mem=64gb
+#PBS -e run.err
+#PBS -o run.out
+
+
+
+source ~/.bash_profile
+source ~/.bashrc
+
+module load gcc/6.2.0
+module load plink/1.90
+
+conda activate r_36
+
+cd "${PBS_O_WORKDIR}"
+
+bash split_genotypes.sh

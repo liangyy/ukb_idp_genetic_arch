@@ -12,6 +12,8 @@ cd ${PBS_O_WORKDIR}
 conda activate zenodo
 
 python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/zenodo_upload/zenodo_uploader.py \
+  --depository 4895174 \
   --meta-yaml meta.yaml \
   --file-list file_list.txt \
-  --token /home/t.cri.yliang/zenodo_haky.txt 
+  --token /home/t.cri.yliang/brainxcan_upload.txt
+ 

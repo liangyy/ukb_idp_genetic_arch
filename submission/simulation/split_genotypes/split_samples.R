@@ -1,10 +1,10 @@
 library(optparse)
 
 option_list <- list(
-    make_option(c("-g1", "--group1"), type="character", default=NULL,
+    make_option(c("-g", "--group1"), type="character", default=NULL,
                 help="Output group1",
                 metavar="character"),
-    make_option(c("-g2", "--group2"), type="character", default=NULL,
+    make_option(c("-f", "--group2"), type="character", default=NULL,
                 help="Output group2",
                 metavar="character"),
     make_option(c("-i", "--input"), type="character", default=NULL,
@@ -23,7 +23,7 @@ n2 <- length(samples) - n1
 g1_idx <- sample(1 : length(samples), n1)
 g1_ind <- (1 : length(samples)) %in% g1_idx
 g1 <- samples[g1_ind]
-g2 <- samples[g2_ind]
+g2 <- samples[!g1_ind]
 message(glue::glue('Number of samples in group1 = {length(g1)}'))
 message(glue::glue('Number of samples in group2 = {length(g2)}'))
 

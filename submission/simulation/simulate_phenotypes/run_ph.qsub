@@ -1,0 +1,23 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l mem=16gb
+#PBS -e logs/ph.config_${CONFIG_MIDNAME}_group_${GROUP}_rand_${RAND}.err
+#PBS -o logs/ph.config_${CONFIG_MIDNAME}_group_${GROUP}_rand_${RAND}.out
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate ukb_idp
+
+export PYTHONPATH=$PYTHONPATH:/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge
+
+cd "${PBS_O_WORKDIR}"
+
+python simulate_phenotypes.py \
+  --geno_bed_pattern "${GENO_PATTERN}" \
+  --output_prefix "${OUTDIR}/${CONFIG_MIDNAME}" \
+  --rand_seed "${RAND}" \
+  --indiv_list "${INDIV_LIST}" \
+  --effect_size_prefix "${ES_PREFIX}" \
+  --param_config config."${CONFIG_MIDNAME}".yaml > \
+  logs/ph.config_${CONFIG_MIDNAME}_group_${GROUP}_rand_${RAND}.log 2>&1

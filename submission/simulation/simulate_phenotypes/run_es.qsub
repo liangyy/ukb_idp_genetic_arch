@@ -1,8 +1,8 @@
 #PBS -S /bin/bash
 #PBS -l walltime=24:00:00
 #PBS -l mem=16gb
-#PBS -e logs/config_${CONFIG_MIDNAME}_group_${GROUP}_rand_${RAND}.err
-#PBS -o logs/config_${CONFIG_MIDNAME}_group_${GROUP}_rand_${RAND}.out
+#PBS -e logs/es.config_${CONFIG_MIDNAME}_rand_${RAND}.err
+#PBS -o logs/es.config_${CONFIG_MIDNAME}_rand_${RAND}.out
 
 source ~/.bash_profile
 source ~/.bashrc
@@ -15,9 +15,8 @@ cd "${PBS_O_WORKDIR}"
 
 python simulate_phenotypes.py \
   --geno_bed_pattern "${GENO_PATTERN}" \
-  --output_prefix "${OUTDIR}/${CONFIG_MIDNAME}_${GROUP}" \
+  --output_prefix "${OUTDIR}/${CONFIG_MIDNAME}" \
   --rand_seed "${RAND}" \
-  --param_config config."${CONFIG_MIDNAME}".yaml \
-  --indiv_list "${INDIV_LIST}" > \
-  logs/config_${CONFIG_MIDNAME}_group_${GROUP}_rand_${RAND}.log 2>&1
+  --param_config config."${CONFIG_MIDNAME}".yaml > \
+  logs/es.config_${CONFIG_MIDNAME}_rand_${RAND}.log 2>&1
   

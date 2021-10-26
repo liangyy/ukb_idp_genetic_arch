@@ -12,8 +12,8 @@ conda activate ukb_idp
 export PYTHONPATH=$PYTHONPATH:/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge
 
 python simulate_phenotypes.py \
-  --geno_bed_pattern "${GENO_PATTERN}"\
-  --output_prefix "${OUTDIR}/${CONFIG_MIDNAME}_${GROUP}"\
+  --geno_bed_pattern "${GENO_PATTERN}" \
+  --output_prefix "${OUTDIR}/${CONFIG_MIDNAME}_${GROUP}" \
   --rand_seed "${RAND}" \
   --param_config config."${CONFIG_MIDNAME}".yaml \
   --indiv_list "${INDIV_LIST}"

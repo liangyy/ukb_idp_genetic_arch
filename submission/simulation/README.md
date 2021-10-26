@@ -9,7 +9,7 @@ The procedures are listed below:
     - Simulate mediators with dense `B` under different h2 values: `M = X B + E`
     - Simulate phenotypes with sparse `beta` under different PVE values: `Y = M beta + e`
     - For null, we simulate phenotypes with `Y = X b + e` with dense `b`
-3. **Train ridge models for mediators**
-4. **Run GWAS for phenotypes and mediators**
+3. **Train ridge models for mediators** (group 1)
+4. **Run GWAS for phenotypes and mediators** (group 1 and 2)
 5. **Calculate LD scores** using the current genotype files as the reference panel (limited SNP set)
 6. **Run BrainXcan and genetic correlation**

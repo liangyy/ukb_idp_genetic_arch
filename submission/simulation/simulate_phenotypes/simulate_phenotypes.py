@@ -9,13 +9,13 @@ def load_indiv(fn):
     res = []
     with open(fn, 'r') as f:
         for i in f:
-            line = i.strip().split('\s')
+            line = i.strip().split(' ')
             res.append(line[0])
     return res
 def get_geno_meta(pattern):
     n = 0
     for i in range(1, 23):
-        bim = pattern.format(chr_num=i) + '.bim
+        bim = pattern.format(chr_num=i) + '.bim'
         with open(bim, 'r') as f:
             for j in f:
                 n += 1
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_prefix', help='''
         Phenotype in parquet format.
     ''')
-    parser.add_argument('--rand_seed', nargs='+', type=int, help='''
+    parser.add_argument('--rand_seed', type=int, help='''
         The list of random seeds  
     ''')
     parser.add_argument('--num_mediators', default=None, type=int, help='''
@@ -93,14 +93,14 @@ if __name__ == '__main__':
         
     logging.info('Loading meta information')
     # load individual list
-    samples = load_indiv(args.indiv_list)
+    indiv_list = load_indiv(args.indiv_list)
     # get genotype meta data
     nsnp = get_geno_meta(args.geno_bed_pattern)
-    
+ 
     logging.info('Simulation effect sizes')
     B = np.random.normal(size=(nsnp, num_mediators))
     beta = np.random.normal(size=(num_mediators))
-    beta[np.random.uniform() < pi0] = 0
+    beta[np.random.uniform(size=num_mediators) < pi0] = 0
     b_null = np.random.normal(size=nsnp)
     df_mediator = pd.DataFrame({'mediator': [ i for i in range(num_mediators) ], 'beta': beta})
     
@@ -110,7 +110,8 @@ if __name__ == '__main__':
     ynullm = np.zeros(len(indiv_list))
     df_snp = []
     for i in range(1, 23):
-        geno_prefix = geno_bed_pattern.format(chr_num=i)
+        logging.info(f'-> Working on chromosome{i}')
+        geno_prefix = args.geno_bed_pattern.format(chr_num=i)
         geno_i, _, _, snp_meta = load_genotype_from_bedfile(
             f'{geno_prefix}.bed', indiv_list, snplist_to_exclude=set([]), 
             return_snp=True, standardize=True)
@@ -123,7 +124,7 @@ if __name__ == '__main__':
         ynullm += geno_i @ b_i
         for k in range(num_mediators):
             df_dic[f'B_{k}'] = B_i[:, k]
-        df_dic['b_y_null'] = b_null
+        df_dic['b_y_null'] = b_i
         df_snp.append(pd.DataFrame(df_dic))
         start += geno_i.shape[1]
     df_snp = pd.concat(df_snp, axis=0)
@@ -137,15 +138,15 @@ if __name__ == '__main__':
     logging.info('Simulating observed mediators/y_null')
     var_gmed = df_gmed.iloc[:, 1:].var(axis=0)
     gmed_names = var_gmed.index.tolist()
-    gmed_values = var.gmed.values.tolist()
+    gmed_values = var_gmed.values.tolist()
     df_omed = {'individual': indiv_list}
     for h2 in h2s:
         for n, v in zip(gmed_names, gmed_values):
             error_sd = np.sqrt(v / h2 * (1 - h2))
-            df_omed[f'{n}_h2_{h2}'] = add_noise(df_gmed[[n]].values, error_sd)        
+            df_omed[f'{n}_h2_{h2}'] = add_noise(df_gmed[n].values, error_sd)        
     df_omed = pd.DataFrame(df_omed)
     df_y = {'individual': indiv_list}
-    gynull = df_gynull[['gynull']].values
+    gynull = df_gynull['gynull'].values
     for h2 in h2s:
         for pve in pves:
             ff = h2 * pve

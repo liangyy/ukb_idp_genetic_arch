@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from run_gw_ridge import load_genotype_from_bedfile
 
@@ -68,10 +69,10 @@ if __name__ == '__main__':
                 param_dict = yaml.safe_load(f)
             except:
                 raise ValueError('Something wrong in param_config')
-        h2s = param_dict['h2s'] if args.h2s is None
-        pves = param_dict['pves'] if args.pves is None
-        pi0 = param_dict['pi0'] if args.pi0 is None
-        num_mediators = param_dict['num_mediators'] if args.num_mediators is None
+        h2s = param_dict['h2s'] if args.h2s is None else args.h2s
+        pves = param_dict['pves'] if args.pves is None else args.pves
+        pi0 = param_dict['pi0'] if args.pi0 is None else args.pi0
+        num_mediators = param_dict['num_mediators'] if args.num_mediators is None else args.num_mediators
         
     logging.info('Loading meta information')
     # load individual list
@@ -113,7 +114,7 @@ if __name__ == '__main__':
     
     df_gmed = pd.concat([ 
         pd.DataFrame({'individual': indiv_list}),
-        pd.DataFrame(gm, columns=[ f'm_{k}' for k in range(num_mediators)],
+        pd.DataFrame(gm, columns=[ f'm_{k}' for k in range(num_mediators) ])],
         axis=1)
     df_gynull = pd.DataFrame({'individual': indiv_list, 'gynull': ynullm})
     

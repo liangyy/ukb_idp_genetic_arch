@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+
 def get_geno_meta(pattern):
     n = 0
     for i in range(1, 23):
@@ -71,10 +73,9 @@ if __name__ == '__main__':
         pi0 = param_dict['pi0'] if args.pi0 is None else args.pi0
     
     logging.info('Loading meta information')
-    # load individual list
-    indiv_list = load_indiv(args.indiv_list)
     # get genotype meta data
     df_snp = get_geno_meta(args.geno_bed_pattern)
+    nsnp = df_snp.shape[0]
  
     logging.info('Simulation effect sizes')
     B = np.random.normal(size=(nsnp, num_mediators))

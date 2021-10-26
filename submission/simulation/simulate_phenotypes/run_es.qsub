@@ -13,7 +13,7 @@ export PYTHONPATH=$PYTHONPATH:/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_ge
 
 cd "${PBS_O_WORKDIR}"
 
-python simulate_phenotypes.py \
+python simulate_effect_sizes.py \
   --geno_bed_pattern "${GENO_PATTERN}" \
   --output_prefix "${OUTDIR}/${CONFIG_MIDNAME}" \
   --rand_seed "${RAND}" \

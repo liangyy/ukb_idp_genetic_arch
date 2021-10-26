@@ -15,7 +15,7 @@ cd "${PBS_O_WORKDIR}"
 
 python simulate_phenotypes.py \
   --geno_bed_pattern "${GENO_PATTERN}" \
-  --output_prefix "${OUTDIR}/${CONFIG_MIDNAME}" \
+  --output_prefix "${OUTDIR}/${CONFIG_MIDNAME}.group_${GROUP}" \
   --rand_seed "${RAND}" \
   --indiv_list "${INDIV_LIST}" \
   --effect_size_prefix "${ES_PREFIX}" \

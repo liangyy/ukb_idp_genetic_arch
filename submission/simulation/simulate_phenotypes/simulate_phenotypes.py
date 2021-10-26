@@ -102,8 +102,10 @@ if __name__ == '__main__':
             right_on=['snpid', 'ref', 'alt'],
             how='left')
         df_snp_i.fillna(0, inplace=True)
-        B_i = df_snp_i.iloc[:, 3:-1].values
-        b_i = df_snp_i.iloc[:, -1].values
+        B_cols = [ f'B_{k}' for k in range(num_mediators) ]
+        b_col = 'b_y_null'
+        B_i = df_snp_i[B_cols].values
+        b_i = df_snp_i[b_col].values
         gm += geno_i @ B_i
         ynullm += geno_i @ b_i
     

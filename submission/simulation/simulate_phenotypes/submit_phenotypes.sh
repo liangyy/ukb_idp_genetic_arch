@@ -18,7 +18,7 @@ for group in "${group[@]}"; do
 INDIV_LIST="${geno_dir}/group${group}.chr22.fam",\
 OUTDIR="${outdir}",\
 RAND="${rand}",\
-ES_PREFIX="${OUTDIR}/${CONFIG_MIDNAME}.rand_${rand}",\
+ES_PREFIX="${outdir}/param1.rand_${rand}",\
 GENO_PATTERN="${geno_dir}/group${group}.chr{chr_num}",\
 GROUP="group${group}" \
       run_ph.qsub

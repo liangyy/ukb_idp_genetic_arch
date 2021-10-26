@@ -1,9 +1,26 @@
+import re
 import numpy as np
 import pandas as pd
 from run_gw_ridge import load_genotype_from_bedfile
 
 def add_noise(y, sd_noise):
     return y + np.random.normal(scale=sd_noise, size=(y.shape[0]))
+def load_indiv(fn):
+    res = []
+    with open(fn, 'r') as f:
+        for i in f:
+            line = i.strip().split('\s')
+            res.append(line[0])
+    return res
+def get_geno_meta(pattern):
+    n = 0
+    for i in range(1, 23):
+        bim = pattern.format(chr_num=i) + '.bim
+        with open(bim, 'r') as f:
+            for j in f:
+                n += 1
+    return n
+
 
 if __name__ == '__main__':
     import argparse
@@ -78,8 +95,7 @@ if __name__ == '__main__':
     # load individual list
     samples = load_indiv(args.indiv_list)
     # get genotype meta data
-    snpids = get_geno_meta(args.geno_bed_pattern)
-    nsnp = len(snpids)
+    nsnp = get_geno_meta(args.geno_bed_pattern)
     
     logging.info('Simulation effect sizes')
     B = np.random.normal(size=(nsnp, num_mediators))
@@ -156,8 +172,3 @@ if __name__ == '__main__':
     df_gmed.to_parquet(f'{args.output_prefix}.rand_{args.rand_seed}.gmed.parquet')
     df_omed.to_parquet(f'{args.output_prefix}.rand_{args.rand_seed}.omed.parquet')
     df_y.to_parquet(f'{args.output_prefix}.rand_{args.rand_seed}.oy.parquet')
-    
-    
-        
-            
-    

@@ -1,0 +1,18 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l mem=16gb
+#PBS -e logs/config_${CONFIG_MIDNAME}_group_${GROUP}_rand_${RAND}.err
+#PBS -o logs/config_${CONFIG_MIDNAME}_group_${GROUP}_rand_${RAND}.out
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate ukb_idp
+
+python simulate_phenotypes.py \
+  --geno_bed_pattern "${GENO_PATTERN}"\
+  --output_prefix "${OUTDIR}/${CONFIG_MIDNAME}_${GROUP}"\
+  --rand_seed "${RAND}" \
+  --param_config config."${CONFIG_MIDNAME}".yaml \
+  --indiv_list "${INDIV_LIST}" \
+  

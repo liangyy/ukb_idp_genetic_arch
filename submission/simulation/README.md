@@ -6,8 +6,9 @@ The procedures are listed below:
 
 1. **Split UKB IDP genotypes** into two groups: group A and B
 2. **Simulate mediators and phenotypes**. For both groups,
-    - Simulate mediators with dense B under different h2 values: `M = X B + E`
-    - Simulate phenotypes with sparse beta under different PVE values: `Y = M beta + e`
+    - Simulate mediators with dense `B` under different h2 values: `M = X B + E`
+    - Simulate phenotypes with sparse `beta` under different PVE values: `Y = M beta + e`
+    - For null, we simulate phenotypes with `Y = X b + e` with dense `b`
 3. **Train ridge models for mediators**
 4. **Run GWAS for phenotypes and mediators**
 5. **Calculate LD scores** using the current genotype files as the reference panel (limited SNP set)

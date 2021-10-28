@@ -4,6 +4,7 @@ rand_seeds=(
   3
   4
   5)
+sample_size=14409
 
 gwas_dir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/run_gwas"
 geno_dir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/split_genotypes"
@@ -17,5 +18,7 @@ for rand in "${rand_seeds[@]}"; do
     PHENO_LIST="logs/rand_${rand}.txt",\
 INPUT_PATTERN="${gwas_dir}/trans_qtl.param1.group_group2.rand_${rand}.oy.chr{chr_num}/{pheno}.parquet",\
 SNP_BIM_PATTERN="${geno_dir}/group2.chr{chr_num}.bim",\
-OUTPUT_PATTERN="${outdir}/{pheno}.txt.gz"
+OUTPUT_PATTERN="${outdir}/{pheno}.txt.gz",\
+SAMPLE_SIZE="${sample_size}" \
+    run.qsub
 done

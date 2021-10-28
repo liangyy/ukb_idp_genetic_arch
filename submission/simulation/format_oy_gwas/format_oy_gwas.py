@@ -16,6 +16,9 @@ if __name__ == '__main__':
     parser.add_argument('--output_pattern', help='''
         Output TXT.GZ file pattern with {pheno} as wildcard 
     ''')
+    parser.add_argument('--sample_size', type=int, help='''
+        Sample size to add as a column
+    ''')
     args = parser.parse_args()
  
     import logging, time, sys, os
@@ -57,6 +60,7 @@ if __name__ == '__main__':
                 on='variant_id')
             df_gwas.append(tmp)
         df_gwas = pd.concat(df_gwas, axis=0)
+        df_gwas['sample_size'] = args.sample_size
         df_gwas.to_csv(
             args.output_pattern.format(pheno=pheno), 
             compression='gzip',

@@ -17,4 +17,5 @@ python format_oy_gwas.py \
   --input_pattern "${INPUT_PATTERN}" \
   --snp_bim_pattern "${SNP_BIM_PATTERN}" \
   --output_pattern "${OUTPUT_PATTERN}" \
+  --sample_size "${SAMPLE_SIZE}" \
   > "logs/${NAME}.log"

@@ -18,7 +18,7 @@ pipe=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/run.snmk
 
 
 "${SNMK}" -s "${pipe}" \
-  --configfile "${PBS_O_WORKDIR}/configs/config.${NAME}.yaml" -p \
+  --configfile "configs/config.${NAME}.yaml" -p \
   --config \
     chr_num="${CHR}" \
     genotype="${GENO_PATTERN}" \

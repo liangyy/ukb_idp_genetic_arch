@@ -1,7 +1,7 @@
 #PBS -S /bin/bash
-#PBS -l walltime=48:00:00
-#PBS -l nodes=1:ppn=16
-#PBS -l mem=16gb
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=24
+#PBS -l mem=32gb
 #PBS -e logs/${TAG}.err
 #PBS -o logs/${TAG}.out
 
@@ -21,7 +21,7 @@ innerfold=5
 
 python $gw_ridge_script \
   --geno_bed_pattern "${GENO_PATTERN}.bed" \
-  --phenotype_parquet "${PHENO_PARQUETd}" \
+  --phenotype_parquet "${PHENO_PARQUET}" \
   --nfold "${outerfold}" "${innerfold}" \
   --output "${OUTDIR}/${TAG}.ridge.parquet" \
   --train_full_model \

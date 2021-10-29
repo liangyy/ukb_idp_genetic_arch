@@ -1,0 +1,19 @@
+name_tag: 'PLACEHOLDER'
+gwas:
+  filename: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/format_oy_gwas/group2.{gwas_name}.txt.gz'
+  cols:
+    snpid: 'variant_id'
+    effect_allele: 'alt'
+    non_effect_allele: 'ref'
+    effect_size: 'b'
+    effect_size_se: 'se'
+    chr: 'chr'
+idp_weight:
+  filename: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/train_ridge/PLACEHOLDER.parquet'
+  cols:
+    snpid: 'variant_id'
+    effect_allele: 'a1'
+    non_effect_allele: 'a0'
+    chr: 'chr'
+genotype_covariance: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/bxcan/group1.geno_cov.chr{chr_num}.banded.npz'
+# gwas_list: ''

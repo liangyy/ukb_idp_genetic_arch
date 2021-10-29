@@ -23,8 +23,8 @@ cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexc
 "${SNMK}" \
   -s run.snmk \
   --configfile "${PBS_O_WORKDIR}/configs/config.${NAME}.yaml" \
-    gwas_list="${GWAS_LIST}" \
   --cores 12 \
+  --config gwas_list="${GWAS_LIST}" outdir="${OUTDIR}" \
   > "${PBS_O_WORKDIR}/logs/run_bxcan_${NAME}.log" \
   2>&1
 

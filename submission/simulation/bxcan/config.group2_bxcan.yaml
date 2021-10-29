@@ -6,7 +6,7 @@ gwas:
     effect_allele: 'alt'
     non_effect_allele: 'ref'
     effect_size: 'b'
-    effect_size_se: 'se'
+    effect_size_se: 'b_se'
     chr: 'chr'
 idp_weight:
   filename: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/train_ridge/PLACEHOLDER.parquet'

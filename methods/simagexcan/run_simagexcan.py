@@ -200,9 +200,11 @@ def load_gwas(gwas_args_list):
     # fn = gwas_args_list[0]
     fn, rename_dict = _parse_args(gwas_args_list, desired_cols=None)
     df = read_table(fn, indiv_col=snpid_col)
-    if get_key_by_val('effect_size', rename_dict) is not None and 'effect_size' in df.columns:
+    k_effect_size = get_key_by_val('effect_size', rename_dict)
+    k_zscore = get_key_by_val('zscore', rename_dict)
+    if k_effect_size is not None and k_effect_size in df.columns:
         _, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='effect_size')
-    elif get_key_by_val('zscore', rename_dict) is not None and 'zscore' in df.columns:
+    elif k_zscore is not None and k_zscore in df.columns:
         _, rename_dict, snpid_col = _parse_gwas_args(gwas_args_list, mode='zscore')
     else:
         raise ValueError('We need either effect_size or zscore in GWAS file.')

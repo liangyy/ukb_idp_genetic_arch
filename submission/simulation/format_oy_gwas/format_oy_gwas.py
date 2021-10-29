@@ -36,7 +36,7 @@ if __name__ == '__main__':
         for i in f:
             i = i.strip()
             pheno_list.append(i)
-    logging.info('There are {len(pheno_list)} phenotypes to work on')
+    logging.info(f'There are {len(pheno_list)} phenotypes to work on')
     
     logging.info('Loading SNP meta info')
     df_snp = []
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     
     logging.info('Loading GWAS')
     for pheno in pheno_list:
-        logging.info('-> On phenotype = {pheno}')
+        logging.info(f'-> On phenotype = {pheno}')
         df_gwas = []
         for i in range(1, 23):
             fn = args.input_pattern.format(chr_num=i, pheno=pheno)
@@ -64,6 +64,7 @@ if __name__ == '__main__':
         df_gwas.to_csv(
             args.output_pattern.format(pheno=pheno), 
             compression='gzip',
+            index=False,
             sep='\t')
     
     

@@ -10,15 +10,17 @@ gwas_dir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/run_gwas"
 geno_dir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/split_genotypes"
 outdir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/format_oy_gwas"
 mkdir -p "${outdir}"
+mkdir -p logs
 
 for rand in "${rand_seeds[@]}"; do
   ls "${gwas_dir}/trans_qtl.param1.group_group2.rand_${rand}.oy.chr22" | \
     sed 's/.parquet//g' > "logs/rand_${rand}.txt"
-  echo qsub -v \
+  qsub -v \
     PHENO_LIST="logs/rand_${rand}.txt",\
+NAME="rand_${rand}",\
 INPUT_PATTERN="${gwas_dir}/trans_qtl.param1.group_group2.rand_${rand}.oy.chr{chr_num}/{pheno}.parquet",\
 SNP_BIM_PATTERN="${geno_dir}/group2.chr{chr_num}.bim",\
-OUTPUT_PATTERN="${outdir}/{pheno}.txt.gz",\
+OUTPUT_PATTERN="${outdir}/group2.rand_${rand}.oy.{pheno}.txt.gz",\
 SAMPLE_SIZE="${sample_size}" \
     run.qsub
 done

@@ -1,0 +1,31 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=32gb
+#PBS -e logs/run_geno_cov.${NAME}.${CHR}.err
+#PBS -o logs/run_geno_cov.${NAME}.${CHR}.out
+
+
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate ukb_idp
+
+SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snakemake
+
+# load extra python dependency
+export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/pyutil
+export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/softwares/tensorqtl/tensorqtl:$PYTHONPATH
+export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge:$PYTHONPATH
+export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/imagexcan:$PYTHONPATH
+
+cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan
+
+$SNMK -s build_geno_cov.snmk \
+  --configfile "${PBS_O_WORKDIR}/config.${NAME}.yaml" \
+  --config \
+    chromosome="${CHR}" \
+    outdir="${OUTDIR}" \
+  > "${PBS_O_WORKDIR}/logs/run_geno_cov.${NAME}.${CHR}.log" \
+  2>&1

@@ -27,5 +27,6 @@ $SNMK -s build_geno_cov.snmk \
   --config \
     chromosome="${CHR}" \
     outdir="${OUTDIR}" \
+    nbatch="${NBATCH}" \
   > "${PBS_O_WORKDIR}/logs/run_geno_cov.${NAME}.${CHR}.log" \
   2>&1

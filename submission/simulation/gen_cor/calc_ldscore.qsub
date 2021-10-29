@@ -1,0 +1,19 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l mem=16gb
+#PBS -e logs/calc_ldscore.${NAME}.${CHR}.err
+#PBS -o logs/calc_ldscore.${NAME}.${CHR}.out
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate ldsc
+
+ldsc_repo="/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ldsc"
+
+python "${ldsc_repo}/ldsc.py" \
+  --bfile "${GENO_PREFIX}${CHR}${GENO_SUFFIX}"\
+  --l2 \ 
+  --ld-wind-kb 1000 \ 
+  --out "${OUTDIR}/${CHR}"
+

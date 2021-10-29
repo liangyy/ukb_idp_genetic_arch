@@ -3,7 +3,7 @@ mkdir -p "${outdir}"
 mkdir -p logs
 
 for i in $(seq 1 22); do
-  echo qsub -v \
+  qsub -v \
     CHR="${i}",\
 NAME="group1_banded",\
 OUTDIR="${outdir}" \

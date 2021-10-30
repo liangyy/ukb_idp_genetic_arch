@@ -12,8 +12,8 @@ conda activate ldsc
 ldsc_repo="/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ldsc"
 
 python "${ldsc_repo}/ldsc.py" \
-  --bfile "${GENO_PREFIX}${CHR}${GENO_SUFFIX}"\
-  --l2 \ 
-  --ld-wind-kb 1000 \ 
+  --bfile "${GENO_PREFIX}${CHR}${GENO_SUFFIX}" \
+  --l2 \
+  --ld-wind-kb 1000 \
   --out "${OUTDIR}/${CHR}"
 

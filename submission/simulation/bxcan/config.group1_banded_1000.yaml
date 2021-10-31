@@ -1,0 +1,6 @@
+name_tag: 'group1'
+mode:
+  type: 'banded'
+  param: 1000
+# nbatch: 50
+genotype: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/split_genotypes/group1.chr{chr_num}.bed'

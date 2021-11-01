@@ -43,7 +43,7 @@ if __name__ == '__main__':
     for i in range(1, 23):
         fn = args.snp_bim_pattern.format(chr_num=i)
         tmp = pd.read_csv(fn, sep='\t', header=None)
-        tmp.columns = ['chr', 'variant_id', 'ph', 'pos', 'ref', 'alt']
+        tmp.columns = ['chr', 'variant_id', 'ph', 'pos', 'alt', 'ref']
         df_snp.append(tmp)
     df_snp = pd.concat(df_snp, axis=0)
     
@@ -56,7 +56,7 @@ if __name__ == '__main__':
             tmp = pd.read_parquet(fn)
             tmp = pd.merge(
                 tmp, 
-                df_snp[['variant_id', 'chr', 'pos', 'ref', 'alt']], 
+                df_snp[['variant_id', 'chr', 'pos', 'alt', 'ref']], 
                 on='variant_id')
             df_gwas.append(tmp)
         df_gwas = pd.concat(df_gwas, axis=0)

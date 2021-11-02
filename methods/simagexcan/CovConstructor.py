@@ -192,7 +192,8 @@ class CovMatrix:
         s1 = eig_vec.T @ mat
         s2 = eig_val[:, np.newaxis] * s1
         s3 = eig_vec @ s2
-        return s3, s3.diagonal().copy() 
+        s4 = np.einsum(eig_vec, eig_val, eig_vec, 'ij,j,ij->i')
+        return s3, s4 
     def _eval_matmul_on_left_npz(self, mat):
         csr = load_npz(self.fn).tocsr()
         diag_csr = csr.diagonal()

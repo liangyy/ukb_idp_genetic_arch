@@ -104,7 +104,7 @@ for cov in [ cov1, cov2 ]:
     # naive
     tmp = cov.copy()
     tmp = tmp @ x
-    mul0, _ = covmat0.eval_matmul_on_left(x)
+    mul0, _ = covmat0.eval_matmul_on_left(x, param=2)
     print('naive', np.allclose(mul0, tmp))
     
     # cap
@@ -131,4 +131,153 @@ for cov in [ cov1, cov2 ]:
     tmp = tmp @ x
     mul4, _ = covmat4.eval_matmul_on_left(x)
     print('evd', np.allclose(mul4, tmp))
+
+
+print('---- testing cov eval_trace ----')
+for cov in [ cov1, cov2 ]:
     
+    # naive
+    tmp = cov.copy()
+    tmp = tmp.diagonal().sum()
+    tr0 = covmat0.eval_trace(param=2)
+    print('naive', np.allclose(tr0, tmp))
+    
+    # cap
+    tmp = cov.copy()
+    tmp[ np.absolute(tmp) < threshold ] = 0
+    tmp = tmp.diagonal().sum()
+    tr1 = covmat1.eval_trace()
+    print('cap', np.allclose(tr1, tmp))
+    
+    # band 1
+    tmp = get_band(cov.copy(), band1, tri=False)
+    tmp = tmp.diagonal().sum()
+    tr2 = covmat2.eval_trace()
+    print('band1', np.allclose(tr2, tmp))
+    
+    # band 2
+    tmp = get_band(cov.copy(), band2, tri=False)
+    tmp = tmp.diagonal().sum()
+    tr3 = covmat3.eval_trace()
+    print('band2', np.allclose(tr3, tmp))
+    
+    # evd
+    tmp = cov.copy()
+    tmp = tmp.diagonal().sum()
+    tr4 = covmat4.eval_trace()
+    print('evd', np.allclose(tr4, tmp))    
+
+print('---- testing cov eval_trace with cor=True ----')
+for cov in [ cov1, cov2 ]:
+    
+    # naive
+    tmp = cov.copy()
+    d = np.sqrt(tmp.diagonal())
+    tmp = tmp / d[:, np.newaxis] / d[np.newaxis, :]
+    tmp = tmp.diagonal().sum()
+    tr0 = covmat0.eval_trace(param=2, cor=True)
+    print('naive', np.allclose(tr0, tmp))
+    
+    # cap
+    tmp = cov.copy()
+    tmp[ np.absolute(tmp) < threshold ] = 0
+    d = np.sqrt(tmp.diagonal())
+    tmp = tmp / d[:, np.newaxis] / d[np.newaxis, :]
+    tmp = tmp.diagonal().sum()
+    tr1 = covmat1.eval_trace(cor=True)
+    print('cap', np.allclose(tr1, tmp))
+    
+    # band 1
+    tmp = get_band(cov.copy(), band1, tri=False)
+    d = np.sqrt(tmp.diagonal())
+    tmp = tmp / d[:, np.newaxis] / d[np.newaxis, :]
+    tmp = tmp.diagonal().sum()
+    tr2 = covmat2.eval_trace(cor=True)
+    print('band1', np.allclose(tr2, tmp))
+    
+    # band 2
+    tmp = get_band(cov.copy(), band2, tri=False)
+    d = np.sqrt(tmp.diagonal())
+    tmp = tmp / d[:, np.newaxis] / d[np.newaxis, :]
+    tmp = tmp.diagonal().sum()
+    tr3 = covmat3.eval_trace(cor=True)
+    print('band2', np.allclose(tr3, tmp))
+    
+    # not implemented
+    # # evd
+    # tmp = cov.copy()
+    # tmp = tmp.diagonal().sum()
+    # tr4 = covmat4.eval_trace()
+    # print('evd', np.allclose(tr4, tmp))  
+
+
+print('---- testing cov eval_sum_of_squares ----')
+for cov in [ cov1, cov2 ]:
+    
+    # naive
+    tmp = cov.copy()
+    tmp = np.power(tmp, 2).sum()
+    sq0 = covmat0.eval_sum_of_squares(param=2)
+    print('naive', np.allclose(sq0, tmp))
+    
+    # cap
+    tmp = cov.copy()
+    tmp[ np.absolute(tmp) < threshold ] = 0
+    tmp = np.power(tmp, 2).sum()
+    sq1 = covmat1.eval_sum_of_squares()
+    print('cap', np.allclose(sq1, tmp))
+    
+    # band 1
+    tmp = get_band(cov.copy(), band1, tri=False)
+    tmp = np.power(tmp, 2).sum()
+    sq2 = covmat2.eval_sum_of_squares()
+    print('band1', np.allclose(sq2, tmp))
+    
+    # band 2
+    tmp = get_band(cov.copy(), band2, tri=False)
+    tmp = np.power(tmp, 2).sum()
+    sq3 = covmat3.eval_sum_of_squares()
+    print('band2', np.allclose(sq3, tmp))
+    
+    # not implemented
+    # # evd
+    # tmp = cov.copy()
+    # tmp = np.power(tmp, 2).sum()
+    # tr4 = covmat4.eval_trace()
+    # print('evd', np.allclose(tr4, tmp))   
+
+print('---- testing cov eval_sum_of_squares with cor=True ----')
+for cov in [ cov1, cov2 ]:
+    
+    # naive
+    tmp = cov.copy()
+    d = np.sqrt(tmp.diagonal())
+    tmp = tmp / d[:, np.newaxis] / d[np.newaxis, :]
+    tmp = np.power(tmp, 2).sum()
+    sq0 = covmat0.eval_sum_of_squares(param=2, cor=True)
+    print('naive', np.allclose(sq0, tmp))
+    
+    # cap
+    tmp = cov.copy()
+    tmp[ np.absolute(tmp) < threshold ] = 0
+    d = np.sqrt(tmp.diagonal())
+    tmp = tmp / d[:, np.newaxis] / d[np.newaxis, :]
+    tmp = np.power(tmp, 2).sum()
+    sq1 = covmat1.eval_sum_of_squares(cor=True)
+    print('cap', np.allclose(sq1, tmp))
+    
+    # band 1
+    tmp = get_band(cov.copy(), band1, tri=False)
+    d = np.sqrt(tmp.diagonal())
+    tmp = tmp / d[:, np.newaxis] / d[np.newaxis, :]
+    tmp = np.power(tmp, 2).sum()
+    sq2 = covmat2.eval_sum_of_squares(cor=True)
+    print('band1', np.allclose(sq2, tmp))
+    
+    # band 2
+    tmp = get_band(cov.copy(), band2, tri=False)
+    d = np.sqrt(tmp.diagonal())
+    tmp = tmp / d[:, np.newaxis] / d[np.newaxis, :]
+    tmp = np.power(tmp, 2).sum()
+    sq3 = covmat3.eval_sum_of_squares(cor=True)
+    print('band2', np.allclose(sq3, tmp))

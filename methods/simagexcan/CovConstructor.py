@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import coo_matrix, save_npz, load_npz
+from scipy.sparse import coo_matrix, save_npz, load_npz, csr_matrix
 
 class CovConstructor:
     def __init__(self, data, nbatch=None):
@@ -184,6 +184,109 @@ class CovMatrix:
             return self._eval_matmul_on_left_h5(left_mat, batch_size=param)
         elif self.mode == 'evd':
             return self._eval_matmul_on_left_evd(left_mat)
+    def eval_trace(self, param=None, cor=False):
+        if self.mode in ['banded', 'cap']:
+            return self._eval_trace_npz(cor=cor)
+        elif self.mode == 'naive':
+            return self._eval_trace_h5(batch_size=param, cor=cor)
+        elif self.mode == 'evd':
+            return self._eval_trace_evd(cor=cor)
+    def eval_sum_of_squares(self, param=None, cor=False):
+        '''
+        Evaluate sum_{ij} R_{ij}^2
+        '''
+        if self.mode in ['banded', 'cap']:
+            return self._eval_sum_of_squares_npz(cor=cor)
+        elif self.mode == 'naive':
+            return self._eval_sum_of_squares_h5(batch_size=param, cor=cor)
+        elif self.mode == 'evd':
+            return self._eval_sum_of_squares_evd(cor=cor)
+    @staticmethod
+    def _npz_standardize(csr, cor):
+        if cor is True:
+            diag_sqrt = np.sqrt(csr.diagonal())
+            # adapted from https://stackoverflow.com/questions/49254111/row-division-in-scipy-sparse-matrix
+            r, c = csr.nonzero()
+            row_sp = csr_matrix(
+                ((1.0 / diag_sqrt)[r], (r,c)), 
+                shape=(csr.shape))
+            col_sp = csr_matrix(
+                ((1.0 / diag_sqrt)[c], (r,c)), 
+                shape=(csr.shape))
+            csr = csr.multiply(row_sp)
+            csr = csr.multiply(col_sp)
+        return csr
+    def _eval_sum_of_squares_evd(self, cor):
+        raise NotImplementedError(
+            'Have not implemented sum of squres for evd cov')
+    def _eval_sum_of_squares_h5(self, batch_size, cor):
+        import h5py
+        f = h5py.File(self.fn, 'r')
+        nrow = f['cov'].shape[0]
+        if batch_size is None:
+            nbatch = 1
+            batch_size = nrow
+        else:
+            nbatch = nrow // batch_size
+            if nbatch * batch_size < nrow:
+                nbatch += 1
+        s, e = 0, batch_size
+        upper = np.zeros(nrow)
+        diag_vec = np.zeros(nrow)
+        for i in range(nbatch):
+            tmp = f['cov'][s : e, s : ]
+            diag_i = tmp.diagonal()
+            diag_vec[s : e] = diag_i
+            if cor is True:
+                tmp = tmp / np.sqrt(diag_i[:, np.newaxis])
+            upper[s : ] += np.power(np.triu(tmp, 1), 2).sum(axis=0) 
+            s += batch_size
+            e = min(batch_size + e, nrow)
+        f.close()
+        if cor is False:
+            diag = np.power(diag_vec, 2).sum()
+        else:
+            upper = upper / diag_vec
+            diag = nrow
+        return upper.sum() * 2 + diag
+    def _eval_sum_of_squares_npz(self, cor):
+        csr = load_npz(self.fn).tocsr()
+        csr = self._npz_standardize(csr, cor)
+        return csr.power(2).sum() * 2 - np.power(csr.diagonal(), 2).sum()
+    def _eval_trace_npz(self, cor):
+        csr = load_npz(self.fn).tocsr()
+        csr = self._npz_standardize(csr, cor)
+        return csr.diagonal().sum()
+    def _eval_trace_h5(self, batch_size, cor):
+        import h5py
+        f = h5py.File(self.fn, 'r')
+        nrow = f['cov'].shape[0]
+        if cor is True:
+            return nrow
+        if batch_size is None:
+            nbatch = 1
+            batch_size = nrow
+        else:
+            nbatch = nrow // batch_size
+            if nbatch * batch_size < nrow:
+                nbatch += 1
+        s, e = 0, batch_size
+        diag_cov = np.zeros((nrow))
+        for i in range(nbatch):
+            diag_cov[s : e] = f['cov'][s : e, s : e].diagonal()
+            s += batch_size
+            e = min(batch_size + e, nrow)
+        f.close()
+        return diag_cov.sum()
+    def _eval_trace_evd(self, cor):
+        if cor is True:
+            raise NotImplementedError(
+                'Have not implemented trace for evd cor')
+        res = np.load(self.fn)
+        if 'eig_val' not in res or 'eig_vec' not in res:
+            raise ValueError('There are {} in file but missing either eig_val or eig_vec.'.format(list(res.keys())))
+        eig_val, eig_vec = res['eig_val'], res['eig_vec']
+        return np.einsum('ij,j,ij', eig_vec, eig_val, eig_vec)
     def _eval_matmul_on_left_evd(self, mat):
         res = np.load(self.fn)
         if 'eig_val' not in res or 'eig_vec' not in res:
@@ -192,7 +295,7 @@ class CovMatrix:
         s1 = eig_vec.T @ mat
         s2 = eig_val[:, np.newaxis] * s1
         s3 = eig_vec @ s2
-        s4 = np.einsum(eig_vec, eig_val, eig_vec, 'ij,j,ij->i')
+        s4 = np.einsum('ij,j,ij->i', eig_vec, eig_val, eig_vec)
         return s3, s4 
     def _eval_matmul_on_left_npz(self, mat):
         csr = load_npz(self.fn).tocsr()
@@ -217,6 +320,8 @@ class CovMatrix:
             res[s : e, :] = f['cov'][s : e, :] @ mat
             res[s : e, :] += f['cov'][:, s : e].T @ mat
             diag_cov[s : e] = f['cov'][s : e, s : e].diagonal()
+            s += batch_size
+            e = min(batch_size + e, nrow)
         res -= diag_cov[:, np.newaxis] * mat
         f.close()
         return res, diag_cov

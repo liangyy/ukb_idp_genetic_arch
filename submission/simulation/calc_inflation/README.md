@@ -1,0 +1,1 @@
+Here I write a script to calculate tr(R'R) and tr^2(R) from genotype covariance.

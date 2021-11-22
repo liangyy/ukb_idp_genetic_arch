@@ -20,7 +20,7 @@ for rand in "${rand_seeds[@]}"; do
   cat config.group2_bxcan_1000.yaml | \
     sed "s#PLACEHOLDER#$nametag#g" \
     > "configs/config.group2_bxcan_1000_${nametag}.yaml"
-  qsub \
+  echo qsub \
     -v NAME="group2_bxcan_1000_${nametag}",\
 GWAS_LIST="${gwas_list}",\
 OUTDIR="${outdir}" \

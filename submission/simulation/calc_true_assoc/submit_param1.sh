@@ -26,7 +26,7 @@ for i in $(seq 1 30); do
 done
 echo "b_y_null" >> "${b2_list}"
 
-for rand in "${rand[@]}"; do 
+for rand in "${rand_seeds[@]}"; do 
   echo qsub -v \
     NAME="param1_rand_${rand}",\
 GENO_COVAR_PATTERN="${geno_pattern}",\

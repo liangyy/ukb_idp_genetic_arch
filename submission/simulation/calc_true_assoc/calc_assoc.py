@@ -1,3 +1,6 @@
+import pandas as pd
+import numpy as np
+
 def load_b(args_):
     df_b = pd.read_parquet(args_[0])
     for i in args_[1:]:
@@ -30,12 +33,12 @@ if __name__ == '__main__':
     parser.add_argument('--b1_effs', help='''
         The list of effect size columns in --b1
     ''')
-    parser.add_argument('--b2', help='''
+    parser.add_argument('--b2', nargs='+', help='''
         Need to have column names for: 
             snpid, non_effect_allele, effect_allele, chr.
         The format is: snpid:rsid_col, ...
     ''')
-    parser.add_argument('--b2_effs', nargs='+', help='''
+    parser.add_argument('--b2_effs', help='''
         The list of effect size columns in --b2
     ''')
     parser.add_argument('--no_standarize', action='store_true', help='''
@@ -48,7 +51,6 @@ if __name__ == '__main__':
     ''')
     args = parser.parse_args()
     
-    from tqdm import tqdm
     import logging, time, sys, os
     # configing util
     logging.basicConfig(
@@ -75,17 +77,19 @@ if __name__ == '__main__':
     res12 = np.zeros((len(b1_effs), len(b2_effs)))
     res22 = np.zeros((len(b2_effs)))
     for i in range(1, 23):
+        logging.info(f'Working on chromosome {i}')
         df_meta = load_cov_meta(args.genotype_covariance.format(chr_num=i))
+        df_b1_sub = pd.merge(df_meta[['snpid', 'chr']], df_b1, on='snpid')
+        df_b2_sub = pd.merge(df_meta[['snpid', 'chr']], df_b2, on='snpid')
+        breakpoint()
         df_b1_sub = rearrage_df_by_target(
-            df=df_b1,
+            df=df_b1_sub,
             target=df_meta,
-            df_value_cols=b1_effs
-        )
+            df_value_cols=b1_effs)
         df_b2_sub = rearrage_df_by_target(
-            df=df_b2,
+            df=df_b2_sub,
             target=df_meta,
-            df_value_cols=b2_effs
-        )
+            df_value_cols=b2_effs)
         n1_used += df_b1_sub[b1_effs[0]].notna().sum()
         n2_used += df_b2_sub[b2_effs[0]].notna().sum()
         

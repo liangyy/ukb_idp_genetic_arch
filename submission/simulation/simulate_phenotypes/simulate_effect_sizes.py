@@ -3,6 +3,7 @@ import numpy as np
 
 def get_geno_meta(pattern):
     n = 0
+    res = []
     for i in range(1, 23):
         bim = pattern.format(chr_num=i) + '.bim'
         snpids = []
@@ -15,7 +16,10 @@ def get_geno_meta(pattern):
                 snpids.append(n)
                 refs.append(r)
                 alts.append(a)
-    return pd.DataFrame({'snpid': snpids, 'ref': refs, 'alt': alts})
+        tmp = pd.DataFrame({'snpid': snpids, 'ref': refs, 'alt': alts})
+        tmp['chr'] = i
+        res.append(tmp)
+    return pd.concat(res, axis=0)
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(prog='simulate_effect_sizes.py', 

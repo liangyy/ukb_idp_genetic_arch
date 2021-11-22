@@ -13,11 +13,12 @@ conda activate ukb_idp
 cd "${PBS_O_WORKDIR}"
 
 export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/simagexcan:$PYTHONPATH
+export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/pyutil:$PYTHONPATH
 
 python calc_assoc.py \
   --genotype_covariance "${GENO_COVAR_PATTERN}" \
-  --b1 "${B1}" \
-  --b2 "${B2}" \
+  --b1 "${B1}" snpid:variant_id effect_allele:a1 non_effect_allele:a0 \
+  --b2 "${B2}" snpid:variant_id effect_allele:a1 non_effect_allele:a0 \
   --b1_effs "${B1_LIST}" \
   --b2_effs "${B2_LIST}" \
   --output "${OUTPUT}" \

@@ -3,7 +3,8 @@ rand_seeds=(
   2
   3
   4
-  5)
+  5
+)
 
 geno_dir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/split_genotypes"
 outdir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/run_gwas"

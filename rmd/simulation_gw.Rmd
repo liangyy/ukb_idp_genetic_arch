@@ -1,0 +1,267 @@
+---
+title: "Simulation study (genome-wide)"
+# author: Yanyu Liang
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup}
+rm(list = ls())
+library(arrow)
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source('https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R')
+source('https://gist.githubusercontent.com/liangyy/489d1519dd45246caf4756d7722bfa25/raw/9bbb39b80243325b7930083063566fae4af85d48/fast_linear_regression')
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+source('rlib.R')
+```
+
+$$
+\newcommand{\cov}{\text{Cov}}
+\newcommand{\var}{\text{Var}}
+\newcommand{\cor}{\text{Cor}}
+\newcommand{\pve}{\text{PVE}}
+$$
+
+# About
+
+See details and scripts at `submission/simulation/`.
+
+# Results
+
+```{r}
+load_bxcan <- function(fn) {
+  kk <- read.csv(fn)
+  return(kk[, 1:3])
+}
+get_n <- function(s, n, func = as.numeric) {
+  return(unlist(lapply(strsplit(s, '_'), function(x) {func(x[n])})))
+}
+get_h2 <- function(s) {
+  return(get_n(s, 4))
+}
+get_m <- function(s) {
+  return(paste0('m_', get_n(s, 2)))
+}
+get_z <- function(pval, eff) {
+  - qnorm(pval / 2) * sign(eff)
+}
+```
+
+Load S-BrainXcan and LDSC based genetic correlation results.
+
+```{r}
+h2s <- c(0.3, 0.5, 0.7, 0.9)
+pves <- c(0.3, 0.5, 0.7, 0.9)
+types <- c('null', 'alt')
+rands <- 1 : 5
+datadir <- '/Users/yanyuluchicago/Desktop/tmp/ukb_idp/simulation'
+df <- list()
+for(h2 in h2s) {
+  for(pve in pves) {
+    for(type in types) {
+      for(rand in rands) {
+        fn_b <- glue::glue('{datadir}/bxcan/param1.group_group1.rand_{rand}.ridge_x_rand_{rand}.oy.{type}_h2_{h2}_pve_{pve}_x_simagexcan.csv')
+        fn_b_1000 <- glue::glue('{datadir}/bxcan_1000/param1.group_group1.rand_{rand}.ridge_x_rand_{rand}.oy.{type}_h2_{h2}_pve_{pve}_x_simagexcan.csv')
+        fn_g <- glue::glue('{datadir}/gen_cor/group1.rand_{rand}_x_group2_x_rand_{rand}.oy.{type}_h2_{h2}_pve_{pve}.ldsc_rg.log')
+        kk_b <- load_bxcan(fn_b)
+        kk_b_1000 <- load_bxcan(fn_b_1000)
+        kk_g <- load_ldsc_rg(fn_g)
+        kk_b <- kk_b %>% 
+          filter(get_h2(IDP) == h2) %>% 
+          mutate(m = get_m(IDP)) %>% 
+          rename(eff = bhat) %>%
+          select(m, eff, pval)
+        kk_b_1000 <- kk_b_1000 %>% 
+          filter(get_h2(IDP) == h2) %>% 
+          mutate(m = get_m(IDP)) %>% 
+          rename(eff = bhat) %>%
+          select(m, eff, pval)
+        kk_g <- kk_g %>% 
+          filter(get_h2(p2) == h2) %>% 
+          mutate(m = get_m(p2)) %>%  
+          rename(pval = p, eff = rg) %>%
+          select(m, eff, pval)
+        kk <- rbind(
+          kk_b %>% mutate(method = 'bxcan'), 
+          kk_g %>% mutate(method = 'gencor'), 
+          kk_b_1000 %>% mutate(method = 'bxcan_1000'))
+        df[[length(df) + 1]] <- kk %>% mutate(h2 = h2, pve = pve, type = type, rand = rand)
+      }
+    }
+  }
+}
+df <- do.call(rbind, df)
+
+df_eff <- list()
+for(rand in rands) {
+  fn <- glue::glue('{datadir}/simulate_phenotypes/param1.rand_{rand}.mediator_effect.parquet')
+  kk <- read_parquet(fn)
+  kk$mediator <- as.numeric(kk$mediator)
+  df_eff[[length(df_eff) + 1]] <- kk %>%
+    mutate(rand = rand) %>% 
+    rename(m = mediator) %>%
+    mutate(m = paste0('m_', m))
+}
+df_eff <- do.call(rbind, df_eff)
+
+df <- left_join(df, df_eff, by = c('m', 'rand'))
+```
+Load the BrainXcan results under the ideal case (associating the true genetic component of a mediator and the phenotype).
+
+```{r}
+df_ideal <- list()
+for(rand in rands) {
+  df_gmed <- read_parquet(glue::glue('{datadir}/simulate_phenotypes/param1.group_group2.rand_{rand}.gmed.parquet'))
+  df_yobs <- read_parquet(glue::glue('{datadir}/simulate_phenotypes/param1.group_group2.rand_{rand}.oy.parquet'))
+  df_indiv <- df_gmed[, 1, drop = FALSE]
+  df_yobs <- left_join(df_indiv, df_yobs, by = 'individual')
+  fast_lm_on_ys <- function(ymat, xmat) {
+    res <- list()
+    for(i in 1 : ncol(ymat)) {
+      y <- ymat[, i]
+      tmp <- fast_linear_regression(y, xmat, matrix(1, nrow = length(y), ncol = 1))
+      res[[length(res) + 1]] <- data.frame(
+        y = colnames(ymat)[i], 
+        x = names(tmp$bhat),
+        bhat = tmp$bhat,
+        pval = tmp$pval)
+    }
+    res <- do.call(rbind, res)
+    rownames(res) <- NULL
+    return(res)
+  }
+  res <- fast_lm_on_ys(
+    df_yobs[, -1] %>% as.matrix(), 
+    df_gmed[, -1] %>% as.matrix())
+  res <- res %>% mutate(
+    h2 = get_n(y, 3), 
+    pve = get_n(y, 5),
+    type = get_n(y, 1, as.character))
+  df_ideal[[length(df_ideal) + 1]] <- res %>% mutate(rand = rand)
+}
+df_ideal <- do.call(rbind, df_ideal)
+df_all <- rbind(
+  df_ideal %>% 
+    mutate(method = 'ideal') %>% 
+    rename(eff = bhat, m = x) %>%
+    select(m, eff, pval, method, h2, pve, type, rand) %>% 
+    left_join(df_eff, by = c('m', 'rand')),
+  df)
+min_p <- 1e-50
+df_all$pval[df_all$pval < min_p] <- min_p 
+df_all$pval[df_all$pval > 1 - min_p] <- 1 - min_p
+df_all <- df_all %>% 
+  mutate(z = get_z(pval, eff)) %>% 
+  group_by(method, type, rand, h2) %>% 
+  mutate(p_exp = rank(pval, ties.method = 'random') / (n() + 1)) %>%
+  ungroup()
+```
+
+# Under the null
+
+QQ-plot.
+
+```{r, fig.width=5, fig.height=5}
+df_all %>% 
+  filter(type == 'null') %>%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval), color = method)) + 
+  geom_abline(intercept = 0, slope = 1) +
+  facet_grid(rand~h2, labeller = label_both) + th2
+```
+
+Z-score comparison.
+
+```{r, fig.width=5, fig.height=5}
+tmp <- inner_join(
+  df_all %>% 
+    filter(type == 'null', method == 'bxcan') %>% 
+    select(m, h2, pve, rand, z),
+  df_all %>% 
+    filter(type == 'null', method != 'bxcan') %>% 
+    select(m, h2, pve, rand, z, method),
+  by = c('m', 'h2', 'pve', 'rand'),
+  suffix = c('.bxcan', '')
+)
+
+tmp %>%
+  ggplot() + 
+  geom_point(aes(x = z.bxcan, y = z)) + 
+  facet_grid(h2~method, labeller = label_both) + 
+  geom_abline(slope = 1, intercept = 0) +
+  th2
+```
+
+# Under the alternative
+
+QQ-plot.
+
+```{r, fig.width=5, fig.height=5}
+df_all %>% 
+  filter(type == 'alt') %>%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval), color = method)) + 
+  geom_abline(intercept = 0, slope = 1) +
+  facet_grid(rand~h2, labeller = label_both) + th2
+```
+
+True effect size vs estimates
+
+For genetic correlation, under the model
+$$\begin{aligned}
+  M &= X B + E \\
+  Y &= M \beta + e \\
+  B &\sim_{iid} N(0, 1) \\
+  \beta &\sim \pi_0\delta_0 + (1 - \pi_0) N(0, 1)
+\end{aligned}$$
+We can re-write $Y$ as 
+$$\begin{aligned}
+  Y &= M\beta + e \\
+  &= (XB + E) \beta + e \\
+  &= XB\beta + E\beta + e \\
+  &= X \underbrace{B\beta}_{b} + \underbrace{E\beta + e}_{\epsilon}
+\end{aligned}$$
+Let $h^2$ be the heritability of mediators and $\pve$ be the proportion of variation in $Y$ explained by mediators, then the heritability of $Y$ is $\frac{h^2}{1 + \frac{1 - \pve}{\pve}} = h^2 \cdot \pve$.
+
+Let's treat $\beta$ to be fixed since it is shared by all variants. 
+But $B$ is treated as random since we will aggregate over genome-wide effects which should be close to handling it as random.
+
+$$\begin{aligned}
+  \cov(b, B_k) &= \cov(B\beta, B_k) \\
+  &= \cov(\sum_c B_c \beta_c, B_k) \\
+  &= \beta_k \\
+  \var(b) &= \var(B\beta) \\
+  &= \sum_c \beta_c^2 \\
+  \var(B_k) &= 1 \\
+  \cor(b, B_k) &= \frac{\beta_k}{\sqrt{\sum_c \beta_c^2}} \\
+  &\approx \frac{\beta_k}{\sqrt{m \cdot (1 - \pi_0)}}
+\end{aligned}$$
+, where $m$ is the number of mediators.
+
+```{r, fig.width=5, fig.height=5}
+df_all %>% 
+  filter(type == 'alt') %>%
+  ggplot() + 
+  geom_point(aes(x = beta, y = eff, color = method)) + 
+  geom_abline(intercept = 0, slope = 1) + 
+  geom_abline(intercept = 0, slope = 1 / sqrt(30 * 0.1), linetype = 2) +
+  facet_grid(method~h2, labeller = label_both) + th2
+```
+
+Power under Bonferroni
+
+```{r, fig.width=5, fig.height=5}
+p_cutoff <- 0.05
+df_all$true_signal <- df_all$beta != 0
+df_all$true_signal[df_all$method == 'null'] <- FALSE
+df_all %>% 
+  group_by(method, type) %>%
+  filter(pval < p_cutoff / n()) %>%
+  ggplot() + 
+  geom_bar(aes(x = true_signal, fill = method), position = 'dodge') +
+  facet_grid(h2~type, scales = 'free_y', labeller = label_both) + th2
+```

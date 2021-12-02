@@ -2,7 +2,7 @@ import yaml
 
 def load_yaml(fn):
     with open(fn, 'r') as f:
-        res = yaml.safe_load(stream)
+        res = yaml.safe_load(f)
     return res
 
 if __name__ == '__main__':
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     ''')
     args = parser.parse_args()
  
-    import logging, time, sys, os
+    import logging, time, sys, os, re
     # configing util
     logging.basicConfig(
         level = logging.INFO, 
@@ -53,8 +53,8 @@ if __name__ == '__main__':
     )
     import pandas as pd
     import numpy as np
-    from brainxcan.bxcan.util.misc import file_exists
-    from brainxcan.bxcan.run_sbrainxcan import load_ldblock, get_idxs_by_block
+    from brainxcan.sbxcan.util.misc import file_exists
+    from brainxcan.sbxcan.run_sbrainxcan import load_ldblock, get_idxs_by_block
     
     logging.info('Loading config')
     config = load_yaml(args.config_yaml)
@@ -67,7 +67,7 @@ if __name__ == '__main__':
     df_gwas = pd.read_csv(gwas_fn, sep='\t', compression='gzip')
     df_meta = pd.DataFrame({
         'chr': [ re.sub('^chr', '', i) for i in df_gwas[args.chr_col] ],
-        'pos': df_gwas[args.pos_col].astype(int),
+        'position': df_gwas[args.pos_col].astype(int),
         'raw_idx': [ i for i in range(df_gwas.shape[0]) ]})
     
     logging.info('Loading LD block file')
@@ -82,7 +82,8 @@ if __name__ == '__main__':
         df_meta_i = df_meta[ df_meta.chr == str(i) ].reset_index(drop=True)
         df_ldblock_i = df_ldblock[ df_ldblock.chr == str(i) ].reset_index(drop=True)
         snp_idxs = get_idxs_by_block(df_meta_i, df_ldblock_i)
-        raw_idxs_by_block += [ list(df_meta.raw_idx.values[i]) for i in snp_idxs ]
+        raw_idxs_by_block += [ list(df_meta_i.raw_idx.values[i]) for i in snp_idxs ]
+    breakpoint()
     for i in range(1, args.nrepeat + 1):
         logging.info(f'-> Repeat = {i}')
         raw_idxs_permuted = []

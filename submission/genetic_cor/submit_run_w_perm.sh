@@ -9,7 +9,7 @@
 ff="logs/run_w_perm_${2}_${1}.n${6}.err"
 if [[ -f $ff ]]
 then
-  e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l` 
+  e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno\|Error' | wc -l` 
   if [[ $e = 1 ]]
   then
     qsub -v \

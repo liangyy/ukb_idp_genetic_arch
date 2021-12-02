@@ -19,6 +19,9 @@ python "${PBS_O_WORKDIR}"/generate_permuted_gwas.py \
   --config_yaml "${PBS_O_WORKDIR}/config.$NAME.yaml" \
   --gwas_name "${GWASNAME}" \
   --nrepeat "${NREPEAT}" \
+  --chr_col chromosome \
+  --pos_col position \
+  --value_cols zscore pvalue \
   --seed 1 \
   --new_config "${OUTDIR}/configs/config.${NAME}_x_${GWASNAME}.yaml" \
   --gwas_outdir "${OUTDIR}/permuted_gwas" \

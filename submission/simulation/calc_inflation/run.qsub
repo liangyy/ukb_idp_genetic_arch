@@ -15,8 +15,15 @@ export PYTHONPATH=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/m
 
 cd "${PBS_O_WORKDIR}"
 
-python calc_inflation_from_ld.py \
-  --genotype_covariance "${GENO_PATTERN}" \
-  --output "${OUTDIR}/${NAME}.tsv" \
-  "${EXTRA_ARG}"
+if [[ -z "${EXTRA_ARG}" ]]; then
+  python calc_inflation_from_ld.py \
+    --genotype_covariance "${GENO_PATTERN}" \
+    --output "${OUTDIR}/${NAME}.tsv"
+else
+  python calc_inflation_from_ld.py \
+    --genotype_covariance "${GENO_PATTERN}" \
+    --output "${OUTDIR}/${NAME}.tsv" \
+    "${EXTRA_ARG}"
+fi
+
   

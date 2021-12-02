@@ -42,3 +42,19 @@ bash submit_run.sh \
   t1_4th \
   /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/genetic_cor/fourth_round_t1_residual.txt
 ```
+
+Test permutation
+
+```
+pheno=gtex_gwas_4th_w_perm
+gwas=pgc.scz2
+qsub -v NAME=$pheno,GWASNAME=$gwas format_gwas.qsub
+
+bash submit_run_w_perm.sh \
+  $gwas \
+  $pheno \
+  t1 \
+  /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/genetic_cor/fourth_round_t1_residual.txt \
+  10 1 \
+  /gpfs/data/im-lab/nas40t2/yanyul/data/ldblock/fourier_ls-all.bed
+```

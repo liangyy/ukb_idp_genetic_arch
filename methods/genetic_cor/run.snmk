@@ -1,6 +1,21 @@
 if 'outdir' not in config:
     config['outdir'] = 'output'
 
+def get_perm_args(config):
+    if perm_dict['perm_ldblock'] is None:
+        perm_args = ''
+    else:
+        perm_args = []
+        args_ = [ 'ldblock', 'seed', 'nrepeat', 'repeat_idx' ]
+        for k in args_:
+            k2 = 'perm_' + k
+            if k2 in config and config[k2] is not None:
+                perm_args.append('--perm-{} {}'.format(
+                    re.sub('_', '-', k), config[k2]))
+        perm_args = ' '.join(perm_args)
+    return perm_args
+perm_args = get_perm_args(config)            
+
 rule all:
     input:
         '{outdir}/{idp_tag}_x_{gwas_tag}_x_{gwas_name}.ldsc_rg.log'.format(**config)
@@ -56,5 +71,6 @@ rule gen_cor:
            --load-parquet \
            --snp-meta {input.snpmeta} \
            --sample-size {params.idp_sample_size} \
+           {perm_args} \
            --out {params.out_prefix} > {log} 2>&1'
 

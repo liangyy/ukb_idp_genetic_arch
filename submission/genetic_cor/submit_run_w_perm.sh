@@ -1,38 +1,43 @@
 # ARGS1: pheno id
-# ARGS2: gwas name tag (config middle name)
-# ARGS3: T1 IDP list 
-# ARGS4: dMRI IDP list
-# ARGS5: output dir
-# ARGS6: nrepeat
-# ARGS7: ldblock file path
+# ARGS2: gwas name tag
+# ARGS3: IDP tag
+# ARGS4: IDP list
+# ARGS5: nrepeat 
+# ARGS6: seed
+# ARGS7: LD block
 
-ff="logs/run_w_perm_${2}_${1}.n${6}.err"
+pheno=$1
+nrepeat=$5
+
+# run w/o permutation
+idpname="${3}"
+ff=logs/run_${2}_${pheno}_${idpname}.log
 if [[ -f $ff ]]
 then
-  e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno\|Error' | wc -l` 
+  e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l` 
   if [[ $e = 1 ]]
   then
-    qsub -v \
-      NAME=$2,\
-GWASNAME=$1,\
-IDPLIST_T1=$3,\
-IDPLIST_DMRI=$4,\
-NREPEAT=$6,\
-OUTDIR=$5,\
-LDBLOCK=$7 \
-      -N $1 \
-      run_w_perm.qsub
+    qsub -v NAME=$2,GWASNAME=$pheno,IDP=${idpname},IDPLIST=$4 -N ${idpname}_${pheno} run.qsub
   fi
 else
-  qsub -v \
-    NAME=$2,\
-GWASNAME=$1,\
-IDPLIST_T1=$3,\
-IDPLIST_DMRI=$4,\
-NREPEAT=$6,\
-OUTDIR=$5,\
-LDBLOCK=$7 \
-    -N $1 \
-    run_w_perm.qsub
+  qsub -v NAME=$2,GWASNAME=$pheno,IDP=${idpname},IDPLIST=$4 -N ${3}_${pheno} run.qsub
 fi
+for i in $(seq 1 "${nrepeat}"); do
+  idpname="${3}.n${nrepeat}_${i}"
+  ff=logs/run_${2}_${pheno}_${idpname}.log
+  if [[ -f $ff ]]
+  then
+    e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l` 
+    if [[ $e = 1 ]]
+    then
+      qsub -v NAME=$2,GWASNAME=$pheno,IDP=${idpname},IDPLIST=$4,\
+NREPEAT=${nrepeat},REPEAT_IDX=$i,SEED=$6,LDBLOCK=$7 \
+        -N ${idpname}_${pheno} run_w_perm.qsub
+    fi
+  else
+    qsub -v NAME=$2,GWASNAME=$pheno,IDP=${idpname},IDPLIST=$4,\
+NREPEAT=${nrepeat},REPEAT_IDX=$i,SEED=$6,LDBLOCK=$7 \
+      -N ${idpname}_${pheno} run_w_perm.qsub
+  fi
+done
 

@@ -1,6 +1,6 @@
-gwas_tag: 'gtex_gwas'
+gwas_tag: 'gtex-gwas'
 gwas_file_pattern: '/gpfs/data/im-lab/nas40t2/Data/SummaryResults/imputed_gwas_hg38_1.1/imputed_{gwas_name}.txt.gz'
-gwas_name: 'pgc.scz2'
+gwas_name: ''
 
 gwas_file_params:
   sample_size: 'sample_size'
@@ -16,12 +16,10 @@ ldscore:
   dir: '/gpfs/data/im-lab/nas40t2/yanyul/data/eur_w_ld_chr'
   snplist: '/gpfs/data/im-lab/nas40t2/yanyul/data/eur_w_ld_chr/w_hm3.snplist'
 
-idp_tag: 'dmri'
-idp_list: 'test_idp_list.txt'
+idp_tag: ''
+idp_list: ''
 idp_snp_meta: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/subset_genotypes/IDP_HM3_finalPheno.merged_all.bim'
 idp_sample_size: 24409
 
-perm_ldblock: '/gpfs/data/im-lab/nas40t2/yanyul/data/ldblock/fourier_ls-all.bed'
-perm_nrepeat: 10
-perm_repeat_idx: 1
-perm_seed: 1
+outdir: '/scratch/t.cri.yliang/ukb_idp/genetic_cor_4th_w_perm'
+

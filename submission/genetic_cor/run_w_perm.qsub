@@ -1,0 +1,60 @@
+#PBS -S /bin/bash
+#PBS -l walltime=48:00:00
+#PBS -l mem=16gb
+#PBS -e logs/run_w_perm_${NAME}_${GWASNAME}.n${NREPEAT}.err
+#PBS -o logs/run_w_perm_${NAME}_${GWASNAME}.n${NREPEAT}.out
+
+BXCAN=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan
+export PYTHONPATH=$BXCAN:$PYTHONPATH
+
+source ~/.bash_profile
+source ~/.bashrc
+
+mkdir -p "${OUTDIR}"
+mkdir -p "${OUTDIR}/configs"
+mkdir -p "${OUTDIR}/permuted_gwas"
+
+conda activate ukb_idp
+python "${PBS_O_WORKDIR}"/generate_permuted_gwas.py \
+  --config_yaml "${PBS_O_WORKDIR}/config.$NAME.yaml" \
+  --gwas_name "${GWASNAME}" \
+  --nrepeat "${NREPEAT}" \
+  --seed 1 \
+  --new_config "${OUTDIR}/configs/config.${NAME}_x_${GWASNAME}.yaml" \
+  --gwas_outdir "${OUTDIR}/permuted_gwas" \
+  --ldblock "${LDBLOCK}"
+
+conda deactivate
+conda activate ldsc
+SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snakemake
+cd /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/genetic_cor
+
+for i in $(seq 1 "${NREPEAT}"); do
+  echo "GWAS formating: Working on repeat = ${i}"
+  $SNMK \
+    -s run.snmk \
+    --configfile "${OUTDIR}/configs/config.${NAME}_x_${GWASNAME}.yaml" \
+    -p all_gwas \
+    --config gwas_name="${GWASNAME}_x_n${i}" \
+      outdir="${OUTDIR}/${NAME}_x_${GWASNAME}"
+done
+
+declare -A IDP_DICT=(
+  ['t1']="${IDPLIST_T1}"
+  ['dmri']="${IDPLIST_DMRI}"
+)
+
+for i in $(seq 1 "${NREPEAT}"); do
+  for idp in "${!IDP_DICT[@]}"; do
+    echo "Running LDSC: Working on repeat = ${i}, IDP = ${idp}"
+    $SNMK \
+      -s run.snmk \
+      --configfile "${OUTDIR}/configs/config.${NAME}_x_${GWASNAME}.yaml" \
+      -p all \
+      --config \
+        gwas_name="${GWASNAME}_x_n${i}" \
+        idp_tag="${idp}" \
+        idp_list="${IDP_DICT[${idp}]}" \
+        outdir="${OUTDIR}/${NAME}_x_${GWASNAME}"
+  done
+done

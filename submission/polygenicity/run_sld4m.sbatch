@@ -18,6 +18,6 @@ conda activate py38
 cd /project2/haky/yanyul/GitHub/misc-tools/est_polygenicity
 
 $SNMK -s sld4m.snmk --configfile $SLURM_SUBMIT_DIR/config.$MYJOB_NAME.yaml \
-  --config mode=all gwas_list=$NAME_LIST \
+  --config mode=all_w_agg gwas_list=$NAME_LIST \
   -j1 -p \
   > $SLURM_SUBMIT_DIR/logs/sld4m.$MYJOB_NAME.$SLURM_JOBID.log 2>&1

@@ -14,7 +14,7 @@ idpname="${3}"
 ff=logs/run_${2}_${pheno}_${idpname}.log
 if [[ -f $ff ]]
 then
-  e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l` 
+  e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno\|File' | wc -l` 
   if [[ $e = 1 ]]
   then
     qsub -v NAME=$2,GWASNAME=$pheno,IDP=${idpname},IDPLIST=$4 -N ${idpname}_${pheno} run.qsub
@@ -27,7 +27,7 @@ for i in $(seq 1 "${nrepeat}"); do
   ff=logs/run_${2}_${pheno}_${idpname}.log
   if [[ -f $ff ]]
   then
-    e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno' | wc -l` 
+    e=`cat $ff | tail -n 1 | grep 'failed\|kill\|Errno\|File' | wc -l` 
     if [[ $e = 1 ]]
     then
       qsub -v NAME=$2,GWASNAME=$pheno,IDP=${idpname},IDPLIST=$4,\

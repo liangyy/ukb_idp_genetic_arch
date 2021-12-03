@@ -2,7 +2,7 @@ if 'outdir' not in config:
     config['outdir'] = 'output'
 
 def get_perm_args(config):
-    if perm_dict['perm_ldblock'] is None:
+    if 'perm_ldblock' not in config or config['perm_ldblock'] is None:
         perm_args = ''
     else:
         perm_args = []

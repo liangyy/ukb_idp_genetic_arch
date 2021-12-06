@@ -1,0 +1,29 @@
+gwas: '/gpfs/data/im-lab/nas40t2/Data/SummaryResults/imputed_gwas_hg38_1.1/imputed_{prefix}.txt.gz'  
+datadir: '/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data'
+outdir: '/scratch/t.cri.yliang/ukb_idp/simagexcan/results_gtex_gwas_4th_en_permz'
+prefix: ''
+# brainxcan_path: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan'
+
+gwas_pop: 'EUR'
+snpid: 'variant_id'
+effect_allele: 'effect_allele'
+non_effect_allele: 'non_effect_allele'
+zscore: 'zscore'
+sample_size: 'sample_size'
+allele_frequency: 'frequency'
+chr: 'chromosome'
+
+
+model_type: 'elastic_net'
+idp_type: 'residual'
+# signif_pval: 1e-5
+# signif_max_idps: 20
+# ld_clump_yaml: '{datadir}/mr/ld_clump.yaml'
+     
+rscript_exe: '/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/r_36/bin/Rscript' 
+# python_exe: 'python
+
+bxcan_ldblock_perm: '/gpfs/data/im-lab/nas40t2/yanyul/data/ldblock/fourier_ls-all.bed'
+bxcan_ldblock_perm_elastic_net: true
+
+

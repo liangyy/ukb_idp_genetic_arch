@@ -1,0 +1,27 @@
+gwas: '/gpfs/data/im-lab/nas40t2/Data/SummaryResults/imputed_gwas_hg38_1.1/imputed_{prefix}.txt.gz'  
+datadir: '/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data'
+prefix: ''
+# brainxcan_path: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan'
+
+gwas_pop: 'EUR'
+snpid: 'variant_id'
+effect_allele: 'alt'
+non_effect_allele: 'ref'
+effect_size: 'b'
+effect_size_se: 'b_se'
+chr: 'chr'
+
+model_type: 'ridge'
+idp_type: 'residual'
+# signif_pval: 1e-5
+# signif_max_idps: 20
+# ld_clump_yaml: '{datadir}/mr/ld_clump.yaml'
+     
+rscript_exe: '/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/r_36/bin/Rscript' 
+# python_exe: 'python
+
+spearman_cutoff: -2  # essentially shut down spearman filter
+bxcan_ldblock_perm: '/gpfs/data/im-lab/nas40t2/yanyul/data/ldblock/fourier_ls-all.bed'
+geno_cov_pattern: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/bxcan_1000/group1.geno_cov.chr{chr_num}.banded.npz'
+
+

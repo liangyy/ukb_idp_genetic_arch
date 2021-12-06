@@ -10,7 +10,17 @@ for pheno in $(cat "${phenolist}"); do
   if [[ $pheno == "Neuroticism_CTG" || $pheno == "AlcDep_PGC_2018" ]]; then
     extra="zscore=zscore"
   fi
-  echo qsub -v CONFIGNAME="${configname}",GWASNAME="${pheno}",EXTRA="" \
-    -N ${configname}_$nametag run_simgx_4th_permz.qsub
+  ff="logs/run_simgx_4th_permz_${configname}_${pheno}.log"
+  if [[ -f "${ff}" ]]; then
+    tmp=$(cat "${ff}" | tail -n 2 | grep "failed\|kill\|Errno\|File" | wc -l)
+    if [[ $tmp != 0 ]]; then
+      echo qsub -v CONFIGNAME="${configname}",GWASNAME="${pheno}",EXTRA="" \
+        -N ${configname}_${pheno} run_simgx_4th_permz.qsub
+    fi
+  else
+    echo qsub -v CONFIGNAME="${configname}",GWASNAME="${pheno}",EXTRA="" \
+      -N ${configname}_${pheno} run_simgx_4th_permz.qsub
+  fi
+  
 done
 

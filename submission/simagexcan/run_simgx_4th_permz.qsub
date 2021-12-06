@@ -26,6 +26,6 @@ cd ${PBS_O_WORKDIR}
 snakemake -s $BXCAN/brainxcan/snmk/run.snmk \
   --configfile ${PBS_O_WORKDIR}/config.$CONFIGNAME.yaml \
   -p SBrainXcanOnly --cores 5 --nt \
-  --config brainxcan_path=$BXCAN prefix=${GWASNAME} \
+  --config brainxcan_path=$BXCAN prefix=${GWASNAME} ${EXTRA} \
   > ${PBS_O_WORKDIR}/logs/run_simgx_4th_permz_${CONFIGNAME}_${GWASNAME}.log 2>&1
   

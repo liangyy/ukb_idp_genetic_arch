@@ -11,7 +11,7 @@ non_effect_allele: 'non_effect_allele'
 effect_size: 'effect_size'
 effect_size_se: 'standard_error'
 chr: 'chromosome'
-zscore: 'zscore'
+# zscore: 'zscore'
 sample_size: 'sample_size'
 allele_frequency: 'frequency'
 

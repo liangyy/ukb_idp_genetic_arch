@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
 #PBS -l walltime=24:00:00
-#PBS -l mem=64gb
+#PBS -l mem=16gb
 #PBS -l nodes=1:ppn=16
 #PBS -e logs/run_simgx_4th_permz_${CONFIGNAME}_${GWASNAME}.err
 #PBS -o logs/run_simgx_4th_permz_${CONFIGNAME}_${GWASNAME}.out

@@ -81,9 +81,9 @@ bash submit_4th.sh t1 gtex_gwas_4th_ridge_residual 12
 New new 4th round (residual only) with permutation-adjusted z-score
 
 ```
-bash submit_4th_permz.sh dmri psychiatric_4th_en_residual 2
-bash submit_4th_permz.sh t1 psychiatric_4th_en_residual 12
-bash submit_4th_permz.sh dmri psychiatric_4th_ridge_residual 2
-bash submit_4th_permz.sh t1 psychiatric_4th_ridge_residual 12
+bash submit_4th_permz.sh psychiatric_4th_en_permz /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/preprocess_psychiatric_traits/trait_list.txt
+bash submit_4th_permz.sh psychiatric_4th_ridge_permz /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/misc_data/preprocess_psychiatric_traits/trait_list.txt
+bash submit_4th_permz.sh gtex_gwas_4th_ridge_permz /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/simagexcan/gtex_gwas_list.txt
+bash submit_4th_permz.sh gtex_gwas_4th_en_permz /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/submission/simagexcan/gtex_gwas_list.txt
 ```
 

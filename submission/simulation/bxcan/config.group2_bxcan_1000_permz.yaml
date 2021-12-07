@@ -1,4 +1,4 @@
-gwas: '/gpfs/data/im-lab/nas40t2/Data/SummaryResults/imputed_gwas_hg38_1.1/imputed_{prefix}.txt.gz'  
+gwas: '/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/format_oy_gwas/group2.{prefix}.txt.gz'
 datadir: '/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data'
 prefix: ''
 # brainxcan_path: '/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan'

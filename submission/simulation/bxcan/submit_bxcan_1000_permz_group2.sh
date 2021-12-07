@@ -17,7 +17,7 @@ for rand in "${rand_seeds[@]}"; do
   for gwas in $(ls "${gwas_dir}"/group2.rand_"${rand}".oy.* | \
     sed "s#${gwas_dir}/group2.##g" | \
     sed 's/.txt.gz//g'); do
-    echo qsub \
+    qsub \
       -v TAGNAME="${tagname}",\
 GWASNAME="${gwas}",\
 GENO_COV="${geno_cov}",\

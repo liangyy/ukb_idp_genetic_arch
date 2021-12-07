@@ -1,4 +1,4 @@
-conda activate brainxcan
+# conda activate brainxcan
 # generate a table with header 
 # R2	Pearson	Spearman	phenotype
 

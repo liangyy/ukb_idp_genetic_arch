@@ -10,10 +10,6 @@ if __name__ == '__main__':
     parser.add_argument('--output', help='''
         Output TSV.GZ performance file.
     ''')
-    parser.add_argument('--output', help='''
-        Output file (TAB-delimited) including Tr(R'R) and Tr^2(R) for each 
-        chromosome. 
-    ''')
     args = parser.parse_args()
     
     import logging, time, sys, os

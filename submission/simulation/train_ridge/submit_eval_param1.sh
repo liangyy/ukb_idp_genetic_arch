@@ -23,6 +23,6 @@ PHENO_PARQUET="${pheno_parquet}",\
 TAG="${tag}",\
 CACHE_TAG="${geno_dir}/group${group}",\
 OUTDIR="${outdir}" \
-      run.qsub
+      eval.qsub
   done
 done

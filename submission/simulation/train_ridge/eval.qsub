@@ -1,0 +1,29 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=24
+#PBS -l mem=32gb
+#PBS -e logs/eval_${TAG}.err
+#PBS -o logs/eval_${TAG}.out
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate ukb_idp
+
+cd "${PBS_O_WORKDIR}"
+
+# script path
+gw_ridge_script=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge/run_gw_ridge.py
+
+# script parameters
+outerfold=5
+innerfold=5
+
+python $gw_ridge_script \
+  --geno_bed_pattern "${GENO_PATTERN}.bed" \
+  --phenotype_parquet "${PHENO_PARQUET}" \
+  --nfold "${outerfold}" "${innerfold}" \
+  --output "${OUTDIR}/${TAG}.ridge.perf.tsv.gz" \
+  --grm_cache "${CACHE_TAG}.pkl.gz" \
+  --center_y \
+  > "logs/eval_${TAG}.log" 2>&1

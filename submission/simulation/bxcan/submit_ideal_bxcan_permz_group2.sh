@@ -24,7 +24,7 @@ GENO_COV="${geno_cov}",\
 IDP_WEIGHT="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/simulate_phenotypes/${idpname}.parquet",\
 OUTDIR="${outdir}" \
       -N "${nametag}" \
-      run_bxcan_permz.qsub
+      run_ideal_bxcan_permz.qsub
   done
 done
 

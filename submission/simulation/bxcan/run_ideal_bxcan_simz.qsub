@@ -1,0 +1,46 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l mem=16gb
+#PBS -l nodes=1:ppn=16
+#PBS -e logs/run_bxcan_simz_${TAGNAME}_${GWASNAME}.err
+#PBS -o logs/run_bxcan_simz_${TAGNAME}_${GWASNAME}.out
+
+export RSTUDIO_PANDOC=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/r_36/bin
+
+BXCAN=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan
+
+# load conda 
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate brainxcan
+
+export PYTHONPATH=$BXCAN:$PYTHONPATH
+
+cd "${PBS_O_WORKDIR}"
+
+mkdir -p "${OUTDIR}"
+
+export PYTHONPATH=${BXCAN}:${PYTHONPATH:-} 
+python "${BXCAN}/brainxcan/sbxcan/run_sbrainxcan.py" \
+  --genotype_covariance "${GENO_COV}" \
+  --gwas "/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/format_oy_gwas/group2.${GWASNAME}.txt.gz" \
+    snpid:variant_id \
+    effect_allele:alt \
+    non_effect_allele:ref \
+    chr:chr \
+    effect_size:b \
+    effect_size_se:b_se \
+    position:pos \
+  --idp_weight "${IDP_WEIGHT}" \
+    snpid:snpid \
+    effect_allele:alt \
+    non_effect_allele:ref \
+    chr:chr \
+  --spearman_cutoff -2 \
+  --empirical_null \
+  --empirical_null_nrepeat 1000 \
+  --empirical_null_seed 1 \
+  --output_prefix "${OUTDIR}/${TAGNAME}_${GWASNAME}" \
+  > "logs/run_bxcan_simz_${TAGNAME}_${GWASNAME}.log" \
+  2>&1

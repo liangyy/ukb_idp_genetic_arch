@@ -8,10 +8,14 @@ rand_seeds=(
 outdir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/simulate_phenotypes"
 configname=param1
 
+rand0=2020
+kk=0
+
 for rand in "${rand_seeds[@]}"; do
+  (( kk = rand0 + rand ))
   python augment_snp_effects.py \
     --snp_effect_parquet "${outdir}/${configname}.rand_${rand}.snp_effect.parquet" \
-    --rand_seed 2021 \
+    --rand_seed "${kk}" \
     --augment_size 300 \
     --output "${outdir}/${configname}.rand_${rand}.snp_effect.augmented.parquet"
 done

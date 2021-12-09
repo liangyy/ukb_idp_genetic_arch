@@ -29,7 +29,9 @@ if __name__ == '__main__':
         format = '%(asctime)s  %(message)s',
         datefmt = '%Y-%m-%d %I:%M:%S %p')
     
+    logging.info('Random seed = {}'.format(args.rand_seed)) 
     np.random.seed(args.rand_seed)
+    
     logging.info('Loading parquet')
     df = pd.read_parquet(args.snp_effect_parquet)
     logging.info('Size = {} x {}'.format(df.shape[0], df.shape[1]))

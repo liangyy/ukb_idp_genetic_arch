@@ -11,13 +11,17 @@ outdir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/simulate_phenotypes"
 mkdir -p "${outdir}"
 mkdir -p logs
 
+rand0=2000
+kk=0
+
 for group in "${group[@]}"; do
+  (( kk = rand0 + rand + group * 10 ))
   for rand in "${rand_seeds[@]}"; do
     qsub -v \
       CONFIG_MIDNAME=param1,\
 INDIV_LIST="${geno_dir}/group${group}.chr22.fam",\
 OUTDIR="${outdir}",\
-RAND="${rand}",\
+RAND="${kk}",\
 ES_PREFIX="${outdir}/param1.rand_${rand}",\
 GENO_PATTERN="${geno_dir}/group${group}.chr{chr_num}",\
 GROUP="group${group}" \

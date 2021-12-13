@@ -1,18 +1,20 @@
+decalre -A rand_seeds
 rand_seeds=(
-  1
-  2
-  3
-  4
-  5)
+  [1]=5
+  [2]=4
+  [3]=1
+  [4]=2
+  [5]=3)
   
-nametag="ideal_aug_simz"
+nametag="ideal_prand2_simz"
 geno_cov="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/bxcan/group1.geno_cov.chr{chr_num}.banded.npz"
 
-outdir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/ideal_aug_bxcan_simz"
+outdir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/ideal_prand2_bxcan_simz"
 gwas_dir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/format_oy_gwas"
 
-for rand in "${rand_seeds[@]}"; do
-  idpname="param1.rand_${rand}.snp_effect.augmented"
+for rand in "${!rand_seeds[@]}"; do
+  rand_idp="${rand_seeds[${rand}]}"
+  idpname="param1.rand_${rand_idp}.snp_effect"
   tagname="${nametag}_${rand}"
   for gwas in $(ls "${gwas_dir}"/group2.rand_"${rand}".oy.* | \
     sed "s#${gwas_dir}/group2.##g" | \

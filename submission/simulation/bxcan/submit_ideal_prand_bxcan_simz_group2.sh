@@ -9,7 +9,7 @@ rand_seeds=(
 nametag="ideal_prand_simz"
 geno_cov="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/bxcan/group1.geno_cov.chr{chr_num}.banded.npz"
 
-outdir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/ideal_bxcan_simz"
+outdir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/ideal_prand_bxcan_simz"
 gwas_dir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/format_oy_gwas"
 
 for rand in "${!rand_seeds[@]}"; do
@@ -19,7 +19,7 @@ for rand in "${!rand_seeds[@]}"; do
   for gwas in $(ls "${gwas_dir}"/group2.rand_"${rand}".oy.* | \
     sed "s#${gwas_dir}/group2.##g" | \
     sed 's/.txt.gz//g'); do
-    echo qsub \
+    qsub \
       -v TAGNAME="${tagname}",\
 GWASNAME="${gwas}",\
 GENO_COV="${geno_cov}",\

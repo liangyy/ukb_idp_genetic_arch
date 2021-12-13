@@ -15,8 +15,8 @@ rand0=2000
 kk=0
 
 for group in "${group[@]}"; do
-  (( kk = rand0 + rand + group * 10 ))
   for rand in "${rand_seeds[@]}"; do
+    (( kk = rand0 + rand + group * 10 ))
     qsub -v \
       CONFIG_MIDNAME=param1,\
 INDIV_LIST="${geno_dir}/group${group}.chr22.fam",\

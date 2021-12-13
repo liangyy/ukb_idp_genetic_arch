@@ -14,11 +14,16 @@ geno2="${geno_dir}/group2.chr{chr_num}"
 mkdir -p configs
 mkdir -p "${outdir}"
 
+rand0=2000
+kk=0
+
 for rand in "${rand_seeds[@]}"; do
+  (( kk1 = rand0 + rand + 10 ))  
+  (( kk2 = rand0 + rand + 20 ))
   # omed GWAS on group 1
-  nametag1="param1.group_group1.rand_${rand}.omed"
+  nametag1="param1.group_group1.rand_${kk1}.omed"
   # oy GWAS on group 2
-  nametag2="param1.group_group2.rand_${rand}.oy"
+  nametag2="param1.group_group2.rand_${kk2}.oy"
  
   cat config.param1.yaml | sed "s#PLACEHOLDER#${nametag1}#g" > "configs/config.${nametag1}.yaml"
   cat config.param1.yaml | sed "s#PLACEHOLDER#${nametag2}#g" > "configs/config.${nametag2}.yaml"

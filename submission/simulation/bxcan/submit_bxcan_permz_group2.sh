@@ -23,14 +23,25 @@ for rand in "${rand_seeds[@]}"; do
   for gwas in $(ls "${gwas_dir}"/group2.rand_"${kk2}".oy.* | \
     sed "s#${gwas_dir}/group2.##g" | \
     sed 's/.txt.gz//g'); do
-    qsub \
-      -v TAGNAME="${tagname}",\
+    doit="1"
+    fn="logs/run_bxcan_permz_${tagname}_${gwas}.log"
+    if [[ -f "${fn}" ]]; then
+      doit=""
+      tmp=$(cat "${fn}" | tail -n 1 | grep Error)
+      if [[ ! -z "${tmp}" ]]; then
+        doit="1"
+      fi
+    fi
+    if [[ ! -z "${doit}" ]]; then
+      qsub \
+        -v TAGNAME="${tagname}",\
 GWASNAME="${gwas}",\
 GENO_COV="${geno_cov}",\
 IDP_WEIGHT="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/train_ridge/${idpname}.parquet",\
 OUTDIR="${outdir}" \
-      -N "${nametag}" \
-      run_bxcan_permz.qsub
+        -N "${nametag}" \
+        run_bxcan_permz.qsub
+    fi
   done
 done
 

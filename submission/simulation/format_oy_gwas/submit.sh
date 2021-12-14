@@ -19,7 +19,7 @@ for rand in "${rand_seeds[@]}"; do
   (( kk2 = rand0 + rand + 20 ))  
   ls "${gwas_dir}/trans_qtl.param1.group_group2.rand_${kk2}.oy.chr22" | \
     sed 's/.parquet//g' > "logs/rand_${kk2}.txt"
-  echo qsub -v \
+  qsub -v \
     PHENO_LIST="logs/rand_${kk2}.txt",\
 NAME="rand_${kk2}",\
 INPUT_PATTERN="${gwas_dir}/trans_qtl.param1.group_group2.rand_${kk2}.oy.chr{chr_num}/{pheno}.parquet",\

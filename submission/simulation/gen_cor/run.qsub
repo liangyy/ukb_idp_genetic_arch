@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
-#PBS -l walltime=24:00:00
-#PBS -l mem=16gb
+#PBS -l walltime=2:00:00
+#PBS -l mem=8gb
 #PBS -e logs/run_${NAME}_${GWASNAME}_${IDP}.err
 #PBS -o logs/run_${NAME}_${GWASNAME}_${IDP}.out
 

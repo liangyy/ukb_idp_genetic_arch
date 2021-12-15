@@ -1,6 +1,7 @@
 #PBS -S /bin/bash
-#PBS -l walltime=24:00:00
-#PBS -l mem=16gb
+#PBS -l walltime=1:00:00
+#PBS -l nodes=1:ppn=2
+#PBS -l mem=4gb
 #PBS -e logs/calc_ldscore.${NAME}.${CHR}.err
 #PBS -o logs/calc_ldscore.${NAME}.${CHR}.out
 

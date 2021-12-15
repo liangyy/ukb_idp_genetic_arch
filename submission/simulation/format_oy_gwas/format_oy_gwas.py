@@ -61,6 +61,7 @@ if __name__ == '__main__':
             df_gwas.append(tmp)
         df_gwas = pd.concat(df_gwas, axis=0)
         df_gwas['sample_size'] = args.sample_size
+        df_gwas.fillna('NA', inplace=True)
         df_gwas.to_csv(
             args.output_pattern.format(pheno=pheno), 
             compression='gzip',

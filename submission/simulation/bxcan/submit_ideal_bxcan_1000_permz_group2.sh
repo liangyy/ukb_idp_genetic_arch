@@ -25,13 +25,13 @@ for rand in "${rand_seeds[@]}"; do
     fn="logs/run_bxcan_permz_${tagname}_${gwas}.log"
     if [[ -f "${fn}" ]]; then
       doit=""
-      tmp=$(cat "${fn}" | tail -n 1 | grep Error)
+      tmp=$(cat "${fn}" | tail -n 1 | grep 'Error\|Quit')
       if [[ ! -z "${tmp}" ]]; then
         doit="1"
       fi
     fi
     if [[ ! -z "${doit}" ]]; then
-      echo qsub \
+      qsub \
         -v TAGNAME="${tagname}",\
 GWASNAME="${gwas}",\
 GENO_COV="${geno_cov}",\

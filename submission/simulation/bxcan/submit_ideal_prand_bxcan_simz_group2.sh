@@ -1,4 +1,4 @@
-decalre -A rand_seeds
+declare -A rand_seeds
 rand_seeds=(
   [1]=2
   [2]=3

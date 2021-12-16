@@ -1,6 +1,6 @@
 #PBS -S /bin/bash
-#PBS -l walltime=24:00:00
-#PBS -l mem=16gb
+#PBS -l walltime=1:00:00
+#PBS -l mem=4gb
 #PBS -e logs/es.config_${CONFIG_MIDNAME}_rand_${RAND}.err
 #PBS -o logs/es.config_${CONFIG_MIDNAME}_rand_${RAND}.out
 

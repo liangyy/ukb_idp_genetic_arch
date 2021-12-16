@@ -24,7 +24,7 @@ if __name__ == '__main__':
     )
     import pandas as pd
 
-    info.logging(f'Loading weights = {args.weight_prefix}')
+    logging.info(f'Loading weights = {args.weight_prefix}')
     weights = pd.read_parquet(args.weight_prefix + '.parquet')
     perf = pd.read_csv(
         args.weight_prefix + '.perf.tsv.gz', 
@@ -42,6 +42,7 @@ if __name__ == '__main__':
         logging.info(f'-> # weights = {len(wnames_h2)}')
         w_sub = weights[wmeta + wnames_h2]
         p_sub = perf[perf.phenotype.isin(wnames_h2)].reset_index(drop=True)
+        logging.info(f'-> Saving w ({w_sub.shape[0]} x {w_sub.shape[1]}) and p ({p_sub.shape[0]} x {p_sub.shape[1]})')
         w_sub.to_parquet(
             f'{args.output_prefix}.{h2_str}.parquet', index=False)
         p_sub.to_csv(

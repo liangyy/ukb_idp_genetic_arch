@@ -16,7 +16,7 @@ for rand in "${rand_seeds[@]}"; do
   (( kk1 = rand0 + rand + 10 ))
   idpname="param2.group_group1.rand_${kk1}.ridge"
   python split_weights_by_h2.py \
-    --weight_prefix "${datadir}/${idpnames}" \
+    --weight_prefix "${datadir}/${idpname}" \
     --h2s 0.3 0.5 0.7 0.9 \
-    --output_prefix "${datadir}/split.${idpnames}"
+    --output_prefix "${datadir}/split.${idpname}"
 done

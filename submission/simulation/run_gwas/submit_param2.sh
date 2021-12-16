@@ -37,8 +37,8 @@ for rand in "${rand_seeds[@]}"; do
     else
       echo qsub -v CHR=$i,NAME="${nametag1}",OUTDIR="${outdir}",GENO_PATTERN="${geno1}.bed" -N "${i}_${nametag1}_gwas" run.qsub
     fi
-    if [[ -f "logs/${nametag2}.${i}.out" ]]; then
-      kk="$(cat "logs/${nametag2}.${i}.out" | grep Exit | tail -n 1 | grep 1)"
+    if [[ -f "logs/${nametag2}.${i}.log" ]]; then
+      kk="$(cat "logs/${nametag2}.${i}.log" | tail -n 1 | grep 'Error\|lock')"
       if [[ ! -z "${kk}" ]]; then
         qsub -v CHR=$i,NAME="${nametag2}",OUTDIR="${outdir}",GENO_PATTERN="${geno2}.bed" -N "${i}_${nametag2}_gwas" run.qsub
       fi

@@ -40,13 +40,13 @@ for rand in "${rand_seeds[@]}"; do
     doit="1"
     if [[ -f "${fout}" ]]; then
       doit=""
-      msg="$(cat "${fout}" | tail -n 1 | grep Error)"
+      msg="$(cat "${fout}" | tail -n 1 | grep 'Error\|lock')"
       if [[ ! -z "${msg}" ]]; then
         doit="1"
       fi
     fi
     if [[ ! -z "${doit}" ]]; then
-        echo qsub -v \
+        qsub -v \
           NAME="${midname}",\
 GWASNAME="${pheno}",\
 IDP="${idp_tag}",\

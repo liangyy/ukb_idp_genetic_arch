@@ -29,21 +29,21 @@ for rand in "${rand_seeds[@]}"; do
   cat config.param2.yaml | sed "s#PLACEHOLDER#${nametag2}#g" > "configs/config.${nametag2}.yaml"
   
   for i in $(seq 1 22); do
-    if [[ -f "logs/${nametag1}.${i}.out" ]]; then
-      kk="$(cat "logs/${nametag1}.${i}.out" | grep Exit | tail -n 1 | grep 1)"
+    if [[ -f "logs/${nametag1}.${i}.log" ]]; then
+      kk="$(cat "logs/${nametag1}.${i}.log" | tail -n 1 | grep 'Error\|lock')"
       if [[ ! -z "${kk}" ]]; then
-        echo qsub -v CHR=$i,NAME="${nametag1}",OUTDIR="${outdir}",GENO_PATTERN="${geno1}.bed" -N "${i}_${nametag1}_gwas" run.qsub
+        qsub -v CHR=$i,NAME="${nametag1}",OUTDIR="${outdir}",GENO_PATTERN="${geno1}.bed" -N "${i}_${nametag1}_gwas" run.qsub
       fi
     else
-      echo qsub -v CHR=$i,NAME="${nametag1}",OUTDIR="${outdir}",GENO_PATTERN="${geno1}.bed" -N "${i}_${nametag1}_gwas" run.qsub
+      qsub -v CHR=$i,NAME="${nametag1}",OUTDIR="${outdir}",GENO_PATTERN="${geno1}.bed" -N "${i}_${nametag1}_gwas" run.qsub
     fi
     if [[ -f "logs/${nametag2}.${i}.log" ]]; then
       kk="$(cat "logs/${nametag2}.${i}.log" | tail -n 1 | grep 'Error\|lock')"
       if [[ ! -z "${kk}" ]]; then
-        qsub -v CHR=$i,NAME="${nametag2}",OUTDIR="${outdir}",GENO_PATTERN="${geno2}.bed" -N "${i}_${nametag2}_gwas" run.qsub
+        echo qsub -v CHR=$i,NAME="${nametag2}",OUTDIR="${outdir}",GENO_PATTERN="${geno2}.bed" -N "${i}_${nametag2}_gwas" run.qsub
       fi
     else
-      qsub -v CHR=$i,NAME="${nametag2}",OUTDIR="${outdir}",GENO_PATTERN="${geno2}.bed" -N "${i}_${nametag2}_gwas" run.qsub
+      echo qsub -v CHR=$i,NAME="${nametag2}",OUTDIR="${outdir}",GENO_PATTERN="${geno2}.bed" -N "${i}_${nametag2}_gwas" run.qsub
     fi
   done
 done

@@ -49,11 +49,11 @@ for rand in "${rand_seeds[@]}"; do
       fi
     fi
     if [[ ! -z "${doit}" ]]; then
-      echo qsub \
+      qsub \
         -v TAGNAME="${tagname}",\
 GWASNAME="${gwas}",\
 GENO_COV="${geno_cov}",\
-IDP_WEIGHT="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/train_ridge_param2/${idpname}.parquet",\
+IDP_WEIGHT="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/train_ridge_param2/split.${idpname}.h2_${h2}.parquet",\
 OUTDIR="${outdir}" \
         -N "${nametag}" \
         run_bxcan_permz.qsub

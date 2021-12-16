@@ -48,7 +48,7 @@ for rand in "${rand_seeds[@]}"; do
       fi
     fi
     if [[ ! -z "${doit}" ]]; then
-      echo qsub \
+      qsub \
         -v TAGNAME="${tagname}",\
 GWASNAME="${gwas}",\
 GENO_COV="${geno_cov}",\

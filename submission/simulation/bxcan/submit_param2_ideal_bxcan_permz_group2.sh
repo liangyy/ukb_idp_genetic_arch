@@ -36,7 +36,8 @@ for rand in "${rand_seeds[@]}"; do
 GWASNAME="${gwas}",\
 GENO_COV="${geno_cov}",\
 IDP_WEIGHT="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/simulate_phenotypes_param2/${idpname}.parquet",\
-OUTDIR="${outdir}" \
+OUTDIR="${outdir}",\
+GWASDIR="${gwas_dir}" \
         -N "${nametag}" \
         run_ideal_bxcan_permz.qsub
     fi

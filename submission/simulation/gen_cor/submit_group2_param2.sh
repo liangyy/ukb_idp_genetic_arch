@@ -3,7 +3,14 @@ rand_seeds=(
   2
   3
   4
-  5)
+  5
+)
+h2s=(
+  0.3
+  0.5
+  0.7
+  0.9
+)
 
 outdir="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/gen_cor_param2"
 mkdir -p "${outdir}"
@@ -29,7 +36,7 @@ for rand in "${rand_seeds[@]}"; do
   for pheno in $(cat "${pheno_list}"); do
     h2=""
     for h2i in "${h2s[@]}"; do
-      tmp=$(echo "${gwas}" | grep "h2_${h2i}")
+      tmp=$(echo "${pheno}" | grep "h2_${h2i}")
       if [[ ! -z "${tmp}" ]]; then
         h2="${h2i}"
       fi
@@ -56,7 +63,7 @@ for rand in "${rand_seeds[@]}"; do
       fi
     fi
     if [[ ! -z "${doit}" ]]; then
-        echo qsub -v \
+        qsub -v \
           NAME="${midname}",\
 GWASNAME="${pheno}",\
 IDP="${idp_tag}",\

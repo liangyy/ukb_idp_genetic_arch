@@ -21,10 +21,14 @@ cd "${PBS_O_WORKDIR}"
 
 mkdir -p "${OUTDIR}"
 
+if [[ -z "${GWASDIR}" ]]; then
+  GWASDIR="/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/format_oy_gwas"
+fi
+
 export PYTHONPATH=${BXCAN}:${PYTHONPATH:-} 
 python "${BXCAN}/brainxcan/sbxcan/run_sbrainxcan.py" \
   --genotype_covariance "${GENO_COV}" \
-  --gwas "/gpfs/data/im-lab/nas40t2/yanyul/ukb_idp/simulation/format_oy_gwas/group2.${GWASNAME}.txt.gz" \
+  --gwas "${GWASDIR}/group2.${GWASNAME}.txt.gz" \
     snpid:variant_id \
     effect_allele:alt \
     non_effect_allele:ref \

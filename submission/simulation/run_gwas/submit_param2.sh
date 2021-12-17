@@ -15,7 +15,8 @@ mkdir -p configs
 mkdir -p "${outdir}"
 
 rand0=2000
-kk=0
+kk1=0
+kk2=0
 
 for rand in "${rand_seeds[@]}"; do
   (( kk1 = rand0 + rand + 10 ))  

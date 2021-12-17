@@ -45,7 +45,7 @@ for rand in "${rand_seeds[@]}"; do
       echo "WARNING: SOMETHING WRONG FOR ${gwas}"
     fi
     idp_tag="group1.rand_${kk1}"
-    idp_list="logs/param2.${idp_tag}.idp_list.txt"
+    idp_list="logs/param2.${idp_tag}.h2_${h2}.idp_list.txt"
     if [[ -f "${idp_list}" ]]; then
       rm "${idp_list}"
     fi

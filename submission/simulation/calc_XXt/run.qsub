@@ -1,0 +1,19 @@
+#PBS -S /bin/bash
+#PBS -l walltime=4:00:00
+#PBS -l mem=32gb
+#PBS -e logs/run_${JOBNAME}.err
+#PBS -o logs/run_${JOBNAME}.out
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate ukb_idp
+
+export PYTHONPATH=$PYTHONPATH:/gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/gw_ridge
+
+cd "${PBS_O_WORKDIR}"
+
+python calc_xxt.py \
+  --geno_bed_pattern "${GENO_PATTERN}" \
+  --output_prefix "${OUTPREFIX}" > \
+  logs/run_${JOBNAME}.log 2>&1

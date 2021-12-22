@@ -1,0 +1,28 @@
+#PBS -S /bin/bash
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=32gb
+#PBS -e logs/run_geno_cov_evd.${NAME}.${CHR}.err
+#PBS -o logs/run_geno_cov_evd.${NAME}.${CHR}.out
+
+
+
+source ~/.bash_profile
+source ~/.bashrc
+
+conda activate brainxcan
+
+bxcan_path=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/brainxcan/brainxcan
+
+# load extra python dependency
+export PYTHONPATH="${bxcan_path}/sbxcan":$PYTHONPATH
+
+cd "${PBS_O_WORKDIR}"
+
+python "${bxcan_path}/sbxcan/build_genotype_covariance.py" \
+  --genotype_bed "${INPUT_GENO}" \
+  --mode evd 0 \
+  --nbatch "${NBATCH}" \
+  --output_prefix "${OUTPUT_PREFIX}" \
+  > "${PBS_O_WORKDIR}/logs/run_geno_cov_evd.${NAME}.${CHR}.log" \
+  2>&1

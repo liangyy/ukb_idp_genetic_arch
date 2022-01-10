@@ -29,7 +29,7 @@ cd ${PBS_O_WORKDIR}
 
 snakemake -s $BXCAN/brainxcan/snmk/run.snmk \
   --configfile ${PBS_O_WORKDIR}/config.$CONFIGNAME.yaml \
-  -p SBrainXcanOnly --cores 5 --nt --forceall \
+  -p SBrainXcan --cores 5 \
   --config brainxcan_path=$BXCAN prefix=$PHENOTYPE \
   > ${PBS_O_WORKDIR}/logs/${CONFIGNAME}_${PHENOTYPE}.log 2>&1
 

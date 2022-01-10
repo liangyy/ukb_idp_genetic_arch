@@ -12,6 +12,7 @@ zscore: 'zscore'
 sample_size: 'sample_size'
 allele_frequency: 'frequency'
 chr: 'chromosome'
+position: 'position'
 
 
 # model_type: 'ridge'

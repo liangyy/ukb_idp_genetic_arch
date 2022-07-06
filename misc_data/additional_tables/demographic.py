@@ -15,4 +15,4 @@ df_sub = df_cov[ df_cov.eid.isin(df_indiv.individual) ][['sex', 'age']]
 # aggregate results
 def count_zeros(x): return (x == 0).sum()
 out = df_sub.agg({'age': ['mean', 'std'], 'sex': ['mean', 'sum', count_zeros]})
-out.to_csv(f'{outdir}/demographic.csv', index=False)
+out.to_csv(f'{outdir}/demographic.csv')

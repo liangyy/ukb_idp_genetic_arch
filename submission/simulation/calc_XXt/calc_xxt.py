@@ -37,8 +37,9 @@ if __name__ == '__main__':
         geno_i, indiv_list, _ = load_genotype_from_bedfile(
             f'{geno_prefix}.bed', indiv_list, snplist_to_exclude=set([]), 
             return_snp=False, standardize=False)
-        geno_i_mean = np.nanmean(geno, axis=0)
+        geno_i_mean = np.nanmean(geno_i, axis=0)
         geno_i -= geno_i_mean
+        logging.info(f'-> {geno_i.mean().sum()}')
         
         M = geno_i.shape[1]
         xxt_now = geno_i @ (geno_i.T / M)
@@ -49,6 +50,7 @@ if __name__ == '__main__':
         w2 = 1 - w1
         xxt = xxt * w1 + xxt_now * w2
         nsnp += M
+        logging.info(f'M = {M}, nsnp = {nsnp}')
     
     logging.info('Saving')
     xxt_file = args.output_prefix + '.xxt.pkl.gz'

@@ -28,6 +28,10 @@ p2z = function(p, b) {
   sign(b) * abs(qnorm(p / 2, lower.tail = T))
 }
 
+z2p <- function(z) {
+  return(2 * exp(pnorm(abs(z), lower.tail = F, log.p = T)))
+}
+
 load_ldsc_rg = function(fn) {
   tmp = read.table(pipe(paste0('cat ', fn, ' |awk \'{if($1=="" && a==1){a=0};if($1=="p1" || a==1 ){a=1;print $0}}\'')), header = T, stringsAsFactors = F)
   p1 = unlist(lapply(strsplit(basename(tmp$p1), '\\.'), function(x) { 

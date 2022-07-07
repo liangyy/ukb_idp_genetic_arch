@@ -1,6 +1,8 @@
 # setwd('misc_data/supplementary_materials_4th/')
 
-backup_dir = '~/Desktop/tmp/backup_from_macbook/ukb_idp_genetic_arch/misc_data/supplementary_materials_4th/'
+backup_dir = '~/Documents/repo_backup/ukb_idp_genetic_arch/misc_data/supplementary_materials_4th/'
+
+setwd(backup_dir)
 library(ggplot2)
 library(dplyr)
 theme_set(theme_bw(base_size = 15))
@@ -10,7 +12,7 @@ options(stringsAsFactors = F)
 
 source('rlib.R')
 
-foldern = 'polygenicity'
+foldern = '~/Documents/repo/GitHub/ukb_idp_genetic_arch/misc_data/supplementary_materials_4th/polygenicity'
 dir.create(foldern)
 
 color_code2 = c('T1' = 'orange', 'dMRI' = 'blue')
@@ -53,6 +55,7 @@ pcs = df_h2 %>% filter(is_pc) %>% select(IDP, idp_type)
   dd2 = do.call(rbind, dd2)
   df_poly = dd2 %>% filter(Var1 == 'Manual_aggregated')
   df_poly = df_poly %>% mutate(stable = Ma_est > 0 & Ma_est > 1.96 * Ma_err)
+  df_poly0 <- df_poly
   # remove TBSS IDPs
   df_poly = remove_probtrack_idp(df_poly)
 }
@@ -160,9 +163,9 @@ if(isTRUE(plot_idp_vs_some_traits)) {
     fraction_of_stable_Me = number_of_stable_Me / total_number
   ) %>% pander::pander(caption = 'PC IDPs')
   
-  tmp2 = df_poly %>% filter(stable) %>% mutate(phenotype = paste(idp_type, IDP)) %>% 
+  tmp2 = df_poly0 %>% filter(stable) %>% mutate(phenotype = paste(idp_type, IDP)) %>% 
     mutate(pheno = factor(phenotype, levels = phenotype[order(idp_type, Ma_est)]))
-  labx = 280
+  labx = 300
   pp = tmp2 %>% ggplot() + 
     geom_errorbar(aes(x = pheno, ymax = Ma_est + 1.96 * Ma_err, ymin = Ma_est - 1.96 * Ma_err), width = 0.025, color = 'gray') + 
     geom_point(aes(x = pheno, y = Ma_est, color = idp_type))  + 
@@ -199,7 +202,7 @@ if(isTRUE(plot_idp_vs_some_traits)) {
 
 plot_h2_vs_me = T
 if(isTRUE(plot_h2_vs_me)) {
-  tmp = inner_join(df_h2, df_poly, by = c('IDP', 'idp_type'))
+  tmp = inner_join(df_h2, df_poly0, by = c('IDP', 'idp_type'))
   tmp = inner_join(tmp, df_perf, by = c('IDP', 'idp_type'))
   tmp %>% filter(stable) %>% 
     ggplot() + geom_point(aes(x = h2, y = Ma_est))

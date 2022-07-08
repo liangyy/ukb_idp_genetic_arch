@@ -37,14 +37,19 @@ for(label in labels) {
 }
 res <- do.call(rbind, res)
 n <- 3
+myformat <- function(nn, digits) {
+  return(formatC(nn, format = 'f', digits = digits))
+}
 res <- res %>% 
   mutate(
-    h2 = paste0(signif(`h2(mean)`, digits = n), ' (', signif(`h2(s.d.)`, digits = n), ')'),
-    Me = paste0(formatC(`Me(mean)`, digits = n - 1, format = 'e'), ' (', formatC(`Me(s.d.)`, digits = n - 1, format = 'e'), ')'),
-    R2 = paste0(signif(`R2(mean)`, digits = n), ' (', signif(`R2(s.d.)`, digits = n), ')'),
-    `h2(PC)` = signif(`h2(PC)`, digits = n),
-    `Me(PC)` = formatC(`Me(PC)`, digits = n - 1, format = 'e'),
-    `R2(PC)` = signif(`R2(PC)`, digits = n)) %>%
+    h2 = paste0(myformat(`h2(mean)`, digits = n - 1), ' (', myformat(`h2(s.d.)`, digits = n - 1), ')'),
+    Me = paste0(round(`Me(mean)`), ' (', round(`Me(s.d.)`), ')'), 
+    # paste0(formatC(`Me(mean)`, digits = n - 1, format = 'e'), ' (', formatC(`Me(s.d.)`, digits = n - 1, format = 'e'), ')'),
+    R2 = paste0(myformat(`R2(mean)`, digits = n), ' (', myformat(`R2(s.d.)`, digits = n), ')'),
+    `h2(PC)` = myformat(`h2(PC)`, digits = n - 1),
+    `Me(PC)` = round(`Me(PC)`),  
+    # formatC(`Me(PC)`, digits = n - 1, format = 'e'),
+    `R2(PC)` = myformat(`R2(PC)`, digits = n)) %>%
   select(
     modality, subtype, `Number of IDPs`,
     `h2(PC)`, h2,

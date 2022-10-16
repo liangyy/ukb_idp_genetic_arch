@@ -357,6 +357,9 @@ if __name__ == '__main__':
         will load genotype and cache the GRM to this path.
         Otherwise, will cache the GRM to [output].grm_cache.pkl.gz
     ''')
+    parser.add_argument('--no_inner_cv', action='store_true', help='''
+        If specified, the script will do splitting but not CV in the inner loop.
+    ''')
     args = parser.parse_args()
  
     import logging, time, sys, os
@@ -450,7 +453,7 @@ if __name__ == '__main__':
         for i in tqdm(range(outer_nfold)):
             train_idx = np.where(sample_partitions != i)[0]
             test_idx = np.where(sample_partitions == i)[0]
-            Ypred, Yobs = solver.cv_train(train_idx, test_idx, rand_seed=args.rand_seed + i + 1)
+            Ypred, Yobs = solver.cv_train(train_idx, test_idx, rand_seed=args.rand_seed + i + 1, only_split=args.no_inner_cv)
             Ypred_collector.append(Ypred)
             Yobs_collector.append(Yobs)
         Ypred = np.concatenate(Ypred_collector, axis=0)
@@ -466,7 +469,7 @@ if __name__ == '__main__':
             theta_g_grid=args.theta_g_grid, 
             inner_cv_fold=outer_nfold
         )
-        beta_partial, best_theta_g = solver.cv_train(rand_seed=args.rand_seed)
+        beta_partial, best_theta_g = solver.cv_train(rand_seed=args.rand_seed, only_split=args.no_inner_cv)
         logging.info('Obtaining best betahat from beta_partial, best_theta_g, and genotypes.')
         betahat, snpid, ref, alt, chrom = obtain_bhat_from_bed(
             args.geno_bed_pattern, snplist_to_exclude=snplist_to_exclude,

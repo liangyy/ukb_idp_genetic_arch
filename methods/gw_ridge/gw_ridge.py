@@ -56,7 +56,7 @@ class blupRidgeSolver:
         else:
             return np.linalg.solve(M, self.y[train_idx, :][:, subset_y_idx])
         
-    def cv_train(self, train_idx=None, test_idx=None, rand_seed=1):
+    def cv_train(self, train_idx=None, test_idx=None, rand_seed=1, only_split=False):
         
         # init train idx (if not set) to include all samples 
         if train_idx is None:
@@ -68,6 +68,9 @@ class blupRidgeSolver:
         # loop over partitions to calculate inner CV MSE
         for p in range(len(partitions)):
             inner_train_idx, inner_test_idx = partitions[p]
+            if only_split and p > 0:
+                mse_mat = mse_mat[:1, :, :]
+                break
             for g in range(len(self.theta_g_grid)):
                 theta_g = self.theta_g_grid[g]
                 mse_mat[p, g, :], _ = self.train(

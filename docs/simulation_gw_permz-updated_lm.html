@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Simulation study (genome-wide) with permutation based z-score adjustment</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fas fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Simulation study (genome-wide) with permutation based z-score adjustment</h1>
+<h4 class="date">12 February, 2023</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(arrow)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;arrow&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:utils&#39;:
+## 
+##     timestamp</code></pre>
+<pre class="r"><code>library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+source(&#39;https://gist.githubusercontent.com/liangyy/489d1519dd45246caf4756d7722bfa25/raw/008367adbab79c217b92e27e26a099e6e1875f41/fast_linear_regression&#39;)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)</code></pre>
+<pre><code>## data.table 1.14.2 using 1 threads (see ?getDTthreads).  Latest news: r-datatable.com</code></pre>
+<pre><code>## **********
+## This installation of data.table has not detected OpenMP support. It should still work but in single-threaded mode.
+## This is a Mac. Please read https://mac.r-project.org/openmp/. Please engage with Apple and ask them for support. Check r-datatable.com for updates, and our Mac instructions here: https://github.com/Rdatatable/data.table/wiki/Installation. After several years of many reports of installation problems on Mac, it&#39;s time to gingerly point out that there have been no similar problems on Windows or Linux.
+## **********</code></pre>
+<pre><code>## 
+## Attaching package: &#39;data.table&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:dplyr&#39;:
+## 
+##     between, first, last</code></pre>
+<pre class="r"><code>options(datatable.fread.datatable = F)
+source(&#39;rlib.R&#39;)</code></pre>
+<p>Truncation based z-scores</p>
+<pre class="r"><code>find_bounds &lt;- function(x, func, step_size = 1.001) {
+  low &lt;- x
+  if(func(low) &gt; 0) {
+    message(&#39;something is wrong&#39;)
+    return(NA)
+  }
+  high &lt;- low
+  while(func(high) &lt;= 0) {
+    high &lt;- high * step_size
+  }
+  return(c(low, high))
+}
+varz_from_truncated_zscore &lt;- function(zscores, cutoff) {
+  c &lt;- abs(cutoff)
+  z_trunc &lt;- zscores[abs(zscores) &lt; c]
+  if(length(z_trunc) &lt; 50) {
+    message(&#39;Too few weak observations&#39;)
+    return(NA)
+  }
+  v &lt;- var(z_trunc)
+  obj &lt;- function(s) {
+    phi_c &lt;- dnorm(c / s)
+    Phi_neg_c &lt;- pnorm(-c / s)
+    s ^ 2 * (1 + - 2 * phi_c * c / s / (1 - 2 * Phi_neg_c)) - v
+  } 
+  bounds &lt;- find_bounds(sqrt(v), obj)
+  # bounds &lt;- c(sqrt(v), 100 * sqrt(v))
+  res &lt;- uniroot(obj, bounds)$root
+  return(res ^ 2)
+}</code></pre>
+<p><span class="math display">\[
+\newcommand{\cov}{\text{Cov}}
+\newcommand{\var}{\text{Var}}
+\newcommand{\cor}{\text{Cor}}
+\newcommand{\pve}{\text{PVE}}
+\]</span></p>
+<div id="about" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> About</h1>
+<p>See details and scripts at <code>submission/simulation/</code>.</p>
+<p>Method label definition:</p>
+<ul>
+<li><code>bxcan_ridge</code>: S-BrainXcan with ridge regression based weights and banded genotype covariance (band size = 200)</li>
+<li><code>bxcan_1000_ridge</code>: S-BrainXcan with ridge regression based weights and banded genotype covariance (band size = 1000)</li>
+<li><code>bxcan_ideal</code>: S-BrainXcan with true weights and banded genotype covariance (band size = 200)</li>
+<li><code>bxcan_1000_ideal</code>: S-BrainXcan with true weights and banded genotype covariance (band size = 1000)</li>
+<li><code>indiv_ideal</code>: Individual level BrainXcan with true weights</li>
+<li><code>gencor</code>: Genetic correlation</li>
+</ul>
+</div>
+<div id="results" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Results</h1>
+<pre class="r"><code>get_n &lt;- function(s, n, func = as.numeric) {
+  return(unlist(lapply(strsplit(s, &#39;_&#39;), function(x) {func(x[n])})))
+}
+get_h2 &lt;- function(s) {
+  return(get_n(s, 4))
+}
+get_m &lt;- function(s) {
+  return(paste0(&#39;m_&#39;, get_n(s, 2)))
+}
+get_z &lt;- function(pval, eff) {
+  - qnorm(pval / 2) * sign(eff)
+}
+get_p_exp &lt;- function(pval) {
+  rank(pval, ties.method = &#39;random&#39;) / (length(pval) + 1)
+}
+load_bxcan_permz &lt;- function(fn_prefix, fn_perf) {
+  kk &lt;- read.csv(glue::glue(&#39;{fn_prefix}.csv&#39;))
+  kk$h2 &lt;- get_h2(kk$IDP)
+  kk2 &lt;- read.csv(glue::glue(&#39;{fn_prefix}.perm_null.csv&#39;))
+  kk3 &lt;- read.table(fn_perf, header = T)$phenotype
+  kk2$pheno &lt;- rep(kk3, 10)
+  kk2$h2 &lt;- get_h2(kk2$pheno)
+  kk2_varz &lt;- kk2 %&gt;% 
+    group_by(h2) %&gt;% 
+    summarize(varz = var(value)) %&gt;%
+    ungroup()
+  kk &lt;- left_join(kk, kk2_varz, by = &#39;h2&#39;) %&gt;%
+    mutate(z_adj_permz = z_brainxcan / sqrt(varz)) %&gt;%
+    mutate(pval_adj_permz = z2p(z_adj_permz))
+  res &lt;- kk %&gt;% 
+    select(IDP, bhat, pval, pval_adj_permz)
+  return(res)
+}</code></pre>
+<p>Load S-BrainXcan and LDSC based genetic correlation results.</p>
+<pre class="r"><code>h2s &lt;- c(0.3, 0.5, 0.7, 0.9)
+pves &lt;- c(0.3, 0.5, 0.7, 0.9)
+types &lt;- c(&#39;null&#39;, &#39;alt&#39;)
+rands &lt;- 1 : 5
+datadir &lt;- &#39;/Users/yanyuluchicago/Desktop/tmp/ukb_idp/simulation&#39;
+df &lt;- list()
+for(rand in rands) {
+  rand1 &lt;- 2010 + rand
+  rand2 &lt;- 2020 + rand
+  fn_idps_ideal &lt;- glue::glue(&#39;{datadir}/simulate_phenotypes_param2/param2.rand_{rand}.snp_effect.perf.tsv.gz&#39;)
+  for(pve in pves) {
+    for(type in types) {
+      for(h2 in h2s) {
+        fn_idps &lt;- glue::glue(&#39;{datadir}/train_ridge_param2/split.param2.group_group1.rand_{rand1}.ridge.h2_{h2}.perf.tsv.gz&#39;)
+        fn_b &lt;- glue::glue(&#39;{datadir}/bxcan_permz_param2/permz_param2_{rand}_rand_{rand2}.oy.{type}_h2_{h2}_pve_{pve}&#39;)
+        fn_b_1k &lt;- glue::glue(&#39;{datadir}/bxcan_1000_permz_param2/permz_1000_param2_{rand}_rand_{rand2}.oy.{type}_h2_{h2}_pve_{pve}&#39;)
+        fn_b_ideal&lt;- glue::glue(&#39;{datadir}/ideal_bxcan_permz_param2/ideal_permz_param2_{rand}_rand_{rand2}.oy.{type}_h2_{h2}_pve_{pve}&#39;)
+        fn_b_ideal_1k &lt;- glue::glue(&#39;{datadir}/ideal_bxcan_1000_permz_param2/ideal_permz_1000_param2_{rand}_rand_{rand2}.oy.{type}_h2_{h2}_pve_{pve}&#39;)
+        fn_g &lt;- glue::glue(&#39;{datadir}/gen_cor_param2/group1.rand_{rand1}_x_group2_x_rand_{rand2}.oy.{type}_h2_{h2}_pve_{pve}.ldsc_rg.log&#39;)
+        kk_b &lt;- load_bxcan_permz(fn_b, fn_idps)
+        kk_b_1k &lt;- load_bxcan_permz(fn_b_1k, fn_idps)
+        kk_b_ideal &lt;- load_bxcan_permz(fn_b_ideal, fn_idps_ideal) %&gt;% filter(IDP != &#39;b_y_null&#39;)
+        kk_b_ideal_1k &lt;- load_bxcan_permz(fn_b_ideal_1k, fn_idps_ideal) %&gt;% filter(IDP != &#39;b_y_null&#39;)
+        kk_g &lt;- load_ldsc_rg(fn_g)
+        kk_b &lt;- kk_b %&gt;% 
+          filter(get_h2(IDP) == h2) %&gt;% 
+          mutate(m = get_m(IDP)) %&gt;% 
+          rename(eff = bhat) %&gt;%
+          select(m, eff, pval, pval_adj_permz)
+        kk_b_1k &lt;- kk_b_1k %&gt;%
+          filter(get_h2(IDP) == h2) %&gt;%
+          mutate(m = get_m(IDP)) %&gt;%
+          rename(eff = bhat) %&gt;%
+          select(m, eff, pval, pval_adj_permz)
+        kk_b_ideal &lt;- kk_b_ideal %&gt;% 
+          mutate(m = get_m(IDP)) %&gt;% 
+          rename(eff = bhat) %&gt;%
+          select(m, eff, pval, pval_adj_permz)
+        kk_b_ideal_1k &lt;- kk_b_ideal_1k %&gt;%
+          mutate(m = get_m(IDP)) %&gt;%
+          rename(eff = bhat) %&gt;%
+          select(m, eff, pval, pval_adj_permz)
+        kk_g &lt;- kk_g %&gt;% 
+          filter(get_h2(p2) == h2) %&gt;% 
+          mutate(m = get_m(p2), pval_adj_permz = NA) %&gt;%  
+          rename(pval = p, eff = rg) %&gt;%
+          select(m, eff, pval, pval_adj_permz)
+        kk &lt;- rbind(
+          kk_b %&gt;% mutate(method = &#39;bxcan_ridge&#39;), 
+          kk_g %&gt;% mutate(method = &#39;gencor&#39;), 
+          kk_b_1k %&gt;% mutate(method = &#39;bxcan_1000_ridge&#39;),
+          kk_b_ideal %&gt;% mutate(method = &#39;bxcan_ideal&#39;),
+          kk_b_ideal_1k %&gt;% mutate(method = &#39;bxcan_1000_ideal&#39;))
+        df[[length(df) + 1]] &lt;- kk %&gt;% mutate(h2 = h2, pve = pve, type = type, rand = rand)
+      }
+    }
+  }
+}
+df &lt;- do.call(rbind, df)
+
+df_eff &lt;- list()
+for(rand in rands) {
+  fn &lt;- glue::glue(&#39;{datadir}/simulate_phenotypes_param2/param2.rand_{rand}.mediator_effect.parquet&#39;)
+  kk &lt;- read_parquet(fn)
+  kk$mediator &lt;- as.numeric(kk$mediator)
+  df_eff[[length(df_eff) + 1]] &lt;- kk %&gt;%
+    mutate(rand = rand) %&gt;% 
+    rename(m = mediator) %&gt;%
+    mutate(m = paste0(&#39;m_&#39;, m))
+}
+df_eff &lt;- do.call(rbind, df_eff)
+
+df &lt;- left_join(df, df_eff, by = c(&#39;m&#39;, &#39;rand&#39;))</code></pre>
+<p>Load the BrainXcan results under the ideal case (associating the true genetic component of a mediator and the phenotype).</p>
+<pre class="r"><code>df_ideal &lt;- list()
+for(rand in rands) {
+  rand1 &lt;- 2010 + rand
+  rand2 &lt;- 2020 + rand
+  df_gmed &lt;- read_parquet(glue::glue(&#39;{datadir}/simulate_phenotypes_param2/param2.group_group2.rand_{rand2}.gmed.parquet&#39;))
+  df_yobs &lt;- read_parquet(glue::glue(&#39;{datadir}/simulate_phenotypes_param2/param2.group_group2.rand_{rand2}.oy.parquet&#39;))
+  df_indiv &lt;- df_gmed[, 1, drop = FALSE]
+  df_yobs &lt;- left_join(df_indiv, df_yobs, by = &#39;individual&#39;)
+  fast_lm_on_ys &lt;- function(ymat, xmat) {
+    res &lt;- list()
+    for(i in 1 : ncol(ymat)) {
+      y &lt;- ymat[, i]
+      tmp &lt;- fast_linear_regression(y, xmat, matrix(1, nrow = length(y), ncol = 1))
+      res[[length(res) + 1]] &lt;- data.frame(
+        y = colnames(ymat)[i], 
+        x = names(tmp$bhat),
+        bhat = tmp$bhat,
+        pval = tmp$pval)
+    }
+    res &lt;- do.call(rbind, res)
+    rownames(res) &lt;- NULL
+    return(res)
+  }
+  res &lt;- fast_lm_on_ys(
+    df_yobs[, -1] %&gt;% as.matrix(), 
+    df_gmed[, -1] %&gt;% as.matrix())
+  res &lt;- res %&gt;% mutate(
+    h2 = get_n(y, 3), 
+    pve = get_n(y, 5),
+    type = get_n(y, 1, as.character))
+  df_ideal[[length(df_ideal) + 1]] &lt;- res %&gt;% mutate(rand = rand)
+}
+df_ideal &lt;- do.call(rbind, df_ideal)
+df_all &lt;- rbind(
+  df_ideal %&gt;% 
+    mutate(method = &#39;indiv_ideal&#39;, pval_adj_permz = NA) %&gt;% 
+    rename(eff = bhat, m = x) %&gt;%
+    select(m, eff, pval, pval_adj_permz, method, h2, pve, type, rand) %&gt;% 
+    left_join(df_eff, by = c(&#39;m&#39;, &#39;rand&#39;)),
+  df)
+
+
+df_all &lt;- df_all %&gt;% 
+  mutate(z_bxcan = p2z(pval, eff)) %&gt;%
+  group_by(method, h2, pve, type, rand) %&gt;%
+  mutate(z_adj_trunc = z_bxcan / sqrt(varz_from_truncated_zscore(z_bxcan, 4))) %&gt;%
+  ungroup() %&gt;%
+  mutate(pval_adj_trunc = z2p(z_adj_trunc))
+
+min_p &lt;- 1e-50
+df_all$pval[df_all$pval &lt; min_p] &lt;- min_p 
+df_all$pval[df_all$pval &gt; 1 - min_p] &lt;- 1 - min_p
+df_all$pval_adj_permz[df_all$pval_adj_permz &lt; min_p] &lt;- min_p 
+df_all$pval_adj_permz[df_all$pval_adj_permz &gt; 1 - min_p] &lt;- 1 - min_p
+df_all$pval_adj_trunc[df_all$pval_adj_trunc &lt; min_p] &lt;- min_p 
+df_all$pval_adj_trunc[df_all$pval_adj_trunc &gt; 1 - min_p] &lt;- 1 - min_p
+df_all &lt;- df_all %&gt;% 
+  mutate(h2_y = pve * h2) %&gt;% 
+  mutate(z = get_z(pval, eff)) %&gt;% 
+  mutate(z_adj_permz = get_z(pval_adj_permz, eff)) %&gt;% 
+  mutate(z_adj_trunc = get_z(pval_adj_trunc, eff))</code></pre>
+</div>
+<div id="under-the-null" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Under the null</h1>
+<p>QQ-plot.</p>
+<pre class="r"><code>df_all %&gt;% 
+  filter(type == &#39;null&#39;) %&gt;%
+  group_by(h2_y, method) %&gt;% mutate(p_exp = get_p_exp(pval)) %&gt;%
+  ungroup() %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval), color = method)) + 
+  geom_abline(intercept = 0, slope = 1) +
+  facet_wrap(~h2_y, labeller = label_both) + th2 +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5))</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code>df_all %&gt;% 
+  filter(type == &#39;null&#39;) %&gt;%
+  group_by(h2_y, method) %&gt;% mutate(p_exp = get_p_exp(pval_adj_permz)) %&gt;%
+  ungroup() %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval_adj_permz), color = method)) + 
+  geom_abline(intercept = 0, slope = 1) +
+  facet_wrap(~h2_y, labeller = label_both) + th2 +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5))</code></pre>
+<pre><code>## Warning: Removed 32000 rows containing missing values (geom_point).</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>df_all %&gt;% 
+  filter(type == &#39;null&#39;) %&gt;%
+  group_by(h2_y, method) %&gt;% mutate(p_exp = get_p_exp(pval_adj_trunc)) %&gt;%
+  ungroup() %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval_adj_trunc), color = method)) + 
+  geom_abline(intercept = 0, slope = 1) +
+  facet_wrap(~h2_y, labeller = label_both) + th2 +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5))</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>df_all %&gt;% 
+  filter(type == &#39;null&#39;) %&gt;%
+  group_by(h2_y, pve, method) %&gt;%
+  summarize(varz = var(z), varz_permz = var(z_adj_permz), varz_trunc = var(z_adj_trunc)) %&gt;%
+  ungroup() %&gt;%
+  reshape2::melt(id.var = c(&#39;h2_y&#39;, &#39;method&#39;, &#39;pve&#39;)) %&gt;%
+  ggplot() +
+    # geom_violin(aes(x = method, y = value, fill = variable), position = position_dodge(0.5)) +
+    geom_boxplot(aes(x = method, y = value, fill = variable), position = position_dodge(0.5), width = 0.2) + th +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;h2_y&#39;, &#39;pve&#39;. You can override using the `.groups` argument.</code></pre>
+<pre><code>## Warning: Removed 32 rows containing non-finite values (stat_boxplot).</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="under-the-alternative" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> Under the alternative</h1>
+<p>QQ-plot.</p>
+<pre class="r"><code>df_all %&gt;% 
+  filter(type == &#39;alt&#39;) %&gt;%
+  group_by(pve, h2, method) %&gt;% mutate(p_exp = get_p_exp(pval)) %&gt;%
+  ungroup() %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval), color = method)) + 
+  geom_abline(intercept = 0, slope = 1) +
+  facet_grid(h2~pve, labeller = label_both) + th2 +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5))</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<pre class="r"><code>df_all %&gt;% 
+  filter(type == &#39;alt&#39;) %&gt;%
+  group_by(pve, h2, method) %&gt;% mutate(p_exp = get_p_exp(pval_adj_permz)) %&gt;%
+  ungroup() %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval_adj_permz), color = method)) + 
+  geom_abline(intercept = 0, slope = 1) +
+  facet_grid(h2~pve, labeller = label_both) + th2 +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5))</code></pre>
+<pre><code>## Warning: Removed 32000 rows containing missing values (geom_point).</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>df_all %&gt;% 
+  filter(type == &#39;alt&#39;) %&gt;%
+  group_by(pve, h2, method) %&gt;% mutate(p_exp = get_p_exp(pval_adj_trunc)) %&gt;%
+  ungroup() %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval_adj_trunc), color = method)) + 
+  geom_abline(intercept = 0, slope = 1) +
+  facet_grid(h2~pve, labeller = label_both) + th2 +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5))</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>True effect size vs estimates</p>
+<p>For genetic correlation, under the model <span class="math display">\[\begin{aligned}
+  M &amp;= X B + E \\
+  Y &amp;= M \beta + e \\
+  B &amp;\sim_{iid} N(0, 1) \\
+  \beta &amp;\sim \pi_0\delta_0 + (1 - \pi_0) N(0, 1)
+\end{aligned}\]</span> We can re-write <span class="math inline">\(Y\)</span> as <span class="math display">\[\begin{aligned}
+  Y &amp;= M\beta + e \\
+  &amp;= (XB + E) \beta + e \\
+  &amp;= XB\beta + E\beta + e \\
+  &amp;= X \underbrace{B\beta}_{b} + \underbrace{E\beta + e}_{\epsilon}
+\end{aligned}\]</span> Let <span class="math inline">\(h^2\)</span> be the heritability of mediators and <span class="math inline">\(\pve\)</span> be the proportion of variation in <span class="math inline">\(Y\)</span> explained by mediators, then the heritability of <span class="math inline">\(Y\)</span> is <span class="math inline">\(\frac{h^2}{1 + \frac{1 - \pve}{\pve}} = h^2 \cdot \pve\)</span>.</p>
+<p>Let’s treat <span class="math inline">\(\beta\)</span> to be fixed since it is shared by all variants. But <span class="math inline">\(B\)</span> is treated as random since we will aggregate over genome-wide effects which should be close to handling it as random.</p>
+<p><span class="math display">\[\begin{aligned}
+  \cov(b, B_k) &amp;= \cov(B\beta, B_k) \\
+  &amp;= \cov(\sum_c B_c \beta_c, B_k) \\
+  &amp;= \beta_k \\
+  \var(b) &amp;= \var(B\beta) \\
+  &amp;= \sum_c \beta_c^2 \\
+  \var(B_k) &amp;= 1 \\
+  \cor(b, B_k) &amp;= \frac{\beta_k}{\sqrt{\sum_c \beta_c^2}} \\
+  &amp;\approx \frac{\beta_k}{\sqrt{m \cdot (1 - \pi_0)}}
+\end{aligned}\]</span> , where <span class="math inline">\(m\)</span> is the number of mediators.</p>
+<pre class="r"><code>df_all %&gt;% 
+  filter(type == &#39;alt&#39;) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = beta, y = eff, color = method)) + 
+  geom_abline(intercept = 0, slope = 1) + 
+  geom_abline(intercept = 0, slope = 1 / sqrt(200 * 0.1), linetype = 2) +
+  facet_wrap(~method) + th2</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>Power under Bonferroni</p>
+<pre class="r"><code>p_cutoff &lt;- 0.05
+df_all$true_signal &lt;- df_all$beta != 0
+df_all$true_signal[df_all$type == &#39;null&#39;] &lt;- FALSE
+df_sig &lt;- rbind(
+  df_all %&gt;% 
+    group_by(method, type, h2, pve, rand) %&gt;%
+    filter(pval_adj_permz &lt; p_cutoff / n()) %&gt;%
+    ungroup() %&gt;%
+    mutate(adj = &#39;perm_z&#39;),
+  df_all %&gt;% 
+    group_by(method, type, h2, pve, rand) %&gt;%
+    filter(pval &lt; p_cutoff / n()) %&gt;%
+    ungroup() %&gt;%
+    mutate(adj = &#39;raw_z&#39;),
+  df_all %&gt;% 
+    group_by(method, type, h2, pve, rand) %&gt;%
+    filter(pval_adj_trunc &lt; p_cutoff / n()) %&gt;%
+    ungroup() %&gt;%
+    mutate(adj = &#39;trunc_z&#39;)
+)
+df_sig %&gt;%
+  filter(type == &#39;null&#39;) %&gt;%
+  ggplot() + 
+  geom_bar(aes(x = true_signal, fill = method), position = &#39;dodge&#39;) +
+  facet_grid(.~adj, scales = &#39;free_y&#39;, labeller = label_both) + th2 +
+  ggtitle(&#39;False positives under the null&#39;)</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code>df_sig %&gt;%
+  filter(type == &#39;alt&#39;, true_signal) %&gt;%
+  ggplot() + 
+  geom_bar(aes(x = true_signal, fill = method), position = &#39;dodge&#39;) +
+  facet_grid(.~adj, scales = &#39;free_y&#39;, labeller = label_both) + th2 +
+  ggtitle(&#39;True positives under the alternative&#39;)</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-13-2.png" width="672" /></p>
+<pre class="r"><code>df_sig %&gt;%
+  filter(type == &#39;alt&#39;, !true_signal) %&gt;%
+  ggplot() + 
+  geom_bar(aes(x = true_signal, fill = method), position = &#39;dodge&#39;) +
+  facet_grid(.~adj, scales = &#39;free_y&#39;, labeller = label_both) + th2 +
+  ggtitle(&#39;False positives under the alternative&#39;)</code></pre>
+<p><img src="simulation_gw_permz-updated_lm_files/figure-html/unnamed-chunk-13-3.png" width="672" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,5 +1,57 @@
 # setwd('~/Documents/repo/github/ukb_idp_genetic_arch/misc_data/supplementary_materials_4th/')
 
+# functions for truncation based z-scores
+{
+  find_bounds <- function(x, func, step_size = 1.001) {
+    low <- x
+    if(func(low) > 0) {
+      message('something is wrong')
+      return(NA)
+    }
+    high <- low
+    while(func(high) <= 0) {
+      high <- high * step_size
+    }
+    return(c(low, high))
+  }
+  varz_from_truncated_zscore <- function(zscores, cutoff, n_min = 50, func = trunc_mom) {
+    c <- abs(cutoff)
+    z_trunc <- zscores[abs(zscores) < c]
+    if(length(z_trunc) < n_min) {
+      message(glue::glue('Too few weak observations, use the smallest {n_min} instead.'))
+      zz <- order(abs(zscores))[1:n_min]
+      z_trunc <- zscores[zz]
+    } else {
+      message(glue::glue('n_used = {length(z_trunc)}'))
+    }
+    return(func(z_trunc, c))
+  }
+  trunc_mom <- function(z_trunc, c) {
+    v <- var(z_trunc)
+    obj <- function(s) {
+      phi_c <- dnorm(c / s)
+      Phi_neg_c <- pnorm(-c / s)
+      s ^ 2 * (1 + - 2 * phi_c * c / s / (1 - 2 * Phi_neg_c)) - v
+    } 
+    bounds <- find_bounds(sqrt(v), obj)
+    # bounds <- c(sqrt(v), 100 * sqrt(v))
+    res <- uniroot(obj, bounds)$root
+    return(res ^ 2)
+  }
+  trunc_mle <- function(z_trunc, c) {
+    obj <- function(s) {
+      print(s)
+      Phi_neg_c <- pnorm(-c / s)
+      -0.5 * sum(z_trunc ^ 2 / s ^ 2) - log(s) - log(1 - 2 * Phi_neg_c)
+    }
+    dev <- function(s) {
+      Phi_neg_c <- pnorm(-c / s)
+      sum(z_trunc ^ 2 / s ^ 3) - 1 / s + 2 * c / s ^ 2 * (1 / sqrt(2 * pi) * exp(-0.5 * c ^ 2 / s ^ 2)) / (1 - 2 * Phi_neg_c)
+    }
+    optim(par = 1, fn = obj, gr = dev, control = list(fnscale = -1), method = 'Brent', lower = 1, upper = 1e4)
+  }
+}
+
 load_sbxcan = function(folder, trait_list) {
   idp_type = list(dMRI = 'dmri', T1 = 't1')
   models = list(ridge = 'ridge', EN = 'en')
@@ -100,7 +152,7 @@ source('../../rmd/rlib.R')
 source('../../rmd/rlib_calc.R')
 source('rlib.R')
 
-foldern = 's_bxcan_permz'
+foldern = 's_bxcan_trunc'
 dir.create(foldern)
 mydir <- '~/Documents/repo_backup/ukb_idp_genetic_arch/misc_data/supplementary_materials_4th'
 
@@ -118,7 +170,6 @@ gen_cor_mr_s = F
 gen_cor_check_mr = F
 plot_sig_mr = F
 save_df = F
-correction_factor_perm = 1.1
 
 not_psych = c('GIANT_2015_BMI_EUR', 'GIANT_2017_BMI_Active_EUR', 'GIANT_HEIGHT', 'UKB_50_Standing_height', 'UKB_21001_Body_mass_index_BMI')
 color_code = c('ridge' = 'blue', 'elastic net' = 'orange', 'rg' = 'pink')
@@ -140,11 +191,9 @@ for(cc in c('gtex_gwas', 'psychiatric')) {
 }
 df = do.call(rbind, df)
 df$model[df$model == 'EN'] = 'elastic net'
-df = df %>% mutate(idp_id = paste(IDP, model)) %>% mutate(zscore = p2z(pval, bhat)) %>%
-  mutate(z_adj_perm_null = z_adj_perm_null / correction_factor_perm) %>%
-  mutate(pval_adj_perm_null = z2p(z_adj_perm_null))
+df = df %>% mutate(idp_id = paste(IDP, model)) %>% mutate(zscore = p2z(pval, bhat))
 if(isTRUE(save_df_full)) {
-  saveRDS(df %>% select(-idp_id), paste0(foldern, '/dataframe_full.sbxcan_permz.rds'))
+  saveRDS(df %>% select(-idp_id), paste0(foldern, '/dataframe_full.sbxcan_trunc.rds'))
   # saveRDS(df_cor, paste0(foldern, '/dataframe_full.gencor.rds'))
 }
 df0 <- readRDS(paste0(mydir, '/s_bxcan/dataframe_full.sbxcan.rds'))
@@ -155,8 +204,13 @@ df <- left_join(df, df0 %>% select(IDP, model, phenotype, pip, cs95), by = c('ID
 # remove ProbTrack IDPs
 df = remove_probtrack_idp(df)
 df <- df %>% 
+  group_by(model, phenotype) %>%
+  mutate(z_adj_trunc = z_brainxcan / sqrt(varz_from_truncated_zscore(z_brainxcan, 2))) %>%
+  ungroup() %>%
+  mutate(pval_adj_trunc = z2p(z_adj_trunc)) %>%
   rename(pval_raw = pval, zscore_raw = zscore, idp_type = modality) %>%
-  rename(pval = pval_adj_perm_null, zscore = z_adj_perm_null)
+  rename(pval = pval_adj_trunc, zscore = z_adj_trunc)
+  
 
 idp_sig = read.table(paste0(mydir, '/supp_table_2.tsv'), header = T, sep = '\t')
 idp_sig = idp_sig %>% filter(is_kept) %>% mutate(idp_id = paste(IDP, model_name))
@@ -339,7 +393,13 @@ if(isTRUE(gen_cor_s)) {
   }
   df_cor = remove_probtrack_idp(df_cor)
   df_cor = df_cor %>% mutate(id = paste(phenotype, IDP, idp_type)) %>% 
-    filter(id %in% (df %>% mutate(id = paste(phenotype, IDP, idp_type)) %>% pull(id)))
+    filter(id %in% (df %>% mutate(id = paste(phenotype, IDP, idp_type)) %>% pull(id))) %>%
+    group_by(phenotype) %>%
+    mutate(z_adj_trunc = zscore / sqrt(varz_from_truncated_zscore(zscore, 2))) %>%
+    ungroup() %>%
+    mutate(pval_adj_trunc = z2p(z_adj_trunc)) %>%
+    rename(pval_raw = pval, zscore_raw = zscore) %>%
+    rename(pval = pval_adj_trunc, zscore = z_adj_trunc)
   df_cor_all = df_cor %>% left_join(df_gwas %>% select(phenotype_id, folder), by = c('phenotype' = 'phenotype_id'))
   # df_cor = left_join(df %>% select(IDP, idp_type, phenotype), df_cor, by = c('IDP', 'phenotype', 'idp_type'))
   

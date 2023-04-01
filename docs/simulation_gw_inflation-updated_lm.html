@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Simulation study (genome-wide) – Estimating inflation</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">UKB IDP Genetic Architecture</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Analysis</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/liangyy/ukb_idp_genetic_arch">
+    <span class="fas fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Simulation study (genome-wide) – Estimating inflation</h1>
+<h4 class="date">12 February, 2023</h4>
+
+</div>
+
+
+<pre class="r"><code>rm(list = ls())
+library(arrow)
+library(ggplot2)
+theme_set(theme_bw(base_size = 15))
+source(&#39;https://gist.githubusercontent.com/liangyy/43912b3ecab5d10c89f9d4b2669871c9/raw/3ca651cfa53ffccb8422f432561138a46e93710f/my_ggplot_theme.R&#39;)
+source(&#39;https://gist.githubusercontent.com/liangyy/489d1519dd45246caf4756d7722bfa25/raw/008367adbab79c217b92e27e26a099e6e1875f41/fast_linear_regression&#39;)
+library(dplyr)
+options(stringsAsFactors = F)
+library(patchwork)
+library(data.table)
+options(datatable.fread.datatable = F)
+source(&#39;rlib.R&#39;)</code></pre>
+<p><span class="math display">\[
+\newcommand{\cov}{\text{Cov}}
+\newcommand{\var}{\text{Var}}
+\newcommand{\cor}{\text{Cor}}
+\newcommand{\pve}{\text{PVE}}
+\]</span></p>
+<div id="about" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> About</h1>
+<p>See details and scripts at <code>submission/simulation/</code>. I re-use the same simulated data as <code>simulation_gw.Rmd</code>. But here, I focus on inflation under the null. For method <code>ideal</code>, I also vary the sample size. For other <code>bxcan</code> approach, the sample size is fixed (1,4409) by the design of the previous simulation study.</p>
+<p>Estimating inflation:</p>
+<ul>
+<li>A theoretical estimate <a href="https://hakyimlab.github.io/yanyu-notebook/docs/date_111521.html">here</a></li>
+<li>An truncated z-score based approach:
+<ol style="list-style-type: decimal">
+<li>Keep z-scores whose absolute value is smaller than <span class="math inline">\(c\)</span></li>
+<li>Calculate the variance <span class="math inline">\(v\)</span> of these z-scores from step 1</li>
+<li>The variance of z-score is estimated as</li>
+</ol></li>
+</ul>
+<p><span class="math display">\[\begin{aligned}
+  \var(z) &amp;= \sigma^2 \\
+  \text{Find $\sigma^2$ such that} &amp; \\
+  v &amp;= \sigma^2 (1 + \frac{-2 \phi(\frac{c}{\sigma})}{1 - 2 \Phi(-\frac{c}{\sigma})}) \\
+  \Phi(x) &amp;= \Pr(Z \le x) \\
+  \phi(x) &amp;= \frac{1}{\sqrt{2 \pi}}\exp(-\frac{1}{2}x^2)
+\end{aligned}\]</span></p>
+</div>
+<div id="results" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Results</h1>
+<pre class="r"><code>load_bxcan &lt;- function(fn) {
+  kk &lt;- read.csv(fn)
+  return(kk[, 1:3])
+}
+get_n &lt;- function(s, n, func = as.numeric) {
+  return(unlist(lapply(strsplit(s, &#39;_&#39;), function(x) {func(x[n])})))
+}
+get_h2 &lt;- function(s) {
+  return(get_n(s, 4))
+}
+get_m &lt;- function(s) {
+  return(paste0(&#39;m_&#39;, get_n(s, 2)))
+}
+get_z &lt;- function(pval, eff) {
+  - qnorm(pval / 2) * sign(eff)
+}</code></pre>
+<p>Load S-BrainXcan and LDSC based genetic correlation results.</p>
+<pre class="r"><code>twas_sample_size &lt;- 14409
+h2s &lt;- c(0.3, 0.5, 0.7, 0.9)
+pves &lt;- c(0.3, 0.5, 0.7, 0.9)
+types &lt;- c(&#39;null&#39;, &#39;alt&#39;)
+rands &lt;- 1 : 5
+datadir &lt;- &#39;/Users/yanyuluchicago/Desktop/tmp/ukb_idp/simulation&#39;
+df &lt;- list()
+for(h2 in h2s) {
+  for(pve in pves) {
+    for(type in types) {
+      for(rand in rands) {
+        fn_b &lt;- glue::glue(&#39;{datadir}/bxcan/param1.group_group1.rand_{rand}.ridge_x_rand_{rand}.oy.{type}_h2_{h2}_pve_{pve}_x_simagexcan.csv&#39;)
+        fn_b_1000 &lt;- glue::glue(&#39;{datadir}/bxcan_1000/param1.group_group1.rand_{rand}.ridge_x_rand_{rand}.oy.{type}_h2_{h2}_pve_{pve}_x_simagexcan.csv&#39;)
+        fn_g &lt;- glue::glue(&#39;{datadir}/gen_cor/group1.rand_{rand}_x_group2_x_rand_{rand}.oy.{type}_h2_{h2}_pve_{pve}.ldsc_rg.log&#39;)
+        kk_b &lt;- load_bxcan(fn_b)
+        kk_b_1000 &lt;- load_bxcan(fn_b_1000)
+        kk_g &lt;- load_ldsc_rg(fn_g)
+        kk_b &lt;- kk_b %&gt;% 
+          filter(get_h2(IDP) == h2) %&gt;% 
+          mutate(m = get_m(IDP)) %&gt;% 
+          rename(eff = bhat) %&gt;%
+          select(m, eff, pval)
+        kk_b_1000 &lt;- kk_b_1000 %&gt;% 
+          filter(get_h2(IDP) == h2) %&gt;% 
+          mutate(m = get_m(IDP)) %&gt;% 
+          rename(eff = bhat) %&gt;%
+          select(m, eff, pval)
+        kk_g &lt;- kk_g %&gt;% 
+          filter(get_h2(p2) == h2) %&gt;% 
+          mutate(m = get_m(p2)) %&gt;%  
+          rename(pval = p, eff = rg) %&gt;%
+          select(m, eff, pval)
+        kk &lt;- rbind(
+          kk_b %&gt;% mutate(method = &#39;bxcan&#39;), 
+          kk_g %&gt;% mutate(method = &#39;gencor&#39;), 
+          kk_b_1000 %&gt;% mutate(method = &#39;bxcan_1000&#39;))
+        df[[length(df) + 1]] &lt;- kk %&gt;% mutate(h2 = h2, pve = pve, type = type, rand = rand)
+      }
+    }
+  }
+}
+df &lt;- do.call(rbind, df)
+df$twas_sample_size &lt;- twas_sample_size
+
+df_eff &lt;- list()
+for(rand in rands) {
+  fn &lt;- glue::glue(&#39;{datadir}/simulate_phenotypes/param1.rand_{rand}.mediator_effect.parquet&#39;)
+  kk &lt;- read_parquet(fn)
+  kk$mediator &lt;- as.numeric(kk$mediator)
+  df_eff[[length(df_eff) + 1]] &lt;- kk %&gt;%
+    mutate(rand = rand) %&gt;% 
+    rename(m = mediator) %&gt;%
+    mutate(m = paste0(&#39;m_&#39;, m))
+}
+df_eff &lt;- do.call(rbind, df_eff)
+
+df &lt;- left_join(df, df_eff, by = c(&#39;m&#39;, &#39;rand&#39;))</code></pre>
+<p>Run the BrainXcan results under the ideal case (associating the true genetic component of a mediator and the phenotype).</p>
+<pre class="r"><code>twas_ns &lt;- c(1000, 5000, 10000, 14409)
+df_ideal &lt;- list()
+for(rand in rands) {
+  df_gmed &lt;- read_parquet(glue::glue(&#39;{datadir}/simulate_phenotypes/param1.group_group2.rand_{rand}.gmed.parquet&#39;))
+  df_yobs &lt;- read_parquet(glue::glue(&#39;{datadir}/simulate_phenotypes/param1.group_group2.rand_{rand}.oy.parquet&#39;))
+  df_indiv &lt;- df_gmed[, 1, drop = FALSE]
+  df_yobs &lt;- left_join(df_indiv, df_yobs, by = &#39;individual&#39;)
+  fast_lm_on_ys &lt;- function(ymat, xmat) {
+    res &lt;- list()
+    for(i in 1 : ncol(ymat)) {
+      y &lt;- ymat[, i]
+      tmp &lt;- fast_linear_regression(y, xmat, matrix(1, nrow = length(y), ncol = 1))
+      res[[length(res) + 1]] &lt;- data.frame(
+        y = colnames(ymat)[i], 
+        x = names(tmp$bhat),
+        bhat = tmp$bhat,
+        pval = tmp$pval)
+    }
+    res &lt;- do.call(rbind, res)
+    rownames(res) &lt;- NULL
+    return(res)
+  }
+  for(twas_n in twas_ns) {
+    idx &lt;- sort(sample(1 : twas_sample_size, twas_n))
+    res &lt;- fast_lm_on_ys(
+    df_yobs[idx, -1] %&gt;% as.matrix(), 
+    df_gmed[idx, -1] %&gt;% as.matrix())
+    res &lt;- res %&gt;% mutate(
+      h2 = get_n(y, 3), 
+      pve = get_n(y, 5),
+      type = get_n(y, 1, as.character))
+    df_ideal[[length(df_ideal) + 1]] &lt;- res %&gt;% mutate(rand = rand, twas_sample_size = twas_n)
+  }
+}
+df_ideal &lt;- do.call(rbind, df_ideal)
+df_all &lt;- rbind(
+  df_ideal %&gt;% 
+    mutate(method = &#39;ideal&#39;) %&gt;% 
+    rename(eff = bhat, m = x) %&gt;%
+    select(m, eff, pval, method, h2, pve, type, rand, twas_sample_size) %&gt;% 
+    left_join(df_eff, by = c(&#39;m&#39;, &#39;rand&#39;)),
+  df)
+df_all$h2_pheno &lt;- df_all$pve * df_all$h2
+# min_p &lt;- 1e-50
+# df_all$pval[df_all$pval &lt; min_p] &lt;- min_p
+# df_all$pval[df_all$pval &gt; 1 - min_p] &lt;- 1 - min_p
+df_all &lt;- df_all %&gt;%
+  mutate(z = get_z(pval, eff)) %&gt;%
+  group_by(method, type, rand, h2) %&gt;%
+  mutate(p_exp = rank(pval, ties.method = &#39;random&#39;) / (n() + 1)) %&gt;%
+  ungroup()</code></pre>
+<p>Loading the inflation factor from LD</p>
+<pre class="r"><code>df_ld_inflat &lt;- list()
+types &lt;- c(&#39;cov&#39;, &#39;cor&#39;)
+modes &lt;- c(&#39;banded_200&#39;, &#39;banded_1000&#39;, &#39;naive&#39;)
+intermediate_factor &lt;- 1000
+for(t in types) {
+  for(m in modes) {
+    fn &lt;- glue::glue(&#39;{datadir}/calc_inflation/{m}_{t}.tsv&#39;)
+    tmp &lt;- read.table(fn, header = T)
+    TrR &lt;- sum(tmp$TrR / intermediate_factor)
+    TrRtR &lt;- sum(tmp$TrRtR / intermediate_factor ^ 2)
+    ld_factor &lt;- TrRtR / TrR ^ 2 
+    df_ld_inflat[[length(df_ld_inflat) + 1]] &lt;- data.frame(type = t, mode = m, ld_factor = ld_factor)
+  }
+}
+df_ld_inflat &lt;- do.call(rbind, df_ld_inflat)</code></pre>
+</div>
+<div id="theoretical-variance-of-z-score-under-the-null" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Theoretical variance of z-score under the null</h1>
+<pre class="r"><code>est_slope &lt;- function(x, y) {
+  x0 &lt;- x - 1
+  y0 &lt;- y - 1
+  mod &lt;- lm(y0 ~ x0 - 1)
+  mod_sum &lt;- summary(mod)
+  return(data.frame(slope = mod_sum$coefficients[1, 1]))
+}
+df_emp_varz &lt;- df_all %&gt;% 
+  filter(type == &#39;null&#39;, method == &#39;ideal&#39;) %&gt;%
+  group_by(h2, h2_pheno, twas_sample_size, method) %&gt;% 
+  summarize(emp_varz = var(z), nrepeat = n()) %&gt;% 
+  ungroup()</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;h2&#39;, &#39;h2_pheno&#39;, &#39;twas_sample_size&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>tmp &lt;- merge(df_emp_varz, df_ld_inflat) %&gt;% mutate(theo_varz = 1 + h2_pheno * twas_sample_size * ld_factor)
+
+tmp_slope &lt;- tmp %&gt;% group_by(mode, type) %&gt;% 
+  do(est_slope(.$emp_varz, .$theo_varz))
+
+tmp %&gt;% ggplot() + 
+  geom_point(aes(
+    x = emp_varz, y = theo_varz, 
+    color = mode, shape = factor(twas_sample_size))) + 
+  facet_wrap(~type) +
+  geom_abline(slope = 1, intercept = 0) + th2 +
+  geom_abline(
+    data = tmp_slope, 
+    aes(slope = slope, intercept = 1 - slope,
+        color = mode))</code></pre>
+<p><img src="simulation_gw_inflation-updated_lm_files/figure-html/unnamed-chunk-5-1.png" width="1152" /></p>
+<pre class="r"><code>tmp_slope %&gt;% pander::pander()</code></pre>
+<table style="width:42%;">
+<colgroup>
+<col width="19%" />
+<col width="9%" />
+<col width="12%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">mode</th>
+<th align="center">type</th>
+<th align="center">slope</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">banded_1000</td>
+<td align="center">cor</td>
+<td align="center">0.3058</td>
+</tr>
+<tr class="even">
+<td align="center">banded_1000</td>
+<td align="center">cov</td>
+<td align="center">0.3937</td>
+</tr>
+<tr class="odd">
+<td align="center">banded_200</td>
+<td align="center">cor</td>
+<td align="center">0.284</td>
+</tr>
+<tr class="even">
+<td align="center">banded_200</td>
+<td align="center">cov</td>
+<td align="center">0.3691</td>
+</tr>
+<tr class="odd">
+<td align="center">naive</td>
+<td align="center">cor</td>
+<td align="center">0.3952</td>
+</tr>
+<tr class="even">
+<td align="center">naive</td>
+<td align="center">cov</td>
+<td align="center">0.4844</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="an-estimate-of-z-score-variance-from-truncated-z-scores" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> An estimate of z-score variance from truncated z-scores</h1>
+<pre class="r"><code>find_bounds &lt;- function(x, func, step_size = 1.001) {
+  low &lt;- x
+  if(func(low) &gt; 0) {
+    message(&#39;something is wrong&#39;)
+    return(NA)
+  }
+  high &lt;- low
+  while(func(high) &lt;= 0) {
+    high &lt;- high * step_size
+  }
+  return(c(low, high))
+}
+varz_from_truncated_zscore &lt;- function(zscores, cutoff) {
+  c &lt;- abs(cutoff)
+  z_trunc &lt;- zscores[abs(zscores) &lt; c]
+  if(length(z_trunc) &lt; 50) {
+    message(&#39;Too few weak observations&#39;)
+    return(NA)
+  }
+  v &lt;- var(z_trunc)
+  obj &lt;- function(s) {
+    phi_c &lt;- dnorm(c / s)
+    Phi_neg_c &lt;- pnorm(-c / s)
+    s ^ 2 * (1 + - 2 * phi_c * c / s / (1 - 2 * Phi_neg_c)) - v
+  } 
+  bounds &lt;- find_bounds(sqrt(v), obj)
+  # bounds &lt;- c(sqrt(v), 100 * sqrt(v))
+  res &lt;- uniroot(obj, bounds)$root
+  return(res ^ 2)
+}</code></pre>
+<p>Use truncation cutoff = 6.</p>
+<pre class="r"><code>df_trunc_varz &lt;- df_all %&gt;% 
+  group_by(h2, h2_pheno, twas_sample_size, method, type) %&gt;% 
+  summarize(
+    trunc_varz = varz_from_truncated_zscore(z, cutoff = 6), 
+    emp_varz = var(z), nrepeat = n()) %&gt;% 
+  ungroup()</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;h2&#39;, &#39;h2_pheno&#39;, &#39;twas_sample_size&#39;, &#39;method&#39;. You can override using the `.groups`
+## argument.</code></pre>
+<p>Compare empirical z-score variance versus the one estimated from z-score truncation. Limit to <code>ideal</code> under the null.</p>
+<pre class="r"><code>df_trunc_varz %&gt;% 
+  filter(method == &#39;ideal&#39;, type == &#39;null&#39;) %&gt;% 
+  ggplot() + 
+  geom_point(aes(x = emp_varz, y = trunc_varz)) + 
+  geom_abline(slope = 1, intercept = 0) + 
+  facet_wrap(~twas_sample_size) + th2</code></pre>
+<p><img src="simulation_gw_inflation-updated_lm_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Adjust z-score by dividing z-score by the squared root of z-score variance estimated via z-score truncation.</p>
+<pre class="r"><code>df_trunc_varz$trunc_varz_min1 &lt;- pmax(df_trunc_varz$trunc_varz, 1)
+df_trunc_varz$trunc_varz_min1[df_trunc_varz$method == &#39;gencor&#39;] &lt;- 1
+df_adj &lt;- left_join(
+  df_all, df_trunc_varz, 
+  by = c(&#39;h2&#39;, &#39;h2_pheno&#39;, &#39;twas_sample_size&#39;, &#39;method&#39;, &#39;type&#39;)) 
+df_adj &lt;- df_adj %&gt;% mutate(z_adj = z / sqrt(trunc_varz_min1)) %&gt;% 
+  mutate(p_adj = 2 * exp(pnorm(abs(z_adj), lower.tail = F, log.p = T)))
+min_p &lt;- 1e-50
+df_adj$pval[df_adj$pval &lt; min_p] &lt;- min_p 
+df_adj$pval[df_adj$pval &gt; 1 - min_p] &lt;- 1 - min_p
+df_adj$p_adj[df_adj$p_adj &lt; min_p] &lt;- min_p 
+df_adj$p_adj[df_adj$p_adj &gt; 1 - min_p] &lt;- 1 - min_p
+df_adj &lt;- df_adj %&gt;% 
+  # group_by(h2, h2_pheno, twas_sample_size, method, type) %&gt;%
+  group_by(method, type) %&gt;%
+  mutate(
+    p_adj_exp = rank(p_adj, ties.method = &#39;random&#39;) / (n() + 1),
+    p_exp = rank(pval, ties.method = &#39;random&#39;) / (n() + 1)) %&gt;% 
+  ungroup()
+p1 &lt;- df_adj %&gt;% 
+  filter(type == &#39;null&#39;) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval), color = method)) +
+  geom_abline(slope = 1, intercept = 0) + th +
+  ggtitle(&#39;Under the null w/o adjustment&#39;) +
+  theme(legend.position = &#39;bottom&#39;)
+p2 &lt;- df_adj %&gt;% 
+  filter(type == &#39;null&#39;) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_adj_exp), y = -log10(p_adj), color = method)) +
+  geom_abline(slope = 1, intercept = 0) + th +
+  ggtitle(&#39;Under the null w/ adjustment&#39;) +
+  theme(legend.position = &#39;bottom&#39;)
+p1 + p2</code></pre>
+<p><img src="simulation_gw_inflation-updated_lm_files/figure-html/unnamed-chunk-9-1.png" width="768" /></p>
+<pre class="r"><code>p1 &lt;- df_adj %&gt;% 
+  filter(type == &#39;alt&#39;) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_exp), y = -log10(pval), color = method)) +
+  geom_abline(slope = 1, intercept = 0) + th +
+  ggtitle(&#39;Under the alternative w/o adjustment&#39;) +
+  theme(legend.position = &#39;bottom&#39;)
+p2 &lt;- df_adj %&gt;% 
+  filter(type == &#39;alt&#39;) %&gt;%
+  ggplot() + 
+  geom_point(aes(x = -log10(p_adj_exp), y = -log10(p_adj), color = method)) +
+  geom_abline(slope = 1, intercept = 0) + th +
+  ggtitle(&#39;Under the alternative w/ adjustment&#39;) +
+  theme(legend.position = &#39;bottom&#39;)
+p1 + p2</code></pre>
+<p><img src="simulation_gw_inflation-updated_lm_files/figure-html/unnamed-chunk-10-1.png" width="768" /></p>
+<p>Power under Bonferroni</p>
+<pre class="r"><code>p_cutoff &lt;- 0.05
+df_adj$true_signal &lt;- df_adj$beta != 0
+df_adj$true_signal[df_adj$method == &#39;null&#39;] &lt;- FALSE
+p1 &lt;- df_adj %&gt;% 
+  filter(twas_sample_size == 14409) %&gt;% 
+  group_by(method, type) %&gt;%
+  filter(pval &lt; p_cutoff / n()) %&gt;%
+  ggplot() + 
+  geom_bar(aes(x = true_signal, fill = method), position = &#39;dodge&#39;) +
+  facet_wrap(~type, scales = &#39;free_y&#39;, labeller = label_both) + th2 +
+  ggtitle(&#39;Number of signals under Bonferroni alpha = 0.05&#39;) +
+  geom_text(stat=&#39;count&#39;, aes(x = true_signal, label=..count.., group = method), position = position_dodge(1))
+p2 &lt;- df_adj %&gt;% 
+  filter(twas_sample_size == 14409) %&gt;%
+  group_by(method, type) %&gt;%
+  filter(p_adj &lt; p_cutoff / n()) %&gt;%
+  ggplot() + 
+  geom_bar(aes(x = true_signal, fill = method), position = &#39;dodge&#39;) +
+  facet_wrap(~type, scales = &#39;free_y&#39;, labeller = label_both) + th2 +
+  ggtitle(&#39;Number of signals under Bonferroni alpha = 0.05&#39;) +
+  geom_text(stat=&#39;count&#39;, aes(x = true_signal, label=..count.., group = method), position = position_dodge(1))
+p1 / p2</code></pre>
+<p><img src="simulation_gw_inflation-updated_lm_files/figure-html/unnamed-chunk-11-1.png" width="768" /></p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

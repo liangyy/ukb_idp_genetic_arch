@@ -1,0 +1,205 @@
+---
+output:
+  html_document: 
+    self_contained: yes
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    number_sections: true
+    theme: cosmo
+params:
+  phenotype_name: "phenotype of interest"
+  color_code_yaml: NA
+  input_prefix: NA
+  rlib: NA
+  ntop: 10
+  bxcan_pval_col: 'pval'
+title: "`r paste0('BrainXcan results for ', params$phenotype_name)`"
+---
+
+
+```{r setup, include=FALSE}
+suppressMessages(library(dplyr))
+suppressMessages(library(ggplot2))
+suppressMessages(library(pander))
+options(stringsAsFactors = FALSE)
+theme_set(theme_classic(base_size = 12))
+panderOptions('table.split.table', Inf)
+source('/Users/yanyuluchicago/Documents/repo/GitHub/brainxcan/brainxcan/vis/report_helper.R')
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r parameters}
+input_prefix = '/Users/yanyuluchicago/Desktop/tmp/ukb_idp/brainxcan_pipeline/psychiatric_permz/SCZ_PGC_2020'
+# meta_file = params$meta_file
+color_code_yaml = '/Users/yanyuluchicago/Desktop/tmp/ukb_idp/brainxcan_data/bxcan_vis/report_color_code.yaml'
+phenotype_name = 'SCZ_PGC_2020'
+# ntop = params$ntop
+bxcan_pval_col = 'pval_adj_perm_null'
+pval_col_to_name = list(
+  pval = 'raw p-values from BrainXcan',
+  pval_adj_emp_null = 'adjusted p-values based on simulated weights',
+  pval_adj_permz_null = 'adjusted p-values based on permuted weights'
+)
+outdir = 'new_plots_for_revision'
+dir.create(outdir)
+```
+
+```{r load_meta}
+# gannot = read.csv(meta_file)
+color_map = load_color_code_yaml(color_code_yaml)
+```
+
+```{r load_results}
+bxcan_file = paste0(input_prefix, '.sbrainxcan.csv')
+sbxcan = read.csv(bxcan_file) %>% mutate(zscore = abs( qnorm(!!sym(bxcan_pval_col)/2) ) * sign(bhat))
+allxcan = sbxcan
+```
+
+```{r subset_to_idp_main_results}
+allxcan_annot = allxcan # %>% left_join(gannot %>% select(-t1_or_dmri), by = "IDP") 
+  
+## PC's should have region==PC
+ind = substr(allxcan_annot$IDP, 1, 2) == "PC"
+allxcan_annot$region[ind] = allxcan$IDP[ind]
+## set subtype of PCs as subtype
+ind = substr(allxcan_annot$IDP, 1, 2) == "PC"
+allxcan_annot$subtype[ind] = allxcan$IDP[ind]
+
+## limit to IDP main results: T1 and TBSS-based dMRI
+xcandf = allxcan_annot %>% filter(subtype %in% names(color_map)) %>% rename(side = left_or_right)
+```
+
+
+# BrainXcan results 
+
+In this analysis, we tested `r nrow(allxcan)` structural and diffusion MRI-derived phenotypes with cross validated spearman correlation >= `r signif(min(allxcan$CV_Spearman), digits = 3)`.
+
+```{r, bonforroni_cutoffs}
+## define number of total tests per phenotype to be used for bonferroni correction
+n_pred_idps = length(unique(xcandf$IDP))
+p_thres = 0.05 / n_pred_idps
+z_thres = abs(qnorm(p_thres / 2))
+```
+
+For the main analysis we focused on `r n_pred_idps` IDPs, which include `r sum(xcandf$subtype == 'Gray-Cortical')` cortical volumes, `r sum(xcandf$subtype == 'Subcortical')` sub-cortical volumes, `r sum(xcandf$subtype == 'Gray-Subcortical')` sub-cortical gray matter volumes.
+In below, we show the overall number of IDP by IDP subtype in the main results.
+
+```{r, show_count}
+xcandf %>% count(subtype) %>% pander::pander()
+```
+
+The p-value being used is `r message(pval_col_to_name[[bxcan_pval_col]])`.
+
+Among `r n_pred_idps` IDPs (`r sum(xcandf$modality=="T1")` T1 and `r sum(xcandf$modality=="dMRI")` diffusion MRI, including the subtype-specific PCs), `r sum(xcandf[[bxcan_pval_col]] < p_thres)` were significantly associated with `r phenotype_name` (pval < $`r signif(p_thres, 3)`$ = 0.05 / `r n_pred_idps`). 
+
+```{r, vis_t1, fig.height=7, fig.width=8}
+idp_type = 'T1'
+pp = plot_bxcan_ordered(xcandf %>% filter(modality == idp_type), color_map, z_thres)
+pp + ggtitle(paste0(phenotype_name, ' - ', idp_type))
+# ggsave(paste0(out_prefix, '.brainxcan_zscore.', idp_type, '.png'), pp, height = 6, width = 8)
+```
+
+
+```{r, vis_dmri, fig.height=6, fig.width=8}
+idp_type = 'dMRI'
+pp = plot_bxcan_ordered(xcandf %>% filter(modality == idp_type), color_map, z_thres)
+pp + ggtitle(paste0(phenotype_name, ' - ', idp_type))
+# ggsave(paste0(out_prefix, '.brainxcan_zscore.', idp_type, '.png'), pp, height = 6, width = 8)
+```
+
+# Try heatmap
+
+```{r}
+plot_bxcan_ordered_heatmap <- function(xcandf0, color_map, z_thres) {
+  shape_map = gen_shape_map()
+  tmp = xcandf0 %>% mutate(lr = as.character(side))
+  tmp$lr[is.na(tmp$lr)] = 'NA'
+  lr2 <- paste0('-', tmp$lr)
+  lr2[lr2 == '-NA'] <- ''
+  region2 <- tmp$region
+  region2[substr(region2, 1, 2) == 'PC'] <- 'PC'
+  region2 <- paste0(region2, lr2)
+  subtype2 <- tmp$subtype
+  pcs <- subtype2[substr(subtype2, 1, 2) == 'PC'] 
+  pcs <- unlist(lapply(strsplit(pcs, '-'), function(x) x[2]))
+  subtype2[substr(subtype2, 1, 2) == 'PC'] <- pcs
+  tmp = tmp %>%
+    mutate(region2 = region2, subtype2 = subtype2) %>%
+    mutate(kk = reorder(region2, zscore ^ 2, FUN = max))
+  tmp2 <- tmp %>% filter(abs(zscore) > z_thres)
+  pp = tmp %>%  
+    ggplot() + 
+    geom_tile(aes(x = kk, y = subtype2, fill = zscore)) +
+    geom_text(data = tmp2, aes(x = kk, y = subtype2, label = "*"), color = 'white', size = 4) + 
+    coord_flip() +
+    ylab('BrainXcan z-score') + 
+    theme(axis.title.y = element_blank()) + 
+    theme(legend.title = element_blank()) +
+    scale_fill_gradient2(low = 'blue', mid = 'white', high = 'red', midpoint = 0, na.value = 'gray')
+  pp
+}
+```
+
+```{r, vis_t12, fig.height=7, fig.width=6}
+idp_type = 'T1'
+pp = plot_bxcan_ordered_heatmap(xcandf %>% filter(modality == idp_type), color_map, z_thres)
+pp = pp + ggtitle(paste0(phenotype_name, ' - ', idp_type)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(glue::glue('{outdir}/{phenotype_name}.{idp_type}.png'), width = 6, height = 14)
+# ggsave(paste0(out_prefix, '.brainxcan_zscore.', idp_type, '.png'), pp, height = 6, width = 8)
+```
+```{r, vis_dmri2, fig.height=12, fig.width=4}
+idp_type = 'dMRI'
+pp = plot_bxcan_ordered_heatmap(xcandf %>% filter(modality == idp_type), color_map, z_thres)
+pp = pp + ggtitle(paste0(phenotype_name, ' - ', idp_type))
+ggsave(glue::glue('{outdir}/{phenotype_name}.{idp_type}.png'), width = 6, height = 12)
+# ggsave(paste0(out_prefix, '.brainxcan_zscore.', idp_type, '.png'), pp, height = 6, width = 8)
+```
+
+# Increase color scale
+
+```{r}
+srcpath = '/Users/yanyuluchicago/Documents/repo/GitHub/brainxcan/brainxcan/vis'
+source(paste0(srcpath, '/', 'vis_helper.R'))
+
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(oro.nifti)
+theme_set(theme_classic(base_size = 12))
+options(stringsAsFactors = F)
+
+opt <- list(
+  datadir = '/Users/yanyuluchicago/Desktop/tmp/ukb_idp/brainxcan_data/bxcan_vis',
+  pval_col = 'pval_adj_perm_null',
+  brainxcan = '/Users/yanyuluchicago/Desktop/tmp/ukb_idp/brainxcan_pipeline/psychiatric_permz/SCZ_PGC_2020.sbrainxcan.csv',
+  output_prefix = glue::glue('{outdir}/updated.{phenotype_name}')
+)
+
+meta_list = readRDS(paste0(opt$datadir, '/meta_plot.rds'))
+tags = names(meta_list)
+
+message(paste0('Loading BrainXcan results. pval_col = ', opt$pval_col))
+df = read.csv(opt$brainxcan) %>% mutate(zscore = p2z(!!sym(opt$pval_col), bhat))
+
+message('Plotting for all tags.')
+p = list(T1 = list(), dMRI = list()) 
+h = list(T1 = c(), dMRI = c())
+for(tag in tags) {
+  message(paste0('Tag = ', tag))
+  idp_type = meta_list[[tag]]$type
+  ptmp = vis_by_tag(opt$datadir, tag, df, 'zscore')
+  ptmp = add_title(ptmp, meta_list[[tag]]$full_name, size = 20, hjust = 0.2)
+  p[[idp_type]][[length(p[[idp_type]]) + 1]] = ptmp
+  h[[idp_type]] = c(h[[idp_type]], ceiling(length(unique(ptmp$data$direction)) / 3))
+}
+for(kk in names(p)) {
+  npp = length(p[[kk]])
+  if(npp > 0) {
+    pp = wrap_plots(p[[kk]], ncol = 1, nrow = npp, heights = h[[kk]])
+    ggsave(paste0(opt$output_prefix, '.', kk, '.pdf'), pp, height = 3 * sum(h[[kk]]), width = 10)
+  }
+}
+```

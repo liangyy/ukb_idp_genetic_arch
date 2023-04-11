@@ -19,7 +19,7 @@ position: 'position'
 
 # model_type: 'ridge'
 idp_type: 'residual'
-signif_pval: 1e-4
+signif_pval: 0.01
 signif_max_idps: 20
 # ld_clump_yaml: '{datadir}/mr/ld_clump.yaml'
      

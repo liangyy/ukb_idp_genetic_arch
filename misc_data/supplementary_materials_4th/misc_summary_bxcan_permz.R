@@ -42,12 +42,21 @@ df_all = rbind(
   kk3
 )
 
-# significance criteria: per phenotype, p < 0.05 under Bonferroni-correction
+# DEPRECATED: significance criteria: per phenotype, p < 0.05 under Bonferroni-correction
+# NEW: signficance criteria: per phenotype, qvalue < 0.05
 alpha = 0.05
 
 # set p adjusted
 df_all %>% group_by(phenotype, source, model) %>% summarise(ntest = n()) %>% ggplot() + geom_point(aes(x = phenotype, y = ntest)) + facet_grid(source ~ model)
-df_all = df_all %>% group_by(phenotype, source, model) %>% mutate(p_adj = pval * n()) %>% ungroup()
+get_qvalue <- function(pval) {
+  maxp <- max(pval)
+  lambda.seq <- seq(0.05, 0.95, 0.05)
+  if(maxp < 0.95) {
+    lambda.seq <- lambda.seq[lambda.seq <= maxp]
+  }
+  return(qvalue::qvalue(pval, lambda = lambda.seq)$qvalues)
+}
+df_all = df_all %>% group_by(phenotype, source, model) %>% mutate(p_adj = get_qvalue(pval)) %>% ungroup()
 
 idp_signif = df_all %>% filter(model == 'ridge', p_adj < alpha) %>% pull(IDP)
 message(length(unique(idp_signif)), ' out of ', length(unique(df_all$IDP)), ' IDPs are significant in at least on phenotype.')
@@ -81,7 +90,7 @@ df_scz %>% group_by(model) %>% summarize(ntest = n())
 df_scz_sub %>% group_by(model) %>% summarize(ntest = n())
 # df_scz_sub = df_scz_sub %>% left_join(annot, by = 'IDP')
 df_scz_sub %>% mutate(is_pc = substr(IDP, 1, 2) == 'PC') %>% group_by(is_pc, subtype) %>% summarize(ntest = n()) 
-df_scz_sub = df_scz_sub %>% mutate(p_adj = pval * n()) 
+df_scz_sub = df_scz_sub %>% mutate(p_adj = get_qvalue(pval)) 
 df_scz_sub %>% filter(p_adj < alpha) %>% nrow()
 
 

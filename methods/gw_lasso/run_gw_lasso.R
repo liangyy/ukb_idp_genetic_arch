@@ -63,7 +63,9 @@ option_list <- list(
                 metavar="character"),
     make_option(c("-d", "--mode"), type="character", default='cv_performance',
                 help="mode = cv_performance or model_training. Default = cv_performance.",
-                metavar="character")
+                metavar="character"),
+    make_option(c("-x", "--remove_missing_in_phenotype"), action='store_true',
+                help="If used, remove missing values for each of the phenotype")
 )
 
 opt_parser <- OptionParser(option_list=option_list)
@@ -88,6 +90,9 @@ if(opt$mode == 'cv_performance') {
 } else {
   message('Wrong mode = ', opt$mode)
   quit()
+}
+if(opt$remove_missing_in_phenotype) {
+  message('--remove_missing_in_phenotype is effective')
 }
 
 # load snpnet configuration
@@ -124,8 +129,20 @@ if(mode == 'cv_performance') {
 logging::loginfo('Looping over phenotypes.')
 pred_list = list()
 beta_list = list()
+fid_iid = paste0(df_phenotype$FID, '_', df_phenotype$IID)
 for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
-  df_out = data.frame(indiv = paste0(df_phenotype$FID, '_', df_phenotype$IID), yobs = df_phenotype[[pheno]], ypred = NA)
+  myy = df_phenotype[[pheno]]
+  myx = fid_iid
+  if(opt$remove_missing_in_phenotype) {
+    is.missing = is.na(myy)
+    if(all(is.missing)) {
+      message('All values are missing for phenotype ', pheno, '. Skip!')
+      next
+    }
+    myy = myy[!is.missing]
+    myx = fid_iid[!is.missing]
+  }
+  df_out = data.frame(indiv = myx, yobs = myy, ypred = NA)
   for(k in 1 : opt$nfold) {
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Initialization.'))
     

@@ -133,6 +133,7 @@ fid_iid = paste0(df_phenotype$FID, '_', df_phenotype$IID)
 for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
   myy = df_phenotype[[pheno]]
   myx = fid_iid
+  mynsample = length(myy)
   if(opt$remove_missing_in_phenotype) {
     is.missing = is.na(myy)
     if(all(is.missing)) {
@@ -141,7 +142,12 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     }
     myy = myy[!is.missing]
     myx = fid_iid[!is.missing]
-  }
+    if(mode == 'cv_performance') {
+      partitions = get_partitions(mynsample, opt$nfold)
+    } else {
+      partitions = rep(2, mynsample)
+    }
+  }  
   df_out = data.frame(indiv = myx, yobs = myy, ypred = NA)
   for(k in 1 : opt$nfold) {
     logging::loginfo(paste0('Working on ', pheno, ': ', k, ' / ', opt$nfold, ' fold. Initialization.'))
@@ -152,7 +158,7 @@ for(pheno in colnames(df_phenotype)[c(-1, -2)]) {
     ntrain = length(train_idx)
     inner_partitions = get_partitions(ntrain, opt$inner_nfold)
     valid_idx = train_idx[inner_partitions == 1]
-    split_col = rep(NA, nsample)
+    split_col = rep(NA, mynsample)
     split_col[train_idx] = 'train'
     split_col[valid_idx] = 'val'
     split_col[test_idx] = 'test'

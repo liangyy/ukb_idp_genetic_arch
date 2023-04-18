@@ -1,0 +1,26 @@
+#PBS -S /bin/bash
+#PBS -l walltime=12:00:00
+#PBS -l nodes=1:ppn=16
+#PBS -l mem=16gb
+#PBS -e logs/run_2nd_${NAME}_${CHR}.err
+#PBS -o logs/run_2nd_${NAME}_${CHR}.out
+
+
+
+source ~/.bash_profile
+source ~/.bashrc
+
+#SNMK=/gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/mixqtl/bin/snakemake
+SNMK=/gpfs/data/im-lab/nas40t2/festus/metabolomics/guardian/MetaboXcan/brainxcan/snakemake
+
+#conda activate tensorqtl
+conda activate /gpfs/data/im-lab/nas40t2/yanyul/softwares/miniconda2/envs/tensorqtl
+
+cd ${PBS_O_WORKDIR}
+pipe=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/gw_qtl/run.snmk
+
+
+$SNMK -s $pipe --configfile $PBS_O_WORKDIR/configs/config.$NAME.yaml -p \
+  --config chr_num=$CHR \
+  > $PBS_O_WORKDIR/logs/run_2nd_${NAME}_${CHR}.log 2>&1
+

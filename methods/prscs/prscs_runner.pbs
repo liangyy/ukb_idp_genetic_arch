@@ -1,0 +1,69 @@
+#! /usr/bin/env bash
+
+#PBS -N prscs
+#PBS -S /bin/bash
+#PBS -l walltime=36:00:00
+#PBS -l mem=16gb
+#PBS -l nodes=1:ppn=6
+
+# SPECIFY LOGGING BEHAVIOR
+
+#PBS -o logs/prscs/${PBS_JOBNAME}.${PBS_JOBID}.log
+#PBS -e logs/prscs/${PBS_JOBNAME}.${PBS_JOBID}.err
+
+source ~/.bashrc 
+module load gcc/6.2.0
+module load R/3.6.3
+
+N_THREADS=6
+export MKL_NUM_THREADS=$N_THREADS
+export NUMEXPR_NUM_THREADS=$N_THREADS
+export OMP_NUM_THREADS=$N_THREADS
+
+
+conda activate prs-cs
+
+#temp params
+#region=t1
+#gwas_ss=/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data/idp_gwas/residual.t1.chr1/IDP-25783.parquet
+#gwas_ss=/scratch/fnyasimi1/ukb_idp/idp_gwas_4th/trans_qtl.fourth_round.t1_w_pc.chr9/IDP-25904.parquet
+
+# params
+trait=$(basename ${gwas_ss} .parquet)
+out_pre=${trait}
+#path=/gpfs/data/im-lab/nas40t2/yanyul/data/brainxcan_data/idp_gwas # original results
+path=/scratch/fnyasimi1/ukb_idp/idp_gwas_4th
+tmp_data=/scratch/fnyasimi1/prscs/data/${region}
+tmp_res=/scratch/fnyasimi1/prscs/brainxcan/${region}
+outdir=/gpfs/data/im-lab/nas40t2/festus/brainxcan/results.all/${region}
+
+mkdir -p ${tmp_data} ${tmp_res} ${outdir}
+
+## check if job already run
+[[ -f ${outdir}/${out_pre}.txt ]] && echo "remove output and run again.." && exit
+
+## format data
+Rscript /gpfs/data/im-lab/nas40t2/festus/brainxcan/data_formatter.R \
+    --indir ${path} \
+    --output ${tmp_data}/${out_pre}.tsv \
+    --region ${region} \
+    --idp_trait ${trait}
+
+
+## Run PRSCS
+# the training gwas has a size of 19528/24409
+python /gpfs/data/im-lab/nas40t2/festus/github/PRScs/PRScs.py \
+  --ref_dir=/gpfs/data/im-lab/nas40t2/festus/github/PRScs/ref_panels/1000G/ldblk_1kg_eur \
+  --bim_prefix=/gpfs/data/im-lab/nas40t2/festus/1000G/1000G_refpanel_v5a \
+  --sst_file=${tmp_data}/${out_pre}.tsv \
+  --n_gwas=19528 \
+  --phi=1e-02 \
+  --out_dir=${tmp_res}/${out_pre}
+
+## gather all results for the DB formatting
+cat ${tmp_res}/${out_pre}_pst_eff_a1_b0.5_phi* > ${outdir}/${out_pre}.txt
+
+## clean up 
+rm ${tmp_data}/${out_pre}.tsv ${tmp_res}/${out_pre}*
+
+#--phi=1e-6, 1e-4, 1e-2, 1 

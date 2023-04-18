@@ -1,0 +1,46 @@
+#PBS -S /bin/bash
+#PBS -N predict-prscs
+#PBS -l walltime=172:00:00
+#PBS -l nodes=1:ppn=8
+#PBS -l mem=64gb
+#PBS -e logs/${PBS_JOBNAME}.${PBS_JOBID}.err
+#PBS -o logs/${PBS_JOBNAME}.${PBS_JOBID}.out
+
+module load gcc/6.2.0
+source ~/.bashrc
+conda activate /gpfs/data/im-lab/nas40t2/festus/my_envs/guardian_pred
+
+
+echo "Starting run"
+
+
+#CHR=chr1-22
+bgen=/gpfs/data/im-lab/nas40t2/festus/brainxcan/genotype/test/IDP_HM3_finalPheno.merged_all.{chr_num}_v3.bgen
+bgi=/gpfs/data/im-lab/nas40t2/festus/brainxcan/genotype/test/IDP_HM3_finalPheno.merged_all.{chr_num}_v3.bgen.bgi
+sample=/gpfs/data/im-lab/nas40t2/festus/brainxcan/genotype/test/IDP_HM3_finalPheno.merged_all.chr1-22_v3.sample
+
+# the weights
+prs_parquet=/gpfs/data/im-lab/nas40t2/festus/brainxcan/models/fourth_round.${region}_w_pc.parquet
+
+
+nthread=8
+ukb_imp_reader_path=/gpfs/data/im-lab/nas40t2/yanyul/GitHub/misc-tools/bgen_io
+
+output_prefix=/gpfs/data/im-lab/nas40t2/festus/brainxcan/models/predicted_${region}_idps
+
+echo $bgi
+
+echo "Prediction started"
+#python /scratch/t.cri.fnyasimi/irafs-classic/run_prs.py \
+#python /gpfs/data/im-lab/nas40t2/yanyul/GitHub/ukb_idp_genetic_arch/methods/prediction/run_prs.py \
+python /gpfs/data/im-lab/nas40t2/festus/metabolomics/guardian/bslmm/run_prs.py \
+  --ukb_bgen_pattern $bgen \
+  --ukb_bgi_pattern $bgi \
+  --ukb_sample_file $sample \
+  --prs_parquet $prs_parquet \
+  --nthread $nthread \
+  --output $output_prefix.parquet \
+  --ukb_imp_reader_path $ukb_imp_reader_path > \
+  /gpfs/data/im-lab/nas40t2/festus/brainxcan/models/pred_${region}.log 2>&1
+
+echo "All is well"

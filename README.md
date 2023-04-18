@@ -1,10 +1,5 @@
 # ukb_idp_genetic_arch
 
-Examine the genetic architecture of UKB **i**mage **d**erived **p**henotypes (UKB IDPs).
+Analysis code for [BrainXcan manuscript](https://www.medrxiv.org/content/10.1101/2021.06.01.21258159v2).
 
-# Analysis plan
-
-* Run genome-wide Lasso.
-* Run genome-wide Ridge.
-* Run genome-wide elastic net (is it doable?).
-* Run BSLMM.
+BrainXcan software is at [https://github.com/hakyimlab/brainxcan](https://github.com/hakyimlab/brainxcan).

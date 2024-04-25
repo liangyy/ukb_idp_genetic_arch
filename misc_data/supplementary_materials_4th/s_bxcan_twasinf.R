@@ -136,6 +136,8 @@ load_h2 <- function(pheno, folder) {
   as.numeric(h2[, 2])
 }
 df_gwas = read.delim2(paste0(mydir, '/../supplementary_materials_3rd/supp_table_4.tsv'), header = T)
+df_n <- read.table('~/Downloads/gwas_sample_size.txt', header = TRUE)
+df_gwas <- df_gwas %>% left_join(df_n, by = c('phenotype_id' = 'trait')) %>% rename(sample_size = sample_size.y)
 folders = list(gtex_gwas = '~/Desktop/tmp/ukb_idp/simagexcan/results_gtex_gwas_4th', psychiatric = '~/Desktop/tmp/ukb_idp/simagexcan/results_psychiatric_4th')
 df_gwas$folder = 'gtex_gwas'
 df_gwas$folder[25:35] = 'psychiatric'
@@ -155,9 +157,9 @@ df_phi <- read.table('~/Downloads/psychiatric_permz_rerun 6/idps-phi.txt', heade
 df <- df %>% left_join(df_gwas %>% select(phenotype_id, sample_size, h2), by = c('phenotype' = 'phenotype_id')) %>%
   left_join(df_phi %>% select(IDP, phi), by = 'IDP') %>%
   mutate(phi = ifelse(phi < 0, 0, phi)) %>% 
-  mutate(corrected_pvalue = pchisq(z_brainxcan ^ 2, df= 1, 
+  mutate(corrected_pvalue = exp(pchisq(z_brainxcan ^ 2, df= 1, 
                                    ncp = (phi * sample_size * h2),
-                                   lower.tail = F, log.p = TRUE),
+                                   lower.tail = F, log.p = TRUE)),
          corrected_zscore = sqrt(qchisq(corrected_pvalue, df = 1,
                                         lower.tail = F)) * sign(z_brainxcan)) %>% 
   dplyr::rename(pval_corrected = corrected_pvalue, 

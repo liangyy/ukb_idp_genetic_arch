@@ -42,28 +42,31 @@ df_all = rbind(
   kk3
 )
 
-if(FALSE) {
-  # DEPRECATED: significance criteria: per phenotype, p < 0.05 under Bonferroni-correction
-  # NEW: signficance criteria: per phenotype, qvalue < 0.05
+if(TRUE) {
+  # significance criteria: per phenotype, p < 0.05 under Bonferroni-correction
   alpha = 0.05
   
   # set p adjusted
   df_all %>% group_by(phenotype, source, model) %>% summarise(ntest = n()) %>% ggplot() + geom_point(aes(x = phenotype, y = ntest)) + facet_grid(source ~ model)
-  get_qvalue <- function(pval) {
-    maxp <- max(pval)
-    lambda.seq <- seq(0.05, 0.95, 0.05)
-    if(maxp < 0.95) {
-      lambda.seq <- lambda.seq[lambda.seq <= maxp]
-    }
-    return(qvalue::qvalue(pval, lambda = lambda.seq)$qvalues)
-  }
-  df_all = df_all %>% group_by(phenotype, source, model) %>% mutate(p_adj = get_qvalue(pval)) %>% ungroup()
+  # get_qvalue <- function(pval) {
+  #   maxp <- max(pval)
+  #   lambda.seq <- seq(0.05, 0.95, 0.05)
+  #   if(maxp < 0.95) {
+  #     lambda.seq <- lambda.seq[lambda.seq <= maxp]
+  #   }
+  #   return(qvalue::qvalue(pval, lambda = lambda.seq)$qvalues)
+  # }
+  df_all = df_all %>% group_by(phenotype, source, model) %>% mutate(p_adj = pval * n()) %>% ungroup()
   idp_signif = df_all %>% filter(model == 'ridge', p_adj < alpha) %>% pull(IDP)
   message(length(unique(idp_signif)), ' out of ', length(unique(df_all$IDP)), ' IDPs are significant in at least on phenotype.')
   
   idp_signif = df_all %>% filter(model == 'ridge', source != 'indiv_bxcan', p_adj < alpha) %>% pull(IDP)
   message(length(unique(idp_signif)), ' out of ', length(unique(df_all$IDP)), ' IDPs are significant in at least on phenotype.')
   
+  df_all %>% filter(model == 'ridge', source != 'indiv_bxcan', p_adj < alpha) %>% group_by(phenotype) %>% 
+    summarize(n_signif = n()) %>% ungroup() %>% 
+    right_join(kk2 %>% select(phenotype, sample_size) %>% distinct(), by = 'phenotype') %>% arrange(desc(sample_size)) %>% ggplot() + geom_point(aes(n_signif, sample_size))
+   
   # correlation between gen cor and ridge
   tmp = df_all %>% filter(source != 'indiv_bxcan')
   maxz = max(abs(tmp$zscore[!is.infinite(tmp$zscore)]))
@@ -82,7 +85,7 @@ if(FALSE) {
   
   # SCZ
   
-  df_scz = kk2 = readRDS('s_bxcan_permz/dataframe_full.sbxcan_permz.rds') %>% filter(model == 'ridge') %>% filter(phenotype == 'SCZ_PGC_2020') %>% select(-pval) %>% rename(idp_type = modality, pval = pval_adj_perm_null)
+  df_scz = kk2 = readRDS('s_bxcan_twasinf/dataframe_full.sbxcan_twasinf.rds') %>% filter(model == 'ridge') %>% filter(phenotype == 'SCZ_PGC_2020') %>% select(-pval) %>% rename(idp_type = modality, pval = pval_corrected)
   annot = load_idp_annot()
   df_scz = filter_pred_perf(df_scz)
   df_scz_sub = remove_probtrack_idp(df_scz)
@@ -90,7 +93,7 @@ if(FALSE) {
   df_scz_sub %>% group_by(model) %>% summarize(ntest = n())
   # df_scz_sub = df_scz_sub %>% left_join(annot, by = 'IDP')
   df_scz_sub %>% mutate(is_pc = substr(IDP, 1, 2) == 'PC') %>% group_by(is_pc, subtype) %>% summarize(ntest = n()) 
-  df_scz_sub = df_scz_sub %>% mutate(p_adj = get_qvalue(pval)) 
+  df_scz_sub = df_scz_sub %>% mutate(p_adj = pval * n()) 
   df_scz_sub %>% filter(p_adj < alpha) %>% nrow()
   
   
